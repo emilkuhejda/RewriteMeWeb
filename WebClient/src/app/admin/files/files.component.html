@@ -1,0 +1,41 @@
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a routerLink="/admin/files">Files</a>
+    </li>
+    <li class="breadcrumb-item active">Overview</li>
+</ol>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Files
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="table-header">Name</th>
+                        <th class="table-header">Date created</th>
+                        <th class="table-header">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date created</th>
+                        <th>Actions</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr *ngFor="let file of fileItems">
+                        <td>{{file.name}}</td>
+                        <td>{{file.dateCreated|date}}</td>
+                        <td><a (click)="transcribe(file.id)">Transcribe</a> | Edit | Delete</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
