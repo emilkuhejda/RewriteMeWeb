@@ -14,7 +14,7 @@ import { DialogComponent } from 'src/app/_directives/dialog/dialog.component';
 })
 export class FilesComponent implements OnInit {
     private readonly scriptKey: string = "data-table-script";
-    private readonly scriptUrl: string = "/src/assets/js/dataTable.js";
+    private readonly scriptUrl: string = "assets/js/dataTable.js";
 
     fileItems: FileItem[];
 
