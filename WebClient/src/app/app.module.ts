@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { GecoDialogModule } from 'angular-dynamic-dialog';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
@@ -12,8 +13,7 @@ import { AdminNavigationComponent } from './_directives/admin-navigation/admin-n
 import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FilesComponent } from './admin/files/files.component';
-import { CreateFileComponent } from './admin/files/create-file/create-file.component';
+import { DialogComponent } from './_directives/dialog/dialog.component';
 
 @NgModule({
     declarations: [
@@ -22,9 +22,8 @@ import { CreateFileComponent } from './admin/files/create-file/create-file.compo
         HomeNavigationComponent,
         AdminNavigationComponent,
         ProgressBarComponent,
-        routingComponents,
-        FilesComponent,
-        CreateFileComponent
+        DialogComponent,
+        routingComponents
     ],
     imports: [
         BrowserModule,
@@ -32,7 +31,8 @@ import { CreateFileComponent } from './admin/files/create-file/create-file.compo
         HttpClientModule,
         ReactiveFormsModule,
         FormsModule,
-        NgbModule
+        NgbModule,
+        GecoDialogModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,
@@ -44,6 +44,7 @@ import { CreateFileComponent } from './admin/files/create-file/create-file.compo
         useClass: ErrorInterceptorService,
         multi: true
     }],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [DialogComponent]
 })
 export class AppModule { }

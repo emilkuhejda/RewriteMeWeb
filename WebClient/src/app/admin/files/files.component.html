@@ -32,7 +32,10 @@
                     <tr *ngFor="let file of fileItems">
                         <td>{{file.name}}</td>
                         <td>{{file.dateCreated|date}}</td>
-                        <td><a (click)="transcribe(file.id)">Transcribe</a> | Edit | Delete</td>
+                        <td>
+                            <a (click)="transcribe(file.id)">Transcribe</a> |
+                            Edit |
+                            <a (click)="remove(file)">Delete</a></td>
                     </tr>
                 </tbody>
             </table>

@@ -12,5 +12,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId);
 
         Task AddAsync(FileItem fileItem);
+
+        Task RemoveAsync(Guid userId, Guid fileId);
     }
 }

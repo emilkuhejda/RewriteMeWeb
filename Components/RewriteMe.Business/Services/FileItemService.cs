@@ -30,5 +30,10 @@ namespace RewriteMe.Business.Services
         {
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
         }
+
+        public async Task RemoveAsync(Guid userId, Guid fileId)
+        {
+            await _fileItemRepository.RemoveAsync(userId, fileId).ConfigureAwait(false);
+        }
     }
 }
