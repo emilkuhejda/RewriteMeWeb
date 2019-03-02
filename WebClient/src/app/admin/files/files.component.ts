@@ -43,8 +43,8 @@ export class FilesComponent implements OnInit {
                 });
     }
 
-    transcribe(fileId: string) {
-        this.fileItemService.transcribe(fileId).subscribe(data => { }, (err: ErrorResponse) => { });
+    transcribe(fileItemId: string) {
+        this.fileItemService.transcribe(fileItemId).subscribe(data => { }, (err: ErrorResponse) => { });
     }
 
     remove(fileItem: FileItem) {
