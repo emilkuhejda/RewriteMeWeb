@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -28,9 +29,9 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticationModel authenticationModel)
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
         {
-            var user = _authenticationService.Authenticate(authenticationModel.Username, authenticationModel.Password);
+            var user = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
             if (user == null)
                 return BadRequest();
 

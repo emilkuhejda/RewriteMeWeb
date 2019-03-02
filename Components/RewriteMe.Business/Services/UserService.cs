@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.UserManagement;
@@ -14,24 +15,24 @@ namespace RewriteMe.Business.Services
             _userRepository = userRepository;
         }
 
-        public bool UserAlreadyExists(User user)
+        public async Task<bool> UserAlreadyExistsAsync(User user)
         {
-            return _userRepository.UserAlreadyExists(user);
+            return await _userRepository.UserAlreadyExistsAsync(user).ConfigureAwait(false);
         }
 
-        public void Add(User user)
+        public async Task AddAsync(User user)
         {
-            _userRepository.Add(user);
+            await _userRepository.AddAsync(user).ConfigureAwait(false);
         }
 
-        public User GetUser(string username)
+        public async Task<User> GetUserAsync(string username)
         {
-            return _userRepository.GetUser(username);
+            return await _userRepository.GetUserAsync(username).ConfigureAwait(false);
         }
 
-        public User GetUser(Guid userId)
+        public async Task<User> GetUserAsync(Guid userId)
         {
-            return _userRepository.GetUser(userId);
+            return await _userRepository.GetUserAsync(userId).ConfigureAwait(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
@@ -16,11 +18,11 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public IEnumerable<FileItem> GetAll(Guid userId)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
-                return context.FileItems
+                var fileItems = await context.FileItems
                     .Where(x => x.UserId == userId)
                     .Select(x => new
                     {
@@ -30,32 +32,35 @@ namespace RewriteMe.DataAccess.Repositories
                         x.FileName,
                         x.DateCreated
                     })
-                    .ToList()
-                    .Select(x => new FileItem
-                    {
-                        Id = x.Id,
-                        UserId = x.UserId,
-                        Name = x.Name,
-                        FileName = x.FileName,
-                        DateCreated = x.DateCreated
-                    });
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return fileItems.Select(x => new FileItem
+                {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    Name = x.Name,
+                    FileName = x.FileName,
+                    DateCreated = x.DateCreated
+                });
             }
         }
 
-        public FileItem GetFileItem(Guid userId, Guid fileId)
+        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId)
         {
             using (var context = _contextFactory.Create())
             {
-                return context.FileItems.FirstOrDefault(x => x.Id == fileId && x.UserId == userId)?.ToFileItem();
+                var fileItem = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileId && x.UserId == userId).ConfigureAwait(false);
+                return fileItem?.ToFileItem();
             }
         }
 
-        public void Add(FileItem fileItem)
+        public async Task AddAsync(FileItem fileItem)
         {
             using (var context = _contextFactory.Create())
             {
-                context.FileItems.Add(fileItem.ToFileItemEntity());
-                context.SaveChanges();
+                await context.FileItems.AddAsync(fileItem.ToFileItemEntity()).ConfigureAwait(false);
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }

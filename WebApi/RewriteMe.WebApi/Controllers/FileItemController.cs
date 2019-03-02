@@ -30,17 +30,17 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var files = _fileItemService.GetAll(userId);
+            var files = await _fileItemService.GetAllAsync(userId).ConfigureAwait(false);
 
             return Ok(files);
         }
 
         [HttpPost("/api/files/create")]
         [DisableRequestSizeLimit]
-        public IActionResult Create([FromForm] CreateFileModel createFileModel)
+        public async Task<IActionResult> Create([FromForm] CreateFileModel createFileModel)
         {
             var files = Request.Form.Files;
             if (!files.Any())
@@ -65,7 +65,7 @@ namespace RewriteMe.WebApi.Controllers
                     DateCreated = DateTime.UtcNow,
                 };
 
-                _fileItemService.Add(fileItem);
+                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
             }
 
             return Ok();

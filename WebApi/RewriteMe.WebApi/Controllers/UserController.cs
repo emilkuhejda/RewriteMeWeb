@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
@@ -23,14 +24,15 @@ namespace RewriteMe.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("/api/users/register")]
-        public IActionResult Register([FromBody] RegisterUserModel registerUserModel)
+        public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
             var user = registerUserModel.ToUser();
-            if (_userService.UserAlreadyExists(user))
+            var userAlreadyExists = await _userService.UserAlreadyExistsAsync(user).ConfigureAwait(false);
+            if (userAlreadyExists)
                 return Conflict();
 
             _authenticationService.CalculatePasswordHash(user, registerUserModel.Password);
-            _userService.Add(user);
+            await _userService.AddAsync(user).ConfigureAwait(false);
 
             return Ok();
         }
