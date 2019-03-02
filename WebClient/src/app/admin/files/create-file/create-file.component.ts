@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-create-file',
@@ -64,9 +65,13 @@ export class CreateFileComponent implements OnInit {
 
         this.fileItemService.create(formData)
             .subscribe(
-                () => {
-                    this.alertService.success("Project was successfully created", true);
-                    this.router.navigate(["/admin/files"]);
+                event => {
+                    if (event.type == HttpEventType.UploadProgress) {
+                        this.progress = Math.round(100 * event.loaded / event.total);
+                    } else if (event instanceof HttpResponse) {
+                        this.alertService.success("Project was successfully created", true);
+                        this.router.navigate(["/admin/files"]);
+                    }
                 },
                 (err: ErrorResponse) => {
                     let error = err.message;
