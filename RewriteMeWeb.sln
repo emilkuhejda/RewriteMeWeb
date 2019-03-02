@@ -9,13 +9,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.WebApi", "WebApi\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{6BBF5D57-7186-4036-BCA7-D729F8FCBBFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.Domain", "Components\RewriteMe.Domain\RewriteMe.Domain.csproj", "{35E6D8BC-4333-490B-9C55-F093374C51C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.Domain", "Components\RewriteMe.Domain\RewriteMe.Domain.csproj", "{35E6D8BC-4333-490B-9C55-F093374C51C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.Business", "Components\RewriteMe.Business\RewriteMe.Business.csproj", "{1EF942CE-06D6-4127-8E48-BFA7A89F7BC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.Business", "Components\RewriteMe.Business\RewriteMe.Business.csproj", "{1EF942CE-06D6-4127-8E48-BFA7A89F7BC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.DataAccess", "Components\RewriteMe.DataAccess\RewriteMe.DataAccess.csproj", "{2FA6F64E-4D81-4780-A341-D3BF3A4B0F89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.DataAccess", "Components\RewriteMe.DataAccess\RewriteMe.DataAccess.csproj", "{2FA6F64E-4D81-4780-A341-D3BF3A4B0F89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.Common", "Components\RewriteMe.Common\RewriteMe.Common.csproj", "{1280E56D-122E-4052-8A9D-DDFE81D3EA3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.Common", "Components\RewriteMe.Common\RewriteMe.Common.csproj", "{1280E56D-122E-4052-8A9D-DDFE81D3EA3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_global", "_global", "{F12EB7E1-8834-4174-8616-CCC9A642FB64}"
+	ProjectSection(SolutionItems) = preProject
+		Global\RewriteMe.CodeAnalysis.ruleset = Global\RewriteMe.CodeAnalysis.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace RewriteMe.DataAccess
 {
-    internal class AppDesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    public class AppDesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
