@@ -29,13 +29,13 @@
                     </tr>
                 </tfoot>
                 <tbody>
-                    <tr *ngFor="let file of fileItems">
-                        <td>{{file.name}}</td>
-                        <td>{{file.dateCreated|date}}</td>
+                    <tr *ngFor="let fileItem of fileItems">
+                        <td>{{fileItem.name}}</td>
+                        <td>{{fileItem.dateCreated|date}}</td>
                         <td>
-                            <a (click)="transcribe(file.id)">Transcribe</a> |
+                            <a (click)="transcribe(fileItem.id)">Transcribe</a> |
                             Edit |
-                            <a (click)="remove(file)">Delete</a></td>
+                            <a (click)="remove(fileItem)">Delete</a></td>
                     </tr>
                 </tbody>
             </table>

@@ -15,19 +15,19 @@ export class FileItemService {
 		return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath).pipe(map(FileItemMapper.convert));
 	}
 
-	create(fileData) {
-		let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, fileData, {
+	create(formData) {
+		let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, formData, {
 			reportProgress: true
 		});
 
 		return this.http.request(uploadRequest);
 	}
 
-	transcribe(fileId: string) {
-		return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, { fileId: fileId });
+	transcribe(fileItemId: string) {
+		return this.http.patch(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, { fileItemId: fileItemId });
 	}
 
-	remove(fileId: string) {
-		return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiRemoveFileItemPath + "/" + fileId);
+	remove(fileItemId: string) {
+		return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiRemoveFileItemPath + "/" + fileItemId);
 	}
 }

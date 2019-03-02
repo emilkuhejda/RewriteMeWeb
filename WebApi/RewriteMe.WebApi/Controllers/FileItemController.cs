@@ -84,5 +84,14 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("/api/files/transcribe")]
+        public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
+        {
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }
