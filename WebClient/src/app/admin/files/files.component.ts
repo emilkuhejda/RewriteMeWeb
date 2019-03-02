@@ -3,6 +3,7 @@ import { ScriptLoaderService } from 'src/app/_services/script-loader.service';
 import { FileItem } from 'src/app/_models/file-item';
 import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
+import { ErrorResponse } from 'src/app/_models/error-response';
 
 @Component({
     selector: 'app-files',
@@ -26,8 +27,8 @@ export class FilesComponent implements OnInit {
                 data => {
                     this.fileItems = data;
                 },
-                err => {
-                    this.alertService.error(err);
+                (err: ErrorResponse) => {
+                    this.alertService.error(err.message);
                 })
             .add(
                 () => {
@@ -36,7 +37,7 @@ export class FilesComponent implements OnInit {
     }
 
     transcribe(fileId: string) {
-        this.fileItemService.transcribe(fileId).subscribe(data => { }, err => { });
+        this.fileItemService.transcribe(fileId).subscribe(data => { }, (err: ErrorResponse) => { });
     }
 
     ngOnDestroy(): void {

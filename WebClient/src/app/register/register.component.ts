@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../_services/user.service';
 import { AlertService } from '../_services/alert.service';
 import { first } from 'rxjs/operators';
+import { ErrorResponse } from '../_models/error-response';
 
 @Component({
     selector: 'app-register',
@@ -64,7 +65,8 @@ export class RegisterComponent implements OnInit {
                 data => {
                     this.router.navigate(['/login']);
                 },
-                error => {
+                (err: ErrorResponse) => {
+                    let error = err.status === 409 ? "User already exists" : err.message;
                     this.alertService.error(error);
                     this.loading = false;
                 });

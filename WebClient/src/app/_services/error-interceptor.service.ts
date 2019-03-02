@@ -3,6 +3,7 @@ import { HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { AuthenticationService } from './authentication.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ErrorResponse } from '../_models/error-response';
 
 @Injectable({
     providedIn: 'root'
@@ -17,9 +18,9 @@ export class ErrorInterceptorService {
                     this.authenticationService.logout();
                     location.reload(true);
                 }
-
-                const error = (err.error && err.error.message) || "Error occurred, please try again later";
-                return throwError(error);
+                
+                let errorResponse = new ErrorResponse(err);
+                return throwError(errorResponse);
             })
         );
     }

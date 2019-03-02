@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../_services/authentication.service';
 import { AlertService } from '../_services/alert.service';
 import { first } from 'rxjs/operators';
+import { ErrorResponse } from '../_models/error-response';
 
 @Component({
     selector: 'app-login',
@@ -51,7 +52,8 @@ export class LoginComponent implements OnInit {
                 data => {
                     this.router.navigate([this.returnUrl]);
                 },
-                error => {
+                (err: ErrorResponse) => {
+                    let error = err.status === 400 ? "Username or password is incorrect" : err.message;
                     this.alertService.error(error);
                     this.loading = false;
                 });

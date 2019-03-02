@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
+import { ErrorResponse } from 'src/app/_models/error-response';
 
 @Component({
     selector: 'app-create-file',
@@ -67,7 +68,14 @@ export class CreateFileComponent implements OnInit {
                     this.alertService.success("Project was successfully created", true);
                     this.router.navigate(["/admin/files"]);
                 },
-                error => {
+                (err: ErrorResponse) => {
+                    let error = err.message;
+                    if (err.status === 400)
+                        error = "Uploaded file not found";
+
+                    if (err.status === 416)
+                        error = "Multiple upload is not allowed";
+
                     this.alertService.error(error);
                     this.loading = false;
                 });
