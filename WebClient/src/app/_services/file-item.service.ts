@@ -24,7 +24,7 @@ export class FileItemService {
 	}
 
 	transcribe(fileItemId: string) {
-		return this.http.patch(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, { fileItemId: fileItemId });
+		return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, { fileItemId: fileItemId });
 	}
 
 	remove(fileItemId: string) {

@@ -85,7 +85,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok();
         }
 
-        [HttpPatch("/api/files/transcribe")]
+        [HttpPost("/api/files/transcribe")]
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
