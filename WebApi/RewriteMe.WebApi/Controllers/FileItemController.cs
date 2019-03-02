@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers
@@ -50,6 +51,8 @@ namespace RewriteMe.WebApi.Controllers
                 return StatusCode(416);
 
             var fileToUpload = files[0];
+            if (!fileToUpload.IsSupportedType())
+                return StatusCode(415);
 
             using (var memoryStream = new MemoryStream())
             {
