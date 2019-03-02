@@ -80,6 +80,9 @@ export class CreateFileComponent implements OnInit {
 
                     if (err.status === 416)
                         error = "Multiple upload is not allowed";
+                    
+                    if(err.status === 415)
+                    error="Audio file is not supported";
 
                     this.alertService.error(error);
                     this.loading = false;
