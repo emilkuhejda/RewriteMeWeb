@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190301205521_InitialCreate")]
+    [Migration("20190302104312_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,35 @@ namespace RewriteMe.DataAccess.Migrations
                 .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime?>("DateProcessed");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<byte[]>("Source")
+                        .IsRequired();
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FileItem");
+                });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserEntity", b =>
                 {
@@ -49,6 +78,14 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("FileItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

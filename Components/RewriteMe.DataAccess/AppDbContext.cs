@@ -16,6 +16,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<UserEntity> Users { get; set; }
 
+        public DbSet<FileItemEntity> FileItems { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -27,6 +29,7 @@ namespace RewriteMe.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
         }
     }
 }

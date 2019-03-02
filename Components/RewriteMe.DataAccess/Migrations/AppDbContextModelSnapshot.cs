@@ -19,6 +19,35 @@ namespace RewriteMe.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime?>("DateProcessed");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<byte[]>("Source")
+                        .IsRequired();
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FileItem");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -47,6 +76,14 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("FileItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

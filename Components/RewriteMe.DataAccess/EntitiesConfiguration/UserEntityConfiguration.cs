@@ -16,6 +16,8 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.LastName).IsRequired().HasMaxLength(50);
             builder.Property(x => x.PasswordHash).HasMaxLength(100).IsRequired();
             builder.Property(x => x.PasswordSalt).HasMaxLength(150).IsRequired();
+
+            builder.HasMany(x => x.FileItems).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
