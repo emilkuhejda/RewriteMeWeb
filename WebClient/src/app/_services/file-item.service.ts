@@ -12,11 +12,11 @@ export class FileItemService {
 	constructor(private http: HttpClient) { }
 
 	getAll() {
-		return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFilesPath).pipe(map(FileItemMapper.convert));
+		return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath).pipe(map(FileItemMapper.convert));
 	}
 
 	create(fileData) {
-		let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFilePath, fileData, {
+		let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, fileData, {
 			reportProgress: true
 		});
 
@@ -24,6 +24,10 @@ export class FileItemService {
 	}
 
 	transcribe(fileId: string) {
-		return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFilePath, { fileId: fileId });
+		return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, { fileId: fileId });
+	}
+
+	remove(fileId: string) {
+		return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiRemoveFileItemPath + "/" + fileId);
 	}
 }

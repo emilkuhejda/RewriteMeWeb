@@ -73,5 +73,16 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("/api/files/{id}")]
+        public async Task<IActionResult> Remove([FromRoute] string id)
+        {
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var fileItemId = Guid.Parse(id);
+
+            await _fileItemService.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }

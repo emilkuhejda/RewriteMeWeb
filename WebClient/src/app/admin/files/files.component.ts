@@ -4,6 +4,8 @@ import { FileItem } from 'src/app/_models/file-item';
 import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { DialogComponent } from 'src/app/_directives/dialog/dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -19,9 +21,14 @@ export class FilesComponent implements OnInit {
     constructor(
         private fileItemService: FileItemService,
         private alertService: AlertService,
-        private scriptLoaderService: ScriptLoaderService) { }
+        private scriptLoaderService: ScriptLoaderService,
+        private modal: GecoDialog) { }
 
     ngOnInit() {
+        this.initialize();
+    }
+
+    private initialize() {
         this.fileItemService.getAll()
             .subscribe(
                 data => {
@@ -38,6 +45,37 @@ export class FilesComponent implements OnInit {
 
     transcribe(fileId: string) {
         this.fileItemService.transcribe(fileId).subscribe(data => { }, (err: ErrorResponse) => { });
+    }
+
+    remove(fileItem: FileItem) {
+        let onAccept = (dialogComponent: DialogComponent) => {
+            this.fileItemService.remove(fileItem.id)
+                .subscribe(
+                    () => {
+                        this.alertService.success(`The file '${fileItem.name}' was successfully deleted`);
+                        this.initialize();
+                    },
+                    (err: ErrorResponse) => {
+                        this.alertService.error(err.message);
+                    }
+                )
+                .add(() => {
+                    dialogComponent.close();
+                });
+        };
+
+        let data = {
+            title: `Delete ${fileItem.name}`,
+            message: `Do you really want to delete file '${fileItem.name}'?`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(DialogComponent, {
+            data: data,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 
     ngOnDestroy(): void {
