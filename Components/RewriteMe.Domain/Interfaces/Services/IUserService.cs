@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IUserService
     {
-        bool UserAlreadyExists(User user);
+        Task<bool> UserAlreadyExistsAsync(User user);
 
-        void Add(User user);
+        Task<User> GetUserAsync(string username);
 
-        User GetUser(string username);
+        Task<User> GetUserAsync(Guid userId);
 
-        User GetUser(Guid userId);
+        Task AddAsync(User user);
     }
 }

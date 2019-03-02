@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        bool UserAlreadyExists(User user);
+        Task<bool> UserAlreadyExistsAsync(User user);
 
-        User GetUser(string username);
+        Task<User> GetUserAsync(string username);
 
-        User GetUser(Guid userId);
+        Task<User> GetUserAsync(Guid userId);
 
-        void Add(User user);
+        Task AddAsync(User user);
     }
 }

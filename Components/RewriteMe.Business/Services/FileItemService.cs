@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
@@ -15,19 +16,19 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
-        public IEnumerable<FileItem> GetAll(Guid userId)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId)
         {
-            return _fileItemRepository.GetAll(userId);
+            return await _fileItemRepository.GetAllAsync(userId).ConfigureAwait(false);
         }
 
-        public FileItem GetFileItem(Guid userId, Guid fileId)
+        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId)
         {
-            return _fileItemRepository.GetFileItem(userId, fileId);
+            return await _fileItemRepository.GetFileItemAsync(userId, fileId).ConfigureAwait(false);
         }
 
-        public void Add(FileItem fileItem)
+        public async Task AddAsync(FileItem fileItem)
         {
-            _fileItemRepository.Add(fileItem);
+            await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
         }
     }
 }

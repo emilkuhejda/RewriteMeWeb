@@ -87,7 +87,7 @@ namespace RewriteMe.WebApi
                     {
                         var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                         var userId = Guid.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetUser(userId);
+                        var user = userService.GetUserAsync(userId);
                         if (user == null)
                         {
                             context.Fail("Unauthorized");

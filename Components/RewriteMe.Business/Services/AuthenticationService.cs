@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.UserManagement;
 
@@ -22,12 +23,12 @@ namespace RewriteMe.Business.Services
             user.PasswordSalt = generatedPassword.PasswordSalt;
         }
 
-        public User Authenticate(string username, string password)
+        public async Task<User> AuthenticateAsync(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return null;
 
-            var user = _userService.GetUser(username);
+            var user = await _userService.GetUserAsync(username).ConfigureAwait(false);
             if (user == null)
                 return null;
 

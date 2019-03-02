@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IFileItemRepository
     {
-        IEnumerable<FileItem> GetAll(Guid userId);
+        Task<IEnumerable<FileItem>> GetAllAsync(Guid userId);
 
-        FileItem GetFileItem(Guid userId, Guid fileId);
+        Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId);
 
-        void Add(FileItem fileItem);
+        Task AddAsync(FileItem fileItem);
     }
 }

@@ -1,4 +1,5 @@
-﻿using RewriteMe.Domain.UserManagement;
+﻿using System.Threading.Tasks;
+using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
@@ -6,6 +7,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         void CalculatePasswordHash(User user, string password);
 
-        User Authenticate(string username, string password);
+        Task<User> AuthenticateAsync(string username, string password);
     }
 }
