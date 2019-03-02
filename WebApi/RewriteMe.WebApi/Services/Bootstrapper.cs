@@ -26,9 +26,11 @@ namespace RewriteMe.WebApi.Services
         {
             builder.RegisterType<DbContextFactory>().As<IDbContextFactory>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<FileItemRepository>().As<IFileItemRepository>().InstancePerLifetimeScope();
 
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+            builder.RegisterType<FileItemService>().As<IFileItemService>().InstancePerLifetimeScope();
         }
     }
 }

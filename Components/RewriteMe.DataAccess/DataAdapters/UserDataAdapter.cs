@@ -1,4 +1,5 @@
-﻿using RewriteMe.DataAccess.Entities;
+﻿using System.Linq;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.DataAccess.DataAdapters
@@ -14,7 +15,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FirstName = userEntity.FirstName,
                 LastName = userEntity.LastName,
                 PasswordHash = userEntity.PasswordHash,
-                PasswordSalt = userEntity.PasswordSalt
+                PasswordSalt = userEntity.PasswordSalt,
+                FileItems = userEntity.FileItems.Select(x => x.ToFileItem()).ToList()
             };
         }
 
@@ -27,7 +29,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PasswordHash = user.PasswordHash,
-                PasswordSalt = user.PasswordSalt
+                PasswordSalt = user.PasswordSalt,
+                FileItems = user.FileItems?.Select(x => x.ToFileItemEntity()).ToList()
             };
         }
     }
