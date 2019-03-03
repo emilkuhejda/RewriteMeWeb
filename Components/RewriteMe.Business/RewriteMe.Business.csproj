@@ -20,6 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NAudio" Version="1.8.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RewriteMe.Common\RewriteMe.Common.csproj" />
     <ProjectReference Include="..\RewriteMe.Domain\RewriteMe.Domain.csproj" />
   </ItemGroup>
 
