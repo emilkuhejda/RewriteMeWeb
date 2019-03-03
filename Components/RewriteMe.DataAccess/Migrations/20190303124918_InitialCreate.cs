@@ -55,7 +55,8 @@ namespace RewriteMe.DataAccess.Migrations
                     FileItemId = table.Column<Guid>(nullable: false),
                     Alternatives = table.Column<string>(nullable: false),
                     Source = table.Column<byte[]>(nullable: false),
-                    TotalTime = table.Column<TimeSpan>(nullable: false)
+                    TotalTime = table.Column<TimeSpan>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

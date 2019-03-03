@@ -15,7 +15,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FileItemId = transcribeItemEntity.FileItemId,
                 Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(transcribeItemEntity.Alternatives),
                 Source = transcribeItemEntity.Source,
-                TotalTime = transcribeItemEntity.TotalTime
+                TotalTime = transcribeItemEntity.TotalTime,
+                DateCreated = transcribeItemEntity.DateCreated
             };
         }
 
@@ -27,7 +28,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FileItemId = transcribeItem.FileItemId,
                 Alternatives = JsonConvert.SerializeObject(transcribeItem.Alternatives),
                 Source = transcribeItem.Source,
-                TotalTime = transcribeItem.TotalTime
+                TotalTime = transcribeItem.TotalTime,
+                DateCreated = transcribeItem.DateCreated
             };
         }
     }

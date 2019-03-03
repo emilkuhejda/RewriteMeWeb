@@ -14,5 +14,7 @@ namespace RewriteMe.Domain.Transcription
         public byte[] Source { get; set; }
 
         public TimeSpan TotalTime { get; set; }
+
+        public DateTime DateCreated { get; set; }
     }
 }

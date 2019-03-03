@@ -14,6 +14,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public TimeSpan TotalTime { get; set; }
 
+        public DateTime DateCreated { get; set; }
+
         public FileItemEntity FileItem { get; set; }
     }
 }
