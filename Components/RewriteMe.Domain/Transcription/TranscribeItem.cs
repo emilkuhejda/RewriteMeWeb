@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RewriteMe.Domain.Transcription
 {
@@ -8,10 +9,10 @@ namespace RewriteMe.Domain.Transcription
 
         public Guid FileItemId { get; set; }
 
-        public string Transcript { get; set; }
+        public IEnumerable<RecognitionAlternative> Alternatives { get; set; }
 
         public byte[] Source { get; set; }
 
-        public int Duration { get; set; }
+        public TimeSpan TotalTime { get; set; }
     }
 }

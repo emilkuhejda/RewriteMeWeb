@@ -1,4 +1,6 @@
-﻿using RewriteMe.DataAccess.Entities;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.DataAdapters
@@ -11,9 +13,9 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = transcribeItemEntity.Id,
                 FileItemId = transcribeItemEntity.FileItemId,
-                Transcript = transcribeItemEntity.Transcript,
+                Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(transcribeItemEntity.Alternatives),
                 Source = transcribeItemEntity.Source,
-                Duration = transcribeItemEntity.Duration
+                TotalTime = transcribeItemEntity.TotalTime
             };
         }
 
@@ -23,9 +25,9 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = transcribeItem.Id,
                 FileItemId = transcribeItem.FileItemId,
-                Transcript = transcribeItem.Transcript,
+                Alternatives = JsonConvert.SerializeObject(transcribeItem.Alternatives),
                 Source = transcribeItem.Source,
-                Duration = transcribeItem.Duration
+                TotalTime = transcribeItem.TotalTime
             };
         }
     }

@@ -12,9 +12,9 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.FileItemId).IsRequired();
-            builder.Property(x => x.Transcript).IsRequired();
+            builder.Property(x => x.Alternatives).IsRequired();
             builder.Property(x => x.Source).IsRequired();
-            builder.Property(x => x.Duration).IsRequired();
+            builder.Property(x => x.TotalTime).IsRequired();
         }
     }
 }

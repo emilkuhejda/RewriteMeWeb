@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -22,18 +21,15 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionService _speechRecognitionService;
-        private readonly IWavFileService _wavFileService;
         private readonly AppSettings _appSettings;
 
         public FileItemController(
             IFileItemService fileItemService,
             ISpeechRecognitionService speechRecognitionService,
-            IWavFileService wavFileService,
             IOptions<AppSettings> options)
         {
             _fileItemService = fileItemService;
             _speechRecognitionService = speechRecognitionService;
-            _wavFileService = wavFileService;
             _appSettings = options.Value;
         }
 
@@ -99,11 +95,7 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            var audioSource = fileItem.IsWav()
-                ? fileItem.Source
-                : await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
-
-            await _speechRecognitionService.Recognize(audioSource, _appSettings.SpeechCredentials).ConfigureAwait(false);
+            await _speechRecognitionService.Recognize(fileItem, _appSettings.SpeechCredentials).ConfigureAwait(false);
 
             return Ok();
         }

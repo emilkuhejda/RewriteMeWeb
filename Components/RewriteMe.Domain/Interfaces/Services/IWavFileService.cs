@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
@@ -7,6 +8,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<byte[]> ConvertToWav(byte[] source);
 
-        Task<IEnumerable<string>> SplitWavFile(byte[] inputFile);
+        Task<IEnumerable<WavFileItem>> SplitWavFile(byte[] inputFile);
     }
 }
