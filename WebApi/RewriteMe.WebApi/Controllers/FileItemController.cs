@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -71,7 +72,8 @@ namespace RewriteMe.WebApi.Controllers
                     Name = createFileModel.Name,
                     FileName = fileToUpload.Name,
                     Source = memoryStream.ToArray(),
-                    DateCreated = DateTime.UtcNow,
+                    ContentType = fileToUpload.ContentType,
+                    DateCreated = DateTime.UtcNow
                 };
 
                 await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
@@ -97,8 +99,11 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            var convertedFileItem = await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
-            await _speechRecognitionService.Recognize(convertedFileItem, _appSettings.SpeechCredentials).ConfigureAwait(false);
+            var audioSource = fileItem.IsWav()
+                ? fileItem.Source
+                : await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
+
+            await _speechRecognitionService.Recognize(audioSource, _appSettings.SpeechCredentials).ConfigureAwait(false);
 
             return Ok();
         }
