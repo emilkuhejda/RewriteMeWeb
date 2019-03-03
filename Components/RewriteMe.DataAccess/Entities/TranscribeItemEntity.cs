@@ -8,11 +8,11 @@ namespace RewriteMe.DataAccess.Entities
 
         public Guid FileItemId { get; set; }
 
-        public string Transcript { get; set; }
+        public string Alternatives { get; set; }
 
         public byte[] Source { get; set; }
 
-        public int Duration { get; set; }
+        public TimeSpan TotalTime { get; set; }
 
         public FileItemEntity FileItem { get; set; }
     }

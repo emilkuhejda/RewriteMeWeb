@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using RewriteMe.Common.Helpers;
 
 namespace RewriteMe.WebApi.Extensions
 {
@@ -7,12 +7,7 @@ namespace RewriteMe.WebApi.Extensions
     {
         public static bool IsSupportedType(this IFormFile formFile)
         {
-            var supportedTypes = new[] { "audio/wav", "audio/x-m4a" };
-
-            if (supportedTypes.Contains(formFile.ContentType))
-                return true;
-
-            return false;
+            return ContentTypeHelper.IsSupportedType(formFile.ContentType);
         }
     }
 }

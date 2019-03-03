@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NAudio.Wave;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Business.Services
 {
@@ -33,14 +34,14 @@ namespace RewriteMe.Business.Services
             return bytes;
         }
 
-        public async Task<IEnumerable<string>> SplitWavFile(byte[] inputFile)
+        public async Task<IEnumerable<WavFileItem>> SplitWavFile(byte[] inputFile)
         {
             return await Task.Run(() => SplitWavFileInternal(inputFile)).ConfigureAwait(false);
         }
 
-        private IEnumerable<string> SplitWavFileInternal(byte[] inputFile)
+        private IEnumerable<WavFileItem> SplitWavFileInternal(byte[] inputFile)
         {
-            var fileNames = new List<string>();
+            var files = new List<WavFileItem>();
 
             using (var stream = new MemoryStream(inputFile))
             using (var reader = new WaveFileReader(stream))
@@ -51,25 +52,25 @@ namespace RewriteMe.Business.Services
                 {
                     var startTime = new TimeSpan(0, 0, i * FileLengthInSeconds);
                     var endTile = new TimeSpan(0, 0, (i + 1) * FileLengthInSeconds);
-                    TrimWavFile(reader, startTime, endTile, fileNames);
+                    TrimWavFile(reader, startTime, endTile, files);
                 }
 
                 var start = new TimeSpan(0, 0, countItems * FileLengthInSeconds);
                 var end = new TimeSpan(0, 0, (int)reader.TotalTime.TotalSeconds);
-                TrimWavFile(reader, start, end, fileNames);
+                TrimWavFile(reader, start, end, files);
 
-                return fileNames;
+                return files;
             }
         }
 
-        private void TrimWavFile(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<string> fileNames)
+        private void TrimWavFile(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavFileItem> files)
         {
             var outputFileName = GetTempName();
-            TrimWavFile(reader, outputFileName, start, end);
-            fileNames.Add(outputFileName);
+            var fileItem = TrimWavFile(reader, outputFileName, start, end);
+            files.Add(fileItem);
         }
 
-        private void TrimWavFile(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end)
+        private WavFileItem TrimWavFile(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end)
         {
             using (var writer = new WaveFileWriter(outputFileName, reader.WaveFormat))
             {
@@ -82,6 +83,8 @@ namespace RewriteMe.Business.Services
                 endPosition = endPosition - endPosition % reader.WaveFormat.BlockAlign;
 
                 TrimWavFile(reader, writer, startPosition, endPosition);
+
+                return new WavFileItem(outputFileName, writer.TotalTime);
             }
         }
 

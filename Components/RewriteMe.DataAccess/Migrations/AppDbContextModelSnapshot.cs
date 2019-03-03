@@ -56,15 +56,15 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("Duration");
+                    b.Property<string>("Alternatives")
+                        .IsRequired();
 
                     b.Property<Guid>("FileItemId");
 
                     b.Property<byte[]>("Source")
                         .IsRequired();
 
-                    b.Property<string>("Transcript")
-                        .IsRequired();
+                    b.Property<TimeSpan>("TotalTime");
 
                     b.HasKey("Id");
 

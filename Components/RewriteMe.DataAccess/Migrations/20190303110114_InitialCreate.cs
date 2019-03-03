@@ -32,6 +32,7 @@ namespace RewriteMe.DataAccess.Migrations
                     Name = table.Column<string>(maxLength: 150, nullable: false),
                     FileName = table.Column<string>(maxLength: 150, nullable: false),
                     Source = table.Column<byte[]>(nullable: false),
+                    ContentType = table.Column<string>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateProcessed = table.Column<DateTime>(nullable: true)
                 },
@@ -46,14 +47,43 @@ namespace RewriteMe.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TranscribeItem",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    FileItemId = table.Column<Guid>(nullable: false),
+                    Alternatives = table.Column<string>(nullable: false),
+                    Source = table.Column<byte[]>(nullable: false),
+                    TotalTime = table.Column<TimeSpan>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TranscribeItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TranscribeItem_FileItem_FileItemId",
+                        column: x => x.FileItemId,
+                        principalTable: "FileItem",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_FileItem_UserId",
                 table: "FileItem",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TranscribeItem_FileItemId",
+                table: "TranscribeItem",
+                column: "FileItemId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TranscribeItem");
+
             migrationBuilder.DropTable(
                 name: "FileItem");
 
