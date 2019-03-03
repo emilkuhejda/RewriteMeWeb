@@ -12,7 +12,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = transcribeItemEntity.Id,
                 FileItemId = transcribeItemEntity.FileItemId,
                 Transcript = transcribeItemEntity.Transcript,
-                Source = transcribeItemEntity.Source
+                Source = transcribeItemEntity.Source,
+                Duration = transcribeItemEntity.Duration
             };
         }
 
@@ -23,7 +24,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = transcribeItem.Id,
                 FileItemId = transcribeItem.FileItemId,
                 Transcript = transcribeItem.Transcript,
-                Source = transcribeItem.Source
+                Source = transcribeItem.Source,
+                Duration = transcribeItem.Duration
             };
         }
     }

@@ -11,5 +11,7 @@ namespace RewriteMe.Domain.Transcription
         public string Transcript { get; set; }
 
         public byte[] Source { get; set; }
+
+        public int Duration { get; set; }
     }
 }
