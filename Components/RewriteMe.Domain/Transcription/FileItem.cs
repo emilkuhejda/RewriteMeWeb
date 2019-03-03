@@ -14,6 +14,8 @@ namespace RewriteMe.Domain.Transcription
 
         public byte[] Source { get; set; }
 
+        public string ContentType { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }

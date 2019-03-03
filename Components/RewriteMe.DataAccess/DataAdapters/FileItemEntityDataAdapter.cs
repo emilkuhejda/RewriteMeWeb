@@ -14,6 +14,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Name = fileItemEntity.Name,
                 FileName = fileItemEntity.FileName,
                 Source = fileItemEntity.Source,
+                ContentType = fileItemEntity.ContentType,
                 DateCreated = fileItemEntity.DateCreated,
                 DateProcessed = fileItemEntity.DateProcessed
             };
@@ -28,6 +29,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Name = fileItem.Name,
                 FileName = fileItem.FileName,
                 Source = fileItem.Source,
+                ContentType = fileItem.ContentType,
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed
             };
