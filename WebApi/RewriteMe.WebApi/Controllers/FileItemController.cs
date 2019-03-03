@@ -20,13 +20,19 @@ namespace RewriteMe.WebApi.Controllers
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
+        private readonly ISpeechRecognitionService _speechRecognitionService;
+        private readonly IWavFileService _wavFileService;
         private readonly AppSettings _appSettings;
 
         public FileItemController(
             IFileItemService fileItemService,
+            ISpeechRecognitionService speechRecognitionService,
+            IWavFileService wavFileService,
             IOptions<AppSettings> options)
         {
             _fileItemService = fileItemService;
+            _speechRecognitionService = speechRecognitionService;
+            _wavFileService = wavFileService;
             _appSettings = options.Value;
         }
 
@@ -90,6 +96,9 @@ namespace RewriteMe.WebApi.Controllers
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
+
+            var convertedFileItem = await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
+            await _speechRecognitionService.Recognize(convertedFileItem, _appSettings.SpeechCredentials).ConfigureAwait(false);
 
             return Ok();
         }
