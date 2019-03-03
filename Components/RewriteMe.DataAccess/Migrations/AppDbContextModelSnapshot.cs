@@ -59,6 +59,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<string>("Alternatives")
                         .IsRequired();
 
+                    b.Property<DateTime>("DateCreated");
+
                     b.Property<Guid>("FileItemId");
 
                     b.Property<byte[]>("Source")

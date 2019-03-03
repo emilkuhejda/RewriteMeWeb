@@ -90,7 +90,8 @@ namespace RewriteMe.Business.Services
                     FileItemId = fileItemId,
                     Alternatives = alternatives,
                     Source = source,
-                    TotalTime = wavFileItem.TotalTime
+                    TotalTime = wavFileItem.TotalTime,
+                    DateCreated = DateTime.UtcNow
                 };
 
                 await _transcribeItemService.AddAsync(transcribeItem).ConfigureAwait(false);
