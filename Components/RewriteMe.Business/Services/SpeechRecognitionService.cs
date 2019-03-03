@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Speech.V1;
 using Grpc.Auth;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
@@ -18,16 +19,19 @@ namespace RewriteMe.Business.Services
     {
         private readonly IWavFileService _wavFileService;
         private readonly ITranscribeItemService _transcribeItemService;
+        private readonly AppSettings _appSettings;
 
         public SpeechRecognitionService(
             IWavFileService wavFileService,
-            ITranscribeItemService transcribeItemService)
+            ITranscribeItemService transcribeItemService,
+            IOptions<AppSettings> options)
         {
             _wavFileService = wavFileService;
             _transcribeItemService = transcribeItemService;
+            _appSettings = options.Value;
         }
 
-        public async Task Recognize(FileItem fileItem, SpeechCredentials speechCredentials)
+        public async Task Recognize(FileItem fileItem)
         {
             if (!fileItem.IsSupportedType())
                 throw new InvalidOperationException("File type is not supported");
@@ -39,11 +43,11 @@ namespace RewriteMe.Business.Services
             var wavFiles = await _wavFileService.SplitWavFile(audioSource).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
-            var serializedCredentials = JsonConvert.SerializeObject(speechCredentials);
+            var serializedCredentials = JsonConvert.SerializeObject(_appSettings.SpeechCredentials);
             var credentials = GoogleCredential.FromJson(serializedCredentials);
             if (credentials.IsCreateScopedRequired)
             {
-                credentials = credentials.CreateScoped("https://www.googleapis.com/auth/cloud-platform");
+                credentials = credentials.CreateScoped(_appSettings.GoogleApiAuthUri);
             }
 
             var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host, credentials.ToChannelCredentials());
@@ -57,16 +61,10 @@ namespace RewriteMe.Business.Services
 
             await Task.WhenAll(task).ConfigureAwait(false);
 
-            foreach (var file in files)
-            {
-                if (File.Exists(file.Path))
-                    File.Delete(file.Path);
-            }
-
-            await Task.CompletedTask.ConfigureAwait(false);
+            DeleteTempFiles(files);
         }
 
-        private async Task RecognizeSpeech(SpeechClient speech, Guid fileItemId, WavFileItem wavFileItem)
+        private async Task RecognizeSpeech(SpeechClient speech, Guid fileItemId, WavPartialFile wavPartialFile)
         {
             await Task.Run(async () =>
             {
@@ -74,7 +72,7 @@ namespace RewriteMe.Business.Services
                 {
                     Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
                     LanguageCode = "en-GB"
-                }, RecognitionAudio.FromFile(wavFileItem.Path));
+                }, RecognitionAudio.FromFile(wavPartialFile.Path));
 
                 longOperation = longOperation.PollUntilCompleted();
                 var response = longOperation.Result;
@@ -83,19 +81,28 @@ namespace RewriteMe.Business.Services
                     .SelectMany(x => x.Alternatives)
                     .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
 
-                var source = await File.ReadAllBytesAsync(wavFileItem.Path).ConfigureAwait(false);
+                var source = await File.ReadAllBytesAsync(wavPartialFile.Path).ConfigureAwait(false);
                 var transcribeItem = new TranscribeItem
                 {
                     Id = Guid.NewGuid(),
                     FileItemId = fileItemId,
                     Alternatives = alternatives,
                     Source = source,
-                    TotalTime = wavFileItem.TotalTime,
+                    TotalTime = wavPartialFile.TotalTime,
                     DateCreated = DateTime.UtcNow
                 };
 
                 await _transcribeItemService.AddAsync(transcribeItem).ConfigureAwait(false);
             }).ConfigureAwait(false);
+        }
+
+        private void DeleteTempFiles(IEnumerable<WavPartialFile> files)
+        {
+            foreach (var file in files)
+            {
+                if (File.Exists(file.Path))
+                    File.Delete(file.Path);
+            }
         }
     }
 }

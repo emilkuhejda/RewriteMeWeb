@@ -2,9 +2,9 @@
 
 namespace RewriteMe.Domain.Transcription
 {
-    public class WavFileItem
+    public class WavPartialFile
     {
-        public WavFileItem(string path, TimeSpan totalTime)
+        public WavPartialFile(string path, TimeSpan totalTime)
         {
             Path = path;
             TotalTime = totalTime;

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
@@ -21,16 +19,13 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionService _speechRecognitionService;
-        private readonly AppSettings _appSettings;
 
         public FileItemController(
             IFileItemService fileItemService,
-            ISpeechRecognitionService speechRecognitionService,
-            IOptions<AppSettings> options)
+            ISpeechRecognitionService speechRecognitionService)
         {
             _fileItemService = fileItemService;
             _speechRecognitionService = speechRecognitionService;
-            _appSettings = options.Value;
         }
 
         [HttpGet("/api/files")]
@@ -95,7 +90,7 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            await _speechRecognitionService.Recognize(fileItem, _appSettings.SpeechCredentials).ConfigureAwait(false);
+            await _speechRecognitionService.Recognize(fileItem).ConfigureAwait(false);
 
             return Ok();
         }
