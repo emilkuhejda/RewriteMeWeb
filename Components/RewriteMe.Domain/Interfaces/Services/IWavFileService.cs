@@ -8,6 +8,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<byte[]> ConvertToWav(byte[] source);
 
-        Task<IEnumerable<WavFileItem>> SplitWavFile(byte[] inputFile);
+        Task<IEnumerable<WavPartialFile>> SplitWavFile(byte[] inputFile);
     }
 }

@@ -6,6 +6,8 @@
 
         public string SecretKey { get; set; }
 
+        public string GoogleApiAuthUri { get; set; }
+
         public SpeechCredentials SpeechCredentials { get; set; }
     }
 }
