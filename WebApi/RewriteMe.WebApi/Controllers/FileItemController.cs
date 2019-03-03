@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
@@ -90,7 +91,7 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            await _speechRecognitionService.Recognize(fileItem).ConfigureAwait(false);
+            BackgroundJob.Enqueue(() => _speechRecognitionService.Recognize(fileItem));
 
             return Ok();
         }
