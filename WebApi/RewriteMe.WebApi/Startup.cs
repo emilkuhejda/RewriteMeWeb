@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,9 +40,12 @@ namespace RewriteMe.WebApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSwaggerGen(c =>
+            var appSettingsSection = Configuration.GetSection("ApplicationSettings");
+            var appSettings = appSettingsSection.Get<AppSettings>();
+
+            services.AddSwaggerGen(configuration =>
             {
-                c.SwaggerDoc("v1", new Info
+                configuration.SwaggerDoc("v1", new Info
                 {
                     Title = "Rewrite me API",
                     Version = "v1"
@@ -50,7 +54,12 @@ namespace RewriteMe.WebApi
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
-                c.IncludeXmlComments(xmlPath);
+                configuration.IncludeXmlComments(xmlPath);
+            });
+
+            services.AddHangfire(configuration =>
+            {
+                configuration.UseSqlServerStorage(appSettings.ConnectionString);
             });
 
             services.Configure<MvcOptions>(options =>
@@ -67,13 +76,11 @@ namespace RewriteMe.WebApi
                         .AllowAnyMethod());
             });
 
-            var appSettingsSection = Configuration.GetSection("ApplicationSettings");
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
-
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
             services.AddMvc();
+
+            var issuerSigningKey = Encoding.ASCII.GetBytes(appSettings.SecretKey);
 
             services.AddAuthentication(x =>
             {
@@ -101,7 +108,7 @@ namespace RewriteMe.WebApi
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    IssuerSigningKey = new SymmetricSecurityKey(issuerSigningKey),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
@@ -150,6 +157,9 @@ namespace RewriteMe.WebApi
 
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rewrite me API v1"); });
+
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
         }
     }
 }
