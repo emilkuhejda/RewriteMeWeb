@@ -3,7 +3,7 @@ using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class UserDataAdapter
+    public static class UserEntityDataAdapter
     {
         public static User ToUser(this UserEntity userEntity)
         {

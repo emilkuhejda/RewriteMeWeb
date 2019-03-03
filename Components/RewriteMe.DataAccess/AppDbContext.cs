@@ -18,6 +18,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<FileItemEntity> FileItems { get; set; }
 
+        public DbSet<TranscribeItemEntity> TranscribeItems { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -30,6 +32,7 @@ namespace RewriteMe.DataAccess
         {
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new TranscribeItemEntityConfiguration());
         }
     }
 }
