@@ -12,6 +12,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public byte[] Source { get; set; }
 
+        public int Duration { get; set; }
+
         public FileItemEntity FileItem { get; set; }
     }
 }
