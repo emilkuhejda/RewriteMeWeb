@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
@@ -21,9 +22,9 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAllAsync(userId).ConfigureAwait(false);
         }
 
-        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId)
+        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileItemId)
         {
-            return await _fileItemRepository.GetFileItemAsync(userId, fileId).ConfigureAwait(false);
+            return await _fileItemRepository.GetFileItemAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(FileItem fileItem)
@@ -31,9 +32,19 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
         }
 
-        public async Task RemoveAsync(Guid userId, Guid fileId)
+        public async Task RemoveAsync(Guid userId, Guid fileItemId)
         {
-            await _fileItemRepository.RemoveAsync(userId, fileId).ConfigureAwait(false);
+            await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        {
+            await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState);
+        }
+
+        public async Task UpdateDateProcessedAsync(Guid fileItemId)
+        {
+            await _fileItemRepository.UpdateDateProcessedAsync(fileItemId);
         }
     }
 }
