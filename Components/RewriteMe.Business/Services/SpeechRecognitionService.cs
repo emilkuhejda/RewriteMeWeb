@@ -8,7 +8,6 @@ using Google.Cloud.Speech.V1;
 using Grpc.Auth;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -17,32 +16,15 @@ namespace RewriteMe.Business.Services
 {
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
-        private readonly IWavFileService _wavFileService;
-        private readonly ITranscribeItemService _transcribeItemService;
         private readonly AppSettings _appSettings;
 
-        public SpeechRecognitionService(
-            IWavFileService wavFileService,
-            ITranscribeItemService transcribeItemService,
-            IOptions<AppSettings> options)
+        public SpeechRecognitionService(IOptions<AppSettings> options)
         {
-            _wavFileService = wavFileService;
-            _transcribeItemService = transcribeItemService;
             _appSettings = options.Value;
         }
 
-        public async Task Recognize(FileItem fileItem)
+        public async Task<IEnumerable<TranscribeItem>> Recognize(FileItem fileItem, IEnumerable<WavPartialFile> files)
         {
-            if (!fileItem.IsSupportedType())
-                throw new InvalidOperationException("File type is not supported");
-
-            var audioSource = fileItem.IsWav()
-                ? fileItem.Source
-                : await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
-
-            var wavFiles = await _wavFileService.SplitWavFile(audioSource).ConfigureAwait(false);
-            var files = wavFiles.ToList();
-
             var serializedCredentials = JsonConvert.SerializeObject(_appSettings.SpeechCredentials);
             var credentials = GoogleCredential.FromJson(serializedCredentials);
             if (credentials.IsCreateScopedRequired)
@@ -53,20 +35,18 @@ namespace RewriteMe.Business.Services
             var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host, credentials.ToChannelCredentials());
             var speechClient = SpeechClient.Create(channel);
 
-            var task = new List<Task>();
+            var task = new List<Task<TranscribeItem>>();
             foreach (var file in files)
             {
                 task.Add(RecognizeSpeech(speechClient, fileItem.Id, file));
             }
 
-            await Task.WhenAll(task).ConfigureAwait(false);
-
-            DeleteTempFiles(files);
+            return await Task.WhenAll(task).ConfigureAwait(false);
         }
 
-        private async Task RecognizeSpeech(SpeechClient speech, Guid fileItemId, WavPartialFile wavPartialFile)
+        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, WavPartialFile wavPartialFile)
         {
-            await Task.Run(async () =>
+            return await Task.Run(async () =>
             {
                 var longOperation = speech.LongRunningRecognize(new RecognitionConfig
                 {
@@ -92,17 +72,8 @@ namespace RewriteMe.Business.Services
                     DateCreated = DateTime.UtcNow
                 };
 
-                await _transcribeItemService.AddAsync(transcribeItem).ConfigureAwait(false);
+                return transcribeItem;
             }).ConfigureAwait(false);
-        }
-
-        private void DeleteTempFiles(IEnumerable<WavPartialFile> files)
-        {
-            foreach (var file in files)
-            {
-                if (File.Exists(file.Path))
-                    File.Delete(file.Path);
-            }
         }
     }
 }
