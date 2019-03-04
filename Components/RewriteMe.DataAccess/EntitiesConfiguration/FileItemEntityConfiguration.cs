@@ -16,6 +16,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.FileName).IsRequired().HasMaxLength(150);
             builder.Property(x => x.Source).IsRequired();
             builder.Property(x => x.ContentType).IsRequired();
+            builder.Property(x => x.RecognitionState).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
 
             builder.HasMany(x => x.TranscribeItems).WithOne(x => x.FileItem).HasForeignKey(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
