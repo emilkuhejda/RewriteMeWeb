@@ -93,7 +93,7 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognitionAsync(fileItem));
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem));
 
             return Ok();
         }
