@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
@@ -30,7 +31,12 @@ namespace RewriteMe.Business.Managers
             _wavFileService = wavFileService;
         }
 
-        public async Task RunRecognitionAsync(FileItem fileItem)
+        public void RunRecognition(FileItem fileItem)
+        {
+            AsyncHelper.RunSync(() => RunRecognitionAsync(fileItem));
+        }
+
+        private async Task RunRecognitionAsync(FileItem fileItem)
         {
             if (!fileItem.IsSupportedType())
                 throw new InvalidOperationException("File type is not supported");
@@ -44,12 +50,18 @@ namespace RewriteMe.Business.Managers
             var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
-            var transcribeItems = await _speechRecognitionService.Recognize(fileItem, files).ConfigureAwait(false);
-            await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
+            try
+            {
+                var transcribeItems = await _speechRecognitionService.Recognize(fileItem, files).ConfigureAwait(false);
+                await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
 
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
-
-            DeleteTempFiles(files);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
+                await _fileItemService.UpdateDateProcessedAsync(fileItem.Id).ConfigureAwait(false);
+            }
+            finally
+            {
+                DeleteTempFiles(files);
+            }
         }
 
         private void DeleteTempFiles(IEnumerable<WavPartialFile> files)
