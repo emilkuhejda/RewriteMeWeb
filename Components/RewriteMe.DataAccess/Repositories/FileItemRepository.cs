@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.DataAccess.Entities;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
 
@@ -49,11 +50,11 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileId)
+        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItem = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileId && x.UserId == userId).ConfigureAwait(false);
+                var fileItem = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId).ConfigureAwait(false);
                 return fileItem?.ToFileItem();
             }
         }
@@ -67,17 +68,43 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task RemoveAsync(Guid userId, Guid fileId)
+        public async Task RemoveAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
                 var fileItemEntity = new FileItemEntity
                 {
-                    Id = fileId,
+                    Id = fileItemId,
                     UserId = userId
                 };
 
                 context.Entry(fileItemEntity).State = EntityState.Deleted;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItemEntity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (fileItemEntity == null)
+                    return;
+
+                fileItemEntity.RecognitionState = recognitionState;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateDateProcessedAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItemEntity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (fileItemEntity == null)
+                    return;
+
+                fileItemEntity.DateProcessed = DateTime.UtcNow;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
