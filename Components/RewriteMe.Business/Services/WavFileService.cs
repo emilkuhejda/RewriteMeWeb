@@ -12,7 +12,7 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        public async Task<byte[]> ConvertToWav(byte[] source)
+        public async Task<byte[]> ConvertToWavAsync(byte[] source)
         {
             var inputFile = Path.GetTempFileName();
             await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
@@ -34,7 +34,7 @@ namespace RewriteMe.Business.Services
             return bytes;
         }
 
-        public async Task<IEnumerable<WavPartialFile>> SplitWavFile(byte[] inputFile)
+        public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile)
         {
             return await Task.Run(() => SplitWavFileInternal(inputFile)).ConfigureAwait(false);
         }
