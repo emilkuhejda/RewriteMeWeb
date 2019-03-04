@@ -31,6 +31,7 @@ namespace RewriteMe.DataAccess.Repositories
                         x.UserId,
                         x.Name,
                         x.FileName,
+                        x.RecognitionState,
                         x.DateCreated
                     })
                     .ToListAsync()
@@ -42,6 +43,7 @@ namespace RewriteMe.DataAccess.Repositories
                     UserId = x.UserId,
                     Name = x.Name,
                     FileName = x.FileName,
+                    RecognitionState = x.RecognitionState,
                     DateCreated = x.DateCreated
                 });
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.DataAccess.Entities
 {
@@ -21,6 +22,8 @@ namespace RewriteMe.DataAccess.Entities
         public byte[] Source { get; set; }
 
         public string ContentType { get; set; }
+
+        public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }
 

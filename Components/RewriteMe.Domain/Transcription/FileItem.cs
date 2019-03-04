@@ -1,9 +1,15 @@
 ﻿using System;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.Domain.Transcription
 {
     public class FileItem
     {
+        public FileItem()
+        {
+            RecognitionState = RecognitionState.None;
+        }
+
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }
@@ -15,6 +21,8 @@ namespace RewriteMe.Domain.Transcription
         public byte[] Source { get; set; }
 
         public string ContentType { get; set; }
+
+        public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }
 
