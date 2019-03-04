@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface ITranscribeItemRepository
     {
-        Task AddAsync(TranscribeItem transcribeItem);
+        Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
@@ -14,7 +15,7 @@ namespace RewriteMe.Business.Services
             _transcribeItemRepository = transcribeItemRepository;
         }
 
-        public async Task AddAsync(TranscribeItem transcribeItem)
+        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
         {
             await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
         }
