@@ -5,6 +5,6 @@ namespace RewriteMe.Domain.Managers
 {
     public interface ISpeechRecognitionManager
     {
-        Task RunRecognition(FileItem fileItem);
+        Task RunRecognitionAsync(FileItem fileItem);
     }
 }

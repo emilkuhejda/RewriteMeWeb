@@ -30,7 +30,7 @@ namespace RewriteMe.Business.Managers
             _wavFileService = wavFileService;
         }
 
-        public async Task RunRecognition(FileItem fileItem)
+        public async Task RunRecognitionAsync(FileItem fileItem)
         {
             if (!fileItem.IsSupportedType())
                 throw new InvalidOperationException("File type is not supported");
@@ -39,9 +39,9 @@ namespace RewriteMe.Business.Managers
 
             var audioSource = fileItem.IsWav()
                 ? fileItem.Source
-                : await _wavFileService.ConvertToWav(fileItem.Source).ConfigureAwait(false);
+                : await _wavFileService.ConvertToWavAsync(fileItem.Source).ConfigureAwait(false);
 
-            var wavFiles = await _wavFileService.SplitWavFile(audioSource).ConfigureAwait(false);
+            var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
             var transcribeItems = await _speechRecognitionService.Recognize(fileItem, files).ConfigureAwait(false);
