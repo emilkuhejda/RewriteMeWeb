@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
@@ -38,6 +39,15 @@ namespace RewriteMe.WebApi.Controllers
             var files = await _fileItemService.GetAllAsync(userId).ConfigureAwait(false);
 
             return Ok(files);
+        }
+
+        [HttpGet("/api/file/{fileItemId}")]
+        public async Task<IActionResult> Get(Guid fileItemId)
+        {
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var file = await _fileItemService.GetFileItemWithoutSourceAsync(userId, fileItemId).ConfigureAwait(false);
+
+            return Ok(file);
         }
 
         [HttpPost("/api/files/create")]
@@ -76,6 +86,14 @@ namespace RewriteMe.WebApi.Controllers
             return Ok();
         }
 
+        [HttpPut("/api/files/update")]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> Update([FromForm] CreateFileModel createFileModel)
+        {
+            await Task.CompletedTask.ConfigureAwait(false);
+            return Ok();
+        }
+
         [HttpDelete("/api/files/{id}")]
         public async Task<IActionResult> Remove([FromRoute] string id)
         {
@@ -92,6 +110,9 @@ namespace RewriteMe.WebApi.Controllers
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
+
+            if (fileItem.RecognitionState != RecognitionState.None)
+                return BadRequest();
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem));
 

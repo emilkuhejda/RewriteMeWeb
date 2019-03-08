@@ -8,6 +8,7 @@ import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { FilesComponent } from './admin/files/files.component';
 import { CreateFileComponent } from './admin/files/create-file/create-file.component';
+import { EditFileComponent } from './admin/files/edit-file/edit-file.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -21,7 +22,8 @@ const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'dashboard', component: DashboardComponent },
             { path: 'files', component: FilesComponent },
-            { path: 'files/create', component: CreateFileComponent }
+            { path: 'files/create', component: CreateFileComponent },
+            { path: 'file/:fileId', component: EditFileComponent }
         ]
     }
 ];

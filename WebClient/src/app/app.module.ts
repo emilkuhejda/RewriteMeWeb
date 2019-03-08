@@ -14,6 +14,8 @@ import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DialogComponent } from './_directives/dialog/dialog.component';
+import { EditFileComponent } from './admin/files/edit-file/edit-file.component';
+import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 
 @NgModule({
     declarations: [
@@ -23,7 +25,9 @@ import { DialogComponent } from './_directives/dialog/dialog.component';
         AdminNavigationComponent,
         ProgressBarComponent,
         DialogComponent,
-        routingComponents
+        routingComponents,
+        EditFileComponent,
+        RecognitionStatePipe
     ],
     imports: [
         BrowserModule,

@@ -44,7 +44,12 @@ export class FilesComponent implements OnInit {
     }
 
     transcribe(fileItemId: string) {
-        this.fileItemService.transcribe(fileItemId).subscribe(data => { }, (err: ErrorResponse) => { });
+        this.fileItemService.transcribe(fileItemId).subscribe(
+            data => { },
+            (err: ErrorResponse) => {
+                let error = err.status === 400 ? "Transcription is in progress" : err.message;
+                this.alertService.error(error);
+            });
     }
 
     remove(fileItem: FileItem) {
