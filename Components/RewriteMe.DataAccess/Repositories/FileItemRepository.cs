@@ -32,8 +32,10 @@ namespace RewriteMe.DataAccess.Repositories
                         x.UserId,
                         x.Name,
                         x.FileName,
+                        x.ContentType,
                         x.RecognitionState,
-                        x.DateCreated
+                        x.DateCreated,
+                        x.DateProcessed
                     })
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -44,9 +46,45 @@ namespace RewriteMe.DataAccess.Repositories
                     UserId = x.UserId,
                     Name = x.Name,
                     FileName = x.FileName,
+                    ContentType = x.ContentType,
                     RecognitionState = x.RecognitionState,
-                    DateCreated = x.DateCreated
+                    DateCreated = x.DateCreated,
+                    DateProcessed = x.DateProcessed
                 });
+            }
+        }
+
+        public async Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = await context.FileItems
+                    .Where(x => x.UserId == userId && x.Id == fileItemId)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.UserId,
+                        x.Name,
+                        x.FileName,
+                        x.ContentType,
+                        x.RecognitionState,
+                        x.DateCreated,
+                        x.DateProcessed
+                    })
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+
+                return new FileItem
+                {
+                    Id = fileItem.Id,
+                    UserId = fileItem.UserId,
+                    Name = fileItem.Name,
+                    FileName = fileItem.FileName,
+                    ContentType = fileItem.ContentType,
+                    RecognitionState = fileItem.RecognitionState,
+                    DateCreated = fileItem.DateCreated,
+                    DateProcessed = fileItem.DateProcessed
+                };
             }
         }
 

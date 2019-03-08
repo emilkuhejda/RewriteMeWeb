@@ -18,6 +18,7 @@
                     <tr>
                         <th class="table-header">Name</th>
                         <th class="table-header">Date created</th>
+                        <td class="table-header">Status</td>
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
@@ -25,6 +26,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Date created</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </tfoot>
@@ -32,9 +34,10 @@
                     <tr *ngFor="let fileItem of fileItems">
                         <td>{{fileItem.name}}</td>
                         <td>{{fileItem.dateCreated|date}}</td>
+                        <td>{{fileItem.recognitionState|recognitionState}}</td>
                         <td>
-                            <a (click)="transcribe(fileItem.id)">Transcribe</a> |
-                            Edit |
+                            <a *ngIf="fileItem.CanUploadFile" (click)="transcribe(fileItem.id)">Transcribe | </a>
+                            <a [routerLink]="['/admin/file', fileItem.id]">Edit | </a>
                             <a (click)="remove(fileItem)">Delete</a></td>
                     </tr>
                 </tbody>
