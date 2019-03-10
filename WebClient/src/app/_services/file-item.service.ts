@@ -16,7 +16,7 @@ export class FileItemService {
 	}
 
 	get(fileItemId: string) {
-		return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemPath + fileItemId).pipe(map(FileItemMapper.convert));
+		return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath + fileItemId).pipe(map(FileItemMapper.convert));
 	}
 
 	create(formData) {
