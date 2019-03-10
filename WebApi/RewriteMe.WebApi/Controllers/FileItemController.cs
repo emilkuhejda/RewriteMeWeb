@@ -88,9 +88,34 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPut("/api/files/update")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Update([FromForm] CreateFileModel createFileModel)
+        public async Task<IActionResult> Update([FromForm] UploadFileModel uploadFileModel)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
+            var files = Request.Form.Files;
+            if (files.Count > 1)
+                return StatusCode(416);
+
+            var fileItem = new FileItem
+            {
+                Id = uploadFileModel.FileItemId,
+                UserId = Guid.Parse(HttpContext.User.Identity.Name),
+                Name = uploadFileModel.Name
+            };
+
+            if (files.Any())
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    var fileToUpoad = files.First();
+                    fileToUpoad.CopyTo(memoryStream);
+
+                    fileItem.FileName = fileToUpoad.Name;
+                    fileItem.Source = memoryStream.ToArray();
+                    fileItem.ContentType = fileToUpoad.ContentType;
+                }
+            }
+
+            await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
+
             return Ok();
         }
 

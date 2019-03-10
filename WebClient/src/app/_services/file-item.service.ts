@@ -40,6 +40,6 @@ export class FileItemService {
 	}
 
 	remove(fileItemId: string) {
-		return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiRemoveFileItemPath + "/" + fileItemId);
+		return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiRemoveFileItemPath + fileItemId);
 	}
 }
