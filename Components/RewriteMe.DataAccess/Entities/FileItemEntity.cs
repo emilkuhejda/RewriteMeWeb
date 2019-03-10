@@ -6,11 +6,6 @@ namespace RewriteMe.DataAccess.Entities
 {
     public class FileItemEntity
     {
-        public FileItemEntity()
-        {
-            TranscribeItems = new HashSet<TranscribeItemEntity>();
-        }
-
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }
@@ -31,6 +26,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public UserEntity User { get; set; }
 
-        public IEnumerable<TranscribeItemEntity> TranscribeItems { get; set; }
+        public IList<TranscribeItemEntity> TranscribeItems { get; set; }
     }
 }

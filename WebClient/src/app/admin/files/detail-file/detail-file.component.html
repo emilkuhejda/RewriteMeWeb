@@ -1,0 +1,11 @@
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a routerLink="/admin/files">Files</a>
+    </li>
+    <li class="breadcrumb-item active">Detail</li>
+</ol>
+
+<div *ngIf="fileItem">
+    <h2>{{fileItem.name}}</h2>
+</div>

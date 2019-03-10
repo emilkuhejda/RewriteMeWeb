@@ -37,7 +37,8 @@
                         <td>{{fileItem.recognitionState|recognitionState}}</td>
                         <td>
                             <a *ngIf="fileItem.CanUploadFile" (click)="transcribe(fileItem.id)">Transcribe | </a>
-                            <a [routerLink]="['/admin/file', fileItem.id]">Edit | </a>
+                            <a *ngIf="!fileItem.CanUploadFile" [routerLink]="['/admin/files', fileItem.id]">Detail | </a>
+                            <a [routerLink]="['/admin/files/edit', fileItem.id]">Edit | </a>
                             <a (click)="remove(fileItem)">Delete</a></td>
                     </tr>
                 </tbody>

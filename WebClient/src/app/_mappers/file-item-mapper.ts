@@ -1,7 +1,8 @@
 import { FileItem } from "../_models/file-item";
+import { TranscribeItemMapper } from './transcribe-item-mapper';
 
 export class FileItemMapper {
-    static convertAll(data): FileItem[] {
+    public static convertAll(data): FileItem[] {
         let files = [];
         for (let item of data) {
             let fileItem = FileItemMapper.convert(item);
@@ -12,7 +13,7 @@ export class FileItemMapper {
         return files;
     }
 
-    static convert(data): FileItem {
+    public static convert(data): FileItem {
         let fileItem = new FileItem();
         fileItem.id = data.id;
         fileItem.name = data.name;
@@ -20,6 +21,7 @@ export class FileItemMapper {
         fileItem.recognitionState = data.recognitionState;
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;
+        fileItem.transcribeItems = TranscribeItemMapper.convert(data.transcribeItems);
 
         return fileItem;
     }
