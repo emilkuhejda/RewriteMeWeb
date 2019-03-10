@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Get(Guid fileItemId)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var file = await _fileItemService.GetFileItemAsync(userId, fileItemId).ConfigureAwait(false);
+            var file = await _fileItemService.GetFileItemWithTranscriptionAsync(userId, fileItemId).ConfigureAwait(false);
 
             return Ok(file);
         }
@@ -143,7 +143,7 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var fileItem = await _fileItemService.GetFileItemAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetFileItemWithoutTranscriptionAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
             if (fileItem.RecognitionState != RecognitionState.None)
                 return BadRequest();
