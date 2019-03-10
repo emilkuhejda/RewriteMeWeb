@@ -9,6 +9,7 @@ import { AuthGuard } from './_guards/auth.guard';
 import { FilesComponent } from './admin/files/files.component';
 import { CreateFileComponent } from './admin/files/create-file/create-file.component';
 import { EditFileComponent } from './admin/files/edit-file/edit-file.component';
+import { DetailFileComponent } from './admin/files/detail-file/detail-file.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -23,7 +24,8 @@ const routes: Routes = [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'files', component: FilesComponent },
             { path: 'files/create', component: CreateFileComponent },
-            { path: 'file/:fileId', component: EditFileComponent }
+            { path: 'files/edit/:fileId', component: EditFileComponent },
+            { path: 'files/:fileId', component: DetailFileComponent }
         ]
     }
 ];
@@ -41,5 +43,7 @@ export const routingComponents = [
     AdminComponent,
     DashboardComponent,
     FilesComponent,
-    CreateFileComponent
+    CreateFileComponent,
+    EditFileComponent,
+    DetailFileComponent
 ]

@@ -37,6 +37,7 @@ namespace RewriteMe.DataAccess.Repositories
                         x.DateCreated,
                         x.DateProcessed
                     })
+                    .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
 
@@ -58,7 +59,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItem = await context.FileItems
+                var fileItemEntity = await context.FileItems
                     .Include(x => x.TranscribeItems)
                     .Where(x => x.UserId == userId && x.Id == fileItemId)
                     .Select(x => new
@@ -73,20 +74,24 @@ namespace RewriteMe.DataAccess.Repositories
                         x.DateProcessed,
                         x.TranscribeItems
                     })
+                    .AsNoTracking()
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
 
+                if (fileItemEntity == null)
+                    return null;
+
                 return new FileItem
                 {
-                    Id = fileItem.Id,
-                    UserId = fileItem.UserId,
-                    Name = fileItem.Name,
-                    FileName = fileItem.FileName,
-                    ContentType = fileItem.ContentType,
-                    RecognitionState = fileItem.RecognitionState,
-                    DateCreated = fileItem.DateCreated,
-                    DateProcessed = fileItem.DateProcessed,
-                    TranscribeItems = fileItem.TranscribeItems.Select(x => x.ToTranscribeItem())
+                    Id = fileItemEntity.Id,
+                    UserId = fileItemEntity.UserId,
+                    Name = fileItemEntity.Name,
+                    FileName = fileItemEntity.FileName,
+                    ContentType = fileItemEntity.ContentType,
+                    RecognitionState = fileItemEntity.RecognitionState,
+                    DateCreated = fileItemEntity.DateCreated,
+                    DateProcessed = fileItemEntity.DateProcessed,
+                    TranscribeItems = fileItemEntity.TranscribeItems?.Select(x => x.ToTranscribeItem())
                 };
             }
         }
@@ -95,7 +100,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItem = await context.FileItems
+                var fileItemEntity = await context.FileItems
                     .Where(x => x.UserId == userId && x.Id == fileItemId)
                     .Select(x => new
                     {
@@ -108,19 +113,23 @@ namespace RewriteMe.DataAccess.Repositories
                         x.DateCreated,
                         x.DateProcessed
                     })
+                    .AsNoTracking()
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
 
+                if (fileItemEntity == null)
+                    return null;
+
                 return new FileItem
                 {
-                    Id = fileItem.Id,
-                    UserId = fileItem.UserId,
-                    Name = fileItem.Name,
-                    FileName = fileItem.FileName,
-                    ContentType = fileItem.ContentType,
-                    RecognitionState = fileItem.RecognitionState,
-                    DateCreated = fileItem.DateCreated,
-                    DateProcessed = fileItem.DateProcessed
+                    Id = fileItemEntity.Id,
+                    UserId = fileItemEntity.UserId,
+                    Name = fileItemEntity.Name,
+                    FileName = fileItemEntity.FileName,
+                    ContentType = fileItemEntity.ContentType,
+                    RecognitionState = fileItemEntity.RecognitionState,
+                    DateCreated = fileItemEntity.DateCreated,
+                    DateProcessed = fileItemEntity.DateProcessed
                 };
             }
         }
@@ -129,7 +138,10 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItem = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId).ConfigureAwait(false);
+                var fileItem = await context.FileItems
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId)
+                    .ConfigureAwait(false);
                 return fileItem?.ToFileItem();
             }
         }
