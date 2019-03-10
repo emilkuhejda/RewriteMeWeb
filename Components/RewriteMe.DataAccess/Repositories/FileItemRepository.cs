@@ -54,6 +54,43 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<FileItem> GetFileItemWithTranscriptionAsync(Guid userId, Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = await context.FileItems
+                    .Include(x => x.TranscribeItems)
+                    .Where(x => x.UserId == userId && x.Id == fileItemId)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.UserId,
+                        x.Name,
+                        x.FileName,
+                        x.ContentType,
+                        x.RecognitionState,
+                        x.DateCreated,
+                        x.DateProcessed,
+                        x.TranscribeItems
+                    })
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+
+                return new FileItem
+                {
+                    Id = fileItem.Id,
+                    UserId = fileItem.UserId,
+                    Name = fileItem.Name,
+                    FileName = fileItem.FileName,
+                    ContentType = fileItem.ContentType,
+                    RecognitionState = fileItem.RecognitionState,
+                    DateCreated = fileItem.DateCreated,
+                    DateProcessed = fileItem.DateProcessed,
+                    TranscribeItems = fileItem.TranscribeItems.Select(x => x.ToTranscribeItem())
+                };
+            }
+        }
+
         public async Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
@@ -88,7 +125,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileItemId)
+        public async Task<FileItem> GetFileItemWithoutTranscriptionAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {

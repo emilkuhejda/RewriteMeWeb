@@ -22,14 +22,19 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAllAsync(userId).ConfigureAwait(false);
         }
 
+        public async Task<FileItem> GetFileItemWithTranscriptionAsync(Guid userId, Guid fileItemId)
+        {
+            return await _fileItemRepository.GetFileItemWithTranscriptionAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
         public async Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId)
         {
             return await _fileItemRepository.GetFileItemWithoutSourceAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<FileItem> GetFileItemAsync(Guid userId, Guid fileItemId)
+        public async Task<FileItem> GetFileItemWithoutTranscriptionAsync(Guid userId, Guid fileItemId)
         {
-            return await _fileItemRepository.GetFileItemAsync(userId, fileItemId).ConfigureAwait(false);
+            return await _fileItemRepository.GetFileItemWithoutTranscriptionAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(FileItem fileItem)

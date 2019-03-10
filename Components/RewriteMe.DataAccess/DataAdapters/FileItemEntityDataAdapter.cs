@@ -18,8 +18,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 ContentType = fileItemEntity.ContentType,
                 RecognitionState = fileItemEntity.RecognitionState,
                 DateCreated = fileItemEntity.DateCreated,
-                DateProcessed = fileItemEntity.DateProcessed,
-                TranscribeItems = fileItemEntity.TranscribeItems.Select(x => x.ToTranscribeItem())
+                DateProcessed = fileItemEntity.DateProcessed
             };
         }
 
@@ -35,8 +34,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 ContentType = fileItem.ContentType,
                 RecognitionState = fileItem.RecognitionState,
                 DateCreated = fileItem.DateCreated,
-                DateProcessed = fileItem.DateProcessed,
-                TranscribeItems = fileItem.TranscribeItems.Select(x => x.ToTranscribeItemEntity())
+                DateProcessed = fileItem.DateProcessed
             };
         }
     }
