@@ -4,6 +4,7 @@ export class CommonVariables {
     public static ApiAuthenticatePath: string = "api/authenticate/";
     public static ApiRegisterPath: string = "api/users/register/";
     public static ApiFileItemsPath: string = "api/files/";
+    public static ApiFileItemForEditPath: string = "api/files/edit/";
     public static ApiCreateFileItemPath: string = "api/files/create/";
     public static ApiUpdateFileItemPath: string = "api/files/update/";
     public static ApiTranscribeFileItemPath: string = "api/files/transcribe/";
