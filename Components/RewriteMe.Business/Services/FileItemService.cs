@@ -42,6 +42,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task UpdateAsync(FileItem fileItem)
+        {
+            await _fileItemRepository.UpdateAsync(fileItem).ConfigureAwait(false);
+        }
+
         public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
         {
             await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState);

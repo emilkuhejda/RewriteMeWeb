@@ -18,6 +18,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task RemoveAsync(Guid userId, Guid fileItemId);
 
+        Task UpdateAsync(FileItem fileItem);
+
         Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
 
         Task UpdateDateProcessedAsync(Guid fileItemId);

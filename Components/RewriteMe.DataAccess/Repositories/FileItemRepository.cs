@@ -121,6 +121,27 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateAsync(FileItem fileItem)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItem.Id && x.UserId == fileItem.UserId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.Name = fileItem.Name;
+
+                if (!string.IsNullOrEmpty(fileItem.FileName))
+                {
+                    entity.FileName = fileItem.FileName;
+                    entity.Source = fileItem.Source;
+                    entity.ContentType = fileItem.ContentType;
+                }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
         {
             using (var context = _contextFactory.Create())

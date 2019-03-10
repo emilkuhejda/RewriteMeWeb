@@ -15,13 +15,15 @@ import { FileItem } from 'src/app/_models/file-item';
 export class EditFileComponent implements OnInit {
     @ViewChild('fileInput') fileInputElement: ElementRef;
 
-    public fileItem: FileItem;
+    fileItem: FileItem;
     editFileForm: FormGroup;
     progress: number;
     message: string;
     selectedFileName: string;
     submitted: boolean;
     loading: boolean;
+
+    private selectedFileList: any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -40,6 +42,8 @@ export class EditFileComponent implements OnInit {
             this.fileItemService.get(fileId).subscribe(
                 data => {
                     this.fileItem = data;
+                    this.editFileForm.controls.name.setValue(data.name);
+                    this.selectedFileName = data.fileName;
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
@@ -58,10 +62,11 @@ export class EditFileComponent implements OnInit {
 
         this.selectedFileName = "";
         this.selectedFileName = files[0].name;
+        this.selectedFileList = files;
     }
 
-    onSubmit(files) {
-        if (files.length === 0) {
+    onSubmit() {
+        if (this.selectedFileList !== undefined && this.selectedFileList.length === 0) {
             this.alertService.error("File is required");
             return;
         }
@@ -73,9 +78,13 @@ export class EditFileComponent implements OnInit {
         this.loading = true;
 
         let formData = new FormData();
+        formData.append("fileItemId", this.fileItem.id);
         formData.append("name", this.controls.name.value);
-        for (let file of files) {
-            formData.append(file.name, file)
+
+        if (this.selectedFileList !== undefined) {
+            for (let file of this.selectedFileList) {
+                formData.append(file.name, file)
+            }
         }
 
         this.fileItemService.update(formData)
