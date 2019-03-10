@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.Domain.Transcription
@@ -27,5 +28,7 @@ namespace RewriteMe.Domain.Transcription
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }
+
+        public IEnumerable<TranscribeItem> TranscribeItems { get; set; }
     }
 }

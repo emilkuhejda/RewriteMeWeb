@@ -42,6 +42,15 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files/{fileItemId}")]
+        public async Task<IActionResult> Get(Guid fileItemId)
+        {
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var file = await _fileItemService.GetFileItemAsync(userId, fileItemId).ConfigureAwait(false);
+
+            return Ok(file);
+        }
+
+        [HttpGet("/api/files/edit/{fileItemId}")]
         public async Task<IActionResult> GetFileItemShallow(Guid fileItemId)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
