@@ -62,3 +62,7 @@
 .progress .progress-bar {
   height: 100%;
 }
+
+.shadow-textarea textarea.form-control {
+  padding-left: 0.8rem;
+}
