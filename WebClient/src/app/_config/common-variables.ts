@@ -10,4 +10,5 @@ export class CommonVariables {
     public static ApiRemoveFileItemPath: string = "api/files/";
     public static ApiTranscribeItemsPath: string = "api/transcribe-items/";
     public static ApiTranscribeAudioPath: string = "api/transcribe-items/audio/";
+    public static ApiUpdateTranscriptPath: string = "api/transcribe-items/update-transcript/";
 }

@@ -52,6 +52,7 @@ namespace RewriteMe.DataAccess.Repositories
                     {
                         x.Id,
                         x.Alternatives,
+                        x.UserTranscript,
                         x.TotalTime,
                         x.DateCreated
                     })
@@ -61,9 +62,23 @@ namespace RewriteMe.DataAccess.Repositories
                 {
                     Id = x.Id,
                     Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
+                    UserTranscript = x.UserTranscript,
                     TotalTime = x.TotalTime,
                     DateCreated = x.DateCreated
                 });
+            }
+        }
+
+        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var transcribeItemEntity = await context.TranscribeItems.SingleOrDefaultAsync(x => x.Id == transcribeItemId).ConfigureAwait(false);
+                if (transcribeItemEntity == null)
+                    return;
+
+                transcribeItemEntity.UserTranscript = transcript;
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }

@@ -16,6 +16,7 @@ import { TranscribeItem } from 'src/app/_models/transcribe-item';
 export class DetailFileComponent implements OnInit {
     fileItemName: string;
     transcribeItems: TranscribeItem[];
+    loading: boolean;
 
     constructor(
         private route: ActivatedRoute,
@@ -31,7 +32,7 @@ export class DetailFileComponent implements OnInit {
             this.getTranscribeItem(fileItem.id).then((transcribeItems: TranscribeItem[]) => {
                 this.transcribeItems = transcribeItems;
 
-                for (var index in transcribeItems) {
+                for (let index in transcribeItems) {
                     let transcribeItem = transcribeItems[index];
                     this.transcribeItemService.getAudio(transcribeItem.id).subscribe(
                         data => {
@@ -41,6 +42,21 @@ export class DetailFileComponent implements OnInit {
                 }
             });
         });
+    }
+
+    update(transcribeItem: TranscribeItem) {
+        this.loading = true;
+
+        let formData = new FormData();
+        formData.append("transcribeItemId", transcribeItem.id);
+        formData.append("transcript", transcribeItem.userTranscript);
+
+        this.transcribeItemService.updateTranscript(formData).subscribe(
+            () => { },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            })
+            .add(() => this.loading = false);
     }
 
     getFileItem() {

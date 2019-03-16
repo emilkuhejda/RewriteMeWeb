@@ -30,5 +30,10 @@ namespace RewriteMe.Business.Services
         {
             return await _transcribeItemRepository.GetAll(fileItemId).ConfigureAwait(false);
         }
+
+        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript)
+        {
+            await _transcribeItemRepository.UpdateUserTranscript(transcribeItemId, transcript).ConfigureAwait(false);
+        }
     }
 }

@@ -18,4 +18,8 @@ export class TranscribeItemService {
     getAudio(transcribeItemId: string) {
         return this.http.get(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeAudioPath + transcribeItemId, { responseType: 'blob' });
     }
+
+    updateTranscript(formData) {
+        return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateTranscriptPath, formData);
+    }
 }
