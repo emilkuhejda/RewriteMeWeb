@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -32,6 +33,16 @@ namespace RewriteMe.WebApi.Controllers
         {
             var transcribeItem = await _transcribeItemService.Get(transcribeItemId).ConfigureAwait(false);
             return new FileContentResult(transcribeItem.Source, "audio/wav");
+        }
+
+        [HttpPut("/api/transcribe-items/update-transcript")]
+        public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
+        {
+            await _transcribeItemService
+                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript)
+                .ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

@@ -11,6 +11,8 @@ namespace RewriteMe.Domain.Transcription
 
         public IEnumerable<RecognitionAlternative> Alternatives { get; set; }
 
+        public string UserTranscript { get; set; }
+
         public byte[] Source { get; set; }
 
         public TimeSpan TotalTime { get; set; }

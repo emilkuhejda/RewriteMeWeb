@@ -10,6 +10,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public string Alternatives { get; set; }
 
+        public string UserTranscript { get; set; }
+
         public byte[] Source { get; set; }
 
         public TimeSpan TotalTime { get; set; }
