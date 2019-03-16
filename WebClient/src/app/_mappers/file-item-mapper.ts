@@ -21,7 +21,6 @@ export class FileItemMapper {
         fileItem.recognitionState = data.recognitionState;
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;
-        fileItem.transcribeItems = TranscribeItemMapper.convert(data.transcribeItems);
 
         return fileItem;
     }
