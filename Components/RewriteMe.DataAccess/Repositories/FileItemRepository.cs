@@ -55,47 +55,6 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<FileItem> GetFileItemWithTranscriptionAsync(Guid userId, Guid fileItemId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var fileItemEntity = await context.FileItems
-                    .Include(x => x.TranscribeItems)
-                    .Where(x => x.UserId == userId && x.Id == fileItemId)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.UserId,
-                        x.Name,
-                        x.FileName,
-                        x.ContentType,
-                        x.RecognitionState,
-                        x.DateCreated,
-                        x.DateProcessed,
-                        x.TranscribeItems
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync()
-                    .ConfigureAwait(false);
-
-                if (fileItemEntity == null)
-                    return null;
-
-                return new FileItem
-                {
-                    Id = fileItemEntity.Id,
-                    UserId = fileItemEntity.UserId,
-                    Name = fileItemEntity.Name,
-                    FileName = fileItemEntity.FileName,
-                    ContentType = fileItemEntity.ContentType,
-                    RecognitionState = fileItemEntity.RecognitionState,
-                    DateCreated = fileItemEntity.DateCreated,
-                    DateProcessed = fileItemEntity.DateProcessed,
-                    TranscribeItems = fileItemEntity.TranscribeItems?.Select(x => x.ToTranscribeItem())
-                };
-            }
-        }
-
         public async Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())

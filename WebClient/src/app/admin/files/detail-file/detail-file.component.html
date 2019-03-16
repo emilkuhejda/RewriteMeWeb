@@ -6,14 +6,18 @@
     <li class="breadcrumb-item active">Detail</li>
 </ol>
 
-<div *ngIf="fileItem">
-    <h2 class="mb-3">{{fileItem.name}}</h2>
+<div *ngIf="fileItemName">
+    <h2 class="mb-3">{{fileItemName}}</h2>
 
-    <div *ngFor="let transcribeItem of fileItem.transcribeItems">
+    <div *ngFor="let transcribeItem of transcribeItems">
         <div class="form-group shadow-textarea">
             <label for="transcript-{{transcribeItem.id}}">Transcript</label>
             <textarea class="form-control z-depth-1" id="transcript-{{transcribeItem.id}}"
                 rows="7">{{transcribeItem.alternatives[0].transcript}}</textarea>
+        </div>
+
+        <div *ngIf="transcribeItem.source">
+            <audio controls="controls" [src]="transcribeItem.source"></audio>
         </div>
     </div>
 </div>

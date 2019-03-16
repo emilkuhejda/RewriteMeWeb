@@ -39,7 +39,7 @@ export class EditFileComponent implements OnInit {
 
         this.route.paramMap.subscribe(paramMap => {
             let fileId = paramMap.get("fileId");
-            this.fileItemService.getShallow(fileId).subscribe(
+            this.fileItemService.get(fileId).subscribe(
                 data => {
                     this.fileItem = data;
                     this.editFileForm.controls.name.setValue(data.name);

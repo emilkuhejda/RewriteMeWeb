@@ -19,10 +19,6 @@ export class FileItemService {
 		return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath + fileItemId).pipe(map(FileItemMapper.convert));
 	}
 
-	getShallow(fileItemId: string) {
-		return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemForEditPath + fileItemId).pipe(map(FileItemMapper.convert));
-	}
-
 	create(formData) {
 		let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, formData, {
 			reportProgress: true

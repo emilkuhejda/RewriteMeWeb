@@ -10,8 +10,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId);
 
-        Task<FileItem> GetFileItemWithTranscriptionAsync(Guid userId, Guid fileItemId);
-
         Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId);
 
         Task<FileItem> GetFileItemWithoutTranscriptionAsync(Guid userId, Guid fileItemId);

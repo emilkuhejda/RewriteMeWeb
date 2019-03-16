@@ -11,7 +11,6 @@ export class TranscribeItemMapper {
             let transcribeItem = new TranscribeItem();
             transcribeItem.id = item.id;
             transcribeItem.alternatives = RecognitionAlternativeMapper.convert(item.alternatives);
-            transcribeItem.source = item.source;
             transcribeItem.totalTime = item.totalTime;
             transcribeItem.dateCreated = item.dateCreated;
 
