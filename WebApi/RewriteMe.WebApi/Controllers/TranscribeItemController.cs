@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,14 @@ namespace RewriteMe.WebApi.Controllers
         {
             var transcribeItems = await _transcribeItemService.GetAll(fileItemId).ConfigureAwait(false);
 
-            return Ok(transcribeItems);
+            return Ok(transcribeItems.Select(x => new
+            {
+                x.Id,
+                x.Alternatives,
+                x.UserTranscript,
+                x.TotalTime,
+                x.DateCreated
+            }));
         }
 
         [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
