@@ -38,7 +38,15 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var files = await _fileItemService.GetAllAsync(userId).ConfigureAwait(false);
 
-            return Ok(files);
+            return Ok(files.Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.FileName,
+                x.RecognitionState,
+                x.DateCreated,
+                x.DateProcessed
+            }));
         }
 
         [HttpGet("/api/files/{fileItemId}")]
@@ -47,7 +55,15 @@ namespace RewriteMe.WebApi.Controllers
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var file = await _fileItemService.GetFileItemWithoutSourceAsync(userId, fileItemId).ConfigureAwait(false);
 
-            return Ok(file);
+            return Ok(new
+            {
+                Id = file.Id,
+                Name = file.Name,
+                FileName = file.FileName,
+                RecognitionState = file.RecognitionState,
+                DateCreated = file.DateCreated,
+                DateProcessed = file.DateProcessed
+            });
         }
 
         [HttpPost("/api/files/create")]

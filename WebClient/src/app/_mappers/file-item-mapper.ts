@@ -1,5 +1,4 @@
 import { FileItem } from "../_models/file-item";
-import { TranscribeItemMapper } from './transcribe-item-mapper';
 
 export class FileItemMapper {
     public static convertAll(data): FileItem[] {
