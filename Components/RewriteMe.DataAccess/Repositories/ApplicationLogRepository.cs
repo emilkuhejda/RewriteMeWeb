@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task Add(ApplicationLog applicationLog)
+        public async Task AddAsync(ApplicationLog applicationLog)
         {
             using (var context = _contextFactory.Create())
             {

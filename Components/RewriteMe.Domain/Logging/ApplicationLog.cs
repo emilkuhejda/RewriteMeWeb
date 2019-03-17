@@ -7,7 +7,7 @@ namespace RewriteMe.Domain.Logging
     {
         public int Id { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         public ApplicationLogLevel LogLevel { get; set; }
 

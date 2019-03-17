@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Logging;
@@ -14,9 +16,62 @@ namespace RewriteMe.Business.Services
             _applicationLogRepository = applicationLogRepository;
         }
 
-        public async Task Add(ApplicationLog applicationLog)
+        public async Task DebugAsync(string message, Guid? userId = null)
         {
-            await _applicationLogRepository.Add(applicationLog).ConfigureAwait(false);
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Debug);
+
+            await AddAsync(log);
+        }
+
+        public async Task TraceAsync(string message, Guid? userId = null)
+        {
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Trace);
+
+            await AddAsync(log);
+        }
+
+        public async Task InfoAsync(string message, Guid? userId = null)
+        {
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Info);
+
+            await AddAsync(log);
+        }
+
+        public async Task WarningAsync(string message, Guid? userId = null)
+        {
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Warning);
+
+            await AddAsync(log);
+        }
+
+        public async Task ErrorAsync(string message, Guid? userId = null)
+        {
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Error);
+
+            await AddAsync(log);
+        }
+
+        public async Task CriticalAsync(string message, Guid? userId = null)
+        {
+            var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Critical);
+
+            await AddAsync(log);
+        }
+
+        private async Task AddAsync(ApplicationLog applicationLog)
+        {
+            await _applicationLogRepository.AddAsync(applicationLog).ConfigureAwait(false);
+        }
+
+        private ApplicationLog CreateApplicationLog(string message, Guid? userId, ApplicationLogLevel logLevel)
+        {
+            return new ApplicationLog
+            {
+                UserId = userId,
+                LogLevel = logLevel,
+                Message = message,
+                DateCreated = DateTime.UtcNow
+            };
         }
     }
 }
