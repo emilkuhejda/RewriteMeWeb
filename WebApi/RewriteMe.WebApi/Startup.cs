@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -90,18 +91,18 @@ namespace RewriteMe.WebApi
             {
                 x.Events = new JwtBearerEvents
                 {
-                    OnTokenValidated = context =>
-                    {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var userId = Guid.Parse(context.Principal.Identity.Name);
-                        var user = userService.GetUserAsync(userId);
-                        if (user == null)
-                        {
-                            context.Fail("Unauthorized");
-                        }
+                    OnTokenValidated = async context =>
+                     {
+                         var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                         var userId = Guid.Parse(context.Principal.Identity.Name);
+                         var user = await userService.GetUserAsync(userId).ConfigureAwait(false);
+                         if (user == null)
+                         {
+                             context.Fail("Unauthorized");
+                         }
 
-                        return Task.CompletedTask;
-                    }
+                         await Task.CompletedTask;
+                     }
                 };
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
@@ -150,6 +151,7 @@ namespace RewriteMe.WebApi
                 .AllowCredentials());
 
             app.UseAuthentication();
+            app.ConfigureExceptionMiddleware();
 
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();

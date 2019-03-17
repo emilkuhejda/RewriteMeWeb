@@ -5,7 +5,7 @@
         None = 0,
         Debug,
         Trace,
-        Information,
+        Info,
         Warning,
         Error,
         Critical
