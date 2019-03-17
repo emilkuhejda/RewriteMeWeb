@@ -20,6 +20,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<TranscribeItemEntity> TranscribeItems { get; set; }
 
+        public DbSet<ApplicationLogEntity> ApplicationLogs { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -33,6 +35,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TranscribeItemEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
         }
     }
 }
