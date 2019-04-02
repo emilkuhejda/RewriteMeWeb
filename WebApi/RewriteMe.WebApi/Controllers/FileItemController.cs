@@ -155,7 +155,7 @@ namespace RewriteMe.WebApi.Controllers
             if (fileItem.RecognitionState != RecognitionState.None)
                 return BadRequest();
 
-            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem));
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem, userId));
 
             return Ok();
         }
