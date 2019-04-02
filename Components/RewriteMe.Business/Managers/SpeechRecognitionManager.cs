@@ -18,22 +18,29 @@ namespace RewriteMe.Business.Managers
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IWavFileService _wavFileService;
+        private readonly IApplicationLogService _applicationLogService;
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
-            IWavFileService wavFileService)
+            IWavFileService wavFileService,
+            IApplicationLogService applicationLogService)
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _wavFileService = wavFileService;
+            _applicationLogService = applicationLogService;
         }
 
-        public void RunRecognition(FileItem fileItem)
+        public void RunRecognition(FileItem fileItem, Guid userId)
         {
+            _applicationLogService.InfoAsync($"Speech recognition started for file ID: {fileItem.Id}.", userId);
+
             AsyncHelper.RunSync(() => RunRecognitionAsync(fileItem));
+
+            _applicationLogService.InfoAsync($"Speech recognition completed for file ID: {fileItem.Id}.", userId);
         }
 
         private async Task RunRecognitionAsync(FileItem fileItem)
