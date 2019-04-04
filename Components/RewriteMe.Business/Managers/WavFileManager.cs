@@ -40,6 +40,8 @@ namespace RewriteMe.Business.Managers
             }
             catch
             {
+                AsyncHelper.RunSync(() => _fileItemService.UpdateRecognitionStateAsync(audioSource.FileItemId, RecognitionState.None));
+
                 _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {audioSource.FileItemId}.", userId);
                 throw;
             }
