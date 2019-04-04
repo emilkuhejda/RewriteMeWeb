@@ -26,70 +26,11 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var fileItems = await context.FileItems
                     .Where(x => x.UserId == userId)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.UserId,
-                        x.Name,
-                        x.FileName,
-                        x.ContentType,
-                        x.RecognitionState,
-                        x.DateCreated,
-                        x.DateProcessed
-                    })
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                return fileItems.Select(x => new FileItem
-                {
-                    Id = x.Id,
-                    UserId = x.UserId,
-                    Name = x.Name,
-                    FileName = x.FileName,
-                    ContentType = x.ContentType,
-                    RecognitionState = x.RecognitionState,
-                    DateCreated = x.DateCreated,
-                    DateProcessed = x.DateProcessed
-                });
-            }
-        }
-
-        public async Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var fileItemEntity = await context.FileItems
-                    .Where(x => x.UserId == userId && x.Id == fileItemId)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.UserId,
-                        x.Name,
-                        x.FileName,
-                        x.ContentType,
-                        x.RecognitionState,
-                        x.DateCreated,
-                        x.DateProcessed
-                    })
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync()
-                    .ConfigureAwait(false);
-
-                if (fileItemEntity == null)
-                    return null;
-
-                return new FileItem
-                {
-                    Id = fileItemEntity.Id,
-                    UserId = fileItemEntity.UserId,
-                    Name = fileItemEntity.Name,
-                    FileName = fileItemEntity.FileName,
-                    ContentType = fileItemEntity.ContentType,
-                    RecognitionState = fileItemEntity.RecognitionState,
-                    DateCreated = fileItemEntity.DateCreated,
-                    DateProcessed = fileItemEntity.DateProcessed
-                };
+                return fileItems.Select(x => x.ToFileItem());
             }
         }
 
@@ -101,6 +42,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId)
                     .ConfigureAwait(false);
+
                 return fileItem?.ToFileItem();
             }
         }
@@ -142,8 +84,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (!string.IsNullOrEmpty(fileItem.FileName))
                 {
                     entity.FileName = fileItem.FileName;
-                    entity.Source = fileItem.Source;
-                    entity.ContentType = fileItem.ContentType;
+                    entity.RecognitionState = RecognitionState.None;
                 }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);

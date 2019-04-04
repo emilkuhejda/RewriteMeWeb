@@ -2,21 +2,19 @@
 
 namespace RewriteMe.DataAccess.Entities
 {
-    public class TranscribeItemEntity
+    public class AudioSourceEntity
     {
         public Guid Id { get; set; }
 
         public Guid FileItemId { get; set; }
 
-        public string Alternatives { get; set; }
+        public byte[] OriginalSource { get; set; }
 
-        public string UserTranscript { get; set; }
+        public byte[] WavSource { get; set; }
 
-        public byte[] Source { get; set; }
+        public string ContentType { get; set; }
 
         public TimeSpan TotalTime { get; set; }
-
-        public DateTime DateCreated { get; set; }
 
         public virtual FileItemEntity FileItem { get; set; }
     }

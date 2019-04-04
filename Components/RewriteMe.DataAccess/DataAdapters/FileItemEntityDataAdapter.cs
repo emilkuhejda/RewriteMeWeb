@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using RewriteMe.DataAccess.Entities;
+﻿using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.DataAdapters
@@ -14,8 +13,6 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = fileItemEntity.UserId,
                 Name = fileItemEntity.Name,
                 FileName = fileItemEntity.FileName,
-                Source = fileItemEntity.Source,
-                ContentType = fileItemEntity.ContentType,
                 RecognitionState = fileItemEntity.RecognitionState,
                 DateCreated = fileItemEntity.DateCreated,
                 DateProcessed = fileItemEntity.DateProcessed
@@ -30,8 +27,6 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = fileItem.UserId,
                 Name = fileItem.Name,
                 FileName = fileItem.FileName,
-                Source = fileItem.Source,
-                ContentType = fileItem.ContentType,
                 RecognitionState = fileItem.RecognitionState,
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed

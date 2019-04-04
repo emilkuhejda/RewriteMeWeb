@@ -10,9 +10,7 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId);
 
-        Task<FileItem> GetFileItemWithoutSourceAsync(Guid userId, Guid fileItemId);
-
-        Task<FileItem> GetFileItemWithoutTranscriptionAsync(Guid userId, Guid fileItemId);
+        Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
         Task AddAsync(FileItem fileItem);
 

@@ -81,5 +81,19 @@ namespace RewriteMe.DataAccess.Repositories
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
+
+        public async Task<TimeSpan> GetTranscriptTotalSeconds(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var totalTicks = await context.TranscribeItems
+                    .Where(x => x.FileItem.UserId == userId)
+                    .Select(x => x.TotalTime)
+                    .SumAsync(x => x.Ticks)
+                    .ConfigureAwait(false);
+
+                return TimeSpan.FromTicks(totalTicks);
+            }
+        }
     }
 }

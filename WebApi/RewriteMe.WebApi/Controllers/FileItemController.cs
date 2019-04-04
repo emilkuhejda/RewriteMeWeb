@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -21,15 +20,20 @@ namespace RewriteMe.WebApi.Controllers
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
+        private readonly IAudioSourceService _audioSourceService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
+        private readonly IWavFileManager _wavFileManager;
 
         public FileItemController(
             IFileItemService fileItemService,
+            IAudioSourceService audioSourceService,
             ISpeechRecognitionManager speechRecognitionManager,
-            ISpeechRecognitionService speechRecognitionService)
+            IWavFileManager wavFileManager)
         {
             _fileItemService = fileItemService;
+            _audioSourceService = audioSourceService;
             _speechRecognitionManager = speechRecognitionManager;
+            _wavFileManager = wavFileManager;
         }
 
         [HttpGet("/api/files")]
@@ -53,7 +57,7 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Get(Guid fileItemId)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var file = await _fileItemService.GetFileItemWithoutSourceAsync(userId, fileItemId).ConfigureAwait(false);
+            var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
             return Ok(new
             {
@@ -77,27 +81,34 @@ namespace RewriteMe.WebApi.Controllers
             if (files.Count > 1)
                 return StatusCode(416);
 
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+
             var fileToUpload = files[0];
             if (!fileToUpload.IsSupportedType())
                 return StatusCode(415);
 
-            using (var memoryStream = new MemoryStream())
+            var fileItem = new FileItem
             {
-                fileToUpload.CopyTo(memoryStream);
+                Id = Guid.NewGuid(),
+                UserId = Guid.Parse(HttpContext.User.Identity.Name),
+                Name = createFileModel.Name,
+                FileName = fileToUpload.Name,
+                DateCreated = DateTime.UtcNow
+            };
 
-                var fileItem = new FileItem
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = Guid.Parse(HttpContext.User.Identity.Name),
-                    Name = createFileModel.Name,
-                    FileName = fileToUpload.Name,
-                    Source = memoryStream.ToArray(),
-                    ContentType = fileToUpload.ContentType,
-                    DateCreated = DateTime.UtcNow
-                };
+            var source = await fileToUpload.GetBytesAsync().ConfigureAwait(false);
+            var audioSource = new AudioSource
+            {
+                Id = Guid.NewGuid(),
+                FileItemId = fileItem.Id,
+                OriginalSource = source,
+                ContentType = fileToUpload.ContentType
+            };
 
-                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-            }
+            await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+            await _audioSourceService.AddAsync(audioSource).ConfigureAwait(false);
+
+            BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
 
             return Ok();
         }
@@ -110,6 +121,8 @@ namespace RewriteMe.WebApi.Controllers
             if (files.Count > 1)
                 return StatusCode(416);
 
+            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+
             var fileItem = new FileItem
             {
                 Id = uploadFileModel.FileItemId,
@@ -119,15 +132,22 @@ namespace RewriteMe.WebApi.Controllers
 
             if (files.Any())
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    var fileToUpoad = files.First();
-                    fileToUpoad.CopyTo(memoryStream);
+                var fileToUpoad = files.First();
+                fileItem.FileName = fileToUpoad.Name;
 
-                    fileItem.FileName = fileToUpoad.Name;
-                    fileItem.Source = memoryStream.ToArray();
-                    fileItem.ContentType = fileToUpoad.ContentType;
-                }
+                var source = await fileToUpoad.GetBytesAsync().ConfigureAwait(false);
+                var audioSource = new AudioSource
+                {
+                    FileItemId = fileItem.Id,
+                    OriginalSource = source,
+                    WavSource = null,
+                    ContentType = fileToUpoad.ContentType,
+                    TotalTime = default(TimeSpan)
+                };
+
+                await _audioSourceService.UpdateAsync(audioSource).ConfigureAwait(false);
+
+                BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
             }
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
@@ -150,10 +170,14 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var fileItem = await _fileItemService.GetFileItemWithoutTranscriptionAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            if (fileItem.RecognitionState != RecognitionState.None)
+            if (fileItem.RecognitionState != RecognitionState.Prepared)
                 return BadRequest();
+
+            var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(fileItem, userId).ConfigureAwait(false);
+            if (!canRunRecognition)
+                return StatusCode(403);
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem, userId));
 

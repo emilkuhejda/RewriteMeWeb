@@ -5,13 +5,6 @@ namespace RewriteMe.DataAccess.Entities
 {
     public class UserEntity
     {
-        public UserEntity()
-        {
-            FileItems = new HashSet<FileItemEntity>();
-            UserSubscriptions = new HashSet<UserSubscriptionEntity>();
-            ApplicationLogs = new HashSet<ApplicationLogEntity>();
-        }
-
         public Guid Id { get; set; }
 
         public string Username { get; set; }
@@ -24,10 +17,10 @@ namespace RewriteMe.DataAccess.Entities
 
         public byte[] PasswordSalt { get; set; }
 
-        public IEnumerable<FileItemEntity> FileItems { get; set; }
+        public virtual IEnumerable<FileItemEntity> FileItems { get; set; }
 
-        public IEnumerable<UserSubscriptionEntity> UserSubscriptions { get; set; }
+        public virtual IEnumerable<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
-        public IEnumerable<ApplicationLogEntity> ApplicationLogs { get; set; }
+        public virtual IEnumerable<ApplicationLogEntity> ApplicationLogs { get; set; }
     }
 }

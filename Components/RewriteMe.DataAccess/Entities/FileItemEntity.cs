@@ -14,18 +14,16 @@ namespace RewriteMe.DataAccess.Entities
 
         public string FileName { get; set; }
 
-        public byte[] Source { get; set; }
-
-        public string ContentType { get; set; }
-
         public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }
 
-        public UserEntity User { get; set; }
+        public virtual UserEntity User { get; set; }
 
-        public IList<TranscribeItemEntity> TranscribeItems { get; set; }
+        public virtual AudioSourceEntity AudioSource { get; set; }
+
+        public virtual IList<TranscribeItemEntity> TranscribeItems { get; set; }
     }
 }
