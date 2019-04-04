@@ -19,10 +19,6 @@ namespace RewriteMe.Domain.Transcription
 
         public string FileName { get; set; }
 
-        public byte[] Source { get; set; }
-
-        public string ContentType { get; set; }
-
         public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }

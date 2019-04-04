@@ -12,16 +12,31 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        public async Task<byte[]> ConvertToWavAsync(byte[] source)
+        public WavFile CreateWavFileFromSource(byte[] source)
+        {
+            using (var memoryStream = new MemoryStream(source))
+            using (var fileReader = new WaveFileReader(memoryStream))
+            {
+                return new WavFile
+                {
+                    Source = source,
+                    TotalTime = fileReader.TotalTime
+                };
+            }
+        }
+
+        public async Task<WavFile> ConvertToWavAsync(byte[] source)
         {
             var inputFile = Path.GetTempFileName();
             await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
 
             var outputFile = GetTempName();
+            var totalTime = new TimeSpan();
             await Task.Run(() =>
             {
                 using (var reader = new MediaFoundationReader(inputFile))
                 {
+                    totalTime = reader.TotalTime;
                     WaveFileWriter.CreateWaveFile(outputFile, reader);
                 }
             }).ConfigureAwait(false);
@@ -31,7 +46,11 @@ namespace RewriteMe.Business.Services
             File.Delete(inputFile);
             File.Delete(outputFile);
 
-            return bytes;
+            return new WavFile
+            {
+                Source = bytes,
+                TotalTime = totalTime
+            };
         }
 
         public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile)

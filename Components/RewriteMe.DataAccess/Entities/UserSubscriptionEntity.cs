@@ -12,6 +12,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateCreated { get; set; }
 
-        public UserEntity User { get; set; }
+        public virtual UserEntity User { get; set; }
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
@@ -16,44 +15,59 @@ namespace RewriteMe.Business.Managers
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
+        private readonly IAudioSourceService _audioSourceService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IWavFileService _wavFileService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
+            IAudioSourceService audioSourceService,
             ITranscribeItemService transcribeItemService,
             IWavFileService wavFileService,
+            IUserSubscriptionService userSubscriptionService,
             IApplicationLogService applicationLogService)
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
+            _audioSourceService = audioSourceService;
             _transcribeItemService = transcribeItemService;
             _wavFileService = wavFileService;
+            _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+        }
+
+        public async Task<bool> CanRunRecognition(FileItem fileItem, Guid userId)
+        {
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+
+            return remainingTime.Ticks > 0;
         }
 
         public void RunRecognition(FileItem fileItem, Guid userId)
         {
-            _applicationLogService.InfoAsync($"Speech recognition started for file ID: {fileItem.Id}.", userId);
+            try
+            {
+                _applicationLogService.InfoAsync($"Speech recognition is started for file ID: {fileItem.Id}.", userId);
 
-            AsyncHelper.RunSync(() => RunRecognitionAsync(fileItem));
+                AsyncHelper.RunSync(() => RunRecognitionAsync(fileItem));
 
-            _applicationLogService.InfoAsync($"Speech recognition completed for file ID: {fileItem.Id}.", userId);
+                _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: {fileItem.Id}.", userId);
+            }
+            catch
+            {
+                _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: {fileItem.Id}.", userId);
+                throw;
+            }
         }
 
         private async Task RunRecognitionAsync(FileItem fileItem)
         {
-            if (!fileItem.IsSupportedType())
-                throw new InvalidOperationException("File type is not supported");
-
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress).ConfigureAwait(false);
 
-            var audioSource = fileItem.IsWav()
-                ? fileItem.Source
-                : await _wavFileService.ConvertToWavAsync(fileItem.Source).ConfigureAwait(false);
-
+            var audioSource = _audioSourceService.GetAudioSource(fileItem.Id);
             var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
