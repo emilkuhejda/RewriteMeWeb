@@ -9,6 +9,6 @@ export class FileItem {
     public dateProcessed: string;
 
     get CanUploadFile() {
-        return this.recognitionState == RecognitionState.Prepared;
+        return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;
     }
 }
