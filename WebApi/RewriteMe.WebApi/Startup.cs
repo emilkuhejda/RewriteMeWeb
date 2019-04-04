@@ -162,6 +162,7 @@ namespace RewriteMe.WebApi
 
             app.UseHangfireServer();
             app.UseHangfireDashboard();
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
         }
     }
 }
