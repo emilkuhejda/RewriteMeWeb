@@ -47,6 +47,7 @@ namespace RewriteMe.WebApi.Controllers
                 x.Id,
                 x.Name,
                 x.FileName,
+                x.Language,
                 x.RecognitionState,
                 x.DateCreated,
                 x.DateProcessed
@@ -61,12 +62,13 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(new
             {
-                Id = file.Id,
-                Name = file.Name,
-                FileName = file.FileName,
-                RecognitionState = file.RecognitionState,
-                DateCreated = file.DateCreated,
-                DateProcessed = file.DateProcessed
+                file.Id,
+                file.Name,
+                file.FileName,
+                file.Language,
+                file.RecognitionState,
+                file.DateCreated,
+                file.DateProcessed
             });
         }
 
@@ -93,6 +95,7 @@ namespace RewriteMe.WebApi.Controllers
                 UserId = Guid.Parse(HttpContext.User.Identity.Name),
                 Name = createFileModel.Name,
                 FileName = fileToUpload.Name,
+                Language = createFileModel.Language,
                 DateCreated = DateTime.UtcNow
             };
 
@@ -127,7 +130,8 @@ namespace RewriteMe.WebApi.Controllers
             {
                 Id = uploadFileModel.FileItemId,
                 UserId = Guid.Parse(HttpContext.User.Identity.Name),
-                Name = uploadFileModel.Name
+                Name = uploadFileModel.Name,
+                Language = uploadFileModel.Language
             };
 
             if (files.Any())

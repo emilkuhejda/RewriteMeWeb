@@ -7,5 +7,7 @@ namespace RewriteMe.WebApi.Models
         public Guid FileItemId { get; set; }
 
         public string Name { get; set; }
+
+        public string Language { get; set; }
     }
 }

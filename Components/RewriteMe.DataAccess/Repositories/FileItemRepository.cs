@@ -80,6 +80,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.Name = fileItem.Name;
+                entity.Language = fileItem.Language;
 
                 if (!string.IsNullOrEmpty(fileItem.FileName))
                 {

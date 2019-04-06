@@ -17,6 +17,7 @@ export class FileItemMapper {
         fileItem.id = data.id;
         fileItem.name = data.name;
         fileItem.fileName = data.fileName;
+        fileItem.language = data.language;
         fileItem.recognitionState = data.recognitionState;
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;

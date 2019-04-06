@@ -38,20 +38,20 @@ namespace RewriteMe.Business.Services
             var task = new List<Task<TranscribeItem>>();
             foreach (var file in files)
             {
-                task.Add(RecognizeSpeech(speechClient, fileItem.Id, file));
+                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file));
             }
 
             return await Task.WhenAll(task).ConfigureAwait(false);
         }
 
-        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, WavPartialFile wavPartialFile)
+        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile)
         {
             return await Task.Run(async () =>
             {
                 var longOperation = speech.LongRunningRecognize(new RecognitionConfig
                 {
                     Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
-                    LanguageCode = "en-GB"
+                    LanguageCode = language
                 }, RecognitionAudio.FromFile(wavPartialFile.Path));
 
                 longOperation = longOperation.PollUntilCompleted();

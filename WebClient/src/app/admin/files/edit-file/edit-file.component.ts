@@ -34,7 +34,8 @@ export class EditFileComponent implements OnInit {
 
     ngOnInit() {
         this.editFileForm = this.formBuilder.group({
-            name: ['', Validators.required]
+            name: ['', Validators.required],
+            language: ['', Validators.required]
         });
 
         this.route.paramMap.subscribe(paramMap => {
@@ -44,6 +45,8 @@ export class EditFileComponent implements OnInit {
                     this.fileItem = data;
                     this.editFileForm.controls.name.setValue(data.name);
                     this.selectedFileName = data.fileName;
+
+                    this.controls.language.setValue(data.language);
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
@@ -66,8 +69,14 @@ export class EditFileComponent implements OnInit {
     }
 
     onSubmit() {
+        this.alertService.clear();
         if (this.selectedFileList !== undefined && this.selectedFileList.length === 0) {
             this.alertService.error("File is required");
+            return;
+        }
+
+        if (this.controls.language.value === "") {
+            this.alertService.error("Language is required");
             return;
         }
 
@@ -80,6 +89,7 @@ export class EditFileComponent implements OnInit {
         let formData = new FormData();
         formData.append("fileItemId", this.fileItem.id);
         formData.append("name", this.controls.name.value);
+        formData.append("language", this.controls.language.value);
 
         if (this.selectedFileList !== undefined) {
             for (let file of this.selectedFileList) {

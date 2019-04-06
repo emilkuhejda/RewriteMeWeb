@@ -13,6 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = fileItemEntity.UserId,
                 Name = fileItemEntity.Name,
                 FileName = fileItemEntity.FileName,
+                Language = fileItemEntity.Language,
                 RecognitionState = fileItemEntity.RecognitionState,
                 DateCreated = fileItemEntity.DateCreated,
                 DateProcessed = fileItemEntity.DateProcessed
@@ -27,6 +28,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = fileItem.UserId,
                 Name = fileItem.Name,
                 FileName = fileItem.FileName,
+                Language = fileItem.Language,
                 RecognitionState = fileItem.RecognitionState,
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed

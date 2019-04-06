@@ -17,6 +17,16 @@
         </div>
     </div>
 
+    <h4>Language</h4>
+
+    <div class="form-group">
+        <select formControlName="language" class="form-control">
+            <option value="" selected>-Select-</option>
+            <option value="en-GB">English (United Kingdom)</option>
+            <option value="en-US">English (United States)</option>
+        </select>
+    </div>
+
     <div class="form-group">
         <span class="btn btn-default btn-file mr-3">
             Browse <input #fileInput type="file" (change)="onChange(fileInput.files)" />
