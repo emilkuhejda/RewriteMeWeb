@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
@@ -83,6 +84,9 @@ namespace RewriteMe.WebApi.Controllers
             if (files.Count > 1)
                 return StatusCode(416);
 
+            if (!SupportedLanguages.IsSupported(createFileModel.Language))
+                return StatusCode(406);
+
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
 
             var fileToUpload = files[0];
@@ -123,6 +127,9 @@ namespace RewriteMe.WebApi.Controllers
             var files = Request.Form.Files;
             if (files.Count > 1)
                 return StatusCode(416);
+
+            if (!SupportedLanguages.IsSupported(uploadFileModel.Language))
+                return StatusCode(406);
 
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
 
