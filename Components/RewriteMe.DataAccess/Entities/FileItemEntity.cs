@@ -14,6 +14,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public string FileName { get; set; }
 
+        public string Language { get; set; }
+
         public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }

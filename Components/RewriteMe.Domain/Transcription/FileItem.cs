@@ -19,6 +19,8 @@ namespace RewriteMe.Domain.Transcription
 
         public string FileName { get; set; }
 
+        public string Language { get; set; }
+
         public RecognitionState RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }

@@ -4,6 +4,7 @@ export class FileItem {
     public id: string;
     public name: string;
     public fileName: string;
+    public language: string;
     public recognitionState: RecognitionState;
     public dateCreated: string;
     public dateProcessed: string;

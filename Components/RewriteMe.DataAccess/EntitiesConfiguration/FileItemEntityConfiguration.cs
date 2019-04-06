@@ -14,6 +14,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(150);
             builder.Property(x => x.FileName).IsRequired().HasMaxLength(150);
+            builder.Property(x => x.Language).IsRequired().HasMaxLength(20);
             builder.Property(x => x.RecognitionState).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
 
