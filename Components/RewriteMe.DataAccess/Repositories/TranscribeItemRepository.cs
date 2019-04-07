@@ -53,16 +53,22 @@ namespace RewriteMe.DataAccess.Repositories
                         x.Id,
                         x.Alternatives,
                         x.UserTranscript,
+                        x.StartTime,
+                        x.EndTime,
                         x.TotalTime,
                         x.DateCreated
                     })
-                    .ToListAsync();
+                    .OrderBy(x => x.StartTime)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
                 return transcribeItemEntities.Select(x => new TranscribeItem
                 {
                     Id = x.Id,
                     Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
                     UserTranscript = x.UserTranscript,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
                     TotalTime = x.TotalTime,
                     DateCreated = x.DateCreated
                 });

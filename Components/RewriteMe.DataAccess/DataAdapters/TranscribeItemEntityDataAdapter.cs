@@ -16,6 +16,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(transcribeItemEntity.Alternatives),
                 UserTranscript = transcribeItemEntity.UserTranscript,
                 Source = transcribeItemEntity.Source,
+                StartTime = transcribeItemEntity.StartTime,
+                EndTime = transcribeItemEntity.EndTime,
                 TotalTime = transcribeItemEntity.TotalTime,
                 DateCreated = transcribeItemEntity.DateCreated
             };
@@ -30,6 +32,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Alternatives = JsonConvert.SerializeObject(transcribeItem.Alternatives),
                 UserTranscript = transcribeItem.UserTranscript,
                 Source = transcribeItem.Source,
+                StartTime = transcribeItem.StartTime,
+                EndTime = transcribeItem.EndTime,
                 TotalTime = transcribeItem.TotalTime,
                 DateCreated = transcribeItem.DateCreated
             };

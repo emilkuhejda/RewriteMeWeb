@@ -6,6 +6,8 @@ export class TranscribeItem {
     public userTranscript: string;
     public alternatives: RecognitionAlternative[];
     public source: any;
+    public startTime: string;
+    public endTime: string;
     public totalTime: string;
     public dateCreated: Date;
 }

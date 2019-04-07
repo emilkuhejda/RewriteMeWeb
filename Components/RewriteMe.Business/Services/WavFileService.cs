@@ -103,7 +103,13 @@ namespace RewriteMe.Business.Services
 
                 TrimWavFile(reader, writer, startPosition, endPosition);
 
-                return new WavPartialFile(outputFileName, writer.TotalTime);
+                return new WavPartialFile
+                {
+                    Path = outputFileName,
+                    StartTime = start,
+                    EndTime = end,
+                    TotalTime = writer.TotalTime
+                };
             }
         }
 

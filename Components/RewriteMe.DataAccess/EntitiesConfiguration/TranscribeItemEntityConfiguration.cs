@@ -14,6 +14,8 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.FileItemId).IsRequired();
             builder.Property(x => x.Alternatives).IsRequired();
             builder.Property(x => x.Source).IsRequired();
+            builder.Property(x => x.StartTime).IsRequired();
+            builder.Property(x => x.EndTime).IsRequired();
             builder.Property(x => x.TotalTime).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
         }
