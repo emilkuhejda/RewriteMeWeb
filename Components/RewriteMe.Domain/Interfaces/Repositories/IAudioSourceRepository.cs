@@ -8,6 +8,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         byte[] GetAudioSource(Guid fileItemId);
 
+        Task<TimeSpan> GetTotalTime(Guid fileItemId);
+
         Task AddAsync(AudioSource audioSource);
 
         Task UpdateAsync(AudioSource audioSource);
