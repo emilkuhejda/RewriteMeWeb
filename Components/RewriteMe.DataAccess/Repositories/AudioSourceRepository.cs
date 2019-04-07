@@ -28,6 +28,18 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<TimeSpan> GetTotalTime(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.AudioSources
+                    .Where(x => x.FileItemId == fileItemId)
+                    .Select(x => x.TotalTime)
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
         public async Task AddAsync(AudioSource audioSource)
         {
             using (var context = _contextFactory.Create())

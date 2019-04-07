@@ -41,7 +41,9 @@ namespace RewriteMe.Business.Managers
 
         public async Task<bool> CanRunRecognition(FileItem fileItem, Guid userId)
         {
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var fileTotalTime = await _audioSourceService.GetTotalTime(fileItem.Id).ConfigureAwait(false);
+            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var remainingTime = subscriptionRemainingTime.Subtract(fileTotalTime);
 
             return remainingTime.Ticks > 0;
         }
