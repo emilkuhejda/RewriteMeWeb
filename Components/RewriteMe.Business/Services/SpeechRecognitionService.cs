@@ -68,6 +68,8 @@ namespace RewriteMe.Business.Services
                     FileItemId = fileItemId,
                     Alternatives = alternatives,
                     Source = source,
+                    StartTime = wavPartialFile.StartTime,
+                    EndTime = wavPartialFile.EndTime,
                     TotalTime = wavPartialFile.TotalTime,
                     DateCreated = DateTime.UtcNow
                 };

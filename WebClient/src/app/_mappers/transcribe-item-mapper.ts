@@ -16,6 +16,8 @@ export class TranscribeItemMapper {
             transcribeItem.transcript = transcript;
             transcribeItem.userTranscript = item.userTranscript === null ? transcript : item.userTranscript;
             transcribeItem.alternatives = alternatives;
+            transcribeItem.startTime = item.startTime;
+            transcribeItem.endTime = item.endTime;
             transcribeItem.totalTime = item.totalTime;
             transcribeItem.dateCreated = item.dateCreated;
 

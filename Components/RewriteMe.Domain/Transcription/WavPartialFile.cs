@@ -4,14 +4,12 @@ namespace RewriteMe.Domain.Transcription
 {
     public class WavPartialFile
     {
-        public WavPartialFile(string path, TimeSpan totalTime)
-        {
-            Path = path;
-            TotalTime = totalTime;
-        }
+        public string Path { get; set; }
 
-        public string Path { get; }
+        public TimeSpan StartTime { get; set; }
 
-        public TimeSpan TotalTime { get; }
+        public TimeSpan EndTime { get; set; }
+
+        public TimeSpan TotalTime { get; set; }
     }
 }
