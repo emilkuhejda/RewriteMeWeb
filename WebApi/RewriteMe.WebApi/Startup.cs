@@ -48,7 +48,7 @@ namespace RewriteMe.WebApi
             {
                 configuration.SwaggerDoc("v1", new Info
                 {
-                    Title = "Rewrite me API",
+                    Title = "Rewrite Me API",
                     Version = "v1"
                 });
 
@@ -158,7 +158,7 @@ namespace RewriteMe.WebApi
             app.UseStaticFiles();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rewrite me API v1"); });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rewrite Me API v1"); });
 
             app.UseHangfireServer();
             app.UseHangfireDashboard();
