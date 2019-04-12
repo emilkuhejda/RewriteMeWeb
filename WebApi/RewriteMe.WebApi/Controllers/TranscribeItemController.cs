@@ -47,7 +47,7 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {
             await _transcribeItemService
-                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript)
+                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, updateTranscribeItem.Version)
                 .ConfigureAwait(false);
 
             return Ok();

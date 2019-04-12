@@ -14,7 +14,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 OriginalSource = entity.OriginalSource,
                 WavSource = entity.WavSource,
                 ContentType = entity.ContentType,
-                TotalTime = entity.TotalTime
+                TotalTime = entity.TotalTime,
+                Version = entity.Version
             };
         }
 
@@ -27,7 +28,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 OriginalSource = audioSource.OriginalSource,
                 WavSource = audioSource.WavSource,
                 ContentType = audioSource.ContentType,
-                TotalTime = audioSource.TotalTime
+                TotalTime = audioSource.TotalTime,
+                Version = audioSource.Version
             };
         }
     }

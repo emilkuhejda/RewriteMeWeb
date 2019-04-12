@@ -31,9 +31,9 @@ namespace RewriteMe.Business.Services
             return await _transcribeItemRepository.GetAll(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript)
+        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version)
         {
-            await _transcribeItemRepository.UpdateUserTranscript(transcribeItemId, transcript).ConfigureAwait(false);
+            await _transcribeItemRepository.UpdateUserTranscript(transcribeItemId, transcript, version).ConfigureAwait(false);
         }
     }
 }

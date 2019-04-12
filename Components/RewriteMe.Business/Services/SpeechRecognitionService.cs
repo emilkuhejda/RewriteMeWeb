@@ -71,7 +71,8 @@ namespace RewriteMe.Business.Services
                     StartTime = wavPartialFile.StartTime,
                     EndTime = wavPartialFile.EndTime,
                     TotalTime = wavPartialFile.TotalTime,
-                    DateCreated = DateTime.UtcNow
+                    DateCreated = DateTime.UtcNow,
+                    Version = 0
                 };
 
                 return transcribeItem;

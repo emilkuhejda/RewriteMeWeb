@@ -23,5 +23,7 @@ namespace RewriteMe.WebApi.Dtos
         public TimeSpan TotalTime { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public int Version { get; set; }
     }
 }
