@@ -55,7 +55,8 @@ namespace RewriteMe.WebApi.Controllers
                 Language = x.Language,
                 RecognitionState = x.RecognitionState,
                 DateCreated = x.DateCreated,
-                DateProcessed = x.DateProcessed
+                DateProcessed = x.DateProcessed,
+                Version = x.Version
             }));
         }
 
@@ -74,7 +75,8 @@ namespace RewriteMe.WebApi.Controllers
                 Language = file.Language,
                 RecognitionState = file.RecognitionState,
                 DateCreated = file.DateCreated,
-                DateProcessed = file.DateProcessed
+                DateProcessed = file.DateProcessed,
+                Version = file.Version
             });
         }
 
@@ -110,7 +112,8 @@ namespace RewriteMe.WebApi.Controllers
                 Name = createFileModel.Name,
                 FileName = fileToUpload.Name,
                 Language = createFileModel.Language,
-                DateCreated = DateTime.UtcNow
+                DateCreated = DateTime.UtcNow,
+                Version = 0
             };
 
             var source = await fileToUpload.GetBytesAsync().ConfigureAwait(false);
@@ -119,7 +122,8 @@ namespace RewriteMe.WebApi.Controllers
                 Id = Guid.NewGuid(),
                 FileItemId = fileItem.Id,
                 OriginalSource = source,
-                ContentType = fileToUpload.ContentType
+                ContentType = fileToUpload.ContentType,
+                Version = 0
             };
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
@@ -151,7 +155,8 @@ namespace RewriteMe.WebApi.Controllers
                 Id = uploadFileModel.FileItemId,
                 UserId = Guid.Parse(HttpContext.User.Identity.Name),
                 Name = uploadFileModel.Name,
-                Language = uploadFileModel.Language
+                Language = uploadFileModel.Language,
+                Version = uploadFileModel.FileItemVersion
             };
 
             if (files.Any())
@@ -166,7 +171,8 @@ namespace RewriteMe.WebApi.Controllers
                     OriginalSource = source,
                     WavSource = null,
                     ContentType = fileToUpoad.ContentType,
-                    TotalTime = default(TimeSpan)
+                    TotalTime = default(TimeSpan),
+                    Version = uploadFileModel.SourceVersion
                 };
 
                 await _audioSourceService.UpdateAsync(audioSource).ConfigureAwait(false);

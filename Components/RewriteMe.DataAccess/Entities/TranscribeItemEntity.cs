@@ -22,6 +22,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateCreated { get; set; }
 
+        public int Version { get; set; }
+
         public virtual FileItemEntity FileItem { get; set; }
     }
 }

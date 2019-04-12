@@ -16,7 +16,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Language = fileItemEntity.Language,
                 RecognitionState = fileItemEntity.RecognitionState,
                 DateCreated = fileItemEntity.DateCreated,
-                DateProcessed = fileItemEntity.DateProcessed
+                DateProcessed = fileItemEntity.DateProcessed,
+                Version = fileItemEntity.Version
             };
         }
 
@@ -31,7 +32,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Language = fileItem.Language,
                 RecognitionState = fileItem.RecognitionState,
                 DateCreated = fileItem.DateCreated,
-                DateProcessed = fileItem.DateProcessed
+                DateProcessed = fileItem.DateProcessed,
+                Version = fileItem.Version
             };
         }
     }

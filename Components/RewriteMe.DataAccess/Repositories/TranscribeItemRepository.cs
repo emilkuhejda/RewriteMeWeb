@@ -56,7 +56,8 @@ namespace RewriteMe.DataAccess.Repositories
                         x.StartTime,
                         x.EndTime,
                         x.TotalTime,
-                        x.DateCreated
+                        x.DateCreated,
+                        x.Version
                     })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
@@ -70,12 +71,13 @@ namespace RewriteMe.DataAccess.Repositories
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
                     TotalTime = x.TotalTime,
-                    DateCreated = x.DateCreated
+                    DateCreated = x.DateCreated,
+                    Version = x.Version
                 });
             }
         }
 
-        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript)
+        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version)
         {
             using (var context = _contextFactory.Create())
             {

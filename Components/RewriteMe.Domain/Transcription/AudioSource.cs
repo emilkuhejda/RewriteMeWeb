@@ -15,5 +15,7 @@ namespace RewriteMe.Domain.Transcription
         public string ContentType { get; set; }
 
         public TimeSpan TotalTime { get; set; }
+
+        public int Version { get; set; }
     }
 }

@@ -22,6 +22,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime? DateProcessed { get; set; }
 
+        public int Version { get; set; }
+
         public virtual UserEntity User { get; set; }
 
         public virtual AudioSourceEntity AudioSource { get; set; }

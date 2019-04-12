@@ -81,6 +81,7 @@ namespace RewriteMe.DataAccess.Repositories
 
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
+                entity.Version = fileItem.Version;
 
                 if (!string.IsNullOrEmpty(fileItem.FileName))
                 {
