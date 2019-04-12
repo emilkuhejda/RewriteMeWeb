@@ -25,6 +25,11 @@ namespace RewriteMe.Business.Services
             return await _audioSourceRepository.GetTotalTime(fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<int> GetLastVersion(Guid userId)
+        {
+            return await _audioSourceRepository.GetLastVersion(userId).ConfigureAwait(false);
+        }
+
         public async Task AddAsync(AudioSource audioSource)
         {
             await _audioSourceRepository.AddAsync(audioSource).ConfigureAwait(false);
