@@ -3,11 +3,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers
@@ -29,6 +31,8 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/authenticate")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
         {
             var user = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
@@ -49,7 +53,7 @@ namespace RewriteMe.WebApi.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(new
+            return Ok(new UserDto
             {
                 Id = Guid.NewGuid(),
                 Username = user.Username,

@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
+using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 
@@ -38,42 +41,49 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files")]
+        [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var files = await _fileItemService.GetAllAsync(userId).ConfigureAwait(false);
 
-            return Ok(files.Select(x => new
+            return Ok(files.Select(x => new FileItemDto
             {
-                x.Id,
-                x.Name,
-                x.FileName,
-                x.Language,
-                x.RecognitionState,
-                x.DateCreated,
-                x.DateProcessed
+                Id = x.Id,
+                Name = x.Name,
+                FileName = x.FileName,
+                Language = x.Language,
+                RecognitionState = x.RecognitionState,
+                DateCreated = x.DateCreated,
+                DateProcessed = x.DateProcessed
             }));
         }
 
         [HttpGet("/api/files/{fileItemId}")]
+        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
             var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
-            return Ok(new
+            return Ok(new FileItemDto
             {
-                file.Id,
-                file.Name,
-                file.FileName,
-                file.Language,
-                file.RecognitionState,
-                file.DateCreated,
-                file.DateProcessed
+                Id = file.Id,
+                Name = file.Name,
+                FileName = file.FileName,
+                Language = file.Language,
+                RecognitionState = file.RecognitionState,
+                DateCreated = file.DateCreated,
+                DateProcessed = file.DateProcessed
             });
         }
 
         [HttpPost("/api/files/create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+        [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Create([FromForm] CreateFileModel createFileModel)
         {
@@ -121,6 +131,9 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/files/update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Update([FromForm] UploadFileModel uploadFileModel)
         {
@@ -167,6 +180,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpDelete("/api/files/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Remove([FromRoute] string id)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
@@ -178,6 +192,9 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/files/transcribe")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
