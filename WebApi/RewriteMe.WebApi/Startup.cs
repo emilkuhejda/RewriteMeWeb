@@ -56,6 +56,14 @@ namespace RewriteMe.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 
                 configuration.IncludeXmlComments(xmlPath);
+                configuration.CustomSchemaIds(type =>
+                {
+                    var returnedValue = type.Name;
+                    if (returnedValue.EndsWith("Dto"))
+                        returnedValue = returnedValue.Replace("Dto", string.Empty);
+
+                    return returnedValue;
+                });
             });
 
             services.AddHangfire(configuration =>
