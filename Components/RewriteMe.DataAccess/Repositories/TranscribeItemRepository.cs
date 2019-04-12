@@ -19,15 +19,6 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                await context.TranscribeItems.AddRangeAsync(transcribeItem.Select(x => x.ToTranscribeItemEntity())).ConfigureAwait(false);
-                await context.SaveChangesAsync();
-            }
-        }
-
         public async Task<TranscribeItem> Get(Guid transcribeItemId)
         {
             using (var context = _contextFactory.Create())
@@ -41,12 +32,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId)
+        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, int minimumVersion)
         {
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItemId == fileItemId)
+                    .Where(x => x.FileItemId == fileItemId && x.Version >= minimumVersion)
                     .AsNoTracking()
                     .Select(x => new
                     {
@@ -87,6 +78,15 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => x.Version)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
+            }
+        }
+
+        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                await context.TranscribeItems.AddRangeAsync(transcribeItem.Select(x => x.ToTranscribeItemEntity())).ConfigureAwait(false);
+                await context.SaveChangesAsync();
             }
         }
 

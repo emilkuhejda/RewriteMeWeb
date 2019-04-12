@@ -42,10 +42,10 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int minimumVersion = 0)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
-            var files = await _fileItemService.GetAllAsync(userId).ConfigureAwait(false);
+            var files = await _fileItemService.GetAllAsync(userId, minimumVersion).ConfigureAwait(false);
 
             return Ok(files.Select(x => new FileItemDto
             {

@@ -20,12 +20,12 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, int minimumVersion)
         {
             using (var context = _contextFactory.Create())
             {
                 var fileItems = await context.FileItems
-                    .Where(x => x.UserId == userId)
+                    .Where(x => x.UserId == userId && x.Version >= minimumVersion)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -34,7 +34,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<FileItem> GetFileItemWithoutTranscriptionAsync(Guid userId, Guid fileItemId)
+        public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {

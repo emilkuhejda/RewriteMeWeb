@@ -16,24 +16,24 @@ namespace RewriteMe.Business.Services
             _transcribeItemRepository = transcribeItemRepository;
         }
 
-        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
-        {
-            await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
-        }
-
         public async Task<TranscribeItem> Get(Guid transcribeItemId)
         {
             return await _transcribeItemRepository.Get(transcribeItemId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId)
+        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, int minimumVersion)
         {
-            return await _transcribeItemRepository.GetAll(fileItemId).ConfigureAwait(false);
+            return await _transcribeItemRepository.GetAll(fileItemId, minimumVersion).ConfigureAwait(false);
         }
 
         public async Task<int> GetLastVersion(Guid userId)
         {
             return await _transcribeItemRepository.GetLastVersion(userId).ConfigureAwait(false);
+        }
+
+        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
+        {
+            await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
         }
 
         public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version)

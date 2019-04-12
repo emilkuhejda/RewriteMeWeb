@@ -17,14 +17,14 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, int minimumVersion)
         {
-            return await _fileItemRepository.GetAllAsync(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetAllAsync(userId, minimumVersion).ConfigureAwait(false);
         }
 
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
-            return await _fileItemRepository.GetFileItemWithoutTranscriptionAsync(userId, fileItemId).ConfigureAwait(false);
+            return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
         public async Task<int> GetLastVersion(Guid userId)
