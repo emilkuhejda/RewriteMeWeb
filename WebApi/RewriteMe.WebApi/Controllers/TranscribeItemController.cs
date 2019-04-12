@@ -27,9 +27,9 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetAll(Guid fileItemId)
+        public async Task<ActionResult> GetAll(Guid fileItemId, int minimumVersion = 0)
         {
-            var transcribeItems = await _transcribeItemService.GetAll(fileItemId).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAll(fileItemId, minimumVersion).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }
