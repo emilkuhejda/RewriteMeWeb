@@ -27,6 +27,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetFileItemWithoutTranscriptionAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<int> GetLastVersion(Guid userId)
+        {
+            return await _fileItemRepository.GetLastVersion(userId).ConfigureAwait(false);
+        }
+
         public async Task AddAsync(FileItem fileItem)
         {
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);

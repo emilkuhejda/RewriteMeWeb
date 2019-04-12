@@ -10,6 +10,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<TimeSpan> GetTotalTime(Guid fileItemId);
 
+        Task<int> GetLastVersion(Guid userId);
+
         Task AddAsync(AudioSource audioSource);
 
         Task UpdateAsync(AudioSource audioSource);

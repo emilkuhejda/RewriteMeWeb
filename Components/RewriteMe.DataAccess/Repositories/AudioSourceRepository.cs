@@ -40,6 +40,19 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<int> GetLastVersion(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.AudioSources
+                    .Where(x => x.FileItem.UserId == userId)
+                    .OrderByDescending(x => x.Version)
+                    .Select(x => x.Version)
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
         public async Task AddAsync(AudioSource audioSource)
         {
             using (var context = _contextFactory.Create())

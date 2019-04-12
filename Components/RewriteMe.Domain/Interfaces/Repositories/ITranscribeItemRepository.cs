@@ -13,6 +13,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId);
 
+        Task<int> GetLastVersion(Guid userId);
+
         Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version);
 
         Task<TimeSpan> GetTranscriptTotalSeconds(Guid userId);
