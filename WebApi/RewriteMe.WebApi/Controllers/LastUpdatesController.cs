@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -30,6 +31,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/lastUpdates")]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);

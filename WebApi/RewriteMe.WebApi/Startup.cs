@@ -52,10 +52,7 @@ namespace RewriteMe.WebApi
                     Version = "v1"
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                configuration.IncludeXmlComments(xmlPath);
+                configuration.EnableAnnotations();
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
@@ -64,6 +61,11 @@ namespace RewriteMe.WebApi
 
                     return returnedValue;
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                configuration.IncludeXmlComments(xmlPath);
             });
 
             services.AddHangfire(configuration =>
