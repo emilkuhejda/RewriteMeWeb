@@ -9,6 +9,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -27,6 +28,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetTranscribeItems")]
         public async Task<ActionResult> GetAll(Guid fileItemId, int minimumVersion = 0)
         {
             var transcribeItems = await _transcribeItemService.GetAll(fileItemId, minimumVersion).ConfigureAwait(false);
@@ -36,6 +38,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
             var transcribeItem = await _transcribeItemService.Get(transcribeItemId).ConfigureAwait(false);
@@ -44,6 +47,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPut("/api/transcribe-items/update-transcript")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {
             await _transcribeItemService

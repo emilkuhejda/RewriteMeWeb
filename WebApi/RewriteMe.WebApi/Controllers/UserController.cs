@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -27,6 +28,7 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPost("/api/users/register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [SwaggerOperation(OperationId = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
             var user = registerUserModel.ToUser();

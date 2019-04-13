@@ -14,6 +14,7 @@ using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -42,6 +43,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(int minimumVersion = 0)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
@@ -62,6 +64,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files/{fileItemId}")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetFileItem")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
@@ -86,6 +89,7 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
+        [SwaggerOperation(OperationId = "CreateFileItem")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Create([FromForm] CreateFileModel createFileModel)
         {
@@ -138,6 +142,7 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
+        [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Update([FromForm] UploadFileModel uploadFileModel)
         {
@@ -187,6 +192,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpDelete("/api/files/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "RemoveFileItem")]
         public async Task<IActionResult> Remove([FromRoute] string id)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);
@@ -201,6 +207,7 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
             var userId = Guid.Parse(HttpContext.User.Identity.Name);

@@ -11,6 +11,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -33,6 +34,7 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPost("/api/authenticate")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [SwaggerOperation(OperationId = "AuthenticateUser")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
         {
             var user = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
