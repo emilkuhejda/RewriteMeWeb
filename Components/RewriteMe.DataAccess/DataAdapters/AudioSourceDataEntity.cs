@@ -3,7 +3,7 @@ using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class AudioSourceEntityDataEntity
+    public static class AudioSourceDataEntity
     {
         public static AudioSource ToAudioSource(this AudioSourceEntity entity)
         {

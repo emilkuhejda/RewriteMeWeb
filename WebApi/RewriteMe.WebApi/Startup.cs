@@ -1,20 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using RewriteMe.DataAccess;
-using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Services;
@@ -73,57 +67,9 @@ namespace RewriteMe.WebApi
                 configuration.UseSqlServerStorage(appSettings.ConnectionString);
             });
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
-            });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    "AllowSpecificOrigin",
-                    builder => builder.WithOrigins("http://localhost:4200")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
-            });
-
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
             services.AddMvc();
-
-            var issuerSigningKey = Encoding.ASCII.GetBytes(appSettings.SecretKey);
-
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
-            {
-                x.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async context =>
-                     {
-                         var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                         var userId = Guid.Parse(context.Principal.Identity.Name);
-                         var user = await userService.GetUserAsync(userId).ConfigureAwait(false);
-                         if (user == null)
-                         {
-                             context.Fail("Unauthorized");
-                         }
-
-                         await Task.CompletedTask;
-                     }
-                };
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(issuerSigningKey),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
 
             return Bootstrapper.BootstrapRuntime(services);
         }
@@ -160,7 +106,6 @@ namespace RewriteMe.WebApi
                 .AllowAnyHeader()
                 .AllowCredentials());
 
-            app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
 
             app.UseMvcWithDefaultRoute();

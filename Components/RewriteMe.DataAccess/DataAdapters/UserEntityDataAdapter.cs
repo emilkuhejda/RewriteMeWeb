@@ -1,33 +1,29 @@
 ﻿using RewriteMe.DataAccess.Entities;
-using RewriteMe.Domain.UserManagement;
+using RewriteMe.Domain.Settings;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
     public static class UserEntityDataAdapter
     {
-        public static User ToUser(this UserEntity userEntity)
+        public static UserSubscription ToUserSubscription(this UserSubscriptionEntity entity)
         {
-            return new User
+            return new UserSubscription
             {
-                Id = userEntity.Id,
-                Username = userEntity.Username,
-                FirstName = userEntity.FirstName,
-                LastName = userEntity.LastName,
-                PasswordHash = userEntity.PasswordHash,
-                PasswordSalt = userEntity.PasswordSalt
+                Id = entity.Id,
+                UserId = entity.UserId,
+                Time = entity.Time,
+                DateCreated = entity.DateCreated
             };
         }
 
-        public static UserEntity ToUserEntity(this User user)
+        public static UserSubscriptionEntity ToUserSubscriptionEntity(this UserSubscription userSubscription)
         {
-            return new UserEntity
+            return new UserSubscriptionEntity
             {
-                Id = user.Id,
-                Username = user.Username,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PasswordHash = user.PasswordHash,
-                PasswordSalt = user.PasswordSalt
+                Id = userSubscription.Id,
+                UserId = userSubscription.UserId,
+                Time = userSubscription.Time,
+                DateCreated = userSubscription.DateCreated
             };
         }
     }
