@@ -84,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/files/create")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
@@ -135,11 +135,11 @@ namespace RewriteMe.WebApi.Controllers
 
             BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
 
-            return Ok();
+            return Ok(new OkDto());
         }
 
         [HttpPut("/api/files/update")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
@@ -187,11 +187,11 @@ namespace RewriteMe.WebApi.Controllers
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
 
-            return Ok();
+            return Ok(new OkDto());
         }
 
         [HttpDelete("/api/files/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "RemoveFileItem")]
         public async Task<IActionResult> Remove([FromRoute] string id)
         {
@@ -200,11 +200,11 @@ namespace RewriteMe.WebApi.Controllers
 
             await _fileItemService.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
 
-            return Ok();
+            return Ok(new OkDto());
         }
 
         [HttpPost("/api/files/transcribe")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
@@ -222,7 +222,7 @@ namespace RewriteMe.WebApi.Controllers
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem, userId));
 
-            return Ok();
+            return Ok(new OkDto());
         }
     }
 }

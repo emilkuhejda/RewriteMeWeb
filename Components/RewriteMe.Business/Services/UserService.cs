@@ -15,24 +15,14 @@ namespace RewriteMe.Business.Services
             _userRepository = userRepository;
         }
 
-        public async Task<bool> UserAlreadyExistsAsync(User user)
+        public async Task<bool> UserAlreadyExistsAsync(Guid userId)
         {
-            return await _userRepository.UserAlreadyExistsAsync(user).ConfigureAwait(false);
+            return await _userRepository.UserAlreadyExistsAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(User user)
         {
             await _userRepository.AddAsync(user).ConfigureAwait(false);
-        }
-
-        public async Task<User> GetUserAsync(string username)
-        {
-            return await _userRepository.GetUserAsync(username).ConfigureAwait(false);
-        }
-
-        public async Task<User> GetUserAsync(Guid userId)
-        {
-            return await _userRepository.GetUserAsync(userId).ConfigureAwait(false);
         }
     }
 }

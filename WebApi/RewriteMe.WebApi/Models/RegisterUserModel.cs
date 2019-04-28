@@ -1,13 +1,15 @@
-﻿namespace RewriteMe.WebApi.Models
+﻿using System;
+
+namespace RewriteMe.WebApi.Models
 {
     public class RegisterUserModel
     {
-        public string Username { get; set; }
+        public Guid Id { get; set; }
 
-        public string Password { get; set; }
+        public string Email { get; set; }
 
-        public string FirstName { get; set; }
+        public string GivenName { get; set; }
 
-        public string LastName { get; set; }
+        public string FamilyName { get; set; }
     }
 }

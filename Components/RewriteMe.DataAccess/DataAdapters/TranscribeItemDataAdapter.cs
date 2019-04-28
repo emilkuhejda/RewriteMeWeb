@@ -5,7 +5,7 @@ using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class TranscribeItemEntityDataAdapter
+    public static class TranscribeItemDataAdapter
     {
         public static TranscribeItem ToTranscribeItem(this TranscribeItemEntity transcribeItemEntity)
         {

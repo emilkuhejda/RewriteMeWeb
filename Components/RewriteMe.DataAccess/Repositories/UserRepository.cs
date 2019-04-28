@@ -16,29 +16,11 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<bool> UserAlreadyExistsAsync(User user)
+        public async Task<bool> UserAlreadyExistsAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.Users.AnyAsync(x => x.Username == user.Username && x.Id != user.Id).ConfigureAwait(false);
-            }
-        }
-
-        public async Task<User> GetUserAsync(string username)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var user = await context.Users.SingleOrDefaultAsync(x => x.Username == username).ConfigureAwait(false);
-                return user?.ToUser();
-            }
-        }
-
-        public async Task<User> GetUserAsync(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var user = await context.Users.SingleOrDefaultAsync(x => x.Id == userId).ConfigureAwait(false);
-                return user?.ToUser();
+                return await context.Users.AnyAsync(x => x.Id == userId).ConfigureAwait(false);
             }
         }
 

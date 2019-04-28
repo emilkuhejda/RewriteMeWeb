@@ -46,7 +46,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/transcribe-items/update-transcript")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {
@@ -54,7 +54,7 @@ namespace RewriteMe.WebApi.Controllers
                 .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, updateTranscribeItem.Version)
                 .ConfigureAwait(false);
 
-            return Ok();
+            return Ok(new OkDto());
         }
     }
 }

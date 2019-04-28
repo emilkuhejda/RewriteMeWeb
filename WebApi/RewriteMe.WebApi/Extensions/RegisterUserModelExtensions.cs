@@ -1,5 +1,4 @@
-﻿using System;
-using RewriteMe.Domain.UserManagement;
+﻿using RewriteMe.Domain.UserManagement;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Extensions
@@ -10,10 +9,10 @@ namespace RewriteMe.WebApi.Extensions
         {
             return new User
             {
-                Id = Guid.NewGuid(),
-                Username = registerUserModel.Username,
-                FirstName = registerUserModel.FirstName,
-                LastName = registerUserModel.LastName
+                Id = registerUserModel.Id,
+                Email = registerUserModel.Email,
+                GivenName = registerUserModel.GivenName,
+                FamilyName = registerUserModel.FamilyName
             };
         }
     }

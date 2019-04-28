@@ -3,7 +3,7 @@ using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class FileItemEntityDataAdapter
+    public static class FileItemDataAdapter
     {
         public static FileItem ToFileItem(this FileItemEntity fileItemEntity)
         {

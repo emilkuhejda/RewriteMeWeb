@@ -3,7 +3,7 @@ using RewriteMe.Domain.Logging;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class ApplicationLogEntityDataAdapter
+    public static class ApplicationLogDataAdapter
     {
         public static ApplicationLog ToApplicationLog(this ApplicationLogEntity entity)
         {
