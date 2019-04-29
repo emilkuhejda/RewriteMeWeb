@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,17 @@ namespace RewriteMe.WebApi
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
             services.AddMvc();
 
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = appSettings.Authentication.ClientId;
+                    options.Authority = $"{appSettings.Authentication.AuthoritySignUpSignIn}/v2.0/";
+                });
+
             return Bootstrapper.BootstrapRuntime(services);
         }
 
@@ -106,6 +118,7 @@ namespace RewriteMe.WebApi
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+            app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
 
             app.UseMvcWithDefaultRoute();

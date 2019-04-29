@@ -35,14 +35,18 @@ namespace RewriteMe.WebApi.Controllers
         [AllowAnonymous]
         [HttpPost("/api/users/register")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [SwaggerOperation(OperationId = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
             var user = registerUserModel.ToUser();
+            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{user.Id}'.");
+
             var userAlreadyExists = await _userService.UserAlreadyExistsAsync(user.Id).ConfigureAwait(false);
             if (userAlreadyExists)
-                return Conflict();
+            {
+                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.");
+                return Ok(new OkDto());
+            }
 
             await _userService.AddAsync(user).ConfigureAwait(false);
             await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
@@ -34,7 +34,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
 
             var fileItemLastVersion = await _fileItemService.GetLastVersion(userId).ConfigureAwait(false);
             var audioSourceLastVersion = await _audioSourceService.GetLastVersion(userId).ConfigureAwait(false);
