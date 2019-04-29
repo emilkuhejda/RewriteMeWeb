@@ -41,7 +41,7 @@ namespace RewriteMe.WebApi.Controllers
             _wavFileManager = wavFileManager;
         }
 
-        [HttpGet("/api/files/{updatedAfter}")]
+        [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(DateTime updatedAfter)
