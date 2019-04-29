@@ -1,12 +1,19 @@
-﻿namespace RewriteMe.WebApi.Dtos
+﻿using System;
+
+namespace RewriteMe.WebApi.Dtos
 {
     public class OkDto
     {
         public OkDto()
+            : this(DateTime.UtcNow)
         {
-            IsSuccess = true;
         }
 
-        public bool IsSuccess { get; set; }
+        public OkDto(DateTime dateTime)
+        {
+            DateTime = dateTime;
+        }
+
+        public DateTime DateTime { get; }
     }
 }

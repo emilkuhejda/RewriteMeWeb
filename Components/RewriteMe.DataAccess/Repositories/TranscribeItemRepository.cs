@@ -32,12 +32,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, int minimumVersion)
+        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItemId == fileItemId && x.Version >= minimumVersion)
+                    .Where(x => x.FileItemId == fileItemId && x.DateUpdated >= updatedAfter)
                     .AsNoTracking()
                     .Select(x => new
                     {
@@ -48,7 +48,7 @@ namespace RewriteMe.DataAccess.Repositories
                         x.EndTime,
                         x.TotalTime,
                         x.DateCreated,
-                        x.Version
+                        x.DateUpdated
                     })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
@@ -63,19 +63,19 @@ namespace RewriteMe.DataAccess.Repositories
                     EndTime = x.EndTime,
                     TotalTime = x.TotalTime,
                     DateCreated = x.DateCreated,
-                    Version = x.Version
+                    DateUpdated = x.DateUpdated
                 });
             }
         }
 
-        public async Task<int> GetLastVersion(Guid userId)
+        public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.AudioSources
+                return await context.TranscribeItems
                     .Where(x => x.FileItem.UserId == userId)
-                    .OrderByDescending(x => x.Version)
-                    .Select(x => x.Version)
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
@@ -90,7 +90,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version)
+        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated)
         {
             using (var context = _contextFactory.Create())
             {
@@ -99,6 +99,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 transcribeItemEntity.UserTranscript = transcript;
+                transcribeItemEntity.DateUpdated = dateUpdated;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

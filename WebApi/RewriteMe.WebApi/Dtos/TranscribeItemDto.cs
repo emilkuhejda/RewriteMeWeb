@@ -24,6 +24,6 @@ namespace RewriteMe.WebApi.Dtos
 
         public DateTime DateCreated { get; set; }
 
-        public int Version { get; set; }
+        public DateTime DateUpdated { get; set; }
     }
 }

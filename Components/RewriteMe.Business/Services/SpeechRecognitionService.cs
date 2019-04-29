@@ -62,6 +62,7 @@ namespace RewriteMe.Business.Services
                     .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
 
                 var source = await File.ReadAllBytesAsync(wavPartialFile.Path).ConfigureAwait(false);
+                var dateCreated = DateTime.UtcNow;
                 var transcribeItem = new TranscribeItem
                 {
                     Id = Guid.NewGuid(),
@@ -71,8 +72,8 @@ namespace RewriteMe.Business.Services
                     StartTime = wavPartialFile.StartTime,
                     EndTime = wavPartialFile.EndTime,
                     TotalTime = wavPartialFile.TotalTime,
-                    DateCreated = DateTime.UtcNow,
-                    Version = 0
+                    DateCreated = dateCreated,
+                    DateUpdated = dateCreated
                 };
 
                 return transcribeItem;

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RewriteMe.DataAccess;
 
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190429125410_AddDateUpdatedToFileItemEntity")]
+    partial class AddDateUpdatedToFileItemEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,8 +76,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AudioSourceVersion");
-
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<DateTime?>("DateProcessed");
@@ -115,8 +115,6 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime>("DateUpdated");
-
                     b.Property<TimeSpan>("EndTime");
 
                     b.Property<Guid>("FileItemId");
@@ -129,6 +127,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<TimeSpan>("TotalTime");
 
                     b.Property<string>("UserTranscript");
+
+                    b.Property<int>("Version");
 
                     b.HasKey("Id");
 

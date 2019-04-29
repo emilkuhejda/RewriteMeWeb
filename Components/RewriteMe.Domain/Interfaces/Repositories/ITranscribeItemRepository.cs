@@ -9,13 +9,13 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task<TranscribeItem> Get(Guid transcribeItemId);
 
-        Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, int minimumVersion);
+        Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, DateTime updatedAfter);
 
-        Task<int> GetLastVersion(Guid userId);
+        Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
 
-        Task UpdateUserTranscript(Guid transcribeItemId, string transcript, int version);
+        Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated);
 
         Task<TimeSpan> GetTranscriptTotalSeconds(Guid userId);
     }

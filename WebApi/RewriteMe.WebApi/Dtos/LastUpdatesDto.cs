@@ -1,11 +1,11 @@
-﻿namespace RewriteMe.WebApi.Dtos
+﻿using System;
+
+namespace RewriteMe.WebApi.Dtos
 {
     public class LastUpdatesDto
     {
-        public int FileItem { get; set; }
+        public DateTime FileItem { get; set; }
 
-        public int AudioSource { get; set; }
-
-        public int TranscribeItem { get; set; }
+        public DateTime TranscribeItem { get; set; }
     }
 }

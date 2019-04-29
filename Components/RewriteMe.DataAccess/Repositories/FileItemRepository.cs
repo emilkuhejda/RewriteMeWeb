@@ -20,12 +20,12 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, int minimumVersion)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
             {
                 var fileItems = await context.FileItems
-                    .Where(x => x.UserId == userId && x.Version >= minimumVersion)
+                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -47,14 +47,14 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<int> GetLastVersion(Guid userId)
+        public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
                 return await context.FileItems
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.Version)
-                    .Select(x => x.Version)
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
@@ -94,7 +94,7 @@ namespace RewriteMe.DataAccess.Repositories
 
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
-                entity.Version = fileItem.Version;
+                entity.DateUpdated = fileItem.DateUpdated;
 
                 if (!string.IsNullOrEmpty(fileItem.FileName))
                 {
