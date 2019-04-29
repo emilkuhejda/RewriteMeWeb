@@ -32,12 +32,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, DateTime updatedAfter)
+        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid userId, DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItemId == fileItemId && x.DateUpdated >= updatedAfter)
+                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter)
                     .AsNoTracking()
                     .Select(x => new
                     {
