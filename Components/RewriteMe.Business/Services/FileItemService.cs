@@ -17,9 +17,9 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, int minimumVersion)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
-            return await _fileItemRepository.GetAllAsync(userId, minimumVersion).ConfigureAwait(false);
+            return await _fileItemRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
         }
 
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
@@ -27,9 +27,9 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<int> GetLastVersion(Guid userId)
+        public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
-            return await _fileItemRepository.GetLastVersion(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(FileItem fileItem)

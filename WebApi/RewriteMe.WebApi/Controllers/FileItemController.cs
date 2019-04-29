@@ -41,25 +41,15 @@ namespace RewriteMe.WebApi.Controllers
             _wavFileManager = wavFileManager;
         }
 
-        [HttpGet("/api/files")]
+        [HttpGet("/api/files/{updatedAfter}")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetFileItems")]
-        public async Task<IActionResult> Get(int minimumVersion = 0)
+        public async Task<IActionResult> Get(DateTime updatedAfter)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var files = await _fileItemService.GetAllAsync(userId, minimumVersion).ConfigureAwait(false);
+            var files = await _fileItemService.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
 
-            return Ok(files.Select(x => new FileItemDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                FileName = x.FileName,
-                Language = x.Language,
-                RecognitionState = x.RecognitionState.ToString(),
-                DateCreated = x.DateCreated,
-                DateProcessed = x.DateProcessed,
-                Version = x.Version
-            }));
+            return Ok(files.Select(x => x.ToDto()));
         }
 
         [HttpGet("/api/files/{fileItemId}")]
@@ -70,21 +60,11 @@ namespace RewriteMe.WebApi.Controllers
             var userId = HttpContext.User.GetNameIdentifier();
             var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
-            return Ok(new FileItemDto
-            {
-                Id = file.Id,
-                Name = file.Name,
-                FileName = file.FileName,
-                Language = file.Language,
-                RecognitionState = file.RecognitionState.ToString(),
-                DateCreated = file.DateCreated,
-                DateProcessed = file.DateProcessed,
-                Version = file.Version
-            });
+            return Ok(file.ToDto());
         }
 
         [HttpPost("/api/files/create")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
@@ -109,6 +89,7 @@ namespace RewriteMe.WebApi.Controllers
             if (!fileToUpload.IsSupportedType())
                 return StatusCode(415);
 
+            var dateCreated = DateTime.UtcNow;
             var fileItem = new FileItem
             {
                 Id = Guid.NewGuid(),
@@ -116,8 +97,9 @@ namespace RewriteMe.WebApi.Controllers
                 Name = createFileModel.Name,
                 FileName = fileToUpload.Name,
                 Language = createFileModel.Language,
-                DateCreated = DateTime.UtcNow,
-                Version = 0
+                DateCreated = dateCreated,
+                DateUpdated = dateCreated,
+                AudioSourceVersion = 1
             };
 
             var source = await fileToUpload.GetBytesAsync().ConfigureAwait(false);
@@ -127,7 +109,7 @@ namespace RewriteMe.WebApi.Controllers
                 FileItemId = fileItem.Id,
                 OriginalSource = source,
                 ContentType = fileToUpload.ContentType,
-                Version = 0
+                Version = fileItem.AudioSourceVersion
             };
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
@@ -135,11 +117,13 @@ namespace RewriteMe.WebApi.Controllers
 
             BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
 
-            return Ok(new OkDto());
+            var fileItemDto = fileItem.ToDto();
+            fileItemDto.AudioSource = audioSource.ToDto();
+            return Ok(fileItemDto);
         }
 
         [HttpPut("/api/files/update")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
@@ -161,11 +145,14 @@ namespace RewriteMe.WebApi.Controllers
                 UserId = HttpContext.User.GetNameIdentifier(),
                 Name = uploadFileModel.Name,
                 Language = uploadFileModel.Language,
-                Version = uploadFileModel.FileItemVersion
+                DateUpdated = DateTime.UtcNow
             };
 
+            AudioSourceDto audioSourceDto = null;
             if (files.Any())
             {
+                fileItem.AudioSourceVersion += 1;
+
                 var fileToUpoad = files.First();
                 fileItem.FileName = fileToUpoad.Name;
 
@@ -177,17 +164,21 @@ namespace RewriteMe.WebApi.Controllers
                     WavSource = null,
                     ContentType = fileToUpoad.ContentType,
                     TotalTime = default(TimeSpan),
-                    Version = uploadFileModel.SourceVersion
+                    Version = fileItem.AudioSourceVersion
                 };
 
                 await _audioSourceService.UpdateAsync(audioSource).ConfigureAwait(false);
+                audioSourceDto = audioSource.ToDto();
 
                 BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
             }
 
+            var fileItemDto = fileItem.ToDto();
+            fileItemDto.AudioSource = audioSourceDto;
+
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(fileItemDto);
         }
 
         [HttpDelete("/api/files/{id}")]

@@ -8,11 +8,11 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IFileItemRepository
     {
-        Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, int minimumVersion);
+        Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter);
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
-        Task<int> GetLastVersion(Guid userId);
+        Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(FileItem fileItem);
 

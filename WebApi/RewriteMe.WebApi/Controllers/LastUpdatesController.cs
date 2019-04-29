@@ -36,14 +36,12 @@ namespace RewriteMe.WebApi.Controllers
         {
             var userId = HttpContext.User.GetNameIdentifier();
 
-            var fileItemLastVersion = await _fileItemService.GetLastVersion(userId).ConfigureAwait(false);
-            var audioSourceLastVersion = await _audioSourceService.GetLastVersion(userId).ConfigureAwait(false);
-            var transcribeItemLastVersion = await _transcribeItemService.GetLastVersion(userId).ConfigureAwait(false);
+            var fileItemLastVersion = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var transcribeItemLastVersion = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
 
             return Ok(new LastUpdatesDto
             {
                 FileItem = fileItemLastVersion,
-                AudioSource = audioSourceLastVersion,
                 TranscribeItem = transcribeItemLastVersion
             });
         }

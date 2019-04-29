@@ -20,7 +20,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 EndTime = transcribeItemEntity.EndTime,
                 TotalTime = transcribeItemEntity.TotalTime,
                 DateCreated = transcribeItemEntity.DateCreated,
-                Version = transcribeItemEntity.Version
+                DateUpdated = transcribeItemEntity.DateUpdated
             };
         }
 
@@ -37,7 +37,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 EndTime = transcribeItem.EndTime,
                 TotalTime = transcribeItem.TotalTime,
                 DateCreated = transcribeItem.DateCreated,
-                Version = transcribeItem.Version
+                DateUpdated = transcribeItem.DateUpdated
             };
         }
     }

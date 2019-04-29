@@ -26,12 +26,12 @@ namespace RewriteMe.WebApi.Controllers
             _transcribeItemService = transcribeItemService;
         }
 
-        [HttpGet("/api/transcribe-items/{fileItemId}")]
+        [HttpGet("/api/transcribe-items/{fileItemId}/{updatedAfter}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
-        public async Task<ActionResult> GetAll(Guid fileItemId, int minimumVersion = 0)
+        public async Task<ActionResult> GetAll(Guid fileItemId, DateTime updatedAfter)
         {
-            var transcribeItems = await _transcribeItemService.GetAll(fileItemId, minimumVersion).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAll(fileItemId, updatedAfter).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }
@@ -50,11 +50,12 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {
+            var dateUpdated = DateTime.UtcNow;
             await _transcribeItemService
-                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, updateTranscribeItem.Version)
+                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated)
                 .ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(new OkDto(dateUpdated));
         }
     }
 }

@@ -23,11 +23,13 @@ namespace RewriteMe.Domain.Transcription
 
         public RecognitionState RecognitionState { get; set; }
 
-        public int Version { get; set; }
-
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }
+
+        public DateTime DateUpdated { get; set; }
+
+        public int AudioSourceVersion { get; set; }
 
         public IEnumerable<TranscribeItem> TranscribeItems { get; set; }
     }
