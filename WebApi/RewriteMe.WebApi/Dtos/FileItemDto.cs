@@ -1,5 +1,4 @@
 ﻿using System;
-using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.WebApi.Dtos
 {
@@ -13,7 +12,7 @@ namespace RewriteMe.WebApi.Dtos
 
         public string Language { get; set; }
 
-        public RecognitionState RecognitionState { get; set; }
+        public string RecognitionState { get; set; }
 
         public DateTime DateCreated { get; set; }
 

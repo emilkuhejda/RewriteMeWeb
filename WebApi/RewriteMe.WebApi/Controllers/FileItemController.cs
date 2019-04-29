@@ -46,7 +46,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(int minimumVersion = 0)
         {
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
             var files = await _fileItemService.GetAllAsync(userId, minimumVersion).ConfigureAwait(false);
 
             return Ok(files.Select(x => new FileItemDto
@@ -55,7 +55,7 @@ namespace RewriteMe.WebApi.Controllers
                 Name = x.Name,
                 FileName = x.FileName,
                 Language = x.Language,
-                RecognitionState = x.RecognitionState,
+                RecognitionState = x.RecognitionState.ToString(),
                 DateCreated = x.DateCreated,
                 DateProcessed = x.DateProcessed,
                 Version = x.Version
@@ -67,7 +67,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetFileItem")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
             var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
             return Ok(new FileItemDto
@@ -76,7 +76,7 @@ namespace RewriteMe.WebApi.Controllers
                 Name = file.Name,
                 FileName = file.FileName,
                 Language = file.Language,
-                RecognitionState = file.RecognitionState,
+                RecognitionState = file.RecognitionState.ToString(),
                 DateCreated = file.DateCreated,
                 DateProcessed = file.DateProcessed,
                 Version = file.Version
@@ -103,7 +103,7 @@ namespace RewriteMe.WebApi.Controllers
             if (!SupportedLanguages.IsSupported(createFileModel.Language))
                 return StatusCode(406);
 
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
 
             var fileToUpload = files[0];
             if (!fileToUpload.IsSupportedType())
@@ -112,7 +112,7 @@ namespace RewriteMe.WebApi.Controllers
             var fileItem = new FileItem
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.Parse(HttpContext.User.Identity.Name),
+                UserId = HttpContext.User.GetNameIdentifier(),
                 Name = createFileModel.Name,
                 FileName = fileToUpload.Name,
                 Language = createFileModel.Language,
@@ -153,12 +153,12 @@ namespace RewriteMe.WebApi.Controllers
             if (!SupportedLanguages.IsSupported(uploadFileModel.Language))
                 return StatusCode(406);
 
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
 
             var fileItem = new FileItem
             {
                 Id = uploadFileModel.FileItemId,
-                UserId = Guid.Parse(HttpContext.User.Identity.Name),
+                UserId = HttpContext.User.GetNameIdentifier(),
                 Name = uploadFileModel.Name,
                 Language = uploadFileModel.Language,
                 Version = uploadFileModel.FileItemVersion
@@ -195,7 +195,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "RemoveFileItem")]
         public async Task<IActionResult> Remove([FromRoute] string id)
         {
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
             var fileItemId = Guid.Parse(id);
 
             await _fileItemService.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
@@ -210,7 +210,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
         {
-            var userId = Guid.Parse(HttpContext.User.Identity.Name);
+            var userId = HttpContext.User.GetNameIdentifier();
             var fileItem = await _fileItemService.GetAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
             if (fileItem.RecognitionState != RecognitionState.Prepared)
