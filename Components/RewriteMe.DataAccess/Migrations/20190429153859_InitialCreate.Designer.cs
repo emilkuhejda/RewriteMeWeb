@@ -10,8 +10,8 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190412203557_AddVersionToEntities")]
-    partial class AddVersionToEntities
+    [Migration("20190429153859_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -76,9 +76,13 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("AudioSourceVersion");
+
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<DateTime?>("DateProcessed");
+
+                    b.Property<DateTime>("DateUpdated");
 
                     b.Property<string>("FileName")
                         .IsRequired()
@@ -95,8 +99,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<int>("RecognitionState");
 
                     b.Property<Guid>("UserId");
-
-                    b.Property<int>("Version");
 
                     b.HasKey("Id");
 
@@ -115,6 +117,8 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
+                    b.Property<DateTime>("DateUpdated");
+
                     b.Property<TimeSpan>("EndTime");
 
                     b.Property<Guid>("FileItemId");
@@ -128,8 +132,6 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<string>("UserTranscript");
 
-                    b.Property<int>("Version");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FileItemId");
@@ -142,25 +144,17 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<byte[]>("PasswordHash")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100);
 
-                    b.Property<byte[]>("PasswordSalt")
+                    b.Property<string>("FamilyName")
                         .IsRequired()
-                        .HasMaxLength(150);
+                        .HasMaxLength(100);
 
-                    b.Property<string>("Username")
+                    b.Property<string>("GivenName")
                         .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 
