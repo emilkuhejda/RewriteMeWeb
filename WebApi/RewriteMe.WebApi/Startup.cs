@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
+using RewriteMe.WebApi.Filters;
 using RewriteMe.WebApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -48,6 +49,7 @@ namespace RewriteMe.WebApi
                 });
 
                 configuration.EnableAnnotations();
+                configuration.OperationFilter<FormFileSwaggerFilter>();
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;

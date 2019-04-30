@@ -69,24 +69,20 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
-        [SwaggerOperation(OperationId = "CreateFileItem")]
+        [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Create([FromForm] CreateFileModel createFileModel)
+        public async Task<IActionResult> Create(string name, string language, string fileName, [FromForm]IFormFile file)
         {
-            var files = Request.Form.Files;
-            if (!files.Any())
+            if (file == null)
                 return BadRequest();
 
-            if (files.Count > 1)
-                return StatusCode(416);
-
-            if (!SupportedLanguages.IsSupported(createFileModel.Language))
+            if (!SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
 
             var userId = HttpContext.User.GetNameIdentifier();
 
-            var fileToUpload = files[0];
-            if (!fileToUpload.IsSupportedType())
+            var isSupported = await file.IsSupportedType();
+            if (!isSupported)
                 return StatusCode(415);
 
             var dateCreated = DateTime.UtcNow;
@@ -94,21 +90,21 @@ namespace RewriteMe.WebApi.Controllers
             {
                 Id = Guid.NewGuid(),
                 UserId = HttpContext.User.GetNameIdentifier(),
-                Name = createFileModel.Name,
-                FileName = fileToUpload.Name,
-                Language = createFileModel.Language,
+                Name = name,
+                FileName = fileName,
+                Language = language,
                 DateCreated = dateCreated,
                 DateUpdated = dateCreated,
                 AudioSourceVersion = 1
             };
 
-            var source = await fileToUpload.GetBytesAsync().ConfigureAwait(false);
+            var source = await file.GetBytesAsync().ConfigureAwait(false);
             var audioSource = new AudioSource
             {
                 Id = Guid.NewGuid(),
                 FileItemId = fileItem.Id,
                 OriginalSource = source,
-                ContentType = fileToUpload.ContentType,
+                ContentType = file.ContentType,
                 Version = fileItem.AudioSourceVersion
             };
 
@@ -128,41 +124,36 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Update([FromForm] UploadFileModel uploadFileModel)
+        public async Task<IActionResult> Update(Guid fileItemId, string name, string language, string fileName, [FromForm]IFormFile file = null)
         {
-            var files = Request.Form.Files;
-            if (files.Count > 1)
-                return StatusCode(416);
-
-            if (!SupportedLanguages.IsSupported(uploadFileModel.Language))
+            var isSupported = await file.IsSupportedType();
+            if (!isSupported)
                 return StatusCode(406);
 
             var userId = HttpContext.User.GetNameIdentifier();
 
             var fileItem = new FileItem
             {
-                Id = uploadFileModel.FileItemId,
+                Id = fileItemId,
                 UserId = HttpContext.User.GetNameIdentifier(),
-                Name = uploadFileModel.Name,
-                Language = uploadFileModel.Language,
+                Name = name,
+                Language = language,
                 DateUpdated = DateTime.UtcNow
             };
 
             AudioSourceDto audioSourceDto = null;
-            if (files.Any())
+            if (file != null)
             {
                 fileItem.AudioSourceVersion += 1;
+                fileItem.FileName = fileName;
 
-                var fileToUpoad = files.First();
-                fileItem.FileName = fileToUpoad.Name;
-
-                var source = await fileToUpoad.GetBytesAsync().ConfigureAwait(false);
+                var source = await file.GetBytesAsync().ConfigureAwait(false);
                 var audioSource = new AudioSource
                 {
                     FileItemId = fileItem.Id,
                     OriginalSource = source,
                     WavSource = null,
-                    ContentType = fileToUpoad.ContentType,
+                    ContentType = file.ContentType,
                     TotalTime = default(TimeSpan),
                     Version = fileItem.AudioSourceVersion
                 };

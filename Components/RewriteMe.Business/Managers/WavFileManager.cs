@@ -49,9 +49,6 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunConversionToWavAsync(AudioSource audioSource)
         {
-            if (!audioSource.IsSupportedType())
-                throw new InvalidOperationException("File type is not supported");
-
             await _fileItemService.UpdateRecognitionStateAsync(audioSource.FileItemId, RecognitionState.Converting).ConfigureAwait(false);
 
             var wavFile = audioSource.IsWav()
