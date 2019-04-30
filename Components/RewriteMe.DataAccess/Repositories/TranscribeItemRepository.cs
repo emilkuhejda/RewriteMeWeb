@@ -42,6 +42,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => new
                     {
                         x.Id,
+                        x.FileItemId,
                         x.Alternatives,
                         x.UserTranscript,
                         x.StartTime,
@@ -57,6 +58,7 @@ namespace RewriteMe.DataAccess.Repositories
                 return transcribeItemEntities.Select(x => new TranscribeItem
                 {
                     Id = x.Id,
+                    FileItemId = x.FileItemId,
                     Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
                     UserTranscript = x.UserTranscript,
                     StartTime = x.StartTime,
