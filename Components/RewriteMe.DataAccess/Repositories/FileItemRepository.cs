@@ -104,6 +104,21 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.Language = language;
+                entity.DateUpdated = DateTime.UtcNow;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task UpdateAsync(FileItem fileItem)
         {
             using (var context = _contextFactory.Create())
@@ -135,6 +150,8 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 fileItemEntity.RecognitionState = recognitionState;
+                fileItemEntity.DateUpdated = DateTime.UtcNow;
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -148,6 +165,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 fileItemEntity.DateProcessed = DateTime.UtcNow;
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

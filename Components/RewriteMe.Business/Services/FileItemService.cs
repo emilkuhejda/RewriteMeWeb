@@ -52,6 +52,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        {
+            await _fileItemRepository.UpdateLanguageAsync(fileItemId, language).ConfigureAwait(false);
+        }
+
         public async Task UpdateAsync(FileItem fileItem)
         {
             await _fileItemRepository.UpdateAsync(fileItem).ConfigureAwait(false);

@@ -22,6 +22,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task RemoveAsync(Guid userId, Guid fileItemId);
 
+        Task UpdateLanguageAsync(Guid fileItemId, string language);
+
         Task UpdateAsync(FileItem fileItem);
 
         Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
