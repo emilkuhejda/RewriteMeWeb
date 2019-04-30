@@ -7,13 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain;
-using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
-using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
@@ -44,10 +42,10 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetFileItems")]
-        public async Task<IActionResult> Get(DateTime updatedAfter)
+        public async Task<IActionResult> Get(DateTimeOffset updatedAfter)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var files = await _fileItemService.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
+            var files = await _fileItemService.GetAllAsync(userId, updatedAfter.DateTime).ConfigureAwait(false);
 
             return Ok(files.Select(x => x.ToDto()));
         }
@@ -188,19 +186,19 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
-        public async Task<IActionResult> Transcribe([FromBody] TranscribeFileItemModel transcribeFileItemModel)
+        public async Task<IActionResult> Transcribe(Guid fileItemId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var fileItem = await _fileItemService.GetAsync(userId, transcribeFileItemModel.FileItemId).ConfigureAwait(false);
 
-            if (fileItem.RecognitionState != RecognitionState.Prepared)
+            var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
+            if (!fileItemExists)
                 return BadRequest();
 
-            var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(fileItem, userId).ConfigureAwait(false);
+            var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId, fileItemId).ConfigureAwait(false);
             if (!canRunRecognition)
                 return StatusCode(403);
 
-            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(fileItem, userId));
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
             return Ok(new OkDto());
         }

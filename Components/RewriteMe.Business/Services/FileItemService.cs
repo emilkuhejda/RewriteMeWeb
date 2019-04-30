@@ -17,6 +17,11 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
+        public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
+        {
+            return await _fileItemRepository.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
             return await _fileItemRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
@@ -25,6 +30,11 @@ namespace RewriteMe.Business.Services
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
+        public FileItem Get(Guid userId, Guid fileItemId)
+        {
+            return _fileItemRepository.Get(userId, fileItemId);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)

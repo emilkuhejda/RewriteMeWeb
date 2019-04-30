@@ -20,6 +20,14 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
+        public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems.AnyAsync(x => x.UserId == userId && x.Id == fileItemId).ConfigureAwait(false);
+            }
+        }
+
         public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
@@ -42,6 +50,18 @@ namespace RewriteMe.DataAccess.Repositories
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId)
                     .ConfigureAwait(false);
+
+                return fileItem?.ToFileItem();
+            }
+        }
+
+        public FileItem Get(Guid userId, Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = context.FileItems
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.Id == fileItemId && x.UserId == userId);
 
                 return fileItem?.ToFileItem();
             }

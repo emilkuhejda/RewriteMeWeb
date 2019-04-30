@@ -8,9 +8,13 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IFileItemService
     {
+        Task<bool> ExistsAsync(Guid userId, Guid fileItemId);
+
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter);
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
+
+        FileItem Get(Guid userId, Guid fileItemId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
