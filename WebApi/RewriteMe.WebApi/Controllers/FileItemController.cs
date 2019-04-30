@@ -68,7 +68,6 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Create(string name, string language, string fileName, [FromForm]IFormFile file)
@@ -121,7 +120,6 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPut("/api/files/update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status416RangeNotSatisfiable)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Update(Guid fileItemId, string name, string language, string fileName, [FromForm]IFormFile file = null)
