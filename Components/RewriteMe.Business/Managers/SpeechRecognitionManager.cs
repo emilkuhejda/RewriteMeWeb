@@ -50,13 +50,26 @@ namespace RewriteMe.Business.Managers
 
         public void RunRecognition(Guid userId, Guid fileItemId)
         {
-            var fileItem = _fileItemService.Get(userId, fileItemId);
+            AsyncHelper.RunSync(() => RunRecognitionAsync(userId, fileItemId));
+        }
 
-            _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId);
+        private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
+        {
+            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+
+            await _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             if (fileItem.RecognitionState < RecognitionState.Prepared)
             {
                 var message = $"File with ID: '{fileItem.Id}' is stil converting. Speech recognition is stopped.";
-                _applicationLogService.ErrorAsync(message, userId);
+                await _applicationLogService.ErrorAsync(message, userId).ConfigureAwait(false);
+                throw new InvalidOperationException(message);
+            }
+
+            var canRunRecognition = await CanRunRecognition(fileItem.UserId, fileItem.Id).ConfigureAwait(false);
+            if (!canRunRecognition)
+            {
+                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription.";
+                await _applicationLogService.ErrorAsync(message, fileItem.UserId).ConfigureAwait(false);
                 throw new InvalidOperationException(message);
             }
 
@@ -65,20 +78,18 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId);
-
-                AsyncHelper.RunSync(() => RunRecognitionAsync(fileItem));
-
-                _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId);
+                await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId);
+                await RunRecognitionInternalAsync(fileItem);
+                await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             }
             catch
             {
-                _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: '{fileItem.Id}'.", userId);
+                await _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
                 throw;
             }
         }
 
-        private async Task RunRecognitionAsync(FileItem fileItem)
+        private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress).ConfigureAwait(false);
 

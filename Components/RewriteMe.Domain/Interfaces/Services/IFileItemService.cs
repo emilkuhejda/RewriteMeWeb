@@ -14,13 +14,13 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
-        FileItem Get(Guid userId, Guid fileItemId);
-
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(FileItem fileItem);
 
         Task RemoveAsync(Guid userId, Guid fileItemId);
+
+        Task UpdateLanguageAsync(Guid fileItemId, string language);
 
         Task UpdateAsync(FileItem fileItem);
 

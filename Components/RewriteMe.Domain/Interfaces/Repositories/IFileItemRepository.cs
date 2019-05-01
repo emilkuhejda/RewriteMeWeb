@@ -14,18 +14,20 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
-        FileItem Get(Guid userId, Guid fileItemId);
-
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(FileItem fileItem);
 
         Task RemoveAsync(Guid userId, Guid fileItemId);
 
+        Task UpdateLanguageAsync(Guid fileItemId, string language);
+
         Task UpdateAsync(FileItem fileItem);
 
         Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
 
         Task UpdateDateProcessedAsync(Guid fileItemId);
+
+        Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId);
     }
 }

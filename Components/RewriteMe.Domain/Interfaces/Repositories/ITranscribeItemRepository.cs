@@ -16,7 +16,5 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
 
         Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated);
-
-        Task<TimeSpan> GetTranscriptTotalSeconds(Guid userId);
     }
 }
