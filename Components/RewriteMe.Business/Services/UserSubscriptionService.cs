@@ -9,14 +9,14 @@ namespace RewriteMe.Business.Services
     public class UserSubscriptionService : IUserSubscriptionService
     {
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
-        private readonly ITranscribeItemRepository _transcribeItemRepository;
+        private readonly IFileItemRepository _fileItemRepository;
 
         public UserSubscriptionService(
             IUserSubscriptionRepository userSubscriptionRepository,
-            ITranscribeItemRepository transcribeItemRepository)
+            IFileItemRepository fileItemRepository)
         {
             _userSubscriptionRepository = userSubscriptionRepository;
-            _transcribeItemRepository = transcribeItemRepository;
+            _fileItemRepository = fileItemRepository;
         }
 
         public async Task AddAsync(UserSubscription userSubscription)
@@ -27,9 +27,9 @@ namespace RewriteMe.Business.Services
         public async Task<TimeSpan> GetRemainingTime(Guid userId)
         {
             var totalSubscriptionTime = await _userSubscriptionRepository.GetTotalSubscriptionTime(userId).ConfigureAwait(false);
-            var transcriptTotalSeconds = await _transcribeItemRepository.GetTranscriptTotalSeconds(userId).ConfigureAwait(false);
+            var transcribedTotalSeconds = await _fileItemRepository.GetTranscribedTotalSeconds(userId).ConfigureAwait(false);
 
-            return totalSubscriptionTime.Subtract(transcriptTotalSeconds);
+            return totalSubscriptionTime.Subtract(transcribedTotalSeconds);
         }
     }
 }

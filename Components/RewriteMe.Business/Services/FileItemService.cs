@@ -32,11 +32,6 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public FileItem Get(Guid userId, Guid fileItemId)
-        {
-            return _fileItemRepository.Get(userId, fileItemId);
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);

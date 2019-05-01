@@ -55,18 +55,6 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public FileItem Get(Guid userId, Guid fileItemId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var fileItem = context.FileItems
-                    .AsNoTracking()
-                    .FirstOrDefault(x => x.Id == fileItemId && x.UserId == userId);
-
-                return fileItem?.ToFileItem();
-            }
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -167,6 +155,22 @@ namespace RewriteMe.DataAccess.Repositories
                 fileItemEntity.DateProcessed = DateTime.UtcNow;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var totalTicks = await context.FileItems
+                    .Include(x => x.AudioSource)
+                    .Where(x => x.UserId == userId)
+                    .Where(x => x.RecognitionState > RecognitionState.Prepared)
+                    .Select(x => x.AudioSource.TotalTime)
+                    .SumAsync(x => x.Ticks)
+                    .ConfigureAwait(false);
+
+                return TimeSpan.FromTicks(totalTicks);
             }
         }
     }
