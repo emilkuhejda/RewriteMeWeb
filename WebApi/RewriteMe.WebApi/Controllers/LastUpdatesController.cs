@@ -16,33 +16,35 @@ namespace RewriteMe.WebApi.Controllers
     public class LastUpdatesController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
-        private readonly IAudioSourceService _audioSourceService;
         private readonly ITranscribeItemService _transcribeItemService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
 
         public LastUpdatesController(
             IFileItemService fileItemService,
-            IAudioSourceService audioSourceService,
-            ITranscribeItemService transcribeItemService)
+            ITranscribeItemService transcribeItemService,
+            IUserSubscriptionService userSubscriptionService)
         {
             _fileItemService = fileItemService;
-            _audioSourceService = audioSourceService;
             _transcribeItemService = transcribeItemService;
+            _userSubscriptionService = userSubscriptionService;
         }
 
-        [HttpGet("/api/lastUpdates")]
+        [HttpGet("/api/last-updates")]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {
             var userId = HttpContext.User.GetNameIdentifier();
 
-            var fileItemLastVersion = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
-            var transcribeItemLastVersion = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
 
             return Ok(new LastUpdatesDto
             {
-                FileItem = fileItemLastVersion,
-                TranscribeItem = transcribeItemLastVersion
+                FileItem = fileItemLastUpdate,
+                TranscribeItem = transcribeItemLastUpdate,
+                UserSubscription = userSubscriptionUpdate
             });
         }
     }

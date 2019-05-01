@@ -1,6 +1,7 @@
 ﻿using RewriteMe.Domain.Transcription;
+using RewriteMe.WebApi.Dtos;
 
-namespace RewriteMe.WebApi.Dtos
+namespace RewriteMe.WebApi.Extensions
 {
     public static class FileItemExtensions
     {

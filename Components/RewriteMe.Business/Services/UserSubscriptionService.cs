@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -17,6 +18,16 @@ namespace RewriteMe.Business.Services
         {
             _userSubscriptionRepository = userSubscriptionRepository;
             _fileItemRepository = fileItemRepository;
+        }
+
+        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        {
+            return await _userSubscriptionRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
+        }
+
+        public async Task<DateTime> GetLastUpdateAsync(Guid userId)
+        {
+            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(UserSubscription userSubscription)
