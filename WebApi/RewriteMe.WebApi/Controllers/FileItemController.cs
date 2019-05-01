@@ -73,14 +73,14 @@ namespace RewriteMe.WebApi.Controllers
             if (file == null)
                 return BadRequest();
 
-            if (!SupportedLanguages.IsSupported(language))
+            if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
-
-            var userId = HttpContext.User.GetNameIdentifier();
 
             var isSupported = await file.IsSupportedType();
             if (!isSupported)
                 return StatusCode(415);
+
+            var userId = HttpContext.User.GetNameIdentifier();
 
             var dateCreated = DateTime.UtcNow;
             var fileItem = new FileItem
@@ -118,13 +118,17 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPut("/api/files/update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Update(Guid fileItemId, string name, string language, string fileName, [FromForm]IFormFile file = null)
         {
+            if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
+                return StatusCode(406);
+
             var isSupported = await file.IsSupportedType();
             if (!isSupported)
-                return StatusCode(406);
+                return StatusCode(415);
 
             var userId = HttpContext.User.GetNameIdentifier();
 
@@ -185,8 +189,9 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
-        public async Task<IActionResult> Transcribe(Guid fileItemId)
+        public async Task<IActionResult> Transcribe(Guid fileItemId, string language)
         {
             var userId = HttpContext.User.GetNameIdentifier();
 
@@ -194,9 +199,14 @@ namespace RewriteMe.WebApi.Controllers
             if (!fileItemExists)
                 return BadRequest();
 
+            if (!SupportedLanguages.IsSupported(language))
+                return StatusCode(406);
+
             var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId, fileItemId).ConfigureAwait(false);
             if (!canRunRecognition)
                 return StatusCode(403);
+
+            await _fileItemService.UpdateLanguageAsync(fileItemId, language).ConfigureAwait(false);
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 

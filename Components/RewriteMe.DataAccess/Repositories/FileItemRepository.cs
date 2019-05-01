@@ -55,18 +55,6 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public FileItem Get(Guid userId, Guid fileItemId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var fileItem = context.FileItems
-                    .AsNoTracking()
-                    .FirstOrDefault(x => x.Id == fileItemId && x.UserId == userId);
-
-                return fileItem?.ToFileItem();
-            }
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -104,6 +92,21 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.Language = language;
+                entity.DateUpdated = DateTime.UtcNow;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task UpdateAsync(FileItem fileItem)
         {
             using (var context = _contextFactory.Create())
@@ -135,6 +138,8 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 fileItemEntity.RecognitionState = recognitionState;
+                fileItemEntity.DateUpdated = DateTime.UtcNow;
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -148,7 +153,24 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 fileItemEntity.DateProcessed = DateTime.UtcNow;
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var totalTicks = await context.FileItems
+                    .Include(x => x.AudioSource)
+                    .Where(x => x.UserId == userId)
+                    .Where(x => x.RecognitionState > RecognitionState.Prepared)
+                    .Select(x => x.AudioSource.TotalTime)
+                    .SumAsync(x => x.Ticks)
+                    .ConfigureAwait(false);
+
+                return TimeSpan.FromTicks(totalTicks);
             }
         }
     }

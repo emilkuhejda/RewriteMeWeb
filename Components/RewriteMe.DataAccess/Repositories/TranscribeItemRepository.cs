@@ -42,6 +42,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => new
                     {
                         x.Id,
+                        x.FileItemId,
                         x.Alternatives,
                         x.UserTranscript,
                         x.StartTime,
@@ -57,6 +58,7 @@ namespace RewriteMe.DataAccess.Repositories
                 return transcribeItemEntities.Select(x => new TranscribeItem
                 {
                     Id = x.Id,
+                    FileItemId = x.FileItemId,
                     Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
                     UserTranscript = x.UserTranscript,
                     StartTime = x.StartTime,
@@ -101,20 +103,6 @@ namespace RewriteMe.DataAccess.Repositories
                 transcribeItemEntity.UserTranscript = transcript;
                 transcribeItemEntity.DateUpdated = dateUpdated;
                 await context.SaveChangesAsync().ConfigureAwait(false);
-            }
-        }
-
-        public async Task<TimeSpan> GetTranscriptTotalSeconds(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var totalTicks = await context.TranscribeItems
-                    .Where(x => x.FileItem.UserId == userId)
-                    .Select(x => x.TotalTime)
-                    .SumAsync(x => x.Ticks)
-                    .ConfigureAwait(false);
-
-                return TimeSpan.FromTicks(totalTicks);
             }
         }
     }

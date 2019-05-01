@@ -32,11 +32,6 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public FileItem Get(Guid userId, Guid fileItemId)
-        {
-            return _fileItemRepository.Get(userId, fileItemId);
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
@@ -50,6 +45,11 @@ namespace RewriteMe.Business.Services
         public async Task RemoveAsync(Guid userId, Guid fileItemId)
         {
             await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        {
+            await _fileItemRepository.UpdateLanguageAsync(fileItemId, language).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(FileItem fileItem)
