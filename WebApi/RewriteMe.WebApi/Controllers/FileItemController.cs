@@ -76,9 +76,15 @@ namespace RewriteMe.WebApi.Controllers
             if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
 
-            var isSupported = await file.IsSupportedType();
-            if (!isSupported)
+            TimeSpan totalTime;
+            try
+            {
+                totalTime = await file.GetTotalTime();
+            }
+            catch (Exception)
+            {
                 return StatusCode(415);
+            }
 
             var userId = HttpContext.User.GetNameIdentifier();
 
@@ -90,6 +96,7 @@ namespace RewriteMe.WebApi.Controllers
                 Name = name,
                 FileName = fileName,
                 Language = language,
+                TotalTime = totalTime,
                 DateCreated = dateCreated,
                 DateUpdated = dateCreated,
                 AudioSourceVersion = 1
@@ -126,10 +133,6 @@ namespace RewriteMe.WebApi.Controllers
             if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
 
-            var isSupported = await file.IsSupportedType();
-            if (!isSupported)
-                return StatusCode(415);
-
             var userId = HttpContext.User.GetNameIdentifier();
 
             var fileItem = new FileItem
@@ -144,8 +147,19 @@ namespace RewriteMe.WebApi.Controllers
             AudioSourceDto audioSourceDto = null;
             if (file != null)
             {
+                TimeSpan totalTime;
+                try
+                {
+                    totalTime = await file.GetTotalTime();
+                }
+                catch (Exception)
+                {
+                    return StatusCode(415);
+                }
+
                 fileItem.AudioSourceVersion += 1;
                 fileItem.FileName = fileName;
+                fileItem.TotalTime = totalTime;
 
                 var source = await file.GetBytesAsync().ConfigureAwait(false);
                 var audioSource = new AudioSource

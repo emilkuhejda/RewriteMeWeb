@@ -8,21 +8,15 @@ namespace RewriteMe.WebApi.Extensions
 {
     public static class FormFileExtensions
     {
-        public static async Task<bool> IsSupportedType(this IFormFile formFile)
+        public static async Task<TimeSpan> GetTotalTime(this IFormFile formFile)
         {
-            try
-            {
-                var source = await formFile.GetBytesAsync().ConfigureAwait(false);
-                var inputFile = Path.GetTempFileName();
-                await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
+            var source = await formFile.GetBytesAsync().ConfigureAwait(false);
+            var inputFile = Path.GetTempFileName();
+            await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
 
-                var reader = new MediaFoundationReader(inputFile);
-                reader.Dispose();
-                return true;
-            }
-            catch (Exception)
+            using (var reader = new MediaFoundationReader(inputFile))
             {
-                return false;
+                return reader.TotalTime;
             }
         }
 
