@@ -8,7 +8,7 @@ namespace RewriteMe.WebApi.Dtos
 
         public Guid UserId { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string TimeString { get; set; }
 
         public DateTime DateCreated { get; set; }
     }

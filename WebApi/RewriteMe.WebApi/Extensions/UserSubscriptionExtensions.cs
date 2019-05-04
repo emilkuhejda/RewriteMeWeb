@@ -11,7 +11,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Id = userSubscription.Id,
                 UserId = userSubscription.UserId,
-                Time = userSubscription.Time,
+                TimeString = userSubscription.Time.ToString(),
                 DateCreated = userSubscription.DateCreated
             };
         }
