@@ -67,6 +67,7 @@ namespace RewriteMe.Business.Services
                 {
                     Id = Guid.NewGuid(),
                     FileItemId = fileItemId,
+                    ApplicationId = _appSettings.ApplicationId,
                     Alternatives = alternatives,
                     Source = source,
                     StartTime = wavPartialFile.StartTime,

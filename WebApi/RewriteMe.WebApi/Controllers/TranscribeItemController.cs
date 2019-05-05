@@ -29,10 +29,10 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/transcribe-items-all")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
-        public async Task<ActionResult> GetAll(DateTimeOffset updatedAfter)
+        public async Task<ActionResult> GetAll(DateTimeOffset updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeItems = await _transcribeItemService.GetAll(userId, updatedAfter.DateTime).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAllAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }
@@ -42,7 +42,7 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
-            var transcribeItem = await _transcribeItemService.Get(transcribeItemId).ConfigureAwait(false);
+            var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
             return new FileContentResult(transcribeItem.Source, "audio/wav");
         }
 
@@ -53,7 +53,7 @@ namespace RewriteMe.WebApi.Controllers
         {
             var dateUpdated = DateTime.UtcNow;
             await _transcribeItemService
-                .UpdateUserTranscript(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated)
+                .UpdateUserTranscriptAsync(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated, updateTranscribeItem.ApplicationId)
                 .ConfigureAwait(false);
 
             return Ok(new OkDto(dateUpdated));

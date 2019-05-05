@@ -16,14 +16,14 @@ namespace RewriteMe.Business.Services
             _transcribeItemRepository = transcribeItemRepository;
         }
 
-        public async Task<TranscribeItem> Get(Guid transcribeItemId)
+        public async Task<TranscribeItem> GetAsync(Guid transcribeItemId)
         {
-            return await _transcribeItemRepository.Get(transcribeItemId).ConfigureAwait(false);
+            return await _transcribeItemRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid fileItemId, DateTime updatedAfter)
+        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid fileItemId, DateTime updatedAfter, Guid applicationId)
         {
-            return await _transcribeItemRepository.GetAll(fileItemId, updatedAfter).ConfigureAwait(false);
+            return await _transcribeItemRepository.GetAllAsync(fileItemId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
@@ -36,9 +36,9 @@ namespace RewriteMe.Business.Services
             await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
         }
 
-        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated)
+        public async Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId)
         {
-            await _transcribeItemRepository.UpdateUserTranscript(transcribeItemId, transcript, dateUpdated).ConfigureAwait(false);
+            await _transcribeItemRepository.UpdateUserTranscriptAsync(transcribeItemId, transcript, dateUpdated, applicationId).ConfigureAwait(false);
         }
     }
 }
