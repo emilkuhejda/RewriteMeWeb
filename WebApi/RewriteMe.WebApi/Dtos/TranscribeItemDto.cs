@@ -16,11 +16,11 @@ namespace RewriteMe.WebApi.Dtos
 
         public byte[] Source { get; set; }
 
-        public TimeSpan StartTime { get; set; }
+        public string StartTimeString { get; set; }
 
-        public TimeSpan EndTime { get; set; }
+        public string EndTimeString { get; set; }
 
-        public TimeSpan TotalTime { get; set; }
+        public string TotalTimeString { get; set; }
 
         public DateTime DateCreated { get; set; }
 

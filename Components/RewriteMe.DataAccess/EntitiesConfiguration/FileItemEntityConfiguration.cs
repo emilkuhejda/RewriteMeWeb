@@ -16,6 +16,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.FileName).IsRequired().HasMaxLength(150);
             builder.Property(x => x.Language).HasMaxLength(20);
             builder.Property(x => x.RecognitionState).IsRequired();
+            builder.Property(x => x.TotalTime).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
             builder.Property(x => x.DateUpdated).IsRequired();
             builder.Property(x => x.AudioSourceVersion).IsRequired();

@@ -1,6 +1,7 @@
 ﻿using RewriteMe.Domain.Transcription;
+using RewriteMe.WebApi.Dtos;
 
-namespace RewriteMe.WebApi.Dtos
+namespace RewriteMe.WebApi.Extensions
 {
     public static class FileItemExtensions
     {
@@ -12,7 +13,8 @@ namespace RewriteMe.WebApi.Dtos
                 Name = fileItem.Name,
                 FileName = fileItem.FileName,
                 Language = fileItem.Language,
-                RecognitionState = fileItem.RecognitionState.ToString(),
+                RecognitionStateString = fileItem.RecognitionState.ToString(),
+                TotalTimeString = fileItem.TotalTime.ToString(),
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
