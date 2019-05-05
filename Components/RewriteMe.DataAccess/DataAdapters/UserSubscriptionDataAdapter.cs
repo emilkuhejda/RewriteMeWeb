@@ -3,7 +3,7 @@ using RewriteMe.Domain.Settings;
 
 namespace RewriteMe.DataAccess.DataAdapters
 {
-    public static class UserEntityDataAdapter
+    public static class UserSubscriptionDataAdapter
     {
         public static UserSubscription ToUserSubscription(this UserSubscriptionEntity entity)
         {
@@ -11,6 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
+                ApplicationId = entity.ApplicationId,
                 Time = entity.Time,
                 DateCreated = entity.DateCreated
             };
@@ -22,6 +23,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = userSubscription.Id,
                 UserId = userSubscription.UserId,
+                ApplicationId = userSubscription.ApplicationId,
                 Time = userSubscription.Time,
                 DateCreated = userSubscription.DateCreated
             };

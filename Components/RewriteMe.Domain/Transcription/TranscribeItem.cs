@@ -9,6 +9,8 @@ namespace RewriteMe.Domain.Transcription
 
         public Guid FileItemId { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
         public IEnumerable<RecognitionAlternative> Alternatives { get; set; }
 
         public string UserTranscript { get; set; }
