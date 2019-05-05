@@ -22,9 +22,9 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
-            return await _fileItemRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
+            return await _fileItemRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
@@ -47,9 +47,9 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)
         {
-            await _fileItemRepository.UpdateLanguageAsync(fileItemId, language).ConfigureAwait(false);
+            await _fileItemRepository.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync(FileItem fileItem)
@@ -57,14 +57,14 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateAsync(fileItem).ConfigureAwait(false);
         }
 
-        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
         {
-            await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState);
+            await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
         }
 
-        public async Task UpdateDateProcessedAsync(Guid fileItemId)
+        public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)
         {
-            await _fileItemRepository.UpdateDateProcessedAsync(fileItemId);
+            await _fileItemRepository.UpdateDateProcessedAsync(fileItemId, applicationId).ConfigureAwait(false);
         }
     }
 }
