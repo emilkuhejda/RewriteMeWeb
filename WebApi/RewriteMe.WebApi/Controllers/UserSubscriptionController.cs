@@ -28,10 +28,10 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/subscriptions")]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
-        public async Task<IActionResult> GetAll(DateTimeOffset updatedAfter)
+        public async Task<IActionResult> GetAll(DateTimeOffset updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId, updatedAfter.DateTime).ConfigureAwait(false);
+            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
 
             return Ok(userSubscriptions.Select(x => x.ToDto()));
         }
