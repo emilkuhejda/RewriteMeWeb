@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers
             if (userAlreadyExists)
             {
                 await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.");
-                return Ok(new OkDto());
+                return Ok(new UserSubscriptionDto { Id = Guid.Empty });
             }
 
             await _userService.AddAsync(user).ConfigureAwait(false);
