@@ -37,7 +37,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId == applicationId)
+                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .Select(x => new
                     {
