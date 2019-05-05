@@ -12,7 +12,9 @@ namespace RewriteMe.WebApi.Dtos
 
         public string Language { get; set; }
 
-        public string RecognitionState { get; set; }
+        public string RecognitionStateString { get; set; }
+
+        public string TotalTimeString { get; set; }
 
         public DateTime DateCreated { get; set; }
 
