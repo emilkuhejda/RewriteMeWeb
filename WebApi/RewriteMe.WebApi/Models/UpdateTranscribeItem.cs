@@ -6,6 +6,8 @@ namespace RewriteMe.WebApi.Models
     {
         public Guid TranscribeItemId { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
         public string Transcript { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = fileItemEntity.Id,
                 UserId = fileItemEntity.UserId,
+                ApplicationId = fileItemEntity.ApplicationId,
                 Name = fileItemEntity.Name,
                 FileName = fileItemEntity.FileName,
                 Language = fileItemEntity.Language,
@@ -29,6 +30,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = fileItem.Id,
                 UserId = fileItem.UserId,
+                ApplicationId = fileItem.ApplicationId,
                 Name = fileItem.Name,
                 FileName = fileItem.FileName,
                 Language = fileItem.Language,

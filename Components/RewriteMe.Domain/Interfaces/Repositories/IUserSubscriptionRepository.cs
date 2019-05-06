@@ -7,7 +7,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IUserSubscriptionRepository
     {
-        Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter);
+        Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 

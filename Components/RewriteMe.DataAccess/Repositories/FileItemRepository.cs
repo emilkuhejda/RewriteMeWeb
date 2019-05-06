@@ -28,12 +28,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
                 var fileItems = await context.FileItems
-                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter)
+                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -92,7 +92,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateLanguageAsync(Guid fileItemId, string language)
+        public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -100,6 +100,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return;
 
+                entity.ApplicationId = applicationId;
                 entity.Language = language;
                 entity.DateUpdated = DateTime.UtcNow;
 
@@ -115,6 +116,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return;
 
+                entity.ApplicationId = fileItem.ApplicationId;
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
                 entity.DateUpdated = fileItem.DateUpdated;
@@ -129,7 +131,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -137,6 +139,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (fileItemEntity == null)
                     return;
 
+                fileItemEntity.ApplicationId = applicationId;
                 fileItemEntity.RecognitionState = recognitionState;
                 fileItemEntity.DateUpdated = DateTime.UtcNow;
 
@@ -144,7 +147,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateDateProcessedAsync(Guid fileItemId)
+        public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -152,7 +155,9 @@ namespace RewriteMe.DataAccess.Repositories
                 if (fileItemEntity == null)
                     return;
 
+                fileItemEntity.ApplicationId = applicationId;
                 fileItemEntity.DateProcessed = DateTime.UtcNow;
+                fileItemEntity.DateUpdated = DateTime.UtcNow;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

@@ -19,7 +19,7 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<TranscribeItem> Get(Guid transcribeItemId)
+        public async Task<TranscribeItem> GetAsync(Guid transcribeItemId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -32,12 +32,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAll(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter)
+                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .Select(x => new
                     {
@@ -92,7 +92,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated)
+        public async Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -100,6 +100,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (transcribeItemEntity == null)
                     return;
 
+                transcribeItemEntity.ApplicationId = applicationId;
                 transcribeItemEntity.UserTranscript = transcript;
                 transcribeItemEntity.DateUpdated = dateUpdated;
                 await context.SaveChangesAsync().ConfigureAwait(false);

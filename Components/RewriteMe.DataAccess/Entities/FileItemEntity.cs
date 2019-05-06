@@ -10,6 +10,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public Guid UserId { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
         public string Name { get; set; }
 
         public string FileName { get; set; }
