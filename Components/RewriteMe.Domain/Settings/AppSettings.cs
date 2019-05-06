@@ -1,7 +1,11 @@
-﻿namespace RewriteMe.Domain.Settings
+﻿using System;
+
+namespace RewriteMe.Domain.Settings
 {
     public class AppSettings
     {
+        public Guid ApplicationId { get; set; }
+
         public string ConnectionString { get; set; }
 
         public Authentication Authentication { get; set; }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Business.Managers
@@ -20,6 +22,7 @@ namespace RewriteMe.Business.Managers
         private readonly IWavFileService _wavFileService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly AppSettings _appSettings;
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
@@ -28,7 +31,8 @@ namespace RewriteMe.Business.Managers
             ITranscribeItemService transcribeItemService,
             IWavFileService wavFileService,
             IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+            IApplicationLogService applicationLogService,
+            IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
@@ -37,6 +41,7 @@ namespace RewriteMe.Business.Managers
             _wavFileService = wavFileService;
             _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _appSettings = options.Value;
         }
 
         public async Task<bool> CanRunRecognition(Guid userId, Guid fileItemId)
@@ -91,7 +96,7 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress).ConfigureAwait(false);
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
             var audioSource = _audioSourceService.GetAudioSource(fileItem.Id);
             var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
@@ -102,8 +107,8 @@ namespace RewriteMe.Business.Managers
                 var transcribeItems = await _speechRecognitionService.Recognize(fileItem, files).ConfigureAwait(false);
                 await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
 
-                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
-                await _fileItemService.UpdateDateProcessedAsync(fileItem.Id).ConfigureAwait(false);
+                await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);
             }
             finally
             {

@@ -20,9 +20,9 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
-        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
-            return await _userSubscriptionRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
+            return await _userSubscriptionRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)

@@ -10,7 +10,7 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<bool> ExistsAsync(Guid userId, Guid fileItemId);
 
-        Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter);
+        Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
@@ -20,12 +20,12 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task RemoveAsync(Guid userId, Guid fileItemId);
 
-        Task UpdateLanguageAsync(Guid fileItemId, string language);
+        Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 
         Task UpdateAsync(FileItem fileItem);
 
-        Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
+        Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId);
 
-        Task UpdateDateProcessedAsync(Guid fileItemId);
+        Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId);
     }
 }

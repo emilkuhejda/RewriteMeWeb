@@ -13,6 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = transcribeItemEntity.Id,
                 FileItemId = transcribeItemEntity.FileItemId,
+                ApplicationId = transcribeItemEntity.ApplicationId,
                 Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(transcribeItemEntity.Alternatives),
                 UserTranscript = transcribeItemEntity.UserTranscript,
                 Source = transcribeItemEntity.Source,
@@ -30,6 +31,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = transcribeItem.Id,
                 FileItemId = transcribeItem.FileItemId,
+                ApplicationId = transcribeItem.ApplicationId,
                 Alternatives = JsonConvert.SerializeObject(transcribeItem.Alternatives),
                 UserTranscript = transcribeItem.UserTranscript,
                 Source = transcribeItem.Source,

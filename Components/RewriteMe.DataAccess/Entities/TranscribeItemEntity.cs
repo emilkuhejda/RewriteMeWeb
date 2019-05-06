@@ -8,6 +8,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public Guid FileItemId { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
         public string Alternatives { get; set; }
 
         public string UserTranscript { get; set; }

@@ -7,14 +7,14 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ITranscribeItemService
     {
-        Task<TranscribeItem> Get(Guid transcribeItemId);
+        Task<TranscribeItem> GetAsync(Guid transcribeItemId);
 
-        Task<IEnumerable<TranscribeItem>> GetAll(Guid userId, DateTime updatedAfter);
+        Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
 
-        Task UpdateUserTranscript(Guid transcribeItemId, string transcript, DateTime dateUpdated);
+        Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId);
     }
 }

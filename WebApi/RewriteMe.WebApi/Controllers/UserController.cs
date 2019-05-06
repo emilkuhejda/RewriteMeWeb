@@ -34,7 +34,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("/api/users/register")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers
             if (userAlreadyExists)
             {
                 await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.");
-                return Ok(new OkDto());
+                return Ok(new UserSubscriptionDto { Id = Guid.Empty });
             }
 
             await _userService.AddAsync(user).ConfigureAwait(false);
@@ -55,6 +55,7 @@ namespace RewriteMe.WebApi.Controllers
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
+                ApplicationId = registerUserModel.ApplicationId,
                 Time = TimeSpan.FromMinutes(5),
                 DateCreated = DateTime.UtcNow
             };
@@ -62,7 +63,7 @@ namespace RewriteMe.WebApi.Controllers
             await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
             await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(userSubscription.ToDto());
         }
     }
 }

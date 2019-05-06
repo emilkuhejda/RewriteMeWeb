@@ -18,12 +18,12 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
                 var userSubscription = await context.UserSubscriptions
-                    .Where(x => x.UserId == userId && x.DateCreated >= updatedAfter)
+                    .Where(x => x.UserId == userId && x.DateCreated >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
