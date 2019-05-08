@@ -14,8 +14,6 @@ namespace RewriteMe.WebApi.Dtos
 
         public string UserTranscript { get; set; }
 
-        public byte[] Source { get; set; }
-
         public string StartTimeString { get; set; }
 
         public string EndTimeString { get; set; }

@@ -13,7 +13,6 @@ namespace RewriteMe.WebApi.Extensions
                 FileItemId = transcribeItem.FileItemId,
                 Alternatives = transcribeItem.Alternatives,
                 UserTranscript = transcribeItem.UserTranscript,
-                Source = transcribeItem.Source,
                 StartTimeString = transcribeItem.StartTime.ToString(),
                 EndTimeString = transcribeItem.EndTime.ToString(),
                 TotalTimeString = transcribeItem.TotalTime.ToString(),
