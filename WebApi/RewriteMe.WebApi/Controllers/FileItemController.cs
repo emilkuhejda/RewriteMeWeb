@@ -79,7 +79,7 @@ namespace RewriteMe.WebApi.Controllers
             TimeSpan totalTime;
             try
             {
-                totalTime = await file.GetTotalTime();
+                totalTime = await file.GetTotalTime().ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -152,7 +152,7 @@ namespace RewriteMe.WebApi.Controllers
                 TimeSpan totalTime;
                 try
                 {
-                    totalTime = await file.GetTotalTime();
+                    totalTime = await file.GetTotalTime().ConfigureAwait(false);
                 }
                 catch (Exception)
                 {

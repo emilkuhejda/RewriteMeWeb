@@ -20,42 +20,42 @@ namespace RewriteMe.Business.Services
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Debug);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         public async Task TraceAsync(string message, Guid? userId = null)
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Trace);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         public async Task InfoAsync(string message, Guid? userId = null)
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Info);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         public async Task WarningAsync(string message, Guid? userId = null)
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Warning);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         public async Task ErrorAsync(string message, Guid? userId = null)
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Error);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         public async Task CriticalAsync(string message, Guid? userId = null)
         {
             var log = CreateApplicationLog(message, userId, ApplicationLogLevel.Critical);
 
-            await AddAsync(log);
+            await AddAsync(log).ConfigureAwait(false);
         }
 
         private async Task AddAsync(ApplicationLog applicationLog)

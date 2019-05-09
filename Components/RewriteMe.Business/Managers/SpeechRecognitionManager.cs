@@ -83,8 +83,8 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId);
-                await RunRecognitionInternalAsync(fileItem);
+                await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
+                await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             }
             catch
