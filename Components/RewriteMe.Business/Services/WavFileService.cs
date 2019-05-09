@@ -31,7 +31,7 @@ namespace RewriteMe.Business.Services
             await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
 
             var outputFile = GetTempName();
-            var totalTime = new TimeSpan();
+            var totalTime = default(TimeSpan);
             await Task.Run(() =>
             {
                 using (var reader = new MediaFoundationReader(inputFile))
