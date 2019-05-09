@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -58,11 +57,6 @@ namespace RewriteMe.WebApi
 
                     return returnedValue;
                 });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                configuration.IncludeXmlComments(xmlPath);
             });
 
             services.AddHangfire(configuration =>
@@ -114,23 +108,13 @@ namespace RewriteMe.WebApi
                 }
             });
 
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var contextFactory = serviceScope.ServiceProvider.GetService<IDbContextFactory>();
-                using (var context = contextFactory.Create())
-                {
-                    context.Database.Migrate();
-                }
-            }
-
-            app.UseDeveloperExceptionPage();
-
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+            app.Migrate();
             app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
 
