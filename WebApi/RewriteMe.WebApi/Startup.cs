@@ -53,8 +53,8 @@ namespace RewriteMe.WebApi
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
-                    if (returnedValue.EndsWith("Dto"))
-                        returnedValue = returnedValue.Replace("Dto", string.Empty);
+                    if (returnedValue.EndsWith("Dto", StringComparison.Ordinal))
+                        returnedValue = returnedValue.Replace("Dto", string.Empty, StringComparison.Ordinal);
 
                     return returnedValue;
                 });

@@ -8,7 +8,7 @@
     <CodeAnalysisRuleSet>..\..\Global\RewriteMe.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='Release'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
