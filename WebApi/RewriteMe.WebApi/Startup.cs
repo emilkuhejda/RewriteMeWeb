@@ -114,6 +114,17 @@ namespace RewriteMe.WebApi
                 }
             });
 
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var contextFactory = serviceScope.ServiceProvider.GetService<IDbContextFactory>();
+                using (var context = contextFactory.Create())
+                {
+                    context.Database.Migrate();
+                }
+            }
+
+            app.UseDeveloperExceptionPage();
+
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
