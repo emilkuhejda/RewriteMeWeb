@@ -16,6 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\Components\RewriteMe.Common\AppSettings.Debug.json" Link="AppSettings.Debug.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\..\Components\RewriteMe.Common\AppSettings.json" Link="AppSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
