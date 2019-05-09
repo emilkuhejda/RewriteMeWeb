@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -53,16 +52,11 @@ namespace RewriteMe.WebApi
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
-                    if (returnedValue.EndsWith("Dto"))
-                        returnedValue = returnedValue.Replace("Dto", string.Empty);
+                    if (returnedValue.EndsWith("Dto", StringComparison.Ordinal))
+                        returnedValue = returnedValue.Replace("Dto", string.Empty, StringComparison.Ordinal);
 
                     return returnedValue;
                 });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                configuration.IncludeXmlComments(xmlPath);
             });
 
             services.AddHangfire(configuration =>
@@ -120,6 +114,7 @@ namespace RewriteMe.WebApi
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+            app.Migrate();
             app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
 

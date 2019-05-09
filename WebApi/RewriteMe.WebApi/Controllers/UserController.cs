@@ -39,12 +39,12 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
             var user = registerUserModel.ToUser();
-            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{user.Id}'.");
+            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{user.Id}'.").ConfigureAwait(false);
 
             var userAlreadyExists = await _userService.UserAlreadyExistsAsync(user.Id).ConfigureAwait(false);
             if (userAlreadyExists)
             {
-                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.");
+                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.").ConfigureAwait(false);
                 return Ok(new UserSubscriptionDto { Id = Guid.Empty });
             }
 

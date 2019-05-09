@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +52,7 @@ namespace RewriteMe.WebApi.Filters
             {
                 if (!(parameter is NonBodyParameter) || parameter.In != "formData") continue;
 
-                if (formFileSubParameterNames.Any(p => parameter.Name.StartsWith(p + "."))
+                if (formFileSubParameterNames.Any(p => parameter.Name.StartsWith(p + ".", StringComparison.OrdinalIgnoreCase))
                     || FormFilePropertyNames.Contains(parameter.Name))
                     parameters.Remove(parameter);
             }

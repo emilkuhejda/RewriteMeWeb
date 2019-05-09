@@ -23,7 +23,7 @@ namespace RewriteMe.WebApi.Utils
         {
             try
             {
-                await _next(context);
+                await _next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
