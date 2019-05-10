@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -44,7 +45,8 @@ namespace RewriteMe.WebApi.Controllers
             {
                 FileItem = fileItemLastUpdate,
                 TranscribeItem = transcribeItemLastUpdate,
-                UserSubscription = userSubscriptionUpdate
+                UserSubscription = userSubscriptionUpdate,
+                SubscriptionProduct = SubscriptionProducts.LastUpdate
             });
         }
     }
