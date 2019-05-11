@@ -9,7 +9,5 @@ namespace RewriteMe.WebApi.Dtos
         public DateTime TranscribeItem { get; set; }
 
         public DateTime UserSubscription { get; set; }
-
-        public DateTime SubscriptionProduct { get; set; }
     }
 }

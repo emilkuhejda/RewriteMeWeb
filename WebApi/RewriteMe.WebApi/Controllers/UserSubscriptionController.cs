@@ -37,14 +37,6 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(userSubscriptions.Select(x => x.ToDto()));
         }
 
-        [HttpGet("/api/subscriptions/products")]
-        [ProducesResponseType(typeof(IEnumerable<SubscriptionProductDto>), StatusCodes.Status200OK)]
-        [SwaggerOperation(OperationId = "GetAvailableProducts")]
-        public IActionResult GetAvailableProducts()
-        {
-            return Ok(SubscriptionProducts.All.Select(x => x.ToDto()));
-        }
-
         [HttpPost("/api/subscriptions/create")]
         [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
