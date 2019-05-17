@@ -27,6 +27,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
+        {
+            return await _fileItemRepository.GetAllDeletedIdsAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
+        }
+
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
@@ -37,14 +42,19 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
+        public async Task<DateTime> GetDeletedLastUpdateAsync(Guid userId)
+        {
+            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
+        }
+
         public async Task AddAsync(FileItem fileItem)
         {
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
         }
 
-        public async Task RemoveAsync(Guid userId, Guid fileItemId)
+        public async Task DeleteAsync(Guid userId, Guid fileItemId)
         {
-            await _fileItemRepository.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
+            await _fileItemRepository.DeleteAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)

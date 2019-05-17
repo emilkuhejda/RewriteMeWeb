@@ -12,13 +12,17 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
+        Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
+
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
+        Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
+
         Task AddAsync(FileItem fileItem);
 
-        Task RemoveAsync(Guid userId, Guid fileItemId);
+        Task DeleteAsync(Guid userId, Guid fileItemId);
 
         Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 

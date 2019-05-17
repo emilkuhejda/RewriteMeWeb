@@ -21,6 +21,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.DateCreated).IsRequired();
             builder.Property(x => x.DateUpdated).IsRequired();
             builder.Property(x => x.AudioSourceVersion).IsRequired();
+            builder.Property(x => x.IsDeleted).IsRequired();
 
             builder.HasMany(x => x.TranscribeItems).WithOne(x => x.FileItem).HasForeignKey(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.AudioSource).WithOne(x => x.FileItem).HasForeignKey<AudioSourceEntity>(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);

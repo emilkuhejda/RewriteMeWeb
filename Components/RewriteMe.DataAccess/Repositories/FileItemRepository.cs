@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
-using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
@@ -24,7 +23,10 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.FileItems.AnyAsync(x => x.UserId == userId && x.Id == fileItemId).ConfigureAwait(false);
+                return await context.FileItems
+                    .Where(x => !x.IsDeleted)
+                    .AnyAsync(x => x.UserId == userId && x.Id == fileItemId)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -33,6 +35,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var fileItems = await context.FileItems
+                    .Where(x => !x.IsDeleted)
                     .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
@@ -42,11 +45,26 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems
+                    .Where(x => x.IsDeleted)
+                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
+                    .AsNoTracking()
+                    .Select(x => x.Id)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
                 var fileItem = await context.FileItems
+                    .Where(x => !x.IsDeleted)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId)
                     .ConfigureAwait(false);
@@ -60,8 +78,25 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 return await context.FileItems
+                    .Where(x => !x.IsDeleted)
                     .Where(x => x.UserId == userId)
                     .OrderByDescending(x => x.DateUpdated)
+                    .AsNoTracking()
+                    .Select(x => x.DateUpdated)
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
+        public async Task<DateTime> GetDeletedLastUpdateAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems
+                    .Where(x => x.IsDeleted)
+                    .Where(x => x.UserId == userId)
+                    .OrderByDescending(x => x.DateUpdated)
+                    .AsNoTracking()
                     .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
@@ -77,17 +112,17 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task RemoveAsync(Guid userId, Guid fileItemId)
+        public async Task DeleteAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItemEntity = new FileItemEntity
-                {
-                    Id = fileItemId,
-                    UserId = userId
-                };
+                var entity = await context.FileItems.Where(x => !x.IsDeleted).FirstOrDefaultAsync(x => x.Id == fileItemId && x.UserId == userId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
 
-                context.Entry(fileItemEntity).State = EntityState.Deleted;
+                entity.DateUpdated = DateTime.UtcNow;
+                entity.IsDeleted = true;
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -96,7 +131,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                var entity = await context.FileItems.Where(x => !x.IsDeleted).FirstOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
                 if (entity == null)
                     return;
 
@@ -112,7 +147,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItem.Id && x.UserId == fileItem.UserId).ConfigureAwait(false);
+                var entity = await context.FileItems.Where(x => !x.IsDeleted).FirstOrDefaultAsync(x => x.Id == fileItem.Id && x.UserId == fileItem.UserId).ConfigureAwait(false);
                 if (entity == null)
                     return;
 
@@ -135,7 +170,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItemEntity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                var fileItemEntity = await context.FileItems.Where(x => !x.IsDeleted).SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
                 if (fileItemEntity == null)
                     return;
 
@@ -151,7 +186,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var fileItemEntity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                var fileItemEntity = await context.FileItems.Where(x => !x.IsDeleted).SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
                 if (fileItemEntity == null)
                     return;
 
@@ -169,8 +204,10 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var totalTicks = await context.FileItems
                     .Include(x => x.AudioSource)
+                    .Where(x => !x.IsDeleted)
                     .Where(x => x.UserId == userId)
                     .Where(x => x.RecognitionState > RecognitionState.Prepared)
+                    .AsNoTracking()
                     .Select(x => x.AudioSource.TotalTime)
                     .SumAsync(x => x.Ticks)
                     .ConfigureAwait(false);

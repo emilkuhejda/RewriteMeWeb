@@ -20,7 +20,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateCreated = fileItemEntity.DateCreated,
                 DateProcessed = fileItemEntity.DateProcessed,
                 DateUpdated = fileItemEntity.DateUpdated,
-                AudioSourceVersion = fileItemEntity.AudioSourceVersion
+                AudioSourceVersion = fileItemEntity.AudioSourceVersion,
+                IsDeleted = fileItemEntity.IsDeleted
             };
         }
 
@@ -39,7 +40,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
-                AudioSourceVersion = fileItem.AudioSourceVersion
+                AudioSourceVersion = fileItem.AudioSourceVersion,
+                IsDeleted = fileItem.IsDeleted
             };
         }
     }

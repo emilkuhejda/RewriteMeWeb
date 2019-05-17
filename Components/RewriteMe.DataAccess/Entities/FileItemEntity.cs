@@ -30,6 +30,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public int AudioSourceVersion { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public virtual UserEntity User { get; set; }
 
         public virtual AudioSourceEntity AudioSource { get; set; }
