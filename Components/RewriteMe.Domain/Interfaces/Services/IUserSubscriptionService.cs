@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Settings;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
@@ -14,5 +15,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task AddAsync(UserSubscription userSubscription);
 
         Task<TimeSpan> GetRemainingTime(Guid userId);
+
+        Task<UserSubscription> RegisterPurchaseAsync(BillingPurchase billingPurchase, Guid applicationId);
     }
 }

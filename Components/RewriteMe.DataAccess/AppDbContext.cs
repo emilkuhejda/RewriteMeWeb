@@ -24,6 +24,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
+        public DbSet<BillingPurchaseEntity> BillingPurchases { get; set; }
+
         public DbSet<ApplicationLogEntity> ApplicationLogs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -41,6 +43,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new AudioSourceEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TranscribeItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserSubscriptionEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new BillingPurchaseEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
         }
     }
