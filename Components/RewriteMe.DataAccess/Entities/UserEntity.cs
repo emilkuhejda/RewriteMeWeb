@@ -17,6 +17,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public virtual IEnumerable<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
+        public virtual IEnumerable<BillingPurchaseEntity> BillingPurchases { get; set; }
+
         public virtual IEnumerable<ApplicationLogEntity> ApplicationLogs { get; set; }
     }
 }

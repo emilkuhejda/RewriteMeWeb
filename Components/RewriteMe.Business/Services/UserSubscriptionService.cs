@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Business.Services
 {
     public class UserSubscriptionService : IUserSubscriptionService
     {
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
+        private readonly IBillingPurchaseRepository _billingPurchaseRepository;
         private readonly IFileItemRepository _fileItemRepository;
 
         public UserSubscriptionService(
             IUserSubscriptionRepository userSubscriptionRepository,
+            IBillingPurchaseRepository billingPurchaseRepository,
             IFileItemRepository fileItemRepository)
         {
             _userSubscriptionRepository = userSubscriptionRepository;
+            _billingPurchaseRepository = billingPurchaseRepository;
             _fileItemRepository = fileItemRepository;
         }
 
@@ -41,6 +46,27 @@ namespace RewriteMe.Business.Services
             var transcribedTotalSeconds = await _fileItemRepository.GetTranscribedTotalSeconds(userId).ConfigureAwait(false);
 
             return totalSubscriptionTime.Subtract(transcribedTotalSeconds);
+        }
+
+        public async Task<UserSubscription> RegisterPurchaseAsync(BillingPurchase billingPurchase, Guid applicationId)
+        {
+            await _billingPurchaseRepository.AddAsync(billingPurchase).ConfigureAwait(false);
+            var subscriptionProduct = SubscriptionProducts.All.FirstOrDefault(x => x.Id == billingPurchase.ProductId);
+            if (subscriptionProduct == null)
+                return null;
+
+            var userSubscription = new UserSubscription
+            {
+                Id = Guid.NewGuid(),
+                UserId = billingPurchase.UserId,
+                ApplicationId = applicationId,
+                Time = subscriptionProduct.Time,
+                DateCreated = DateTime.UtcNow
+            };
+
+            await _userSubscriptionRepository.AddAsync(userSubscription).ConfigureAwait(false);
+
+            return userSubscription;
         }
     }
 }

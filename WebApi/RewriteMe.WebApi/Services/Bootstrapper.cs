@@ -32,6 +32,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<AudioSourceRepository>().As<IAudioSourceRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemRepository>().As<ITranscribeItemRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionRepository>().As<IUserSubscriptionRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<BillingPurchaseRepository>().As<IBillingPurchaseRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationLogRepository>().As<IApplicationLogRepository>().InstancePerLifetimeScope();
 
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
