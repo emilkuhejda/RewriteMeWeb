@@ -112,7 +112,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteAsync(Guid userId, Guid fileItemId)
+        public async Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -120,6 +120,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return;
 
+                entity.ApplicationId = applicationId;
                 entity.DateUpdated = DateTime.UtcNow;
                 entity.IsDeleted = true;
 
@@ -204,7 +205,6 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var totalTicks = await context.FileItems
                     .Include(x => x.AudioSource)
-                    .Where(x => !x.IsDeleted)
                     .Where(x => x.UserId == userId)
                     .Where(x => x.RecognitionState > RecognitionState.Prepared)
                     .AsNoTracking()

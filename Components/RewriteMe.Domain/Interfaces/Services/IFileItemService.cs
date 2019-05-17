@@ -22,7 +22,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task AddAsync(FileItem fileItem);
 
-        Task DeleteAsync(Guid userId, Guid fileItemId);
+        Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId);
 
         Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 

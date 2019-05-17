@@ -52,9 +52,9 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
         }
 
-        public async Task DeleteAsync(Guid userId, Guid fileItemId)
+        public async Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId)
         {
-            await _fileItemRepository.DeleteAsync(userId, fileItemId).ConfigureAwait(false);
+            await _fileItemRepository.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
         }
 
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)

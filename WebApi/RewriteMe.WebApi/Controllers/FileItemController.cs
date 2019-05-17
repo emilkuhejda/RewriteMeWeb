@@ -199,15 +199,14 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(fileItemDto);
         }
 
-        [HttpDelete("/api/files/{id}")]
+        [HttpDelete("/api/files/delete")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
-        public async Task<IActionResult> Delete([FromRoute] string id)
+        public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var fileItemId = Guid.Parse(id);
 
-            await _fileItemService.DeleteAsync(userId, fileItemId).ConfigureAwait(false);
+            await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }
