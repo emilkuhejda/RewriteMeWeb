@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RewriteMe.WebApi.Dtos
 {
@@ -14,6 +15,7 @@ namespace RewriteMe.WebApi.Dtos
             DateTime = dateTime;
         }
 
+        [Required]
         public DateTime DateTime { get; }
     }
 }
