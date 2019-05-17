@@ -17,6 +17,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.AutoRenewing).IsRequired();
             builder.Property(x => x.PurchaseState).IsRequired().HasMaxLength(100);
             builder.Property(x => x.ConsumptionState).IsRequired().HasMaxLength(100);
+            builder.Property(x => x.Platform).IsRequired().HasMaxLength(50);
             builder.Property(x => x.TransactionDateUtc).IsRequired();
         }
     }

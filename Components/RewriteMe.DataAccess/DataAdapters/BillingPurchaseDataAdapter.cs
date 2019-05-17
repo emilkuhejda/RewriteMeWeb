@@ -16,6 +16,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 AutoRenewing = entity.AutoRenewing,
                 PurchaseState = entity.PurchaseState,
                 ConsumptionState = entity.ConsumptionState,
+                Platform = entity.Platform,
                 TransactionDateUtc = entity.TransactionDateUtc
             };
         }
@@ -31,6 +32,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 AutoRenewing = billingPurchase.AutoRenewing,
                 PurchaseState = billingPurchase.PurchaseState,
                 ConsumptionState = billingPurchase.ConsumptionState,
+                Platform = billingPurchase.Platform,
                 TransactionDateUtc = billingPurchase.TransactionDateUtc
             };
         }

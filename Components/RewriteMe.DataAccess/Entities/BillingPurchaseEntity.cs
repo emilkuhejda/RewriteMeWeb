@@ -12,11 +12,13 @@ namespace RewriteMe.DataAccess.Entities
 
         public string ProductId { get; set; }
 
-        public string AutoRenewing { get; set; }
+        public bool AutoRenewing { get; set; }
 
         public string PurchaseState { get; set; }
 
         public string ConsumptionState { get; set; }
+
+        public string Platform { get; set; }
 
         public DateTime TransactionDateUtc { get; set; }
 
