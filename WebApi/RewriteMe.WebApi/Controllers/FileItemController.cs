@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -214,11 +215,11 @@ namespace RewriteMe.WebApi.Controllers
         [HttpDelete("/api/files/delete-all")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "DeleteAllFileItem")]
-        public async Task<IActionResult> DeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
+        public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
 
-            await _fileItemService.DeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            await _fileItemService.DeleteAllAsync(userId, fileItems, applicationId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }

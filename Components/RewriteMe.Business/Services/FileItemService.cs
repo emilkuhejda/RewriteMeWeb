@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Business.Services
@@ -57,9 +58,9 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
         }
 
-        public async Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
-            await _fileItemRepository.DeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            await _fileItemRepository.DeleteAllAsync(userId, fileItems, applicationId).ConfigureAwait(false);
         }
 
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)

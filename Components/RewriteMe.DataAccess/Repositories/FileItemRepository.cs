@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.DataAccess.Repositories
@@ -128,10 +129,12 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
+            var deletedFileItems = fileItems.ToList();
             using (var context = _contextFactory.Create())
             {
+                var fileItemIds = deletedFileItems.Select(x => x.Id);
                 var entities = await context.FileItems
                     .Where(x => !x.IsDeleted)
                     .Where(x => fileItemIds.Contains(x.Id) && x.UserId == userId)
@@ -143,6 +146,10 @@ namespace RewriteMe.DataAccess.Repositories
 
                 foreach (var entity in entities)
                 {
+                    var deletedFileItem = deletedFileItems.Single(x => x.Id == entity.Id);
+                    if (deletedFileItem.DeletedDate < entity.DateUpdated)
+                        continue;
+
                     entity.ApplicationId = applicationId;
                     entity.DateUpdated = DateTime.UtcNow;
                     entity.IsDeleted = true;

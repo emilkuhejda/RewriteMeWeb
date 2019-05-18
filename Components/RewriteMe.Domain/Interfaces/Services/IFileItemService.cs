@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -24,7 +25,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId);
 
-        Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId);
+        Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId);
 
         Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 
