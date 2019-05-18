@@ -39,6 +39,9 @@ namespace RewriteMe.WebApi.Dtos
         [Required]
         public int AudioSourceVersion { get; set; }
 
+        [Required]
+        public bool IsDeleted { get; set; }
+
         public AudioSourceDto AudioSource { get; set; }
     }
 }

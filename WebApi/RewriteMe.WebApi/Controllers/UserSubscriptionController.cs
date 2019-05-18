@@ -52,7 +52,7 @@ namespace RewriteMe.WebApi.Controllers
             if (userSubscription == null)
                 return StatusCode(406);
 
-            return Ok(userSubscription);
+            return Ok(userSubscription.ToDto());
         }
     }
 }

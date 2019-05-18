@@ -35,6 +35,8 @@ namespace RewriteMe.Domain.Transcription
 
         public int AudioSourceVersion { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public IEnumerable<TranscribeItem> TranscribeItems { get; set; }
     }
 }

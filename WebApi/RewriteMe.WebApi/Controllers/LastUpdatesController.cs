@@ -37,12 +37,14 @@ namespace RewriteMe.WebApi.Controllers
             var userId = HttpContext.User.GetNameIdentifier();
 
             var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
             var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
             var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
 
             return Ok(new LastUpdatesDto
             {
                 FileItem = fileItemLastUpdate,
+                DeletedFileItem = deletedFileItemLastUpdate,
                 TranscribeItem = transcribeItemLastUpdate,
                 UserSubscription = userSubscriptionUpdate
             });
