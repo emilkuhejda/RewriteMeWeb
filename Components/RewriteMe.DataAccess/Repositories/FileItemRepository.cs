@@ -128,6 +128,30 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => !x.IsDeleted)
+                    .Where(x => fileItemIds.Contains(x.Id) && x.UserId == userId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!entities.Any())
+                    return;
+
+                foreach (var entity in entities)
+                {
+                    entity.ApplicationId = applicationId;
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.IsDeleted = true;
+                }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)
         {
             using (var context = _contextFactory.Create())

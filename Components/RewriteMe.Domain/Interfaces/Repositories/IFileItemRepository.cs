@@ -24,6 +24,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId);
 
+        Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId);
+
         Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 
         Task UpdateAsync(FileItem fileItem);

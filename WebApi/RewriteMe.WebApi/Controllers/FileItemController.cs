@@ -50,7 +50,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(files.Select(x => x.ToDto()));
         }
 
-        [HttpGet("/api/deleted-files")]
+        [HttpGet("/api/files/deleted")]
         [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
         public async Task<IActionResult> GetDeletedFileItemIds(DateTimeOffset updatedAfter, Guid applicationId)
@@ -207,6 +207,18 @@ namespace RewriteMe.WebApi.Controllers
             var userId = HttpContext.User.GetNameIdentifier();
 
             await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
+
+            return Ok(new OkDto());
+        }
+
+        [HttpDelete("/api/files/delete-all")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "DeleteAllFileItem")]
+        public async Task<IActionResult> DeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+
+            await _fileItemService.DeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }

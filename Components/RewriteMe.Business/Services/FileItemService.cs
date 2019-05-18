@@ -57,6 +57,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
         }
 
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            await _fileItemRepository.DeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+        }
+
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)
         {
             await _fileItemRepository.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
