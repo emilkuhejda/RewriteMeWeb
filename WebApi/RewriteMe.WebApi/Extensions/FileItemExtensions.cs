@@ -18,7 +18,8 @@ namespace RewriteMe.WebApi.Extensions
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
-                AudioSourceVersion = fileItem.AudioSourceVersion
+                AudioSourceVersion = fileItem.AudioSourceVersion,
+                IsDeleted = fileItem.IsDeleted,
             };
         }
     }

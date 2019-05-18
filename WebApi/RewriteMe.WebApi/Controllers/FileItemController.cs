@@ -12,6 +12,7 @@ using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
+using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
@@ -48,6 +49,28 @@ namespace RewriteMe.WebApi.Controllers
             var files = await _fileItemService.GetAllAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
 
             return Ok(files.Select(x => x.ToDto()));
+        }
+
+        [HttpGet("/api/files/deleted")]
+        [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
+        public async Task<IActionResult> GetDeletedFileItemIds(DateTimeOffset updatedAfter, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
+
+            return Ok(ids);
+        }
+
+        [HttpGet("/api/files/deleted-total-time")]
+        [ProducesResponseType(typeof(TimeSpan), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetDeletedFileItemsTotalTime")]
+        public async Task<IActionResult> GetDeletedTotalTime()
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+
+            return Ok(totalTime);
         }
 
         [HttpGet("/api/files/{fileItemId}")]
@@ -188,15 +211,27 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(fileItemDto);
         }
 
-        [HttpDelete("/api/files/{id}")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [SwaggerOperation(OperationId = "RemoveFileItem")]
-        public async Task<IActionResult> Remove([FromRoute] string id)
+        [HttpDelete("/api/files/delete")]
+        [ProducesResponseType(typeof(TimeSpan), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "DeleteFileItem")]
+        public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var fileItemId = Guid.Parse(id);
 
-            await _fileItemService.RemoveAsync(userId, fileItemId).ConfigureAwait(false);
+            await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
+            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+
+            return Ok(totalTime);
+        }
+
+        [HttpDelete("/api/files/delete-all")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "DeleteAllFileItem")]
+        public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+
+            await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }

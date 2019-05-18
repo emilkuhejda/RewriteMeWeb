@@ -9,6 +9,9 @@ namespace RewriteMe.WebApi.Dtos
         public DateTime FileItem { get; set; }
 
         [Required]
+        public DateTime DeletedFileItem { get; set; }
+
+        [Required]
         public DateTime TranscribeItem { get; set; }
 
         [Required]
