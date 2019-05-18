@@ -38,6 +38,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        {
+            return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+        }
+
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
@@ -45,7 +50,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<DateTime> GetDeletedLastUpdateAsync(Guid userId)
         {
-            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(FileItem fileItem)

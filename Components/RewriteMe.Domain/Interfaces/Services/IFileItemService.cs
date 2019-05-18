@@ -19,6 +19,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
+        Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId);
+
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
 
         Task AddAsync(FileItem fileItem);

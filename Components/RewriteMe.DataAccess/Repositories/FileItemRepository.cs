@@ -74,6 +74,23 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var totalTicks = await context.FileItems
+                    .Where(x => x.IsDeleted)
+                    .Where(x => x.UserId == userId)
+                    .Where(x => x.RecognitionState > RecognitionState.Prepared)
+                    .AsNoTracking()
+                    .Select(x => x.TotalTime)
+                    .SumAsync(x => x.Ticks)
+                    .ConfigureAwait(false);
+
+                return TimeSpan.FromTicks(totalTicks);
+            }
+        }
+
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -235,11 +252,10 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var totalTicks = await context.FileItems
-                    .Include(x => x.AudioSource)
                     .Where(x => x.UserId == userId)
                     .Where(x => x.RecognitionState > RecognitionState.Prepared)
                     .AsNoTracking()
-                    .Select(x => x.AudioSource.TotalTime)
+                    .Select(x => x.TotalTime)
                     .SumAsync(x => x.Ticks)
                     .ConfigureAwait(false);
 
