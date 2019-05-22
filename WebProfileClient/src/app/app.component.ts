@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MsalService } from './_services/msal.service';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -10,18 +9,13 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
     title = 'RewriteMe';
 
-    constructor(
-        private msalService: MsalService,
-        private router: Router) {
+    constructor(private msalService: MsalService) {
     }
 
     ngOnInit(): void {
-        if(!this.isUserLoggedIn()) {
-            this.router.navigate(['/login']);
-        }
     }
 
-    logout() {
+    logout(): void {
         this.msalService.logout();
     }
 
