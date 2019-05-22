@@ -32,18 +32,21 @@ export class MsalService {
     }
 
     public authenticate(): void {
+        var _this = this;
         this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
-            this.clientApplication.acquireTokenSilent(this.tenantConfig.b2cScopes).then(
+            _this.clientApplication.acquireTokenSilent(_this.tenantConfig.b2cScopes).then(
                 function (accessToken: any) {
-                    this.saveAccessTokenToCache(accessToken);
+                    _this.saveAccessTokenToCache(accessToken);
                 }, function (error: any) {
-                    this.clientApplication.acquireTokenPopup(this.tenantConfig.b2cScopes).then(
+                    _this.clientApplication.acquireTokenPopup(_this.tenantConfig.b2cScopes).then(
                         function (accessToken: any) {
-                            this.saveAccessTokenToCache(accessToken);
+                            _this.saveAccessTokenToCache(accessToken);
                         }, function (error: any) {
+                            console.log("error: ", error);
                         });
                 })
         }, function (error: any) {
+            console.log("error: ", error);
         });
     }
 
