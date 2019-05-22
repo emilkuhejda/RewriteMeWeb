@@ -5,10 +5,12 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './_directives/sidebar/sidebar.component';
 import { TopbarComponent } from './_directives/topbar/topbar.component';
+import { AlertComponent } from './_directives/alert/alert.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        AlertComponent,
         SidebarComponent,
         TopbarComponent,
         routingComponents
