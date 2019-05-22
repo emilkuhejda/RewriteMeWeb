@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Msal from 'msal';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,7 @@ export class MsalService {
 
     private authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
 
-    constructor() { }
+    constructor(private router: Router) { }
 
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID, this.authority,
@@ -29,7 +30,7 @@ export class MsalService {
         this.clientApplication.authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
         this.authenticate();
     }
-    
+
     public authenticate(): void {
         var _this = this;
         this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
@@ -41,11 +42,9 @@ export class MsalService {
                         function (accessToken: any) {
                             _this.saveAccessTokenToCache(accessToken);
                         }, function (error: any) {
-                            console.log("error: ", error);
                         });
                 })
         }, function (error: any) {
-            console.log("error: ", error);
         });
     }
 
