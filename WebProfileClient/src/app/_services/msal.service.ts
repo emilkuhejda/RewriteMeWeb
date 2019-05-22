@@ -12,7 +12,6 @@ export class MsalService {
         tenant: "rewriteme.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
         signUpSignIn: "B2C_1_RewriteMe_SignUp_SignIn",
-        redirectUri: "http://localhost:4200/profile/login",
         b2cScopes: ["https://rewriteme.onmicrosoft.com/access-api/user_impersonation"]
     };
 
