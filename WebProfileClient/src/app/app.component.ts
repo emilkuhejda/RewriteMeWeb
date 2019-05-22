@@ -9,6 +9,6 @@ export class AppComponent {
     title = 'RewriteMe';
 
     isUserLoggedIn(): boolean {
-        return true;
+        return false;
     }
 }
