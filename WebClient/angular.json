@@ -37,7 +37,7 @@
                             "src/assets/vendor/magnific-popup/jquery.magnific-popup.min.js",
                             "src/assets/js/jqBootstrapValidation.js",
                             "src/assets/js/contact_me.js",
-                            "src/assets/js/freelancer.min.js"
+                            "src/assets/js/freelancer.js"
                         ],
                         "es5BrowserSupport": true
                     },
