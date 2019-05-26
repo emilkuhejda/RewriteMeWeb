@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate } from '@angular/router';
 import { Observable } from 'rxjs';
 import { MsalService } from '../_services/msal.service';
+import { CommonVariables } from '../_config/common-variables';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    constructor(
-        private router: Router,
-        private msalService: MsalService) { }
+    constructor(private msalService: MsalService) { }
 
     canActivate(
         route: ActivatedRouteSnapshot,
@@ -18,10 +17,7 @@ export class AuthGuard implements CanActivate {
             return true;
         }
 
-        let queryParams = {
-            queryParams: { returnUrl: state.url }
-        };
-        this.router.navigate(['/login'], queryParams);
+        window.open(CommonVariables.ApiUrl + CommonVariables.Home, '_self');
         return false;
     }
 }

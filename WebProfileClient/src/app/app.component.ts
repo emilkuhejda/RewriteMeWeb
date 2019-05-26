@@ -18,8 +18,4 @@ export class AppComponent implements OnInit {
     logout(): void {
         this.msalService.logout();
     }
-
-    isUserLoggedIn(): boolean {
-        return this.msalService.isLoggedIn();
-    }
 }

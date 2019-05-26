@@ -41,11 +41,9 @@ export class MsalService {
                         function (accessToken: any) {
                             _this.saveAccessTokenToCache(accessToken);
                         }, function (error: any) {
-                            console.log("error: ", error);
                         });
                 })
         }, function (error: any) {
-            console.log("error: ", error);
         });
     }
 
