@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { FilesComponent } from './files/files.component';
+import { CreateFileComponent } from './files/create-file/create-file.component';
 
 const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [AuthGuard] }
+    { path: '', redirectTo: 'files', pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: 'files', component: FilesComponent, canActivate: [AuthGuard] },
+    { path: 'files/create', component: CreateFileComponent, pathMatch: 'full', canActivate: [AuthGuard] }
 
 ];
 
@@ -15,5 +18,6 @@ const routes: Routes = [
 export class AppRoutingModule { }
 
 export const routingComponents = [
-    HomeComponent
+    FilesComponent,
+    CreateFileComponent
 ]
