@@ -14,7 +14,6 @@ namespace RewriteMe.WebApi.Dtos
         public string SpeechRegion { get; set; }
 
         [Required]
-        [MaxLength(100)]
         public Guid AudioSampleId { get; set; }
 
         [Required]
