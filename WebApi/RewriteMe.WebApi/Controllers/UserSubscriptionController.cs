@@ -54,5 +54,19 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(userSubscription.ToDto());
         }
+
+        [HttpPost("/api/subscriptions/speech-configuration")]
+        [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
+        public IActionResult GetSpeechConfiguration()
+        {
+            var speechConfigurationDto = new SpeechConfigurationDto
+            {
+                SubscriptionKey = "471ab4db87064a9db2ad428c64d82b0d",
+                SpeechRegion = "WestEurope"
+            };
+
+            return Ok(speechConfigurationDto);
+        }
     }
 }
