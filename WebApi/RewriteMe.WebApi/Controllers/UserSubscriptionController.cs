@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Recording;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -20,10 +21,14 @@ namespace RewriteMe.WebApi.Controllers
     public class UserSubscriptionController : ControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
 
-        public UserSubscriptionController(IUserSubscriptionService userSubscriptionService)
+        public UserSubscriptionController(
+            IUserSubscriptionService userSubscriptionService,
+            IRecognizedAudioSampleService recognizedAudioSampleService)
         {
             _userSubscriptionService = userSubscriptionService;
+            _recognizedAudioSampleService = recognizedAudioSampleService;
         }
 
         [HttpGet("/api/subscriptions")]
@@ -58,12 +63,25 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPost("/api/subscriptions/speech-configuration")]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
-        public IActionResult GetSpeechConfiguration()
+        public async Task<IActionResult> GetSpeechConfiguration()
         {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var recognizedAudioSample = new RecognizedAudioSample
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                DateCreated = DateTime.UtcNow
+            };
+
+            await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
+
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
             var speechConfigurationDto = new SpeechConfigurationDto
             {
                 SubscriptionKey = "471ab4db87064a9db2ad428c64d82b0d",
-                SpeechRegion = "WestEurope"
+                SpeechRegion = "WestEurope",
+                AudioSampleId = recognizedAudioSample.Id,
+                SubscriptionRemainingTime = remainingTime
             };
 
             return Ok(speechConfigurationDto);
