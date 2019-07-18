@@ -43,6 +43,7 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetFileItems")]
+        //public async Task<IActionResult> Get(DateTime updatedAfter, Guid applicationId)
         public async Task<IActionResult> Get(DateTimeOffset updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();

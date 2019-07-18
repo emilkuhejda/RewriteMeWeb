@@ -5,9 +5,9 @@ import { FilesComponent } from './files/files.component';
 import { CreateFileComponent } from './files/create-file/create-file.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'files', pathMatch: 'full', canActivate: [AuthGuard] },
-    { path: 'files', component: FilesComponent, canActivate: [AuthGuard] },
-    { path: 'files/create', component: CreateFileComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+    { path: '', redirectTo: 'files', pathMatch: 'full' },
+    { path: 'files', component: FilesComponent },
+    { path: 'files/create', component: CreateFileComponent, pathMatch: 'full' }
 
 ];
 

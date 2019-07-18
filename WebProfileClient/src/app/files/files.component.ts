@@ -18,6 +18,10 @@ export class FilesComponent implements OnInit {
 
     fileItems: FileItem[];
 
+    isLoggedIn() {
+        return this.msalService.isLoggedIn();
+    }
+
     login() {
         this.msalService.login();
     }

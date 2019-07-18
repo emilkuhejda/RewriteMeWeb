@@ -12,6 +12,10 @@ export class FileItemService {
     constructor(private http: HttpClient) { }
 
     getAll() {
-        return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath).pipe(map(FileItemMapper.convertAll));
+        var dateTime = new Date().toUTCString();
+
+        console.log(dateTime);
+
+        return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath + "?updatedAfter=" + dateTime).pipe(map(FileItemMapper.convertAll));
     }
 }
