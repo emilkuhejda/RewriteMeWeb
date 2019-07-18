@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
@@ -16,30 +19,23 @@ namespace RewriteMe.WebApi.Controllers
     [ApiController]
     public class SpeechResultController : Controller
     {
-        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ISpeechResultService _speechResultService;
         private readonly IApplicationLogService _applicationLogService;
 
         public SpeechResultController(
-            IUserSubscriptionService userSubscriptionService,
             ISpeechResultService speechResultService,
             IApplicationLogService applicationLogService)
         {
-            _userSubscriptionService = userSubscriptionService;
             _speechResultService = speechResultService;
             _applicationLogService = applicationLogService;
         }
 
         [HttpPut("/api/speech-results/create")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status426UpgradeRequired)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
         public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
-            var remainingTime = subscriptionRemainingTime.Subtract(createSpeechResultModel.TotalTime);
-
             var speechResult = createSpeechResultModel.ToSpeechResult();
             await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
@@ -47,14 +43,19 @@ namespace RewriteMe.WebApi.Controllers
                 .InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId)
                 .ConfigureAwait(false);
 
-            if (remainingTime.Ticks < 0)
-            {
-                await _applicationLogService
-                    .WarningAsync($"Speech result was successfully inserted. No additional free minutes for user with ID='{userId}'.", userId)
-                    .ConfigureAwait(false);
+            return Ok(new OkDto());
+        }
 
-                return StatusCode(426);
-            }
+        [HttpPut("/api/speech-results/update")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "UpdateSpeechResults")]
+        public async Task<IActionResult> Update(IEnumerable<SpeechResultModel> speechResultModels)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime });
+            await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
+
+            await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }

@@ -12,8 +12,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Id = Guid.NewGuid(),
                 RecognizedAudioSampleId = createSpeechResultModel.RecognizedAudioSampleId,
-                DisplayText = createSpeechResultModel.DisplayText,
-                TotalTime = createSpeechResultModel.TotalTime
+                DisplayText = createSpeechResultModel.DisplayText
             };
         }
     }

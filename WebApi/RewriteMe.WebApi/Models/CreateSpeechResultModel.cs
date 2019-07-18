@@ -7,7 +7,5 @@ namespace RewriteMe.WebApi.Models
         public Guid RecognizedAudioSampleId { get; set; }
 
         public string DisplayText { get; set; }
-
-        public TimeSpan TotalTime { get; set; }
     }
 }

@@ -13,7 +13,6 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.RecognizedAudioSampleId).IsRequired();
             builder.Property(x => x.DisplayText).IsRequired();
-            builder.Property(x => x.TotalTime).IsRequired();
         }
     }
 }
