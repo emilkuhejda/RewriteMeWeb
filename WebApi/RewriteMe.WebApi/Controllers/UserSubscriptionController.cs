@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -22,13 +24,16 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
+        private readonly AppSettings _appSettings;
 
         public UserSubscriptionController(
             IUserSubscriptionService userSubscriptionService,
-            IRecognizedAudioSampleService recognizedAudioSampleService)
+            IRecognizedAudioSampleService recognizedAudioSampleService,
+            IOptions<AppSettings> options)
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
+            _appSettings = options.Value;
         }
 
         [HttpGet("/api/subscriptions")]
@@ -78,8 +83,8 @@ namespace RewriteMe.WebApi.Controllers
             var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
             var speechConfigurationDto = new SpeechConfigurationDto
             {
-                SubscriptionKey = "471ab4db87064a9db2ad428c64d82b0d",
-                SpeechRegion = "WestEurope",
+                SubscriptionKey = _appSettings.AzureSubscriptionKey,
+                SpeechRegion = _appSettings.AzureSpeechRegion,
                 AudioSampleId = recognizedAudioSample.Id,
                 SubscriptionRemainingTime = remainingTime
             };
