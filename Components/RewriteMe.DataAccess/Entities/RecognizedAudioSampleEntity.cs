@@ -7,7 +7,11 @@ namespace RewriteMe.DataAccess.Entities
     {
         public Guid Id { get; set; }
 
+        public Guid UserId { get; set; }
+
         public DateTime DateCreated { get; set; }
+
+        public virtual UserEntity User { get; set; }
 
         public virtual IEnumerable<SpeechResultEntity> SpeechResults { get; set; }
     }

@@ -7,6 +7,8 @@ namespace RewriteMe.Domain.Recording
     {
         public Guid Id { get; set; }
 
+        public Guid UserId { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public IEnumerable<SpeechResult> SpeechResults { get; set; }

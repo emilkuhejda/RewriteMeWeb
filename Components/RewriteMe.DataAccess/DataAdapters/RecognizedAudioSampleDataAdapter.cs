@@ -11,6 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new RecognizedAudioSample
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
                 DateCreated = entity.DateCreated,
                 SpeechResults = entity.SpeechResults.Select(x => x.ToSpeechResult())
             };
@@ -21,6 +22,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new RecognizedAudioSampleEntity
             {
                 Id = recognizedAudioSample.Id,
+                UserId = recognizedAudioSample.UserId,
                 DateCreated = recognizedAudioSample.DateCreated,
                 SpeechResults = recognizedAudioSample.SpeechResults.Select(x => x.ToSpeechResultEntity())
             };
