@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = entity.Id,
                 UserId = entity.UserId,
                 DateCreated = entity.DateCreated,
-                SpeechResults = entity.SpeechResults.Select(x => x.ToSpeechResult())
+                SpeechResults = entity.SpeechResults?.Select(x => x.ToSpeechResult())
             };
         }
 
@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = recognizedAudioSample.Id,
                 UserId = recognizedAudioSample.UserId,
                 DateCreated = recognizedAudioSample.DateCreated,
-                SpeechResults = recognizedAudioSample.SpeechResults.Select(x => x.ToSpeechResultEntity())
+                SpeechResults = recognizedAudioSample.SpeechResults?.Select(x => x.ToSpeechResultEntity())
             };
         }
     }
