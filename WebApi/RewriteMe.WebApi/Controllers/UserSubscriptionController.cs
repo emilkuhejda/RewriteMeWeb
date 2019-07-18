@@ -89,7 +89,7 @@ namespace RewriteMe.WebApi.Controllers
                 SubscriptionKey = _appSettings.AzureSubscriptionKey,
                 SpeechRegion = _appSettings.AzureSpeechRegion,
                 AudioSampleId = recognizedAudioSample.Id,
-                SubscriptionRemainingTime = remainingTime
+                SubscriptionRemainingTimeString = remainingTime.ToString()
             };
 
             await _applicationLogService
