@@ -24,15 +24,18 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
+        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public UserSubscriptionController(
             IUserSubscriptionService userSubscriptionService,
             IRecognizedAudioSampleService recognizedAudioSampleService,
+            IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
+            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
@@ -88,6 +91,10 @@ namespace RewriteMe.WebApi.Controllers
                 AudioSampleId = recognizedAudioSample.Id,
                 SubscriptionRemainingTime = remainingTime
             };
+
+            await _applicationLogService
+                .InfoAsync($"User with ID='{userId}' retrieved speech recognition configuration: {speechConfigurationDto}.", userId)
+                .ConfigureAwait(false);
 
             return Ok(speechConfigurationDto);
         }

@@ -18,13 +18,16 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ISpeechResultService _speechResultService;
+        private readonly IApplicationLogService _applicationLogService;
 
         public SpeechResultController(
             IUserSubscriptionService userSubscriptionService,
-            ISpeechResultService speechResultService)
+            ISpeechResultService speechResultService,
+            IApplicationLogService applicationLogService)
         {
             _userSubscriptionService = userSubscriptionService;
             _speechResultService = speechResultService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpPut("/api/speech-results/create")]
@@ -34,13 +37,24 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)
         {
             var userId = HttpContext.User.GetNameIdentifier();
+            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var remainingTime = subscriptionRemainingTime.Subtract(createSpeechResultModel.TotalTime);
+
             var speechResult = createSpeechResultModel.ToSpeechResult();
             await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
-            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
-            var remainingTime = subscriptionRemainingTime.Subtract(createSpeechResultModel.TotalTime);
+            await _applicationLogService
+                .InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId)
+                .ConfigureAwait(false);
+
             if (remainingTime.Ticks < 0)
+            {
+                await _applicationLogService
+                    .WarningAsync($"Speech result was successfully inserted. No additional free minutes for user with ID='{userId}'.", userId)
+                    .ConfigureAwait(false);
+
                 return StatusCode(426);
+            }
 
             return Ok(new OkDto());
         }
