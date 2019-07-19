@@ -64,14 +64,18 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/speech-results/recognized-time")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetRecognizedTime")]
         public async Task<IActionResult> GetRecognizedTime()
         {
             var userId = HttpContext.User.GetNameIdentifier();
             var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(userId).ConfigureAwait(false);
+            var recognizedTimeDto = new RecognizedTimeDto
+            {
+                TotalTimeString = recognizedTime.ToString()
+            };
 
-            return Ok(new RecognizedTimeDto { TotalTimeString = recognizedTime.ToString() });
+            return Ok(recognizedTimeDto);
         }
     }
 }
