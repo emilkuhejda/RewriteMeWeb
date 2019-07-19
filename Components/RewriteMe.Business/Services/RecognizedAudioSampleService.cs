@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
@@ -17,6 +18,11 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(RecognizedAudioSample recognizedAudioSample)
         {
             await _recognizedAudioSampleRepository.AddAsync(recognizedAudioSample).ConfigureAwait(false);
+        }
+
+        public async Task<TimeSpan> GetRecognizedTime(Guid userId)
+        {
+            return await _recognizedAudioSampleRepository.GetRecognizedTime(userId).ConfigureAwait(false);
         }
     }
 }

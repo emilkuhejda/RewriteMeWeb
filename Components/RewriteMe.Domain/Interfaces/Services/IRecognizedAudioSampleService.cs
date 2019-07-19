@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Recording;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -6,5 +7,7 @@ namespace RewriteMe.Domain.Interfaces.Services
     public interface IRecognizedAudioSampleService
     {
         Task AddAsync(RecognizedAudioSample recognizedAudioSample);
+
+        Task<TimeSpan> GetRecognizedTime(Guid userId);
     }
 }

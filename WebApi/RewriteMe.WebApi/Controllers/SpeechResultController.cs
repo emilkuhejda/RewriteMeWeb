@@ -19,13 +19,16 @@ namespace RewriteMe.WebApi.Controllers
     [ApiController]
     public class SpeechResultController : Controller
     {
+        private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
         private readonly ISpeechResultService _speechResultService;
         private readonly IApplicationLogService _applicationLogService;
 
         public SpeechResultController(
+            IRecognizedAudioSampleService recognizedAudioSampleService,
             ISpeechResultService speechResultService,
             IApplicationLogService applicationLogService)
         {
+            _recognizedAudioSampleService = recognizedAudioSampleService;
             _speechResultService = speechResultService;
             _applicationLogService = applicationLogService;
         }
@@ -58,6 +61,17 @@ namespace RewriteMe.WebApi.Controllers
             await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
 
             return Ok(new OkDto());
+        }
+
+        [HttpGet("/api/speech-results/recognized-time")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetRecognizedTime")]
+        public async Task<IActionResult> GetRecognizedTime()
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(userId).ConfigureAwait(false);
+
+            return Ok(new RecognizedTimeDto { TotalTimeString = recognizedTime.ToString() });
         }
     }
 }
