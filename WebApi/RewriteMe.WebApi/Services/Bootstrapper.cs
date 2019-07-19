@@ -42,7 +42,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<AudioSourceService>().As<IAudioSourceService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemService>().As<ITranscribeItemService>().InstancePerLifetimeScope();
             builder.RegisterType<RecognizedAudioSampleService>().As<IRecognizedAudioSampleService>().InstancePerLifetimeScope();
-            builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
+            builder.RegisterType<SpeechResultService>().As<ISpeechResultService>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionService>().As<IUserSubscriptionService>().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationLogService>().As<IApplicationLogService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();

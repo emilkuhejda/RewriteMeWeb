@@ -30,7 +30,7 @@ namespace RewriteMe.WebApi.Controllers
             _applicationLogService = applicationLogService;
         }
 
-        [HttpPut("/api/speech-results/create")]
+        [HttpPost("/api/speech-results/create")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
         public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)

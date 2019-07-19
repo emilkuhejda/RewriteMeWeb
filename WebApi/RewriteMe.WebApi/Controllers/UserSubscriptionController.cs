@@ -68,7 +68,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(userSubscription.ToDto());
         }
 
-        [HttpPost("/api/subscriptions/speech-configuration")]
+        [HttpGet("/api/subscriptions/speech-configuration")]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
         public async Task<IActionResult> GetSpeechConfiguration()
