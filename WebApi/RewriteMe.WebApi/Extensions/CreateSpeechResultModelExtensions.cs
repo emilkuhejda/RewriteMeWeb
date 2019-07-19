@@ -1,5 +1,4 @@
-﻿using System;
-using RewriteMe.Domain.Recording;
+﻿using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Extensions
@@ -10,7 +9,7 @@ namespace RewriteMe.WebApi.Extensions
         {
             return new SpeechResult
             {
-                Id = Guid.NewGuid(),
+                Id = createSpeechResultModel.SpeechResultId,
                 RecognizedAudioSampleId = createSpeechResultModel.RecognizedAudioSampleId,
                 DisplayText = createSpeechResultModel.DisplayText
             };
