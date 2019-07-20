@@ -9,7 +9,9 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<TranscribeItem> GetAsync(Guid transcribeItemId);
 
-        Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
+        Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid fileItemId);
+
+        Task<IEnumerable<TranscribeItem>> GetAllForUserAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 

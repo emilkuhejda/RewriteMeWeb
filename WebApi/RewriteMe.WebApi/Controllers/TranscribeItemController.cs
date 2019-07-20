@@ -26,13 +26,23 @@ namespace RewriteMe.WebApi.Controllers
             _transcribeItemService = transcribeItemService;
         }
 
+        [HttpGet("/api/transcribe-items/{fileItemId}")]
+        [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetTranscribeItems")]
+        public async Task<ActionResult> GetAll(Guid fileItemId)
+        {
+            var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
+
+            return Ok(transcribeItems.Select(x => x.ToDto()));
+        }
+
         [HttpGet("/api/transcribe-items-all")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
         public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeItems = await _transcribeItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }

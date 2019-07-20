@@ -10,7 +10,11 @@ import { FileItemMapper } from '../_mappers/file-item-mapper';
 })
 export class FileItemService {
     constructor(private http: HttpClient) { }
-
+    
+    get(fileItemId: string) {
+        return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath + fileItemId).pipe(map(FileItemMapper.convert));
+    }
+    
     getAll() {
         let params = new HttpParams();
         params = params.append('applicationId', CommonVariables.ApplicationId);
