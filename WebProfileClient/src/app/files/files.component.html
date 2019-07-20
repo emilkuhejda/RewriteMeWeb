@@ -1,0 +1,48 @@
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Files</h1>
+</div>
+
+<!-- Content -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Files Overview</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <a (click)="login()" *ngIf="!isLoggedIn()">Login</a>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="table-header">Name</th>
+                        <th class="table-header">Date created</th>
+                        <td class="table-header">Status</td>
+                        <th class="table-header">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date created</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr *ngFor="let fileItem of fileItems">
+                        <td>{{fileItem.name}}</td>
+                        <td>{{fileItem.dateCreated|date}}</td>
+                        <td>{{fileItem.recognitionState|recognitionState}}</td>
+                        <td>
+                            <a *ngIf="fileItem.CanUploadFile" href="">Transcribe | </a>
+                            <a *ngIf="!fileItem.CanUploadFile" href="">Detail | </a>
+                            <a href="">Edit | </a>
+                            <a href="">Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

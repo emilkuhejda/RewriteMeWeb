@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RewriteMe.DataAccess;
 
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190718162314_AddRecognizedAudioSample")]
+    partial class AddRecognizedAudioSample
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,11 +156,7 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<Guid>("UserId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("RecognizedAudioSample");
                 });
@@ -168,7 +166,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DisplayText");
+                    b.Property<string>("DisplayText")
+                        .IsRequired();
 
                     b.Property<Guid>("RecognizedAudioSampleId");
 
@@ -285,14 +284,6 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("FileItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
-                {
-                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
-                        .WithMany("RecognizedAudioSamples")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

@@ -20,9 +20,10 @@ export class MsalService {
     constructor(private router: Router) { }
 
     private clientApplication = new Msal.UserAgentApplication(
-        this.tenantConfig.clientID, this.authority,
-        function (errorDesc: any, token: any, error: any, tokenType: any) {
-        }
+        this.tenantConfig.clientID,
+        this.authority,
+        function (errorDesc: any, token: any, error: any, tokenType: any) { },
+        { cacheLocation: 'localStorage' }
     );
 
     public login(): void {
@@ -50,7 +51,7 @@ export class MsalService {
     }
 
     saveAccessTokenToCache(accessToken: string): void {
-        sessionStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
+        localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
     };
 
     logout(): void {
@@ -70,6 +71,6 @@ export class MsalService {
     }
 
     getToken() {
-        return sessionStorage.getItem(this.B2CTodoAccessTokenKey);
+        return localStorage.getItem(this.B2CTodoAccessTokenKey);
     }
 }

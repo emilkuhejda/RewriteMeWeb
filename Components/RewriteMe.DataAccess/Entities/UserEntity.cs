@@ -15,6 +15,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public virtual IEnumerable<FileItemEntity> FileItems { get; set; }
 
+        public virtual IEnumerable<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }
+
         public virtual IEnumerable<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
         public virtual IEnumerable<BillingPurchaseEntity> BillingPurchases { get; set; }
