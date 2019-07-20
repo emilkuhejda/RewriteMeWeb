@@ -8,7 +8,6 @@ namespace RewriteMe.WebApi.Models
         [Required]
         public Guid Id { get; set; }
 
-        [Required]
         public TimeSpan TotalTime { get; set; }
     }
 }
