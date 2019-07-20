@@ -17,15 +17,7 @@ export class FilesComponent implements OnInit {
         private alertService: AlertService) { }
 
     fileItems: FileItem[];
-
-    isLoggedIn() {
-        return this.msalService.isLoggedIn();
-    }
-
-    login() {
-        this.msalService.login();
-    }
-
+    
     ngOnInit() {
         this.fileItemService.getAll().subscribe(
             data => {
