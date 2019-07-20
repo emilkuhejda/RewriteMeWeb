@@ -35,7 +35,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
-            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            return await _userSubscriptionRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(UserSubscription userSubscription)
