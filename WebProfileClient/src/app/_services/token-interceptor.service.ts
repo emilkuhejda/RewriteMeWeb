@@ -17,7 +17,7 @@ export class TokenInterceptorService {
                 }
             });
         }
-
+        
         return next.handle(request);
     }
 }

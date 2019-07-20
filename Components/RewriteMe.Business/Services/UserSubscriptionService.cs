@@ -14,15 +14,18 @@ namespace RewriteMe.Business.Services
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
         private readonly IBillingPurchaseRepository _billingPurchaseRepository;
         private readonly IFileItemRepository _fileItemRepository;
+        private readonly IRecognizedAudioSampleRepository _recognizedAudioSampleRepository;
 
         public UserSubscriptionService(
             IUserSubscriptionRepository userSubscriptionRepository,
             IBillingPurchaseRepository billingPurchaseRepository,
-            IFileItemRepository fileItemRepository)
+            IFileItemRepository fileItemRepository,
+            IRecognizedAudioSampleRepository recognizedAudioSampleRepository)
         {
             _userSubscriptionRepository = userSubscriptionRepository;
             _billingPurchaseRepository = billingPurchaseRepository;
             _fileItemRepository = fileItemRepository;
+            _recognizedAudioSampleRepository = recognizedAudioSampleRepository;
         }
 
         public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
@@ -32,7 +35,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
-            return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            return await _userSubscriptionRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
         public async Task AddAsync(UserSubscription userSubscription)
@@ -44,7 +47,9 @@ namespace RewriteMe.Business.Services
         {
             var totalSubscriptionTime = await _userSubscriptionRepository.GetTotalSubscriptionTime(userId).ConfigureAwait(false);
             var transcribedTotalSeconds = await _fileItemRepository.GetTranscribedTotalSeconds(userId).ConfigureAwait(false);
+            var realTimeRecognizedTime = await _recognizedAudioSampleRepository.GetRecognizedTime(userId).ConfigureAwait(false);
 
+            transcribedTotalSeconds = transcribedTotalSeconds.Add(realTimeRecognizedTime);
             return totalSubscriptionTime.Subtract(transcribedTotalSeconds);
         }
 

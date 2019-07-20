@@ -29,10 +29,10 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/transcribe-items-all")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
-        public async Task<ActionResult> GetAll(DateTimeOffset updatedAfter, Guid applicationId)
+        public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeItems = await _transcribeItemService.GetAllAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }

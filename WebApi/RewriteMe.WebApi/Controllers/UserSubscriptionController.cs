@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Recording;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -20,19 +23,29 @@ namespace RewriteMe.WebApi.Controllers
     public class UserSubscriptionController : ControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
+        private readonly IApplicationLogService _applicationLogService;
+        private readonly AppSettings _appSettings;
 
-        public UserSubscriptionController(IUserSubscriptionService userSubscriptionService)
+        public UserSubscriptionController(
+            IUserSubscriptionService userSubscriptionService,
+            IRecognizedAudioSampleService recognizedAudioSampleService,
+            IApplicationLogService applicationLogService,
+            IOptions<AppSettings> options)
         {
             _userSubscriptionService = userSubscriptionService;
+            _recognizedAudioSampleService = recognizedAudioSampleService;
+            _applicationLogService = applicationLogService;
+            _appSettings = options.Value;
         }
 
         [HttpGet("/api/subscriptions")]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
-        public async Task<IActionResult> GetAll(DateTimeOffset updatedAfter, Guid applicationId)
+        public async Task<IActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId, updatedAfter.DateTime, applicationId).ConfigureAwait(false);
+            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
             return Ok(userSubscriptions.Select(x => x.ToDto()));
         }
@@ -53,6 +66,37 @@ namespace RewriteMe.WebApi.Controllers
                 return StatusCode(406);
 
             return Ok(userSubscription.ToDto());
+        }
+
+        [HttpGet("/api/subscriptions/speech-configuration")]
+        [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
+        [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
+        public async Task<IActionResult> GetSpeechConfiguration()
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var recognizedAudioSample = new RecognizedAudioSample
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                DateCreated = DateTime.UtcNow
+            };
+
+            await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
+
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var speechConfigurationDto = new SpeechConfigurationDto
+            {
+                SubscriptionKey = _appSettings.AzureSubscriptionKey,
+                SpeechRegion = _appSettings.AzureSpeechRegion,
+                AudioSampleId = recognizedAudioSample.Id,
+                SubscriptionRemainingTimeString = remainingTime.ToString()
+            };
+
+            await _applicationLogService
+                .InfoAsync($"User with ID='{userId}' retrieved speech recognition configuration: {speechConfigurationDto}.", userId)
+                .ConfigureAwait(false);
+
+            return Ok(speechConfigurationDto);
         }
     }
 }
