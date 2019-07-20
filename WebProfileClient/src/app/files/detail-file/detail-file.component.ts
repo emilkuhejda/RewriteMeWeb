@@ -7,6 +7,7 @@ import { ErrorResponse } from 'src/app/_models/error-response';
 import { TranscribeItemService } from 'src/app/_services/transcribe-item.service';
 import { TranscribeItem } from 'src/app/_models/transcribe-item';
 import { CommonVariables } from 'src/app/_config/common-variables';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-detail-file',
@@ -16,23 +17,24 @@ import { CommonVariables } from 'src/app/_config/common-variables';
 export class DetailFileComponent implements OnInit {
     fileItemName: string;
     transcribeItems: TranscribeItem[];
+    source: any;
     loading: boolean;
 
     constructor(
         private route: ActivatedRoute,
         private fileItemService: FileItemService,
         private transcribeItemService: TranscribeItemService,
-        private alertService: AlertService) { }
+        private alertService: AlertService,
+        private sanitizer: DomSanitizer) { }
 
     ngOnInit() {
-        this.getFileItem().then((fileItem: FileItem) => {
+        this.initializeFileItem().then((fileItem: FileItem) => {
             this.fileItemName = fileItem.name;
-
-            this.getTranscribeItem(fileItem.id);
+            this.initializeTranscribeItems(fileItem.id);
         });
     }
 
-    getFileItem() {
+    initializeFileItem() {
         return new Promise(resolve => {
             this.route.paramMap.subscribe(paramMap => {
                 let fileId = paramMap.get("fileId");
@@ -48,7 +50,7 @@ export class DetailFileComponent implements OnInit {
         });
     }
 
-    getTranscribeItem(fileItemId: string) {
+    initializeTranscribeItems(fileItemId: string) {
         this.transcribeItemService.getAll(fileItemId).subscribe(
             (transcribeItems: TranscribeItem[]) => {
                 this.transcribeItems = transcribeItems;
@@ -73,5 +75,20 @@ export class DetailFileComponent implements OnInit {
                 this.alertService.error(err.message);
             })
             .add(() => this.loading = false);
+    }
+
+    loadAudioFile(transcribeItem: TranscribeItem) {
+        this.loading = true;
+
+        this.transcribeItemService.getAudio(transcribeItem.id).subscribe(
+            data => {
+                this.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }).add(() => {
+                this.loading = false
+                window.scrollTo(0, 0);
+            });
     }
 }

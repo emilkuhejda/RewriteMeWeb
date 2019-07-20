@@ -4,12 +4,23 @@
 </div>
 
 <!-- Content -->
+<div class="mb-4" *ngIf="source && !loading">
+	<div class="card border-left-primary shadow h-100 py-2">
+		<div class="card-body">
+			<div class="row no-gutters align-items-center">
+				<audio controls="controls" [src]="source"></audio>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div *ngFor="let transcribeItem of transcribeItems">
 	<div class="card shadow mb-4">
 		<!-- Card Header - Dropdown -->
 		<div class="card-header py-3 align-items-center justify-content-between">
 			<h6 class="m-0 font-weight-bold text-primary">Transcript</h6>
 		</div>
+
 		<!-- Card Body -->
 		<div class="card-body">
 			<div class="form-group shadow-textarea">
@@ -20,6 +31,9 @@
 			<div class="form-group">
 				<button [disabled]="loading" (click)="update(transcribeItem)"
 					class="btn btn-primary mr-2">Update</button>
+				<button [disabled]="loading" (click)="loadAudioFile(transcribeItem)" class="btn btn-info mr-2">Load
+					audio</button>
+
 				<img *ngIf="loading"
 					src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
 			</div>

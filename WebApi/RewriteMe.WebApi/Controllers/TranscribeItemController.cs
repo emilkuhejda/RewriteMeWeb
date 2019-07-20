@@ -56,6 +56,14 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(transcribeItem.Source);
         }
 
+        [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
+        [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
+        public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
+        {
+            var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
+            return new FileContentResult(transcribeItem.Source, "audio/wav");
+        }
+
         [HttpPut("/api/transcribe-items/update-transcript")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]

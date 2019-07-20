@@ -15,6 +15,10 @@ export class TranscribeItemService {
         return this.http.get<TranscribeItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeItemsPath + fileItemId).pipe(map(TranscribeItemMapper.convert));
     }
 
+    getAudio(transcribeItemId: string) {
+        return this.http.get(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeAudioPath + transcribeItemId, { responseType: 'blob' });
+    }
+
     updateTranscript(formData) {
         return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateTranscriptPath, formData);
     }
