@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
         if (this.msalService.isLoggedIn()) {
             return true;
         }
-
+        
         window.open(CommonVariables.ApiUrl + CommonVariables.Home, '_self');
         return false;
     }

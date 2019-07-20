@@ -29,7 +29,9 @@ export class FilesComponent implements OnInit {
     ngOnInit() {
         this.fileItemService.getAll().subscribe(
             data => {
-                this.fileItems = data;
+                this.fileItems = data.sort((a, b) => {
+                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
+                });
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
