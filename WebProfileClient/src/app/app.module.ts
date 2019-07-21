@@ -14,6 +14,7 @@ import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ExportAsModule } from 'ngx-export-as';
 import { ExportDialogComponent } from './_directives/export-dialog/export-dialog.component';
+import { DialogComponent } from './_directives/dialog/dialog.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { ExportDialogComponent } from './_directives/export-dialog/export-dialog
         TopbarComponent,
         RecognitionStatePipe,
         routingComponents,
-        ExportDialogComponent
+        ExportDialogComponent,
+        DialogComponent
     ],
     imports: [
         BrowserModule,
@@ -45,6 +47,6 @@ import { ExportDialogComponent } from './_directives/export-dialog/export-dialog
         multi: true
     }],
     bootstrap: [AppComponent],
-    entryComponents: [ExportDialogComponent]
+    entryComponents: [ExportDialogComponent, DialogComponent]
 })
 export class AppModule { }
