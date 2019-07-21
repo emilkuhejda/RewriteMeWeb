@@ -20,21 +20,23 @@ export class FilesComponent implements OnInit {
     fileItems: FileItem[];
 
     ngOnInit() {
-        this.fileItemService.getAll().subscribe(
-            data => {
-                this.fileItems = data.sort((a, b) => {
-                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
-                });
-            },
-            (err: ErrorResponse) => {
-                this.alertService.error(err.message);
-            }
-        );
+        this.initialize();
     }
 
-    remove(fileItem: FileItem) {
+    delete(fileItem: FileItem) {
         let onAccept = (dialogComponent: DialogComponent) => {
-            dialogComponent.close();
+            this.fileItemService.delete(fileItem.id)
+                .subscribe(
+                    () => {
+                        this.alertService.success(`The file '${fileItem.name}' was successfully deleted`);
+                        this.initialize();
+                    },
+                    (err: ErrorResponse) => {
+                        this.alertService.error(err.message);
+                    }
+                ).add(() => {
+                    dialogComponent.close();
+                });
         };
 
         let data = {
@@ -49,5 +51,18 @@ export class FilesComponent implements OnInit {
         });
 
         modal.onClosedModal().subscribe();
+    }
+
+    initialize() {
+        this.fileItemService.getAll().subscribe(
+            data => {
+                this.fileItems = data.sort((a, b) => {
+                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
+                });
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }
+        );
     }
 }

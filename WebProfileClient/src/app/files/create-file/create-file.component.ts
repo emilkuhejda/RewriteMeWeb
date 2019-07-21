@@ -73,7 +73,7 @@ export class CreateFileComponent implements OnInit {
         formData.append("applicationId", CommonVariables.ApplicationId);
         formData.append("file", file);
 
-        this.fileItemService.create(formData)
+        this.fileItemService.upload(formData)
             .subscribe(
                 event => {
                     if (event.type == HttpEventType.UploadProgress) {

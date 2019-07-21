@@ -21,11 +21,18 @@ export class FileItemService {
         return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath, { params: params }).pipe(map(FileItemMapper.convertAll));
     }
 
-    create(formData) {
-        let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, formData, {
+    upload(formData) {
+        let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiUpdateTranscriptPath, formData, {
             reportProgress: true
         });
-        
+
         return this.http.request(uploadRequest);
+    }
+
+    delete(fileItemId: string) {
+        let params = new HttpParams();
+        params = params.append('fileItemId', fileItemId);
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+        return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiDeleteFileItemPath, { params: params });
     }
 }

@@ -38,7 +38,7 @@
                             <a *ngIf="fileItem.CanUploadFile" href="">Transcribe | </a>
                             <a *ngIf="!fileItem.CanUploadFile" [routerLink]="['/files', fileItem.id]">Detail | </a>
                             <a href="">Edit | </a>
-                            <a (click)="remove(fileItem)">Delete</a></td>
+                            <a (click)="delete(fileItem)">Delete</a></td>
                     </tr>
                 </tbody>
             </table>
