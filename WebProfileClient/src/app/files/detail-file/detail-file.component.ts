@@ -107,15 +107,10 @@ export class DetailFileComponent implements OnInit {
     }
 
     export() {
-        let transcribeItems = [];
-        this.transcribeItems.forEach(transcribeItem => {
-            transcribeItems.push(transcribeItem.userTranscript);
-        });
-
         let modal = this.modal.openDialog(ExportDialogComponent, {
             data: {
                 fileName: this.fileItemName,
-                items: transcribeItems
+                transcribeItems: this.transcribeItems
             },
             useStyles: 'none'
         });

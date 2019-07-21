@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GECO_DATA_DIALOG, GECO_DIALOG_REF, GecoDialogRef } from 'angular-dynamic-dialog';
 import { ExportAsConfig, ExportAsService } from 'ngx-export-as';
+import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 
 @Component({
     selector: 'app-export-dialog',
@@ -8,11 +9,11 @@ import { ExportAsConfig, ExportAsService } from 'ngx-export-as';
     styleUrls: ['./export-dialog.component.css']
 })
 export class ExportDialogComponent implements OnInit {
-    private fileName: string;
-    private items: any;
-
+    fileName: string;
+    transcribeItems: TranscribeItemViewModel[];
+    
     loading: boolean;
-
+    
     exportAsConfig: ExportAsConfig = {
         type: 'docx',
         elementId: 'export-area'
@@ -23,9 +24,9 @@ export class ExportDialogComponent implements OnInit {
         @Inject(GECO_DIALOG_REF) public dialogRef: GecoDialogRef,
         private exportAsService: ExportAsService) {
         this.fileName = data.fileName;
-        this.items = data.items;
+        this.transcribeItems = data.transcribeItems;
     }
-
+    
     ngOnInit() { }
 
     accept() {

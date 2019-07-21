@@ -6,7 +6,7 @@
 </div>
 
 <div id="export-area" class="modal-body overflow-auto">
-    <p *ngFor="let item of items">{{item}}</p>
+    <p *ngFor="let transcribeItem of transcribeItems">{{transcribeItem.userTranscript}}</p>
 </div>
 <div class="modal-footer">
     <button type="button" [disabled]="loading" class="btn btn-primary" (click)="accept()">Accept</button>
