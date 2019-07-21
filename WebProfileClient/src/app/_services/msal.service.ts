@@ -25,12 +25,12 @@ export class MsalService {
         function (errorDesc: any, token: any, error: any, tokenType: any) { },
         { cacheLocation: 'localStorage' }
     );
-
+    
     public login(): void {
         this.clientApplication.authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
         this.authenticate();
     }
-
+    
     public authenticate(): void {
         var _this = this;
         this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
@@ -49,7 +49,7 @@ export class MsalService {
             console.log("error: ", error);
         });
     }
-
+    
     saveAccessTokenToCache(accessToken: string): void {
         localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
     };

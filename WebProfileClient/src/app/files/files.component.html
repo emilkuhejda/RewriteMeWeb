@@ -11,7 +11,6 @@
     </div>
     <!-- Card Body -->
     <div class="card-body">
-        <a (click)="login()" *ngIf="!isLoggedIn()">Login</a>
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -37,9 +36,9 @@
                         <td>{{fileItem.recognitionState|recognitionState}}</td>
                         <td>
                             <a *ngIf="fileItem.CanUploadFile" href="">Transcribe | </a>
-                            <a *ngIf="!fileItem.CanUploadFile" href="">Detail | </a>
+                            <a *ngIf="!fileItem.CanUploadFile" [routerLink]="['/files', fileItem.id]">Detail | </a>
                             <a href="">Edit | </a>
-                            <a href="">Delete</a></td>
+                            <a (click)="remove(fileItem)">Delete</a></td>
                     </tr>
                 </tbody>
             </table>

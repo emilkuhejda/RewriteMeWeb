@@ -3,4 +3,7 @@ export class CommonVariables {
     public static ApiUrl: string = "https://localhost:44357/";
     public static Home: string = "home/";
     public static ApiFileItemsPath: string = "api/files/";
+    public static ApiTranscribeItemsPath: string = "api/transcribe-items/";
+    public static ApiUpdateTranscriptPath: string = "api/transcribe-items/update-transcript/";
+    public static ApiTranscribeAudioPath: string = "api/transcribe-items/audio-stream/";
 }

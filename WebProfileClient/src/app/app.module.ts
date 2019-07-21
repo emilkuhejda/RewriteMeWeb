@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { GecoDialogModule } from 'angular-dynamic-dialog';
 
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,6 +12,9 @@ import { AlertComponent } from './_directives/alert/alert.component';
 import { TokenInterceptorService } from './_services/token-interceptor.service';
 import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
+import { ExportAsModule } from 'ngx-export-as';
+import { ExportDialogComponent } from './_directives/export-dialog/export-dialog.component';
+import { DialogComponent } from './_directives/dialog/dialog.component';
 
 @NgModule({
     declarations: [
@@ -18,12 +23,18 @@ import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
         SidebarComponent,
         TopbarComponent,
         RecognitionStatePipe,
-        routingComponents
+        routingComponents,
+        ExportDialogComponent,
+        DialogComponent
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
-        AppRoutingModule
+        AppRoutingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        ExportAsModule,
+        GecoDialogModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,
@@ -35,6 +46,7 @@ import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
         useClass: ErrorInterceptorService,
         multi: true
     }],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [ExportDialogComponent, DialogComponent]
 })
 export class AppModule { }

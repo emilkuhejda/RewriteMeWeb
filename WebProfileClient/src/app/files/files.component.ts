@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FileItemService } from '../_services/file-item.service';
 import { ErrorResponse } from '../_models/error-response';
 import { AlertService } from '../_services/alert.service';
-import { MsalService } from '../_services/msal.service';
 import { FileItem } from '../_models/file-item';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { DialogComponent } from '../_directives/dialog/dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -12,19 +13,11 @@ import { FileItem } from '../_models/file-item';
 })
 export class FilesComponent implements OnInit {
     constructor(
-        private msalService: MsalService,
         private fileItemService: FileItemService,
-        private alertService: AlertService) { }
+        private alertService: AlertService,
+        private modal: GecoDialog) { }
 
     fileItems: FileItem[];
-
-    isLoggedIn() {
-        return this.msalService.isLoggedIn();
-    }
-
-    login() {
-        this.msalService.login();
-    }
 
     ngOnInit() {
         this.fileItemService.getAll().subscribe(
@@ -37,5 +30,24 @@ export class FilesComponent implements OnInit {
                 this.alertService.error(err.message);
             }
         );
+    }
+
+    remove(fileItem: FileItem) {
+        let onAccept = (dialogComponent: DialogComponent) => {
+            dialogComponent.close();
+        };
+
+        let data = {
+            title: `Delete ${fileItem.name}`,
+            message: `Do you really want to delete file '${fileItem.name}'?`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(DialogComponent, {
+            data: data,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 }

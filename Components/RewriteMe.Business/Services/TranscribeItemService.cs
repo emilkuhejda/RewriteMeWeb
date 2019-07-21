@@ -21,9 +21,14 @@ namespace RewriteMe.Business.Services
             return await _transcribeItemRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
+        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid fileItemId)
         {
-            return await _transcribeItemRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
+            return await _transcribeItemRepository.GetAllAsync(fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<TranscribeItem>> GetAllForUserAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
+        {
+            return await _transcribeItemRepository.GetAllForUserAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
