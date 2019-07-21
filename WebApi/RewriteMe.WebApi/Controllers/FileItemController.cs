@@ -91,23 +91,6 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Upload([FromForm] UploadFileItemModel uploadFileItemModel, [FromForm] IFormFile file)
-        {
-            return await Create(
-                uploadFileItemModel.Name,
-                uploadFileItemModel.Language,
-                uploadFileItemModel.FileName,
-                uploadFileItemModel.ApplicationId,
-                file).ConfigureAwait(false);
-        }
-
-        [HttpPost("/api/files/create")]
-        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-        [SwaggerOperation(OperationId = "CreateFileItem")]
-        [DisableRequestSizeLimit]
         public async Task<IActionResult> Create(string name, string language, string fileName, Guid applicationId, [FromForm]IFormFile file)
         {
             if (file == null)

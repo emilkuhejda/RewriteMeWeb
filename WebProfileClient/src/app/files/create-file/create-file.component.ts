@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse, HttpParams } from '@angular/common/http';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { CommonVariables } from 'src/app/_config/common-variables';
 
@@ -65,15 +65,17 @@ export class CreateFileComponent implements OnInit {
 
         this.loading = true;
 
-        var file = files[0];
+        let file = files[0];
+        let params = new HttpParams();
+        params = params.append("name", this.controls.name.value);
+        params = params.append("language", this.controls.language.value);
+        params = params.append("fileName", file.name);
+        params = params.append("applicationId", CommonVariables.ApplicationId);
+
         let formData = new FormData();
-        formData.append("name", this.controls.name.value);
-        formData.append("language", this.controls.language.value);
-        formData.append("fileName", file.name);
-        formData.append("applicationId", CommonVariables.ApplicationId);
         formData.append("file", file);
 
-        this.fileItemService.upload(formData)
+        this.fileItemService.upload(formData, params)
             .subscribe(
                 event => {
                     if (event.type == HttpEventType.UploadProgress) {
@@ -86,7 +88,7 @@ export class CreateFileComponent implements OnInit {
                 (err: ErrorResponse) => {
                     let error = err.message;
                     if (err.status === 400)
-                        error = "Uploaded file not found";
+                        error = "Uploaded file was not found";
 
                     if (err.status === 406)
                         error = "Language is not supported";

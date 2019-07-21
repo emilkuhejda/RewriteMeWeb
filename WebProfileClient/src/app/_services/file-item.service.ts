@@ -21,8 +21,9 @@ export class FileItemService {
         return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath, { params: params }).pipe(map(FileItemMapper.convertAll));
     }
 
-    upload(formData) {
-        let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiUpdateTranscriptPath, formData, {
+    upload(formData: FormData, params: HttpParams) {
+        let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiUploadFileItemPath, formData, {
+            params: params,
             reportProgress: true
         });
 
@@ -34,5 +35,13 @@ export class FileItemService {
         params = params.append('fileItemId', fileItemId);
         params = params.append('applicationId', CommonVariables.ApplicationId);
         return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiDeleteFileItemPath, { params: params });
+    }
+
+    transcribe(fileItemId: string, language: string) {
+        let params = new HttpParams();
+        params = params.append('fileItemId', fileItemId);
+        params = params.append('language', language);
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+        return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, null, { params: params });
     }
 }

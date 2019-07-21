@@ -24,6 +24,7 @@ export class FilesComponent implements OnInit {
     }
 
     delete(fileItem: FileItem) {
+        this.alertService.clear();
         let onAccept = (dialogComponent: DialogComponent) => {
             this.fileItemService.delete(fileItem.id)
                 .subscribe(
@@ -42,6 +43,47 @@ export class FilesComponent implements OnInit {
         let data = {
             title: `Delete ${fileItem.name}`,
             message: `Do you really want to delete file '${fileItem.name}'?`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(DialogComponent, {
+            data: data,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
+    }
+
+    transcribe(fileItem: FileItem) {
+        this.alertService.clear();
+        let onAccept = (dialogComponent: DialogComponent) => {
+            this.fileItemService.transcribe(fileItem.id, fileItem.language)
+                .subscribe(
+                    () => {
+                        this.alertService.success(`The file '${fileItem.name}' started processing`);
+                        this.initialize();
+                    },
+                    (err: ErrorResponse) => {
+                        let error = err.message;
+                        if (err.status === 400)
+                            error = "Audio file was not found";
+
+                        if (err.status === 403)
+                            error = "Your subscription does not have enough free minutes";
+
+                        if (err.status === 406)
+                            error = "Language is not supported";
+
+                        this.alertService.error(error);
+                    }
+                ).add(() => {
+                    dialogComponent.close();
+                });
+        };
+
+        let data = {
+            title: `Transcribe ${fileItem.name}`,
+            message: `Do you really want to transcribe file '${fileItem.name}'?`,
             onAccept: onAccept
         };
 
