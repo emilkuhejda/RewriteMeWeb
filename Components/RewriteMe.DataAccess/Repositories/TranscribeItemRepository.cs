@@ -32,7 +32,45 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
+        public async Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var transcribeItemEntities = await context.TranscribeItems
+                    .Where(x => x.FileItemId == fileItemId)
+                    .AsNoTracking()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.FileItemId,
+                        x.Alternatives,
+                        x.UserTranscript,
+                        x.StartTime,
+                        x.EndTime,
+                        x.TotalTime,
+                        x.DateCreated,
+                        x.DateUpdated
+                    })
+                    .OrderBy(x => x.StartTime)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return transcribeItemEntities.Select(x => new TranscribeItem
+                {
+                    Id = x.Id,
+                    FileItemId = x.FileItemId,
+                    Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
+                    UserTranscript = x.UserTranscript,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    TotalTime = x.TotalTime,
+                    DateCreated = x.DateCreated,
+                    DateUpdated = x.DateUpdated
+                });
+            }
+        }
+
+        public async Task<IEnumerable<TranscribeItem>> GetAllForUserAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
