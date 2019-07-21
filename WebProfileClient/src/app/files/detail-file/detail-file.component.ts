@@ -8,6 +8,7 @@ import { TranscribeItemService } from 'src/app/_services/transcribe-item.service
 import { TranscribeItem } from 'src/app/_models/transcribe-item';
 import { CommonVariables } from 'src/app/_config/common-variables';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 
 @Component({
     selector: 'app-detail-file',
@@ -16,9 +17,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class DetailFileComponent implements OnInit {
     fileItemName: string;
-    transcribeItems: TranscribeItem[];
-    source: any;
-    loading: boolean;
+    transcribeItems: TranscribeItemViewModel[] = [];
 
     constructor(
         private route: ActivatedRoute,
@@ -53,7 +52,11 @@ export class DetailFileComponent implements OnInit {
     initializeTranscribeItems(fileItemId: string) {
         this.transcribeItemService.getAll(fileItemId).subscribe(
             (transcribeItems: TranscribeItem[]) => {
-                this.transcribeItems = transcribeItems;
+                for (let transcribeItem of transcribeItems) {
+                    let viewModel = new TranscribeItemViewModel();
+                    viewModel.transcribeItem = transcribeItem;
+                    this.transcribeItems.push(viewModel);
+                }
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
@@ -61,34 +64,33 @@ export class DetailFileComponent implements OnInit {
         );
     }
 
-    update(transcribeItem: TranscribeItem) {
-        this.loading = true;
+    update(viewModel: TranscribeItemViewModel) {
+        viewModel.isLoading = true;
 
         let formData = new FormData();
-        formData.append("transcribeItemId", transcribeItem.id);
+        formData.append("transcribeItemId", viewModel.transcribeItem.id);
         formData.append("applicationId", CommonVariables.ApplicationId);
-        formData.append("transcript", transcribeItem.userTranscript);
+        formData.append("transcript", viewModel.transcribeItem.userTranscript);
 
         this.transcribeItemService.updateTranscript(formData).subscribe(
             () => { },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             })
-            .add(() => this.loading = false);
+            .add(() => viewModel.isLoading = false);
     }
 
-    loadAudioFile(transcribeItem: TranscribeItem) {
-        this.loading = true;
+    loadAudioFile(viewModel: TranscribeItemViewModel) {
+        viewModel.isLoading = true;
 
-        this.transcribeItemService.getAudio(transcribeItem.id).subscribe(
+        this.transcribeItemService.getAudio(viewModel.transcribeItem.id).subscribe(
             data => {
-                this.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
+                viewModel.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }).add(() => {
-                this.loading = false
-                window.scrollTo(0, 0);
+                viewModel.isLoading = false;
             });
     }
 }
