@@ -25,7 +25,7 @@ export class FileItemService {
         let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiCreateFileItemPath, formData, {
             reportProgress: true
         });
-
+        
         return this.http.request(uploadRequest);
     }
 }

@@ -6,5 +6,5 @@ export class CommonVariables {
     public static ApiTranscribeItemsPath: string = "api/transcribe-items/";
     public static ApiUpdateTranscriptPath: string = "api/transcribe-items/update-transcript/";
     public static ApiTranscribeAudioPath: string = "api/transcribe-items/audio-stream/";
-    public static ApiCreateFileItemPath: string = "api/files/create/";
+    public static ApiCreateFileItemPath: string = "api/files/upload/";
 }

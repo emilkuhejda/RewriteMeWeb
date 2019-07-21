@@ -5,6 +5,7 @@ import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { CommonVariables } from 'src/app/_config/common-variables';
 
 @Component({
     selector: 'app-create-file',
@@ -64,13 +65,13 @@ export class CreateFileComponent implements OnInit {
 
         this.loading = true;
 
+        var file = files[0];
         let formData = new FormData();
         formData.append("name", this.controls.name.value);
         formData.append("language", this.controls.language.value);
-
-        for (let file of files) {
-            formData.append(file.name, file)
-        }
+        formData.append("fileName", file.name);
+        formData.append("applicationId", CommonVariables.ApplicationId);
+        formData.append("file", file);
 
         this.fileItemService.create(formData)
             .subscribe(
@@ -78,7 +79,7 @@ export class CreateFileComponent implements OnInit {
                     if (event.type == HttpEventType.UploadProgress) {
                         this.progress = Math.round(100 * event.loaded / event.total);
                     } else if (event instanceof HttpResponse) {
-                        this.alertService.success("Project was successfully created", true);
+                        this.alertService.success("File was successfully created", true);
                         this.router.navigate(["/files"]);
                     }
                 },
