@@ -9,6 +9,8 @@ import { TranscribeItem } from 'src/app/_models/transcribe-item';
 import { CommonVariables } from 'src/app/_config/common-variables';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -24,6 +26,7 @@ export class DetailFileComponent implements OnInit {
         private fileItemService: FileItemService,
         private transcribeItemService: TranscribeItemService,
         private alertService: AlertService,
+        private modal: GecoDialog,
         private sanitizer: DomSanitizer) { }
 
     ngOnInit() {
@@ -101,5 +104,22 @@ export class DetailFileComponent implements OnInit {
 
     onChange(transcribeItem: TranscribeItemViewModel) {
         transcribeItem.updateUserTranscript();
+    }
+
+    export() {
+        let transcribeItems = [];
+        this.transcribeItems.forEach(transcribeItem => {
+            transcribeItems.push(transcribeItem.userTranscript);
+        });
+
+        let modal = this.modal.openDialog(ExportDialogComponent, {
+            data: {
+                fileName: this.fileItemName,
+                items: transcribeItems
+            },
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 }
