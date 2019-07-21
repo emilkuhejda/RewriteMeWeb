@@ -4,12 +4,12 @@
 </div>
 
 <!-- Content -->
-<div *ngFor="let viewModel of transcribeItems">
-	<div class="mb-4" *ngIf="viewModel.source">
+<div *ngFor="let transcribeItem of transcribeItems">
+	<div class="mb-4" *ngIf="transcribeItem.source">
 		<div class="card border-left-primary shadow h-100 py-2">
 			<div class="card-body">
 				<div class="row no-gutters align-items-center">
-					<audio controls="controls" [src]="viewModel.source"></audio>
+					<audio controls="controls" [src]="transcribeItem.source"></audio>
 				</div>
 			</div>
 		</div>
@@ -24,17 +24,19 @@
 		<!-- Card Body -->
 		<div class="card-body">
 			<div class="form-group shadow-textarea">
-				<textarea class="form-control" rows="7" [(ngModel)]="viewModel.transcribeItem.userTranscript"
-					[disabled]="viewModel.isLoading"></textarea>
+				<textarea class="form-control" rows="7" [(ngModel)]="transcribeItem.userTranscript"
+					[disabled]="transcribeItem.isLoading" (input)="onChange(transcribeItem)"></textarea>
 			</div>
 
 			<div class="form-group">
-				<button [disabled]="viewModel.isLoading" (click)="update(viewModel)"
-					class="btn btn-primary mr-2">Update</button>
-				<button [disabled]="viewModel.isLoading" *ngIf="!viewModel.source" (click)="loadAudioFile(viewModel)"
-					class="btn btn-info mr-2">Load audio</button>
+				<button [disabled]="transcribeItem.isLoading || !transcribeItem.isDirty"
+					(click)="update(transcribeItem)" class="btn btn-primary mr-2">Update</button>
+				<button [disabled]="transcribeItem.isLoading" *ngIf="!transcribeItem.source"
+					(click)="loadAudioFile(transcribeItem)" class="btn btn-info mr-2">Load audio</button>
+				<button [disabled]="transcribeItem.isLoading" *ngIf="transcribeItem.isUserTranscriptChanged"
+					(click)="refresh(transcribeItem)" class="btn btn-info mr-2">Refresh</button>
 
-				<img *ngIf="viewModel.isLoading"
+				<img *ngIf="transcribeItem.isLoading"
 					src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
 			</div>
 		</div>

@@ -53,9 +53,7 @@ export class DetailFileComponent implements OnInit {
         this.transcribeItemService.getAll(fileItemId).subscribe(
             (transcribeItems: TranscribeItem[]) => {
                 for (let transcribeItem of transcribeItems) {
-                    let viewModel = new TranscribeItemViewModel();
-                    viewModel.transcribeItem = transcribeItem;
-                    this.transcribeItems.push(viewModel);
+                    this.transcribeItems.push(new TranscribeItemViewModel(transcribeItem));
                 }
             },
             (err: ErrorResponse) => {
@@ -64,33 +62,44 @@ export class DetailFileComponent implements OnInit {
         );
     }
 
-    update(viewModel: TranscribeItemViewModel) {
-        viewModel.isLoading = true;
+    update(transcribeItem: TranscribeItemViewModel) {
+        transcribeItem.isLoading = true;
 
         let formData = new FormData();
-        formData.append("transcribeItemId", viewModel.transcribeItem.id);
+        formData.append("transcribeItemId", transcribeItem.transcribeItemId);
         formData.append("applicationId", CommonVariables.ApplicationId);
-        formData.append("transcript", viewModel.transcribeItem.userTranscript);
+        formData.append("transcript", transcribeItem.userTranscript);
 
         this.transcribeItemService.updateTranscript(formData).subscribe(
             () => { },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             })
-            .add(() => viewModel.isLoading = false);
+            .add(() => {
+                transcribeItem.isLoading = false;
+                transcribeItem.clear();
+            });
     }
 
-    loadAudioFile(viewModel: TranscribeItemViewModel) {
-        viewModel.isLoading = true;
+    loadAudioFile(transcribeItem: TranscribeItemViewModel) {
+        transcribeItem.isLoading = true;
 
-        this.transcribeItemService.getAudio(viewModel.transcribeItem.id).subscribe(
+        this.transcribeItemService.getAudio(transcribeItem.transcribeItemId).subscribe(
             data => {
-                viewModel.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
+                transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }).add(() => {
-                viewModel.isLoading = false;
+                transcribeItem.isLoading = false;
             });
+    }
+
+    refresh(transcribeItem: TranscribeItemViewModel) {
+        transcribeItem.refreshTranscript();
+    }
+
+    onChange(transcribeItem: TranscribeItemViewModel) {
+        transcribeItem.updateUserTranscript();
     }
 }
