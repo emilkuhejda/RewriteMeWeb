@@ -5,6 +5,8 @@ import { AlertService } from '../_services/alert.service';
 import { FileItem } from '../_models/file-item';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
+import { timer } from 'rxjs';
+import { RecognitionState } from '../_enums/recognition-state';
 
 @Component({
     selector: 'app-files',
@@ -97,14 +99,41 @@ export class FilesComponent implements OnInit {
 
     initialize() {
         this.fileItemService.getAll().subscribe(
-            data => {
-                this.fileItems = data.sort((a, b) => {
+            (fileItems: FileItem[]) => {
+                this.fileItems = fileItems.sort((a, b) => {
                     return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
                 });
+
+                this.synchronizeFileItems(fileItems);
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }
         );
+    }
+
+    synchronizeFileItems(fileItems: FileItem[]) {
+        let anyWaitingForSynchronization = fileItems.filter(fileItem => fileItem.recognitionState == RecognitionState.InProgress);
+        if (anyWaitingForSynchronization.length > 0) {
+            let source = timer(30000);
+            source.subscribe(() => {
+                this.updateFileItems();
+            });
+        }
+    }
+
+    updateFileItems() {
+        this.fileItemService.getAll().subscribe(
+            (fileItems: FileItem[]) => {
+                for (let fileItem of fileItems) {
+                    let items = this.fileItems.filter(x => x.id == fileItem.id);
+                    if (items.length > 0) {
+                        let item = items[0];
+                        item.recognitionState = fileItem.recognitionState;
+                    }
+                }
+
+                this.synchronizeFileItems(fileItems);
+            });
     }
 }
