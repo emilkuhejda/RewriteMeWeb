@@ -16,4 +16,8 @@ export class FileItem {
     get CanUploadFile() {
         return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;
     }
+
+    get IsInProgress() {
+        return this.recognitionState == RecognitionState.InProgress;
+    }
 }
