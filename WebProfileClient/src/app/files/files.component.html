@@ -38,7 +38,7 @@
                             <a *ngIf="fileItem.CanTranscribe" (click)="transcribe(fileItem)">Transcribe</a>
                             <span *ngIf="fileItem.CanTranscribe"> | </span>
                             <a *ngIf="fileItem.CanTranscribe" [class.disabled]="fileItem.IsInProgress"
-                                class="btn btn-link" [routerLink]="['/files', fileItem.id]">Edit</a>
+                                class="btn btn-link" [routerLink]="['/files/edit', fileItem.id]">Edit</a>
                             <span *ngIf="fileItem.CanTranscribe"> | </span>
                             <a *ngIf="fileItem.IsCompleted" [class.disabled]="fileItem.IsInProgress"
                                 class="btn btn-link" [routerLink]="['/files', fileItem.id]">Detail</a>

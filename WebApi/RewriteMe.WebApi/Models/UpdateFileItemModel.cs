@@ -2,11 +2,11 @@
 
 namespace RewriteMe.WebApi.Models
 {
-    public class UploadFileItemModel
+    public class UpdateFileItemModel
     {
-        public string Name { get; set; }
+        public Guid FileItemId { get; set; }
 
-        public string FileName { get; set; }
+        public string Name { get; set; }
 
         public string Language { get; set; }
 

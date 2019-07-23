@@ -28,6 +28,12 @@ export class FileItemService {
         return this.http.request(uploadRequest);
     }
 
+    update(formData: FormData) {
+        formData.append("applicationId", CommonVariables.ApplicationId);
+
+        return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateFileItemPath, formData);
+    }
+
     delete(fileItemId: string) {
         let params = new HttpParams();
         params = params.append('fileItemId', fileItemId);

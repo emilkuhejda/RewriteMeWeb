@@ -17,7 +17,6 @@ export class CreateFileComponent implements OnInit {
 
     createFileForm: FormGroup;
     progress: number;
-    message: string;
     selectedFileName: string;
     submitted: boolean;
     loading: boolean;
