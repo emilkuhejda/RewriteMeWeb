@@ -1,4 +1,5 @@
 import { FileItem } from '../_models/file-item';
+import { RecognitionState } from '../_enums/recognition-state';
 
 export class FileItemMapper {
     public static convertAll(data): FileItem[] {
@@ -18,7 +19,7 @@ export class FileItemMapper {
         fileItem.name = data.name;
         fileItem.fileName = data.fileName;
         fileItem.language = data.language;
-        fileItem.recognitionState = data.RecognitionStateString;
+        fileItem.recognitionState = <RecognitionState>RecognitionState[<string>data.recognitionStateString];
         fileItem.totalTime = data.TotalTimeString;
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;

@@ -46,8 +46,7 @@ export class DetailFileComponent implements OnInit {
                     },
                     (err: ErrorResponse) => {
                         this.alertService.error(err.message);
-                    }
-                );
+                    });
             });
         });
     }

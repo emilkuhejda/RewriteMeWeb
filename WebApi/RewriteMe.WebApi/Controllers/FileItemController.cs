@@ -84,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(file.ToDto());
         }
 
-        [HttpPost("/api/files/create")]
+        [HttpPost("/api/files/upload")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
@@ -149,66 +149,27 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPut("/api/files/update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Update(Guid fileItemId, string name, string language, string fileName, Guid applicationId, [FromForm]IFormFile file = null)
+        public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
-            if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
+            if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
                 return StatusCode(406);
 
             var userId = HttpContext.User.GetNameIdentifier();
-
             var fileItem = new FileItem
             {
-                Id = fileItemId,
-                UserId = HttpContext.User.GetNameIdentifier(),
-                ApplicationId = applicationId,
-                Name = name,
-                Language = language,
+                Id = updateFileItemModel.FileItemId,
+                UserId = userId,
+                ApplicationId = updateFileItemModel.ApplicationId,
+                Name = updateFileItemModel.Name,
+                Language = updateFileItemModel.Language,
                 DateUpdated = DateTime.UtcNow
             };
 
-            AudioSourceDto audioSourceDto = null;
-            if (file != null)
-            {
-                TimeSpan totalTime;
-                try
-                {
-                    totalTime = await file.GetTotalTime().ConfigureAwait(false);
-                }
-                catch (Exception)
-                {
-                    return StatusCode(415);
-                }
-
-                fileItem.AudioSourceVersion += 1;
-                fileItem.FileName = fileName;
-                fileItem.TotalTime = totalTime;
-
-                var source = await file.GetBytesAsync().ConfigureAwait(false);
-                var audioSource = new AudioSource
-                {
-                    FileItemId = fileItem.Id,
-                    OriginalSource = source,
-                    WavSource = null,
-                    ContentType = file.ContentType,
-                    TotalTime = default(TimeSpan),
-                    Version = fileItem.AudioSourceVersion
-                };
-
-                await _audioSourceService.UpdateAsync(audioSource).ConfigureAwait(false);
-                audioSourceDto = audioSource.ToDto();
-
-                BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
-            }
-
-            var fileItemDto = fileItem.ToDto();
-            fileItemDto.AudioSource = audioSourceDto;
-
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
 
-            return Ok(fileItemDto);
+            return Ok(new OkDto());
         }
 
         [HttpDelete("/api/files/delete")]

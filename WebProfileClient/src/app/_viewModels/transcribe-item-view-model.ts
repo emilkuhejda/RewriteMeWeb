@@ -4,7 +4,6 @@ export class TranscribeItemViewModel {
     readonly transcribeItemId: string;
     readonly transcript: string;
     public userTranscript: string;
-    public isUserTranscriptChanged: boolean;
     public source: any;
     public isDirty: boolean;
     public isLoading: boolean;
@@ -13,13 +12,15 @@ export class TranscribeItemViewModel {
         this.transcribeItemId = transcribeItem.id;
         this.transcript = transcribeItem.transcript;
         this.userTranscript = transcribeItem.userTranscript;
-        this.isUserTranscriptChanged = transcribeItem.isUserTranscriptChanged();
+    }
+
+    get isUserTranscriptChanged() {
+        return this.transcribeItem.isUserTranscriptChanged();
     }
 
     updateUserTranscript() {
         this.isDirty = true;
         this.transcribeItem.userTranscript = this.userTranscript;
-        this.isUserTranscriptChanged = this.transcribeItem.isUserTranscriptChanged();
     }
 
     refreshTranscript() {
@@ -27,7 +28,6 @@ export class TranscribeItemViewModel {
         this.transcribeItem.refreshTranscript();
 
         this.userTranscript = this.transcribeItem.userTranscript;
-        this.isUserTranscriptChanged = this.transcribeItem.isUserTranscriptChanged();
     }
 
     clear() {

@@ -15,6 +15,8 @@ import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ExportAsModule } from 'ngx-export-as';
 import { ExportDialogComponent } from './_directives/export-dialog/export-dialog.component';
 import { DialogComponent } from './_directives/dialog/dialog.component';
+import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,8 @@ import { DialogComponent } from './_directives/dialog/dialog.component';
         RecognitionStatePipe,
         routingComponents,
         ExportDialogComponent,
-        DialogComponent
+        DialogComponent,
+        ProgressBarComponent
     ],
     imports: [
         BrowserModule,
@@ -34,6 +37,7 @@ import { DialogComponent } from './_directives/dialog/dialog.component';
         ReactiveFormsModule,
         FormsModule,
         ExportAsModule,
+        NgbModule,
         GecoDialogModule
     ],
     providers: [{
