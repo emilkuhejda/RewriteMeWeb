@@ -35,10 +35,17 @@
                         <td>{{fileItem.dateCreated|date}}</td>
                         <td>{{fileItem.recognitionState|recognitionState}}</td>
                         <td>
-                            <a *ngIf="fileItem.CanUploadFile" href="">Transcribe | </a>
-                            <a *ngIf="!fileItem.CanUploadFile" [routerLink]="['/files', fileItem.id]">Detail | </a>
-                            <a href="">Edit | </a>
-                            <a (click)="remove(fileItem)">Delete</a></td>
+                            <a *ngIf="fileItem.CanTranscribe" (click)="transcribe(fileItem)">Transcribe</a>
+                            <span *ngIf="fileItem.CanTranscribe"> | </span>
+                            <a *ngIf="fileItem.CanTranscribe" [class.disabled]="fileItem.IsInProgress"
+                                class="btn btn-link" [routerLink]="['/files/edit', fileItem.id]">Edit</a>
+                            <span *ngIf="fileItem.CanTranscribe"> | </span>
+                            <a *ngIf="fileItem.IsCompleted" [class.disabled]="fileItem.IsInProgress"
+                                class="btn btn-link" [routerLink]="['/files', fileItem.id]">Detail</a>
+                            <span *ngIf="fileItem.IsCompleted"> | </span>
+                            <a [class.disabled]="fileItem.IsInProgress" class="btn btn-link"
+                                (click)="delete(fileItem)">Delete</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

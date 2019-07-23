@@ -5,6 +5,8 @@ import { AlertService } from '../_services/alert.service';
 import { FileItem } from '../_models/file-item';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
+import { timer } from 'rxjs';
+import { RecognitionState } from '../_enums/recognition-state';
 
 @Component({
     selector: 'app-files',
@@ -20,21 +22,24 @@ export class FilesComponent implements OnInit {
     fileItems: FileItem[];
 
     ngOnInit() {
-        this.fileItemService.getAll().subscribe(
-            data => {
-                this.fileItems = data.sort((a, b) => {
-                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
-                });
-            },
-            (err: ErrorResponse) => {
-                this.alertService.error(err.message);
-            }
-        );
+        this.initialize();
     }
 
-    remove(fileItem: FileItem) {
+    delete(fileItem: FileItem) {
+        this.alertService.clear();
         let onAccept = (dialogComponent: DialogComponent) => {
-            dialogComponent.close();
+            this.fileItemService.delete(fileItem.id)
+                .subscribe(
+                    () => {
+                        this.alertService.success(`The file '${fileItem.name}' was successfully deleted`);
+                        this.initialize();
+                    },
+                    (err: ErrorResponse) => {
+                        this.alertService.error(err.message);
+                    }
+                ).add(() => {
+                    dialogComponent.close();
+                });
         };
 
         let data = {
@@ -49,5 +54,86 @@ export class FilesComponent implements OnInit {
         });
 
         modal.onClosedModal().subscribe();
+    }
+
+    transcribe(fileItem: FileItem) {
+        this.alertService.clear();
+        let onAccept = (dialogComponent: DialogComponent) => {
+            this.fileItemService.transcribe(fileItem.id, fileItem.language)
+                .subscribe(
+                    () => {
+                        this.alertService.success(`The file '${fileItem.name}' started processing`);
+                        this.initialize();
+                    },
+                    (err: ErrorResponse) => {
+                        let error = err.message;
+                        if (err.status === 400)
+                            error = "Audio file was not found";
+
+                        if (err.status === 403)
+                            error = "Your subscription does not have enough free minutes";
+
+                        if (err.status === 406)
+                            error = "Language is not supported";
+
+                        this.alertService.error(error);
+                    }
+                ).add(() => {
+                    dialogComponent.close();
+                });
+        };
+
+        let data = {
+            title: `Transcribe ${fileItem.name}`,
+            message: `Do you really want to transcribe file '${fileItem.name}'?`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(DialogComponent, {
+            data: data,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
+    }
+
+    initialize() {
+        this.fileItemService.getAll().subscribe(
+            (fileItems: FileItem[]) => {
+                this.fileItems = fileItems.sort((a, b) => {
+                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
+                });
+
+                this.synchronizeFileItems(fileItems);
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }
+        );
+    }
+
+    synchronizeFileItems(fileItems: FileItem[]) {
+        let anyWaitingForSynchronization = fileItems.filter(fileItem => fileItem.recognitionState == RecognitionState.InProgress);
+        if (anyWaitingForSynchronization.length > 0) {
+            let source = timer(30000);
+            source.subscribe(() => {
+                this.updateFileItems();
+            });
+        }
+    }
+
+    updateFileItems() {
+        this.fileItemService.getAll().subscribe(
+            (fileItems: FileItem[]) => {
+                for (let fileItem of fileItems) {
+                    let items = this.fileItems.filter(x => x.id == fileItem.id);
+                    if (items.length > 0) {
+                        let item = items[0];
+                        item.recognitionState = fileItem.recognitionState;
+                    }
+                }
+
+                this.synchronizeFileItems(fileItems);
+            });
     }
 }

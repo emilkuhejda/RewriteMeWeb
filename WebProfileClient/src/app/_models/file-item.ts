@@ -13,7 +13,15 @@ export class FileItem {
     public audioSourceVersion: number;
     public isDeleted: boolean;
 
-    get CanUploadFile() {
+    get CanTranscribe() {
         return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;
+    }
+
+    get IsInProgress() {
+        return this.recognitionState == RecognitionState.InProgress;
+    }
+
+    get IsCompleted() {
+        return this.recognitionState == RecognitionState.Completed;
     }
 }
