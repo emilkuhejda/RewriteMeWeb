@@ -12,11 +12,11 @@ export class FileItem {
     public dateUpdated: string;
     public audioSourceVersion: number;
     public isDeleted: boolean;
-
-    get CanUploadFile() {
+    
+    get CanTranscribe() {
         return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;
     }
-
+    
     get IsInProgress() {
         return this.recognitionState == RecognitionState.InProgress;
     }
