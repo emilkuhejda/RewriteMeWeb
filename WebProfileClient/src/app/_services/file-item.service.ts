@@ -16,9 +16,7 @@ export class FileItemService {
     }
 
     getAll() {
-        let params = new HttpParams();
-        params = params.append('applicationId', CommonVariables.ApplicationId);
-        return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath, { params: params }).pipe(map(FileItemMapper.convertAll));
+        return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath).pipe(map(FileItemMapper.convertAll));
     }
 
     upload(formData: FormData, params: HttpParams) {

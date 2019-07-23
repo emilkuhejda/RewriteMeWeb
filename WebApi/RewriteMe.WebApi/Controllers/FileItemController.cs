@@ -146,6 +146,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(fileItemDto);
         }
 
+        [Obsolete("Method is not used anymore")]
         [HttpPut("/api/files/update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
