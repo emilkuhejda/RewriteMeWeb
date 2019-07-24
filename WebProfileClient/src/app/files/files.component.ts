@@ -63,7 +63,9 @@ export class FilesComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.alertService.success(`The file '${fileItem.name}' started processing`);
-                        this.initialize();
+
+                        fileItem.recognitionState = RecognitionState.InProgress;
+                        this.synchronizeFileItems(this.fileItems);
                     },
                     (err: ErrorResponse) => {
                         let error = err.message;
