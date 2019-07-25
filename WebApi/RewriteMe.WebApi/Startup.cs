@@ -121,7 +121,7 @@ namespace RewriteMe.WebApi
                     !Path.HasExtension(context.Request.Path.Value) &&
                     !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    context.Request.Path = "/index.html";
+                    context.Request.Path = "/home/index.html";
                     await next();
                 }
             });
