@@ -6,6 +6,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -97,6 +98,12 @@ namespace RewriteMe.WebApi
                     options.Authority = $"{appSettings.Authentication.AuthoritySignUpSignIn}/v2.0/";
                 });
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             return Bootstrapper.BootstrapRuntime(services);
         }
 
@@ -119,9 +126,17 @@ namespace RewriteMe.WebApi
 
                 if (context.Response.StatusCode == 404 &&
                     !Path.HasExtension(context.Request.Path.Value) &&
-                    !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase))
+                    !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase) &&
+                    !context.Request.Path.Value.StartsWith("/control-panel/", StringComparison.InvariantCultureIgnoreCase))
                 {
                     context.Request.Path = "/home/index.html";
+                    await next();
+                }
+                else if (context.Response.StatusCode == 404 &&
+                         !Path.HasExtension(context.Request.Path.Value) &&
+                         context.Request.Path.Value.StartsWith("/control-panel/", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    context.Request.Path = "/control-panel/error";
                     await next();
                 }
             });
@@ -135,6 +150,7 @@ namespace RewriteMe.WebApi
             app.Migrate();
             app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
+            app.UseCookiePolicy();
 
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();
