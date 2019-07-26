@@ -4,6 +4,7 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ControlPanelController : Controller
     {
         [HttpGet("/control-panel")]
