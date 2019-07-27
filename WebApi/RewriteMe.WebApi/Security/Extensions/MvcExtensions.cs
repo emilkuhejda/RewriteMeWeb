@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace RewriteMe.WebApi.Security
+namespace RewriteMe.WebApi.Security.Extensions
 {
     public static class MvcExtensions
     {

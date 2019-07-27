@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.UserManagement;
 
-namespace RewriteMe.WebApi.Security.RewriteMeAuthorization
+namespace RewriteMe.WebApi.Security.Extensions
 {
     public static class RewriteMeAuthorizationExtensions
     {

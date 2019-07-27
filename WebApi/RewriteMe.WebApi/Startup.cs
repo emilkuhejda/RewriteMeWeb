@@ -18,8 +18,7 @@ using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Filters;
 using RewriteMe.WebApi.Security;
-using RewriteMe.WebApi.Security.AzureAd;
-using RewriteMe.WebApi.Security.RewriteMeAuthorization;
+using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RewriteMe.Domain.Settings;
 
-namespace RewriteMe.WebApi.Security.AzureAd
+namespace RewriteMe.WebApi.Security.Extensions
 {
     public static class AzureAdExtensions
     {
