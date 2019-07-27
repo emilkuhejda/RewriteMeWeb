@@ -7,6 +7,7 @@ import { AlertComponent } from './__directives/alert/alert.component';
 import { DialogComponent } from './__directives/dialog/dialog.component';
 import { SidebarComponent } from './__directives/sidebar/sidebar.component';
 import { TopbarComponent } from './__directives/topbar/topbar.component';
+import { GecoDialogModule } from 'angular-dynamic-dialog';
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { TopbarComponent } from './__directives/topbar/topbar.component';
     ],
     imports: [
         BrowserModule,
-        AppRoutingModule
+        AppRoutingModule,
+        GecoDialogModule
     ],
     providers: [],
     bootstrap: [AppComponent]
