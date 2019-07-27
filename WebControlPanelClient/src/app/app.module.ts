@@ -3,16 +3,24 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AlertComponent } from './__directives/alert/alert.component';
+import { DialogComponent } from './__directives/dialog/dialog.component';
+import { SidebarComponent } from './__directives/sidebar/sidebar.component';
+import { TopbarComponent } from './__directives/topbar/topbar.component';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        AlertComponent,
+        DialogComponent,
+        SidebarComponent,
+        TopbarComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
