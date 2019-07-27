@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './_directives/alert/alert.component';
 import { DialogComponent } from './_directives/dialog/dialog.component';
@@ -9,7 +9,7 @@ import { SidebarComponent } from './_directives/sidebar/sidebar.component';
 import { TopbarComponent } from './_directives/topbar/topbar.component';
 import { GecoDialogModule } from 'angular-dynamic-dialog';
 import { TokenInterceptorService } from './_service/token-interceptor.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ErrorInterceptorService } from './_service/error-interceptor.service';
 
 @NgModule({
@@ -18,11 +18,13 @@ import { ErrorInterceptorService } from './_service/error-interceptor.service';
         AlertComponent,
         DialogComponent,
         SidebarComponent,
-        TopbarComponent
+        TopbarComponent,
+        routingComponents
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
+        HttpClientModule,
         GecoDialogModule
     ],
     providers: [{

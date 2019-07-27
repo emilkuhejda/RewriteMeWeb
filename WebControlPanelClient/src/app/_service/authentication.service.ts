@@ -28,4 +28,9 @@ export class AuthenticationService {
     getUser(): User {
         return JSON.parse(localStorage.getItem(CommonVariables.CurrentUser));
     }
+
+    isLoggedIn(): boolean {
+        let currentUser = this.getUser();
+        return currentUser !== null && currentUser.token !== null;
+    }
 }
