@@ -303,4 +303,5 @@ __pycache__/
 # tools/
 
 # End of https://www.gitignore.io/api/angular,aspnetcore
-wwwroot
+WebApi/RewriteMe\.WebApi/wwwroot/home/
+WebApi/RewriteMe\.WebApi/wwwroot/profile/
