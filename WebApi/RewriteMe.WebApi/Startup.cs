@@ -8,13 +8,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Filters;
+using RewriteMe.WebApi.Security;
+using RewriteMe.WebApi.Security.AzureAd;
+using RewriteMe.WebApi.Security.RewriteMeAuthorization;
 using RewriteMe.WebApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -85,7 +90,30 @@ namespace RewriteMe.WebApi
 
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
-            services.AddMvc();
+
+            services.AddRewriteMeAuthorization(appSettings);
+            services.AddAzureAdAuthorization(appSettings);
+            services.AddMvc().AddFilterProvider((serviceProvider) =>
+            {
+                var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
+                var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
+
+                var filterProviderOptions = new[]
+                {
+                    new FilterProviderOption
+                    {
+                        RoutePrefix = "api",
+                        Filter = azureAdAuthorizeFilter
+                    },
+                    new FilterProviderOption
+                    {
+                        RoutePrefix = "control-panel",
+                        Filter = rewriteMeAuthorizeFilter
+                    }
+                };
+
+                return new AuthenticationFilterProvider(filterProviderOptions);
+            });
 
             services.AddAuthentication(options =>
                 {
@@ -112,6 +140,7 @@ namespace RewriteMe.WebApi
         {
             if (env.IsDevelopment())
             {
+                IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -148,7 +177,6 @@ namespace RewriteMe.WebApi
                 .AllowCredentials());
 
             app.Migrate();
-            app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
