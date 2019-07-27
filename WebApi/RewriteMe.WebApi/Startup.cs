@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
@@ -139,7 +138,6 @@ namespace RewriteMe.WebApi
         {
             if (env.IsDevelopment())
             {
-                IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -154,17 +152,9 @@ namespace RewriteMe.WebApi
 
                 if (context.Response.StatusCode == 404 &&
                     !Path.HasExtension(context.Request.Path.Value) &&
-                    !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase) &&
-                    !context.Request.Path.Value.StartsWith("/control-panel/", StringComparison.InvariantCultureIgnoreCase))
+                    !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase))
                 {
                     context.Request.Path = "/home/index.html";
-                    await next();
-                }
-                else if (context.Response.StatusCode == 404 &&
-                         !Path.HasExtension(context.Request.Path.Value) &&
-                         context.Request.Path.Value.StartsWith("/control-panel/", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    context.Request.Path = "/control-panel/error";
                     await next();
                 }
             });
