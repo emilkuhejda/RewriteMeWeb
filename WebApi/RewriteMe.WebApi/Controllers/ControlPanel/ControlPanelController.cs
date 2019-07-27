@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
