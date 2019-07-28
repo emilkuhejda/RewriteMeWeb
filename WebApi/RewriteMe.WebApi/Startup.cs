@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -112,17 +111,6 @@ namespace RewriteMe.WebApi
 
                 return new AuthenticationFilterProvider(filterProviderOptions);
             });
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.Audience = appSettings.Authentication.ClientId;
-                    options.Authority = $"{appSettings.Authentication.AuthoritySignUpSignIn}/v2.0/";
-                });
 
             services.Configure<CookiePolicyOptions>(options =>
             {

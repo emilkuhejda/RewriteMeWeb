@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Administration;
@@ -30,6 +31,15 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var administrator = await context.Administrators.SingleOrDefaultAsync(x => x.Username == username).ConfigureAwait(false);
+                return administrator?.ToAdministrator();
+            }
+        }
+
+        public async Task<Administrator> GetAsync(Guid administratorId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var administrator = await context.Administrators.SingleOrDefaultAsync(x => x.Id == administratorId).ConfigureAwait(false);
                 return administrator?.ToAdministrator();
             }
         }

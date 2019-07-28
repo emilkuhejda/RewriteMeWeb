@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RewriteMe.Domain.Administration;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -8,5 +9,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task AddAsync(Administrator administrator);
 
         Task<Administrator> GetAsync(string username);
+
+        Task<Administrator> GetAsync(Guid administratorId);
     }
 }

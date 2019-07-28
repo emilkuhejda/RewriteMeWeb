@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
-using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.WebApi.Security.Extensions
 {
@@ -32,15 +32,15 @@ namespace RewriteMe.WebApi.Security.Extensions
                     {
                         OnTokenValidated = async context =>
                         {
-                            //var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                            var userId = Guid.Parse(context.Principal.Identity.Name);
-                            var user = new User();
-                            if (user == null)
+                            var administratorService = context.HttpContext.RequestServices.GetRequiredService<IAdministratorService>();
+                            var administratorId = Guid.Parse(context.Principal.Identity.Name);
+                            var administrator = await administratorService.GetAsync(administratorId).ConfigureAwait(false);
+                            if (administrator == null)
                             {
                                 context.Fail("Unauthorized");
                             }
 
-                            await Task.CompletedTask;
+                            await Task.CompletedTask.ConfigureAwait(false);
                         }
                     };
                     x.RequireHttpsMetadata = false;
