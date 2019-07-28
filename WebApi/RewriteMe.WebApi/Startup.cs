@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,8 @@ using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Filters;
+using RewriteMe.WebApi.Security;
+using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -84,18 +87,36 @@ namespace RewriteMe.WebApi
 
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
-            services.AddMvc();
 
-            services.AddAuthentication(options =>
+            services.AddRewriteMeAuthorization(appSettings);
+            services.AddAzureAdAuthorization(appSettings);
+            services.AddMvc().AddFilterProvider((serviceProvider) =>
+            {
+                var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
+                var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
+
+                var filterProviderOptions = new[]
                 {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.Audience = appSettings.Authentication.ClientId;
-                    options.Authority = $"{appSettings.Authentication.AuthoritySignUpSignIn}/v2.0/";
-                });
+                    new FilterProviderOption
+                    {
+                        RoutePrefix = "api",
+                        Filter = azureAdAuthorizeFilter
+                    },
+                    new FilterProviderOption
+                    {
+                        RoutePrefix = "control-panel",
+                        Filter = rewriteMeAuthorizeFilter
+                    }
+                };
+
+                return new AuthenticationFilterProvider(filterProviderOptions);
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
             return Bootstrapper.BootstrapRuntime(services);
         }
@@ -121,7 +142,7 @@ namespace RewriteMe.WebApi
                     !Path.HasExtension(context.Request.Path.Value) &&
                     !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    context.Request.Path = "/index.html";
+                    context.Request.Path = "/home/index.html";
                     await next();
                 }
             });
@@ -133,8 +154,8 @@ namespace RewriteMe.WebApi
                 .AllowCredentials());
 
             app.Migrate();
-            app.UseAuthentication();
             app.ConfigureExceptionMiddleware();
+            app.UseCookiePolicy();
 
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();

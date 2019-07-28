@@ -14,6 +14,8 @@ namespace RewriteMe.DataAccess
             _connectionString = connectionString;
         }
 
+        public DbSet<AdministratorEntity> Administrators { get; set; }
+
         public DbSet<UserEntity> Users { get; set; }
 
         public DbSet<FileItemEntity> FileItems { get; set; }
@@ -42,6 +44,7 @@ namespace RewriteMe.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new AdministratorEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AudioSourceEntityConfiguration());
