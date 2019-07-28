@@ -27,7 +27,8 @@
                         "styles": [
                             "src/styles.css",
                             "src/assets/vendor/fontawesome-free/css/all.min.css",
-                            "src/assets/css/sb-admin-2.css"
+                            "src/assets/css/sb-admin-2.css",
+                            "node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css"
                         ],
                         "scripts": [
                             "src/assets/vendor/jquery/jquery.min.js",
