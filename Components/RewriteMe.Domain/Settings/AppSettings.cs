@@ -6,6 +6,8 @@ namespace RewriteMe.Domain.Settings
     {
         public Guid ApplicationId { get; set; }
 
+        public string SecretKey { get; set; }
+
         public string ConnectionString { get; set; }
 
         public Authentication Authentication { get; set; }

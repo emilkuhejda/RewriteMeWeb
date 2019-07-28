@@ -27,6 +27,7 @@ namespace RewriteMe.WebApi.Services
         private static void BindCommon(ContainerBuilder builder)
         {
             builder.RegisterType<DbContextFactory>().As<IDbContextFactory>().InstancePerLifetimeScope();
+            builder.RegisterType<AdministratorRepository>().As<IAdministratorRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemRepository>().As<IFileItemRepository>().InstancePerLifetimeScope();
             builder.RegisterType<AudioSourceRepository>().As<IAudioSourceRepository>().InstancePerLifetimeScope();
@@ -37,6 +38,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<BillingPurchaseRepository>().As<IBillingPurchaseRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationLogRepository>().As<IApplicationLogRepository>().InstancePerLifetimeScope();
 
+            builder.RegisterType<AdministratorService>().As<IAdministratorService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemService>().As<IFileItemService>().InstancePerLifetimeScope();
             builder.RegisterType<AudioSourceService>().As<IAudioSourceService>().InstancePerLifetimeScope();
@@ -47,6 +49,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<ApplicationLogService>().As<IApplicationLogService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
+            builder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
 
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();
