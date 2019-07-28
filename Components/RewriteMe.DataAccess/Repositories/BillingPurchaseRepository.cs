@@ -31,9 +31,13 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entities = await context.BillingPurchases.Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
+                var billingPurchases = await context.BillingPurchases
+                    .Where(x => x.UserId == userId)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
-                return entities.Select(x => x.ToBillingPurchase());
+                return billingPurchases.Select(x => x.ToBillingPurchase());
             }
         }
     }

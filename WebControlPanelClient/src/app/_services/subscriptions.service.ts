@@ -5,10 +5,10 @@ import { CommonVariables } from '../_config/common-variables';
 @Injectable({
     providedIn: 'root'
 })
-export class BillingPurchaseService {
+export class SubscriptionsService {
     constructor(private http: HttpClient) { }
 
     getAll(userId: string) {
-        return this.http.get(CommonVariables.ApiUrl + CommonVariables.ApiPurchasesPath + userId);
+        return this.http.get(CommonVariables.ApiUrl + CommonVariables.ApiSubscriptionsPath + userId);
     }
 }
