@@ -43,10 +43,10 @@ export class UsersComponent implements OnInit {
     private reInitDatatable(): void {
         if (this.tableWidget) {
             this.tableWidget.destroy();
-            this.tableWidget = null
+            this.tableWidget = null;
         }
 
-        setTimeout(() => this.initDatatable(), 0);
+        this.initDatatable();
     }
 
     private orderUsers(a: User, b: User): number {
