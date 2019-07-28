@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/_service/user.service';
 import { User } from 'src/app/_models/user';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
     selector: 'app-users',

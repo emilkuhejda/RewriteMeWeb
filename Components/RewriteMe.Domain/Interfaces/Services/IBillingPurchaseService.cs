@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Transcription;
 
-namespace RewriteMe.Domain.Interfaces.Repositories
+namespace RewriteMe.Domain.Interfaces.Services
 {
-    public interface IBillingPurchaseRepository
+    public interface IBillingPurchaseService
     {
-        Task AddAsync(BillingPurchase billingPurchase);
-
         Task<IEnumerable<BillingPurchase>> GetAllByUserAsync(Guid userId);
     }
 }

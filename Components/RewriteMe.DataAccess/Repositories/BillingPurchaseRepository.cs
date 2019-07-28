@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
@@ -20,6 +24,16 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 await context.BillingPurchases.AddAsync(billingPurchase.ToBillingPurchaseEntity()).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<IEnumerable<BillingPurchase>> GetAllByUserAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.BillingPurchases.Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
+
+                return entities.Select(x => x.ToBillingPurchase());
             }
         }
     }
