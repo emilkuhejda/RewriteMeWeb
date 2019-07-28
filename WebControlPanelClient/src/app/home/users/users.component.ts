@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit {
             this.tableWidget = null;
         }
 
-        this.initDatatable();
+        setTimeout(this.initDatatable, 0);
     }
 
     private orderUsers(a: User, b: User): number {

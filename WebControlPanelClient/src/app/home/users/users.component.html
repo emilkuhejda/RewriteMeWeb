@@ -36,6 +36,8 @@
                         <td>{{user.familyName}}</td>
                         <td>
                             <a [routerLink]="['/users/purchases', user.id]">Purchases</a>
+                            <span> | </span>
+                            <a [routerLink]="['/users/subscriptions', user.id]">Subscriptions</a>
                         </td>
                     </tr>
                 </tbody>
