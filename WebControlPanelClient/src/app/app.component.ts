@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from './_service/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-root',
@@ -9,9 +10,17 @@ import { AuthenticationService } from './_service/authentication.service';
 export class AppComponent implements OnInit {
 	isLoggedIn: boolean;
 
-	constructor(private authenticationService: AuthenticationService) { }
+	constructor(
+		private router: Router,
+		private authenticationService: AuthenticationService) { }
 
 	ngOnInit(): void {
 		this.isLoggedIn = this.authenticationService.isLoggedIn();
+	}
+
+	logout() {
+		this.authenticationService.logout();
+		this.isLoggedIn = this.authenticationService.isLoggedIn();
+		this.router.navigate(['/login']);
 	}
 }

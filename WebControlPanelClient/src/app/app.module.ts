@@ -11,6 +11,7 @@ import { GecoDialogModule } from 'angular-dynamic-dialog';
 import { TokenInterceptorService } from './_service/token-interceptor.service';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ErrorInterceptorService } from './_service/error-interceptor.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -25,6 +26,8 @@ import { ErrorInterceptorService } from './_service/error-interceptor.service';
         BrowserModule,
         AppRoutingModule,
         HttpClientModule,
+        ReactiveFormsModule,
+        FormsModule,
         GecoDialogModule
     ],
     providers: [{
