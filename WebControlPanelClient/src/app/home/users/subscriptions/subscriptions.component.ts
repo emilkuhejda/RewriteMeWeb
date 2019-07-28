@@ -41,7 +41,7 @@ export class SubscriptionsComponent implements OnInit {
             formData.append("minutes", dialogComponent.selectedMinutes.toString());
             this.subscriptionsService.create(formData).subscribe(
                 () => {
-                    this.alertService.success("User subscription was successfully created", true);
+                    this.alertService.success("User subscription was successfully created", false);
                     this.initialize();
                 },
                 (err: ErrorResponse) => {
