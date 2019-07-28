@@ -10,7 +10,8 @@ import { SubscriptionsComponent } from './home/users/subscriptions/subscriptions
 
 
 const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'users/purchases/:userId', component: PurchasesComponent, canActivate: [AuthGuard] },
