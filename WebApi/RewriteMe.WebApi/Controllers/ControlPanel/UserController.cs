@@ -15,16 +15,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     {
         private readonly IUserService _userService;
         private readonly IBillingPurchaseService _billingPurchaseService;
-        private readonly IUserSubscriptionService _userSubscriptionService;
 
         public UserController(
             IUserService userService,
-            IBillingPurchaseService billingPurchaseService,
-            IUserSubscriptionService userSubscriptionService)
+            IBillingPurchaseService billingPurchaseService)
         {
             _userService = userService;
             _billingPurchaseService = billingPurchaseService;
-            _userSubscriptionService = userSubscriptionService;
         }
 
         [HttpGet("/control-panel/users")]
@@ -41,14 +38,6 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             var billingPurchases = await _billingPurchaseService.GetAllByUserAsync(userId).ConfigureAwait(false);
 
             return Ok(billingPurchases);
-        }
-
-        [HttpGet("/control-panel/subscriptions/{userId}")]
-        public async Task<IActionResult> GetSubscriptions(Guid userId)
-        {
-            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId).ConfigureAwait(false);
-
-            return Ok(userSubscriptions);
         }
     }
 }

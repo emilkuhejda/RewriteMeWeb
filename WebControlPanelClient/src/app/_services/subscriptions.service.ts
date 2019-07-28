@@ -12,6 +12,12 @@ import { UserSubscription } from '../_models/user-subscription';
 export class SubscriptionsService {
     constructor(private http: HttpClient) { }
 
+    create(formData: FormData) {
+        formData.append("applicationId", CommonVariables.ApplicationId);
+
+        return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiCreateSubscriptionPath, formData);
+    }
+
     getAll(userId: string): Observable<UserSubscription[]> {
         return this.http.get<UserSubscription[]>(CommonVariables.ApiUrl + CommonVariables.ApiSubscriptionsPath + userId).pipe(map(UserSubscriptionMapper.convertAll));
     }

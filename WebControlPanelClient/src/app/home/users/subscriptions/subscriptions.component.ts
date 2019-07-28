@@ -17,6 +17,7 @@ import 'datatables.net-bs4';
 })
 export class SubscriptionsComponent implements OnInit {
     private tableWidget: any;
+    private userId: string;
     userSubscriptions: UserSubscription[];
 
     constructor(
@@ -27,26 +28,28 @@ export class SubscriptionsComponent implements OnInit {
 
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
-            let userId = paramMap.get("userId");
-            this.subscriptionsService.getAll(userId).subscribe(
-                (userSubscriptions: UserSubscription[]) => {
-                    this.userSubscriptions = userSubscriptions.sort((a, b) => {
-                        return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
-                    });
-
-                    this.reInitDatatable();
-                },
-                (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
-                }
-            );
+            this.userId = paramMap.get("userId");
+            this.initialize();
         });
     }
 
     create() {
         this.alertService.clear();
         let onAccept = (dialogComponent: CreateSubscriptionDialogComponent) => {
-            dialogComponent.close();
+            let formData = new FormData();
+            formData.append("userId", this.userId);
+            formData.append("minutes", dialogComponent.selectedMinutes.toString());
+            this.subscriptionsService.create(formData).subscribe(
+                () => {
+                    this.alertService.success("User subscription was successfully created", true);
+                    this.initialize();
+                },
+                (err: ErrorResponse) => {
+                    this.alertService.error(err.message);
+                })
+                .add(() => {
+                    dialogComponent.close();
+                });
         };
 
         let modal = this.modal.openDialog(CreateSubscriptionDialogComponent, {
@@ -55,6 +58,21 @@ export class SubscriptionsComponent implements OnInit {
         });
 
         modal.onClosedModal().subscribe();
+    }
+
+    private initialize() {
+        this.subscriptionsService.getAll(this.userId).subscribe(
+            (userSubscriptions: UserSubscription[]) => {
+                this.userSubscriptions = userSubscriptions.sort((a, b) => {
+                    return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
+                });
+
+                this.reInitDatatable();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }
+        );
     }
 
     ngAfterViewInit() {
