@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { UserService } from 'src/app/_services/user.service';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
-import { UserService } from 'src/app/_services/user.service';
 
 @Component({
     selector: 'app-users',
@@ -13,9 +13,9 @@ import { UserService } from 'src/app/_services/user.service';
     styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-    users: User[];
     private tableWidget: any;
-
+    users: User[];
+    
     constructor(
         private userService: UserService,
         private alertService: AlertService) { }

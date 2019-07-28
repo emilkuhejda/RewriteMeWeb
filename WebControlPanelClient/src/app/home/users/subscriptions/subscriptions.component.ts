@@ -3,8 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { SubscriptionsService } from 'src/app/_services/subscriptions.service';
-import { Observable } from 'rxjs';
 import { UserSubscription } from 'src/app/_models/user-subscription';
+import * as $ from 'jquery';
+import 'datatables.net';
+import 'datatables.net-bs4';
 
 @Component({
     selector: 'app-subscriptions',
@@ -12,6 +14,9 @@ import { UserSubscription } from 'src/app/_models/user-subscription';
     styleUrls: ['./subscriptions.component.css']
 })
 export class SubscriptionsComponent implements OnInit {
+    private tableWidget: any;
+    userSubscriptions: UserSubscription[];
+
     constructor(
         private route: ActivatedRoute,
         private subscriptionsService: SubscriptionsService,
@@ -21,13 +26,35 @@ export class SubscriptionsComponent implements OnInit {
         this.route.paramMap.subscribe(paramMap => {
             let userId = paramMap.get("userId");
             this.subscriptionsService.getAll(userId).subscribe(
-                (userSubscription: UserSubscription[]) => {
-                    console.log(userSubscription);
+                (userSubscriptions: UserSubscription[]) => {
+                    this.userSubscriptions = userSubscriptions.sort((a, b) => {
+                        return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
+                    });
+
+                    this.reInitDatatable();
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
                 }
             );
         });
+    }
+
+    ngAfterViewInit() {
+        this.initDatatable();
+    }
+
+    private initDatatable(): void {
+        let table: any = $('#dataTable');
+        this.tableWidget = table.DataTable();
+    }
+
+    private reInitDatatable(): void {
+        if (this.tableWidget) {
+            this.tableWidget.destroy();
+            this.tableWidget = null;
+        }
+
+        setTimeout(this.initDatatable, 0);
     }
 }
