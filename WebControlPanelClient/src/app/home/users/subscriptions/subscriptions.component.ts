@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { SubscriptionsService } from 'src/app/_services/subscriptions.service';
+import { Observable } from 'rxjs';
+import { UserSubscription } from 'src/app/_models/user-subscription';
 
 @Component({
     selector: 'app-subscriptions',
@@ -19,7 +21,9 @@ export class SubscriptionsComponent implements OnInit {
         this.route.paramMap.subscribe(paramMap => {
             let userId = paramMap.get("userId");
             this.subscriptionsService.getAll(userId).subscribe(
-                () => { },
+                (userSubscription: UserSubscription[]) => {
+                    console.log(userSubscription);
+                },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
                 }
