@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
@@ -11,10 +12,19 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         [HttpGet("/control-panel/users")]
         public async Task<IActionResult> Get()
         {
-            return Ok();
+            var users = await _userService.GetAllAsync().ConfigureAwait(false);
+
+            return Ok(users);
         }
     }
 }

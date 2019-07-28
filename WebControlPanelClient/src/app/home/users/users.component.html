@@ -1,1 +1,45 @@
-<p>users works!</p>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Users</h1>
+</div>
+
+<!-- Content -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Users Overview</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="table-header">Email</th>
+                        <th class="table-header">Given name</th>
+                        <td class="table-header">Family name</td>
+                        <th class="table-header">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Email</th>
+                        <th>Given name</th>
+                        <th>Family name</th>
+                        <th>Actions</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr *ngFor="let user of users">
+                        <td>{{user.email}}</td>
+                        <td>{{user.givenName}}</td>
+                        <td>{{user.familyName}}</td>
+                        <td>
+                            <a [routerLink]="['/users/purchases', user.id]">Purchases</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

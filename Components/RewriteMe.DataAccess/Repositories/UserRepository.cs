@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
@@ -31,6 +33,15 @@ namespace RewriteMe.DataAccess.Repositories
                 var userEntity = user.ToUserEntity();
                 await context.Users.AddAsync(userEntity).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entites = await context.Users.ToListAsync().ConfigureAwait(false);
+                return entites.Select(x => x.ToUser());
             }
         }
     }

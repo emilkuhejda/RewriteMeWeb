@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -23,6 +24,11 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(User user)
         {
             await _userRepository.AddAsync(user).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _userRepository.GetAllAsync().ConfigureAwait(false);
         }
     }
 }
