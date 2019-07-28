@@ -4,6 +4,8 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { SubscriptionsService } from 'src/app/_services/subscriptions.service';
 import { UserSubscription } from 'src/app/_models/user-subscription';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { CreateSubscriptionDialogComponent } from 'src/app/_directives/create-subscription-dialog/create-subscription-dialog.component';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
@@ -20,7 +22,8 @@ export class SubscriptionsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private subscriptionsService: SubscriptionsService,
-        private alertService: AlertService) { }
+        private alertService: AlertService,
+        private modal: GecoDialog) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
@@ -38,6 +41,20 @@ export class SubscriptionsComponent implements OnInit {
                 }
             );
         });
+    }
+
+    create() {
+        this.alertService.clear();
+        let onAccept = (dialogComponent: CreateSubscriptionDialogComponent) => {
+            dialogComponent.close();
+        };
+
+        let modal = this.modal.openDialog(CreateSubscriptionDialogComponent, {
+            data: onAccept,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 
     ngAfterViewInit() {
