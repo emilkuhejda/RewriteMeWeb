@@ -15,8 +15,8 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [Produces("application/json")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -32,7 +32,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/authenticate")]
-        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)

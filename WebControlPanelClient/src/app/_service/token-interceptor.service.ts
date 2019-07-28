@@ -9,7 +9,7 @@ export class TokenInterceptorService {
     constructor(private authenticationService: AuthenticationService) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler) {
-        let currentUser = this.authenticationService.getUser();
+        let currentUser = this.authenticationService.getAdministrator();
         if (currentUser && currentUser.token) {
             request = request.clone({
                 setHeaders: {

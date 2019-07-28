@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonVariables } from '../_config/common-variables';
-import { User } from '../_models/user';
+import { Administrator } from '../_models/administrator';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -30,12 +30,12 @@ export class AuthenticationService {
         this.statusChanged.emit(this.isLoggedIn());
     }
 
-    getUser(): User {
+    getAdministrator(): Administrator {
         return JSON.parse(localStorage.getItem(CommonVariables.CurrentUser));
     }
 
     isLoggedIn(): boolean {
-        let currentUser = this.getUser();
+        let currentUser = this.getAdministrator();
         return currentUser !== null && currentUser.token !== null;
     }
 }
