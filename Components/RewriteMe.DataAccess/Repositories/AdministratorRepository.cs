@@ -40,6 +40,19 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task DeleteAsync(Guid administratorId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.Administrators.FirstOrDefaultAsync(x => x.Id == administratorId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                context.Administrators.Remove(entity);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<IEnumerable<Administrator>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())

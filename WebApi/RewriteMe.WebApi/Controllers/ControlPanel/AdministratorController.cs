@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
@@ -42,6 +43,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         {
             var administrator = updateAdministrator.ToAdministrator();
             await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [HttpDelete("/control-panel/administrators/delete")]
+        public async Task<IActionResult> Delete(Guid administratorId)
+        {
+            await _administratorService.DeleteAsync(administratorId).ConfigureAwait(false);
 
             return Ok();
         }

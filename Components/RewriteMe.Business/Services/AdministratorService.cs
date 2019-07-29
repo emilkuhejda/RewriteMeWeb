@@ -26,6 +26,11 @@ namespace RewriteMe.Business.Services
             await _administratorRepository.UpdateAsync(administrator).ConfigureAwait(false);
         }
 
+        public async Task DeleteAsync(Guid administratorId)
+        {
+            await _administratorRepository.DeleteAsync(administratorId).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<Administrator>> GetAllAsync()
         {
             return await _administratorRepository.GetAllAsync().ConfigureAwait(false);

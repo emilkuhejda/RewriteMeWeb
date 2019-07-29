@@ -11,6 +11,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateAsync(Administrator administrator);
 
+        Task DeleteAsync(Guid administratorId);
+
         Task<IEnumerable<Administrator>> GetAllAsync();
 
         Task<Administrator> GetAsync(string username);
