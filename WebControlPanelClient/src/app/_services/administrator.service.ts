@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Administrator } from '../_models/administrator';
 import { CommonVariables } from '../_config/common-variables';
@@ -22,5 +22,12 @@ export class AdministratorService {
 
     update(formData: FormData) {
         return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateAdministratorPath, formData);
+    }
+
+    delete(administratorId: string) {
+        let params = new HttpParams();
+        params = params.append('administratorId', administratorId);
+
+        return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiDeleteAdministratorPath, { params: params });
     }
 }
