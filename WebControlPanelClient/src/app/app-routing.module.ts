@@ -7,6 +7,9 @@ import { LoginGuard } from './_guards/login.guard';
 import { UsersComponent } from './home/users/users.component';
 import { PurchasesComponent } from './home/users/purchases/purchases.component';
 import { SubscriptionsComponent } from './home/users/subscriptions/subscriptions.component';
+import { AdministratorsComponent } from './home/administrators/administrators.component';
+import { CreateAdministratorComponent } from './home/administrators/create-administrator/create-administrator.component';
+import { DetailAdministratorComponent } from './home/administrators/detail-administrator/detail-administrator.component';
 
 
 const routes: Routes = [
@@ -15,7 +18,10 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'users/purchases/:userId', component: PurchasesComponent, canActivate: [AuthGuard] },
-    { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] }
+    { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
+    { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
+    { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
+    { path: 'administrators/detail/:administratorId', component: CreateAdministratorComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
@@ -29,5 +35,8 @@ export const routingComponents = [
     LoginComponent,
     UsersComponent,
     PurchasesComponent,
-    SubscriptionsComponent
+    SubscriptionsComponent,
+    AdministratorsComponent,
+    CreateAdministratorComponent,
+    DetailAdministratorComponent
 ];
