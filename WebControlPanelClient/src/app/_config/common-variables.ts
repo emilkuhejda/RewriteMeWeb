@@ -7,4 +7,7 @@ export class CommonVariables {
     public static ApiPurchasesPath: string = "control-panel/purchases/";
     public static ApiSubscriptionsPath: string = "control-panel/subscriptions/";
     public static ApiCreateSubscriptionPath: string = "control-panel/subscriptions/create";
+    public static ApiAdministratorsPath: string = "control-panel/administrators/";
+    public static ApiCreateAdministratorPath: string = "control-panel/administrators/create";
+    public static ApiUpdateAdministratorPath: string = "control-panel/administrators/update";
 }
