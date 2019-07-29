@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
@@ -23,6 +25,15 @@ namespace RewriteMe.DataAccess.Repositories
                 var administratorEntity = administrator.ToAdministratorEntity();
                 await context.Administrators.AddAsync(administratorEntity).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<IEnumerable<Administrator>> GetAllAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.Administrators.ToListAsync().ConfigureAwait(false);
+                return entities.Select(x => x.ToAdministrator());
             }
         }
 

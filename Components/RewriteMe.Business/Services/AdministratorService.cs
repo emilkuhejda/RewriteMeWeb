@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Administration;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -18,6 +19,11 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(Administrator administrator)
         {
             await _administratorRepository.AddAsync(administrator).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Administrator>> GetAllAsync()
+        {
+            return await _administratorRepository.GetAllAsync().ConfigureAwait(false);
         }
 
         public async Task<Administrator> GetAsync(string username)
