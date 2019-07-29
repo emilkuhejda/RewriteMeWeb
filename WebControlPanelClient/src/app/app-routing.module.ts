@@ -21,7 +21,7 @@ const routes: Routes = [
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
-    { path: 'administrators/detail/:administratorId', component: CreateAdministratorComponent, canActivate: [AuthGuard] }
+    { path: 'administrators/detail/:administratorId', component: DetailAdministratorComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
