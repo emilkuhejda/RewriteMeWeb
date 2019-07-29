@@ -9,11 +9,11 @@ export class TokenInterceptorService {
     constructor(private authenticationService: AuthenticationService) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler) {
-        let currentUser = this.authenticationService.getAdministrator();
-        if (currentUser && currentUser.token) {
+        let identity = this.authenticationService.getIdentity();
+        if (identity && identity.token) {
             request = request.clone({
                 setHeaders: {
-                    Authorization: "Bearer " + currentUser.token
+                    Authorization: "Bearer " + identity.token
                 }
             });
         }
