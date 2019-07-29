@@ -15,7 +15,7 @@ import 'datatables.net-bs4';
 export class UsersComponent implements OnInit {
     private tableWidget: any;
     users: User[];
-    
+
     constructor(
         private userService: UserService,
         private alertService: AlertService) { }
