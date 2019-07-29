@@ -28,6 +28,11 @@ namespace RewriteMe.Business.Services
             _recognizedAudioSampleRepository = recognizedAudioSampleRepository;
         }
 
+        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId)
+        {
+            return await _userSubscriptionRepository.GetAllAsync(userId).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             return await _userSubscriptionRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
