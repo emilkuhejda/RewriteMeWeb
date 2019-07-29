@@ -5,9 +5,9 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Extensions
 {
-    public static class AdministratorModelExtensions
+    public static class CreateAdministratorModelExtensions
     {
-        public static Administrator ToAdministrator(this AdministratorModel model)
+        public static Administrator ToAdministrator(this CreateAdministratorModel model)
         {
             var password = PasswordHelper.CreateHash(model.Password);
 

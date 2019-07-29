@@ -29,9 +29,9 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPost("/control-panel/administrators/create")]
-        public async Task<IActionResult> Create([FromForm] AdministratorModel administratorModel)
+        public async Task<IActionResult> Create([FromForm] CreateAdministratorModel createAdministratorModel)
         {
-            var administrator = administratorModel.ToAdministrator();
+            var administrator = createAdministratorModel.ToAdministrator();
             await _administratorService.AddAsync(administrator).ConfigureAwait(false);
 
             return Ok();

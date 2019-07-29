@@ -1,6 +1,6 @@
 ﻿namespace RewriteMe.WebApi.Models
 {
-    public class AdministratorModel
+    public class CreateAdministratorModel
     {
         public string Username { get; set; }
 
