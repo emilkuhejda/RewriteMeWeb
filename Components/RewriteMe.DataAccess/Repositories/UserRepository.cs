@@ -40,8 +40,8 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entites = await context.Users.ToListAsync().ConfigureAwait(false);
-                return entites.Select(x => x.ToUser());
+                var entities = await context.Users.ToListAsync().ConfigureAwait(false);
+                return entities.Select(x => x.ToUser());
             }
         }
     }
