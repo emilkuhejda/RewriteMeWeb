@@ -28,6 +28,18 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateAsync(Administrator administrator)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var administratorEntity = administrator.ToAdministratorEntity();
+                context.Attach(administratorEntity);
+                context.Entry(administratorEntity).State = EntityState.Modified;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<IEnumerable<Administrator>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())

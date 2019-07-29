@@ -36,5 +36,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
 
             return Ok();
         }
+
+        [HttpPut("/control-panel/administrators/update")]
+        public async Task<IActionResult> Update([FromForm] UpdateAdministratorModel updateAdministrator)
+        {
+            var administrator = updateAdministrator.ToAdministrator();
+            await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }

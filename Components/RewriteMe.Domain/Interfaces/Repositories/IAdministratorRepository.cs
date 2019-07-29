@@ -9,6 +9,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task AddAsync(Administrator administrator);
 
+        Task UpdateAsync(Administrator administrator);
+
         Task<IEnumerable<Administrator>> GetAllAsync();
 
         Task<Administrator> GetAsync(string username);
