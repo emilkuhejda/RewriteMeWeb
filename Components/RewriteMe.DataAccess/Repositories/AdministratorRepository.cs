@@ -46,7 +46,14 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var administratorEntity = administrator.ToAdministratorEntity();
                 context.Attach(administratorEntity);
-                context.Entry(administratorEntity).State = EntityState.Modified;
+                context.Entry(administratorEntity).Property(x => x.FirstName).IsModified = true;
+                context.Entry(administratorEntity).Property(x => x.LastName).IsModified = true;
+
+                if (administratorEntity.PasswordHash != null)
+                {
+                    context.Entry(administratorEntity).Property(x => x.PasswordHash).IsModified = true;
+                    context.Entry(administratorEntity).Property(x => x.PasswordSalt).IsModified = true;
+                }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

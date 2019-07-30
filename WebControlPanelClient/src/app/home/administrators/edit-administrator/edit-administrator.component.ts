@@ -29,7 +29,7 @@ export class EditAdministratorComponent implements OnInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             username: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
+            password: ['', [Validators.minLength(6)]],
             confirmPassword: ['']
         }, { validator: this.repeatPasswordValidate });
 
