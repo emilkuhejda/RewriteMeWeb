@@ -20,11 +20,11 @@ export class AdministratorService {
         return this.http.get<Administrator>(CommonVariables.ApiUrl + CommonVariables.ApiAdministratorsPath + administratorId).pipe(map(AdministratorMapper.convert));
     }
 
-    create(formData) {
+    create(formData: any) {
         return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiCreateAdministratorPath, formData);
     }
 
-    update(formData) {
+    update(formData: any) {
         return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateAdministratorPath, formData);
     }
 
