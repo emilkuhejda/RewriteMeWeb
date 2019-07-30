@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
@@ -21,6 +22,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _administratorService = administratorService;
         }
 
+        [HttpGet("/control-panel/administrators/{administratorId}")]
+        public async Task<IActionResult> Get(Guid administratorId)
+        {
+            var administrators = await _administratorService.GetAsync(administratorId).ConfigureAwait(false);
+            return Ok(administrators);
+        }
+
         [HttpGet("/control-panel/administrators")]
         public async Task<IActionResult> GetAll()
         {
@@ -29,10 +37,35 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPost("/control-panel/administrators/create")]
-        public async Task<IActionResult> Create([FromForm] AdministratorModel administratorModel)
+        public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
-            var administrator = administratorModel.ToAdministrator();
+            var administrator = createAdministratorModel.ToAdministrator();
+            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            if (alreadyExists)
+                return StatusCode(409);
+
             await _administratorService.AddAsync(administrator).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [HttpPut("/control-panel/administrators/update")]
+        public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
+        {
+            var administrator = updateAdministrator.ToAdministrator();
+            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            if (alreadyExists)
+                return StatusCode(409);
+
+            await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [HttpDelete("/control-panel/administrators/delete")]
+        public async Task<IActionResult> Delete(Guid administratorId)
+        {
+            await _administratorService.DeleteAsync(administratorId).ConfigureAwait(false);
 
             return Ok();
         }
