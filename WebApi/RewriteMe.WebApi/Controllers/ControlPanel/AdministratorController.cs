@@ -22,6 +22,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _administratorService = administratorService;
         }
 
+        [HttpGet("/control-panel/administrators/{administratorId}")]
+        public async Task<IActionResult> Get(Guid administratorId)
+        {
+            var administrators = await _administratorService.GetAsync(administratorId).ConfigureAwait(false);
+            return Ok(administrators);
+        }
+
         [HttpGet("/control-panel/administrators")]
         public async Task<IActionResult> GetAll()
         {

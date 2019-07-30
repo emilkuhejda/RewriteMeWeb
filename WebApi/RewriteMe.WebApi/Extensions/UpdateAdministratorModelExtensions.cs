@@ -11,6 +11,7 @@ namespace RewriteMe.WebApi.Extensions
             var administrator = new Administrator
             {
                 Id = model.Id,
+                Username = model.Username,
                 FirstName = model.FirstName,
                 LastName = model.LastName
             };

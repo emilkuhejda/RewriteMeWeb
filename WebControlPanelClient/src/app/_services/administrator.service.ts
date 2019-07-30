@@ -16,6 +16,10 @@ export class AdministratorService {
         return this.http.get<Administrator[]>(CommonVariables.ApiUrl + CommonVariables.ApiAdministratorsPath).pipe(map(AdministratorMapper.convertAll));
     }
 
+    get(administratorId: string) {
+        return this.http.get<Administrator>(CommonVariables.ApiUrl + CommonVariables.ApiAdministratorsPath + administratorId).pipe(map(AdministratorMapper.convert));
+    }
+
     create(formData) {
         return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiCreateAdministratorPath, formData);
     }

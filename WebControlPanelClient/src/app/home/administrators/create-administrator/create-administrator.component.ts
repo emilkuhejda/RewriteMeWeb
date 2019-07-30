@@ -12,7 +12,7 @@ import { ErrorResponse } from 'src/app/_models/error-response';
     styleUrls: ['./create-administrator.component.css']
 })
 export class CreateAdministratorComponent implements OnInit {
-    registerForm: FormGroup;
+    createForm: FormGroup;
     loading: boolean = false;
     submitted: boolean = false;
 
@@ -23,7 +23,7 @@ export class CreateAdministratorComponent implements OnInit {
         private alertService: AlertService) { }
 
     ngOnInit() {
-        this.registerForm = this.formBuilder.group({
+        this.createForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.email]],
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
@@ -41,13 +41,13 @@ export class CreateAdministratorComponent implements OnInit {
     }
 
     get controls() {
-        return this.registerForm.controls;
+        return this.createForm.controls;
     }
 
     onSubmit() {
         this.submitted = true;
 
-        if (this.registerForm.invalid)
+        if (this.createForm.invalid)
             return;
 
         this.loading = true;
