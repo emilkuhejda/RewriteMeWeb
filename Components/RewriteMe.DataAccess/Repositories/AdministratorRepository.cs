@@ -18,6 +18,18 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
+        public async Task<bool> AlreadyExists(Administrator administrator)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.Administrators
+                    .SingleOrDefaultAsync(x => x.Username.Equals(administrator.Username, StringComparison.OrdinalIgnoreCase) && x.Id != administrator.Id)
+                    .ConfigureAwait(false);
+
+                return entity != null;
+            }
+        }
+
         public async Task AddAsync(Administrator administrator)
         {
             using (var context = _contextFactory.Create())

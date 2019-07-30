@@ -30,18 +30,26 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPost("/control-panel/administrators/create")]
-        public async Task<IActionResult> Create([FromForm] CreateAdministratorModel createAdministratorModel)
+        public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
             var administrator = createAdministratorModel.ToAdministrator();
+            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            if (alreadyExists)
+                return StatusCode(409);
+
             await _administratorService.AddAsync(administrator).ConfigureAwait(false);
 
             return Ok();
         }
 
         [HttpPut("/control-panel/administrators/update")]
-        public async Task<IActionResult> Update([FromForm] UpdateAdministratorModel updateAdministrator)
+        public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
         {
             var administrator = updateAdministrator.ToAdministrator();
+            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            if (alreadyExists)
+                return StatusCode(409);
+
             await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
 
             return Ok();

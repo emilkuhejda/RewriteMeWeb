@@ -7,6 +7,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IAdministratorService
     {
+        Task<bool> AlreadyExists(Administrator administrator);
+
         Task AddAsync(Administrator administrator);
 
         Task UpdateAsync(Administrator administrator);
