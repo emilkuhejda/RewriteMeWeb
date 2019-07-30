@@ -5,6 +5,7 @@ import { AdministratorService } from 'src/app/_services/administrator.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { first } from 'rxjs/operators';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { MustMatch } from 'src/app/_validators/must-match';
 
 @Component({
     selector: 'app-create-administrator',
@@ -29,15 +30,7 @@ export class CreateAdministratorComponent implements OnInit {
             lastName: ['', Validators.required],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['']
-        }, { validator: this.repeatPasswordValidate });
-    }
-
-    repeatPasswordValidate(group: FormGroup) {
-        var password = group.controls.password.value;
-        var confirmPassword = group.controls.confirmPassword.value;
-        let errors = password === confirmPassword ? null : { passwordsNotEqual: true };
-
-        group.controls.confirmPassword.setErrors(errors);
+        }, { validator: MustMatch('password', 'confirmPassword') });
     }
 
     get controls() {
