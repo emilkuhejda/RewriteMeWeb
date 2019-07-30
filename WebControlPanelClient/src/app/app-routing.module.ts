@@ -9,8 +9,7 @@ import { PurchasesComponent } from './home/users/purchases/purchases.component';
 import { SubscriptionsComponent } from './home/users/subscriptions/subscriptions.component';
 import { AdministratorsComponent } from './home/administrators/administrators.component';
 import { CreateAdministratorComponent } from './home/administrators/create-administrator/create-administrator.component';
-import { DetailAdministratorComponent } from './home/administrators/detail-administrator/detail-administrator.component';
-
+import { EditAdministratorComponent } from './home/administrators/edit-administrator/edit-administrator.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,7 +20,7 @@ const routes: Routes = [
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
-    { path: 'administrators/detail/:administratorId', component: DetailAdministratorComponent, canActivate: [AuthGuard] }
+    { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
@@ -38,5 +37,5 @@ export const routingComponents = [
     SubscriptionsComponent,
     AdministratorsComponent,
     CreateAdministratorComponent,
-    DetailAdministratorComponent
+    EditAdministratorComponent
 ];

@@ -40,8 +40,8 @@
                         <td>
                             <button (click)="delete(administrator)" class="btn btn-link">Delete</button>
                             <span> | </span>
-                            <a [routerLink]="['/administrators/detail', administrator.id]"
-                                class="btn btn-link">Detail</a>
+                            <a [routerLink]="['/administrators/edit', administrator.id]"
+                                class="btn btn-link">Edit</a>
                         </td>
                     </tr>
                 </tbody>
