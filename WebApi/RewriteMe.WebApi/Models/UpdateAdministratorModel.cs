@@ -1,7 +1,11 @@
-﻿namespace RewriteMe.WebApi.Models
+﻿using System;
+
+namespace RewriteMe.WebApi.Models
 {
-    public class AdministratorModel
+    public class UpdateAdministratorModel
     {
+        public Guid Id { get; set; }
+
         public string Username { get; set; }
 
         public string Password { get; set; }
