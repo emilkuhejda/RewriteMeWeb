@@ -14,57 +14,57 @@ namespace RewriteMe.Business.Managers
     public class WavFileManager : IWavFileManager
     {
         private readonly IFileItemService _fileItemService;
-        private readonly IAudioSourceService _audioSourceService;
         private readonly IWavFileService _wavFileService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public WavFileManager(
             IFileItemService fileItemService,
-            IAudioSourceService audioSourceService,
             IWavFileService wavFileService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _fileItemService = fileItemService;
-            _audioSourceService = audioSourceService;
             _wavFileService = wavFileService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
-        public void RunConversionToWav(AudioSource audioSource, Guid userId)
+        public void RunConversionToWav(FileItem fileItem, Guid userId)
         {
             try
             {
-                _applicationLogService.InfoAsync($"File WAV conversion is started for file ID: {audioSource.FileItemId}.", userId);
+                _applicationLogService.InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId);
 
-                AsyncHelper.RunSync(() => RunConversionToWavAsync(audioSource));
+                AsyncHelper.RunSync(() => RunConversionToWavAsync(fileItem));
 
-                _applicationLogService.InfoAsync($"File WAV conversion is completed for file ID: {audioSource.FileItemId}.", userId);
+                _applicationLogService.InfoAsync($"File WAV conversion is completed for file ID: {fileItem.Id}.", userId);
             }
             catch
             {
-                AsyncHelper.RunSync(() => _fileItemService.UpdateRecognitionStateAsync(audioSource.FileItemId, RecognitionState.None, _appSettings.ApplicationId));
+                AsyncHelper.RunSync(() => _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.None, _appSettings.ApplicationId));
 
-                _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {audioSource.FileItemId}.", userId);
+                _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {fileItem.Id}.", userId);
                 throw;
             }
         }
 
-        private async Task RunConversionToWavAsync(AudioSource audioSource)
+        private async Task RunConversionToWavAsync(FileItem fileItem)
         {
-            await _fileItemService.UpdateRecognitionStateAsync(audioSource.FileItemId, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
 
-            var wavFile = audioSource.IsWav()
-                ? _wavFileService.CreateWavFileFromSource(audioSource.OriginalSource)
-                : await _wavFileService.ConvertToWavAsync(audioSource.OriginalSource).ConfigureAwait(false);
+            string sourceFileName;
+            if (!fileItem.IsOriginalWav())
+            {
+                sourceFileName = await _wavFileService.ConvertToWavAsync(fileItem).ConfigureAwait(false);
+            }
+            else
+            {
+                sourceFileName = _wavFileService.CopyWavAsync(fileItem);
+            }
 
-            audioSource.WavSource = wavFile.Source;
-            audioSource.TotalTime = wavFile.TotalTime;
-
-            await _audioSourceService.UpdateAsync(audioSource).ConfigureAwait(false);
-            await _fileItemService.UpdateRecognitionStateAsync(audioSource.FileItemId, RecognitionState.Prepared, _appSettings.ApplicationId).ConfigureAwait(false);
+            await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFileName).ConfigureAwait(false);
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Prepared, _appSettings.ApplicationId).ConfigureAwait(false);
         }
     }
 }

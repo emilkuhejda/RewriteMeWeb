@@ -10,7 +10,6 @@ export class FileItem {
     public dateCreated: string;
     public dateProcessed: string;
     public dateUpdated: string;
-    public audioSourceVersion: number;
     public isDeleted: boolean;
 
     get CanTranscribe() {

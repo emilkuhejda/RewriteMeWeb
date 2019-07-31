@@ -20,8 +20,6 @@ namespace RewriteMe.DataAccess
 
         public DbSet<FileItemEntity> FileItems { get; set; }
 
-        public DbSet<AudioSourceEntity> AudioSources { get; set; }
-
         public DbSet<TranscribeItemEntity> TranscribeItems { get; set; }
 
         public DbSet<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }
@@ -47,7 +45,6 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new AdministratorEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new AudioSourceEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TranscribeItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RecognizedAudioSampleEntityConfiguration());
             modelBuilder.ApplyConfiguration(new SpeechResultEntityConfiguration());

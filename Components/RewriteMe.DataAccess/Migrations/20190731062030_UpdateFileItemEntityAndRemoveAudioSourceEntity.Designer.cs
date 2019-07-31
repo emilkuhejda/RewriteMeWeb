@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RewriteMe.DataAccess;
 
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190731062030_UpdateFileItemEntityAndRemoveAudioSourceEntity")]
+    partial class UpdateFileItemEntityAndRemoveAudioSourceEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,6 +111,8 @@ namespace RewriteMe.DataAccess.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ApplicationId");
+
+                    b.Property<int>("AudioSourceVersion");
 
                     b.Property<DateTime>("DateCreated");
 

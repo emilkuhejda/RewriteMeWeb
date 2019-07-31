@@ -17,7 +17,6 @@ namespace RewriteMe.Business.Managers
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
-        private readonly IAudioSourceService _audioSourceService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IWavFileService _wavFileService;
         private readonly IUserSubscriptionService _userSubscriptionService;
@@ -27,7 +26,6 @@ namespace RewriteMe.Business.Managers
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
-            IAudioSourceService audioSourceService,
             ITranscribeItemService transcribeItemService,
             IWavFileService wavFileService,
             IUserSubscriptionService userSubscriptionService,
@@ -36,7 +34,6 @@ namespace RewriteMe.Business.Managers
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
-            _audioSourceService = audioSourceService;
             _transcribeItemService = transcribeItemService;
             _wavFileService = wavFileService;
             _userSubscriptionService = userSubscriptionService;
@@ -46,7 +43,9 @@ namespace RewriteMe.Business.Managers
 
         public async Task<bool> CanRunRecognition(Guid userId, Guid fileItemId)
         {
-            var fileTotalTime = await _audioSourceService.GetTotalTime(fileItemId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+            var fileTotalTime = fileItem.TotalTime;
+
             var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
             var remainingTime = subscriptionRemainingTime.Subtract(fileTotalTime);
 
@@ -98,7 +97,7 @@ namespace RewriteMe.Business.Managers
         {
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
-            var audioSource = _audioSourceService.GetAudioSource(fileItem.Id);
+            var audioSource = await _fileItemService.GetAudioSource(fileItem.Id).ConfigureAwait(false);
             var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
             var files = wavFiles.ToList();
 

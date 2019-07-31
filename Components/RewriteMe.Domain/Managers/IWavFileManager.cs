@@ -5,6 +5,6 @@ namespace RewriteMe.Domain.Managers
 {
     public interface IWavFileManager
     {
-        void RunConversionToWav(AudioSource audioSource, Guid userId);
+        void RunConversionToWav(FileItem fileItem, Guid userId);
     }
 }

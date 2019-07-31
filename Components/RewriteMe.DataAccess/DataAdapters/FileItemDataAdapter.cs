@@ -16,11 +16,13 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FileName = fileItemEntity.FileName,
                 Language = fileItemEntity.Language,
                 RecognitionState = fileItemEntity.RecognitionState,
+                OriginalSourceFileName = fileItemEntity.OriginalSourceFileName,
+                SourceFileName = fileItemEntity.SourceFileName,
+                OriginalContentType = fileItemEntity.OriginalContentType,
                 TotalTime = fileItemEntity.TotalTime,
                 DateCreated = fileItemEntity.DateCreated,
                 DateProcessed = fileItemEntity.DateProcessed,
                 DateUpdated = fileItemEntity.DateUpdated,
-                AudioSourceVersion = fileItemEntity.AudioSourceVersion,
                 IsDeleted = fileItemEntity.IsDeleted
             };
         }
@@ -36,11 +38,13 @@ namespace RewriteMe.DataAccess.DataAdapters
                 FileName = fileItem.FileName,
                 Language = fileItem.Language,
                 RecognitionState = fileItem.RecognitionState,
+                OriginalSourceFileName = fileItem.OriginalSourceFileName,
+                SourceFileName = fileItem.SourceFileName,
+                OriginalContentType = fileItem.OriginalContentType,
                 TotalTime = fileItem.TotalTime,
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
-                AudioSourceVersion = fileItem.AudioSourceVersion,
                 IsDeleted = fileItem.IsDeleted
             };
         }

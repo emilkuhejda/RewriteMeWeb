@@ -60,6 +60,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<FileItem> GetAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = await context.FileItems
+                    .Where(x => !x.IsDeleted)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == fileItemId)
+                    .ConfigureAwait(false);
+
+                return fileItem?.ToFileItem();
+            }
+        }
+
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
@@ -211,6 +225,19 @@ namespace RewriteMe.DataAccess.Repositories
                     entity.RecognitionState = RecognitionState.None;
                 }
 
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateSourceFileNameAsync(Guid fileItemId, string sourceFileName)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.FirstOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.SourceFileName = sourceFileName;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

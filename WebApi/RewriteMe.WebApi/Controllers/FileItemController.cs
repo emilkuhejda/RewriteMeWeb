@@ -24,18 +24,15 @@ namespace RewriteMe.WebApi.Controllers
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
-        private readonly IAudioSourceService _audioSourceService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly IWavFileManager _wavFileManager;
 
         public FileItemController(
             IFileItemService fileItemService,
-            IAudioSourceService audioSourceService,
             ISpeechRecognitionManager speechRecognitionManager,
             IWavFileManager wavFileManager)
         {
             _fileItemService = fileItemService;
-            _audioSourceService = audioSourceService;
             _speechRecognitionManager = speechRecognitionManager;
             _wavFileManager = wavFileManager;
         }
@@ -91,7 +88,7 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Create(string name, string language, string fileName, Guid applicationId, [FromForm]IFormFile file)
+        public async Task<IActionResult> Upload(string name, string language, string fileName, Guid applicationId, [FromForm]IFormFile file)
         {
             if (file == null)
                 return BadRequest();
@@ -99,10 +96,14 @@ namespace RewriteMe.WebApi.Controllers
             if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
 
+            var fileItemId = Guid.NewGuid();
+            var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
+            var uploadedFile = await _fileItemService.UploadFileAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+
             TimeSpan totalTime;
             try
             {
-                totalTime = await file.GetTotalTime().ConfigureAwait(false);
+                totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
             }
             catch (Exception)
             {
@@ -110,40 +111,27 @@ namespace RewriteMe.WebApi.Controllers
             }
 
             var userId = HttpContext.User.GetNameIdentifier();
-
             var dateCreated = DateTime.UtcNow;
             var fileItem = new FileItem
             {
-                Id = Guid.NewGuid(),
-                UserId = HttpContext.User.GetNameIdentifier(),
+                Id = fileItemId,
+                UserId = userId,
                 ApplicationId = applicationId,
                 Name = name,
                 FileName = fileName,
                 Language = language,
+                OriginalSourceFileName = uploadedFile.FileName,
+                OriginalContentType = file.ContentType,
                 TotalTime = totalTime,
                 DateCreated = dateCreated,
-                DateUpdated = dateCreated,
-                AudioSourceVersion = 1
-            };
-
-            var source = await file.GetBytesAsync().ConfigureAwait(false);
-            var audioSource = new AudioSource
-            {
-                Id = Guid.NewGuid(),
-                FileItemId = fileItem.Id,
-                OriginalSource = source,
-                ContentType = file.ContentType,
-                Version = fileItem.AudioSourceVersion
+                DateUpdated = dateCreated
             };
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-            await _audioSourceService.AddAsync(audioSource).ConfigureAwait(false);
 
-            BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(audioSource, userId));
+            BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(fileItem, userId));
 
-            var fileItemDto = fileItem.ToDto();
-            fileItemDto.AudioSource = audioSource.ToDto();
-            return Ok(fileItemDto);
+            return Ok(fileItem.ToDto());
         }
 
         [HttpPut("/api/files/update")]
@@ -187,7 +175,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpDelete("/api/files/delete-all")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [SwaggerOperation(OperationId = "DeleteAllFileItem")]
+        [SwaggerOperation(OperationId = "DeleteAllFileItems")]
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
@@ -197,7 +185,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(new OkDto());
         }
 
-        [HttpPost("/api/files/transcribe")]
+        [HttpPut("/api/files/transcribe")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
