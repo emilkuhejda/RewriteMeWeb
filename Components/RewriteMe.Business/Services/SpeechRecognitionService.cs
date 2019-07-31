@@ -16,10 +16,14 @@ namespace RewriteMe.Business.Services
 {
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
+        private readonly IFileAccessService _fileAccessService;
         private readonly AppSettings _appSettings;
 
-        public SpeechRecognitionService(IOptions<AppSettings> options)
+        public SpeechRecognitionService(
+            IFileAccessService fileAccessService,
+            IOptions<AppSettings> options)
         {
+            _fileAccessService = fileAccessService;
             _appSettings = options.Value;
         }
 
@@ -46,7 +50,7 @@ namespace RewriteMe.Business.Services
 
         private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile)
         {
-            return await Task.Run(async () =>
+            return await Task.Run(() =>
             {
                 var longOperation = speech.LongRunningRecognize(new RecognitionConfig
                 {
@@ -61,7 +65,11 @@ namespace RewriteMe.Business.Services
                     .SelectMany(x => x.Alternatives)
                     .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
 
-                var source = await File.ReadAllBytesAsync(wavPartialFile.Path).ConfigureAwait(false);
+                var sourceFileName = Guid.NewGuid().ToString();
+                var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItemId);
+                var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
+                File.Copy(wavPartialFile.Path, sourceFilePath);
+
                 var dateCreated = DateTime.UtcNow;
                 var transcribeItem = new TranscribeItem
                 {
@@ -69,7 +77,7 @@ namespace RewriteMe.Business.Services
                     FileItemId = fileItemId,
                     ApplicationId = _appSettings.ApplicationId,
                     Alternatives = alternatives,
-                    Source = source,
+                    SourceFileName = sourceFileName,
                     StartTime = wavPartialFile.StartTime,
                     EndTime = wavPartialFile.EndTime,
                     TotalTime = wavPartialFile.TotalTime,

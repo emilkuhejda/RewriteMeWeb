@@ -1,4 +1,5 @@
-﻿using RewriteMe.Domain.Transcription;
+﻿using System;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
@@ -9,5 +10,9 @@ namespace RewriteMe.Domain.Interfaces.Services
         string GetOriginalFileItemPath(FileItem fileItem);
 
         string GetFileItemPath(FileItem fileItem);
+
+        string GetTranscriptionsDirectoryPath(Guid fileItemId);
+
+        string GetTranscriptionPath(TranscribeItem transcribeItem);
     }
 }

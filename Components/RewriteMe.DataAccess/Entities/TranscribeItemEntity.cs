@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public string UserTranscript { get; set; }
 
-        public byte[] Source { get; set; }
+        public string SourceFileName { get; set; }
 
         public TimeSpan StartTime { get; set; }
 
