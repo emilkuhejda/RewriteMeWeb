@@ -49,7 +49,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseService>().As<IBillingPurchaseService>().InstancePerLifetimeScope();
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
-            builder.RegisterType<HostingEnvironmentService>().As<IHostingEnvironmentService>().InstancePerLifetimeScope();
+            builder.RegisterType<FileAccessService>().As<IFileAccessService>().InstancePerLifetimeScope();
 
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();

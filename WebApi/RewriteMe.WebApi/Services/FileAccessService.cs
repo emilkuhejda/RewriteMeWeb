@@ -5,13 +5,13 @@ using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.WebApi.Services
 {
-    public class HostingEnvironmentService : IHostingEnvironmentService
+    public class FileAccessService : IFileAccessService
     {
         private const string UploadedFilesDirectory = "uploaded";
 
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public HostingEnvironmentService(IHostingEnvironment hostingEnvironment)
+        public FileAccessService(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }

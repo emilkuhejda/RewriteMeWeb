@@ -2,7 +2,7 @@
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
-    public interface IHostingEnvironmentService
+    public interface IFileAccessService
     {
         string GetRootPath();
 

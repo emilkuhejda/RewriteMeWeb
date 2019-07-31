@@ -12,18 +12,18 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        private readonly IHostingEnvironmentService _hostingEnvironmentService;
+        private readonly IFileAccessService _fileAccessService;
 
-        public WavFileService(IHostingEnvironmentService hostingEnvironmentService)
+        public WavFileService(IFileAccessService fileAccessService)
         {
-            _hostingEnvironmentService = hostingEnvironmentService;
+            _fileAccessService = fileAccessService;
         }
 
         public string CopyWavAsync(FileItem fileItem)
         {
-            var inputFile = _hostingEnvironmentService.GetOriginalFileItemPath(fileItem);
+            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
 
-            var rootDirectoryPath = _hostingEnvironmentService.GetRootPath();
+            var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
             var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
 
@@ -34,9 +34,9 @@ namespace RewriteMe.Business.Services
 
         public async Task<string> ConvertToWavAsync(FileItem fileItem)
         {
-            var inputFile = _hostingEnvironmentService.GetOriginalFileItemPath(fileItem);
+            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
 
-            var rootDirectoryPath = _hostingEnvironmentService.GetRootPath();
+            var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
             var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
             await Task.Run(() =>

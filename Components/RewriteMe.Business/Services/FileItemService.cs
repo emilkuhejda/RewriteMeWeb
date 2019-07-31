@@ -14,14 +14,14 @@ namespace RewriteMe.Business.Services
     public class FileItemService : IFileItemService
     {
         private readonly IFileItemRepository _fileItemRepository;
-        private readonly IHostingEnvironmentService _hostingEnvironmentService;
+        private readonly IFileAccessService _fileAccessService;
 
         public FileItemService(
             IFileItemRepository fileItemRepository,
-            IHostingEnvironmentService hostingEnvironmentService)
+            IFileAccessService fileAccessService)
         {
             _fileItemRepository = fileItemRepository;
-            _hostingEnvironmentService = hostingEnvironmentService;
+            _fileAccessService = fileAccessService;
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -102,7 +102,7 @@ namespace RewriteMe.Business.Services
         public async Task<byte[]> GetAudioSource(Guid fileItemId)
         {
             var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
-            var fileItemPath = _hostingEnvironmentService.GetFileItemPath(fileItem);
+            var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
                 return Array.Empty<byte>();
 
@@ -111,7 +111,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<UploadedFile> UploadFileAsync(Guid fileItemId, byte[] uploadedFileSource)
         {
-            var directoryPath = _hostingEnvironmentService.GetRootPath();
+            var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
             Directory.CreateDirectory(uploadDirectoryPath);
 

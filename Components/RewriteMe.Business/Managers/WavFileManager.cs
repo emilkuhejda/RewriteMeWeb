@@ -16,27 +16,27 @@ namespace RewriteMe.Business.Managers
     {
         private readonly IFileItemService _fileItemService;
         private readonly IWavFileService _wavFileService;
-        private readonly IHostingEnvironmentService _hostingEnvironmentService;
+        private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public WavFileManager(
             IFileItemService fileItemService,
             IWavFileService wavFileService,
-            IHostingEnvironmentService hostingEnvironmentService,
+            IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _fileItemService = fileItemService;
             _wavFileService = wavFileService;
-            _hostingEnvironmentService = hostingEnvironmentService;
+            _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
         public void RunConversionToWav(FileItem fileItem, Guid userId)
         {
-            var filePath = _hostingEnvironmentService.GetOriginalFileItemPath(fileItem);
+            var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
             if (!File.Exists(filePath))
                 return;
 
