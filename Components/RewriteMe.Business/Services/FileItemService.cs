@@ -123,7 +123,8 @@ namespace RewriteMe.Business.Services
             return new UploadedFile
             {
                 FileName = uploadedFileName,
-                FilePath = uploadedFilePath
+                FilePath = uploadedFilePath,
+                DirectoryPath = uploadDirectoryPath
             };
         }
 

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
@@ -24,15 +27,18 @@ namespace RewriteMe.WebApi.Controllers
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
+        private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly IWavFileManager _wavFileManager;
 
         public FileItemController(
             IFileItemService fileItemService,
+            IApplicationLogService applicationLogService,
             ISpeechRecognitionManager speechRecognitionManager,
             IWavFileManager wavFileManager)
         {
             _fileItemService = fileItemService;
+            _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
             _wavFileManager = wavFileManager;
         }
@@ -107,6 +113,8 @@ namespace RewriteMe.WebApi.Controllers
             }
             catch (Exception)
             {
+                Directory.Delete(uploadedFile.DirectoryPath, true);
+
                 return StatusCode(415);
             }
 
@@ -127,7 +135,18 @@ namespace RewriteMe.WebApi.Controllers
                 DateUpdated = dateCreated
             };
 
-            await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+            try
+            {
+                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+            }
+            catch (DbUpdateException ex)
+            {
+                Directory.Delete(uploadedFile.DirectoryPath, true);
+
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
+
+                return BadRequest();
+            }
 
             BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(fileItem, userId));
 
