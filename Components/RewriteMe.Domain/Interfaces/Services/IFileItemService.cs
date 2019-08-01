@@ -33,8 +33,16 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdateAsync(FileItem fileItem);
 
+        Task UpdateSourceFileNameAsync(Guid fileItemId, string sourceFileName);
+
         Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId);
 
         Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId);
+
+        Task<byte[]> GetAudioSource(Guid fileItemId);
+
+        Task<UploadedFile> UploadFileAsync(Guid fileItemId, byte[] uploadedFileSource);
+
+        TimeSpan GetAudioTotalTime(string filePath);
     }
 }

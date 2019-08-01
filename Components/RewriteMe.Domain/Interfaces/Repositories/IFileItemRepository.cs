@@ -15,6 +15,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
+        Task<FileItem> GetAsync(Guid fileItemId);
+
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
         Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId);
@@ -32,6 +34,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId);
 
         Task UpdateAsync(FileItem fileItem);
+
+        Task UpdateSourceFileNameAsync(Guid fileItemId, string sourceFileName);
 
         Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId);
 

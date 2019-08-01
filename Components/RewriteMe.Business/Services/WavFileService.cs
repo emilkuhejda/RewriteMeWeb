@@ -12,45 +12,42 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        public WavFile CreateWavFileFromSource(byte[] source)
+        private readonly IFileAccessService _fileAccessService;
+
+        public WavFileService(IFileAccessService fileAccessService)
         {
-            using (var memoryStream = new MemoryStream(source))
-            using (var fileReader = new WaveFileReader(memoryStream))
-            {
-                return new WavFile
-                {
-                    Source = source,
-                    TotalTime = fileReader.TotalTime
-                };
-            }
+            _fileAccessService = fileAccessService;
         }
 
-        public async Task<WavFile> ConvertToWavAsync(byte[] source)
+        public string CopyWavAsync(FileItem fileItem)
         {
-            var inputFile = Path.GetTempFileName();
-            await File.WriteAllBytesAsync(inputFile, source).ConfigureAwait(false);
+            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
 
-            var outputFile = GetTempName();
-            var totalTime = default(TimeSpan);
+            var rootDirectoryPath = _fileAccessService.GetRootPath();
+            var fileName = Guid.NewGuid().ToString();
+            var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
+
+            File.Copy(inputFile, outputFile, true);
+
+            return fileName;
+        }
+
+        public async Task<string> ConvertToWavAsync(FileItem fileItem)
+        {
+            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
+
+            var rootDirectoryPath = _fileAccessService.GetRootPath();
+            var fileName = Guid.NewGuid().ToString();
+            var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
             await Task.Run(() =>
             {
                 using (var reader = new MediaFoundationReader(inputFile))
                 {
-                    totalTime = reader.TotalTime;
                     WaveFileWriter.CreateWaveFile(outputFile, reader);
                 }
             }).ConfigureAwait(false);
 
-            var bytes = await File.ReadAllBytesAsync(outputFile).ConfigureAwait(false);
-
-            File.Delete(inputFile);
-            File.Delete(outputFile);
-
-            return new WavFile
-            {
-                Source = bytes,
-                TotalTime = totalTime
-            };
+            return fileName;
         }
 
         public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile)

@@ -10,6 +10,7 @@ using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
+using IOFile = System.IO.File;
 
 namespace RewriteMe.WebApi.Controllers
 {
@@ -20,10 +21,14 @@ namespace RewriteMe.WebApi.Controllers
     public class TranscribeItemController : ControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
+        private readonly IFileAccessService _fileAccessService;
 
-        public TranscribeItemController(ITranscribeItemService transcribeItemService)
+        public TranscribeItemController(
+            ITranscribeItemService transcribeItemService,
+            IFileAccessService fileAccessService)
         {
             _transcribeItemService = transcribeItemService;
+            _fileAccessService = fileAccessService;
         }
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
@@ -53,7 +58,9 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
             var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
-            return Ok(transcribeItem.Source);
+            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
+            var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
+            return Ok(source);
         }
 
         [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
@@ -61,7 +68,9 @@ namespace RewriteMe.WebApi.Controllers
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
             var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
-            return new FileContentResult(transcribeItem.Source, "audio/wav");
+            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
+            var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
+            return new FileContentResult(source, "audio/wav");
         }
 
         [HttpPut("/api/transcribe-items/update-transcript")]

@@ -24,7 +24,6 @@ export class FileItemMapper {
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;
         fileItem.dateUpdated = data.dateUpdated;
-        fileItem.audioSourceVersion = data.audioSourceVersion;
         fileItem.isDeleted = data.isDeleted;
 
         return fileItem;

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using NAudio.Wave;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -12,10 +14,14 @@ namespace RewriteMe.Business.Services
     public class FileItemService : IFileItemService
     {
         private readonly IFileItemRepository _fileItemRepository;
+        private readonly IFileAccessService _fileAccessService;
 
-        public FileItemService(IFileItemRepository fileItemRepository)
+        public FileItemService(
+            IFileItemRepository fileItemRepository,
+            IFileAccessService fileAccessService)
         {
             _fileItemRepository = fileItemRepository;
+            _fileAccessService = fileAccessService;
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -78,6 +84,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateAsync(fileItem).ConfigureAwait(false);
         }
 
+        public async Task UpdateSourceFileNameAsync(Guid fileItemId, string sourceFileName)
+        {
+            await _fileItemRepository.UpdateSourceFileNameAsync(fileItemId, sourceFileName).ConfigureAwait(false);
+        }
+
         public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
         {
             await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
@@ -86,6 +97,43 @@ namespace RewriteMe.Business.Services
         public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)
         {
             await _fileItemRepository.UpdateDateProcessedAsync(fileItemId, applicationId).ConfigureAwait(false);
+        }
+
+        public async Task<byte[]> GetAudioSource(Guid fileItemId)
+        {
+            var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
+            var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
+            if (!File.Exists(fileItemPath))
+                return Array.Empty<byte>();
+
+            return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
+        }
+
+        public async Task<UploadedFile> UploadFileAsync(Guid fileItemId, byte[] uploadedFileSource)
+        {
+            var directoryPath = _fileAccessService.GetRootPath();
+            var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
+            Directory.CreateDirectory(uploadDirectoryPath);
+
+            var uploadedFileName = Guid.NewGuid().ToString();
+            var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
+
+            await File.WriteAllBytesAsync(uploadedFilePath, uploadedFileSource).ConfigureAwait(false);
+
+            return new UploadedFile
+            {
+                FileName = uploadedFileName,
+                FilePath = uploadedFilePath,
+                DirectoryPath = uploadDirectoryPath
+            };
+        }
+
+        public TimeSpan GetAudioTotalTime(string filePath)
+        {
+            using (var reader = new MediaFoundationReader(filePath))
+            {
+                return reader.TotalTime;
+            }
         }
     }
 }
