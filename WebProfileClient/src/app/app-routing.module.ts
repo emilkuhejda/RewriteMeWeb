@@ -6,6 +6,7 @@ import { CreateFileComponent } from './files/create-file/create-file.component';
 import { DetailFileComponent } from './files/detail-file/detail-file.component';
 import { EditFileComponent } from './files/edit-file/edit-file.component';
 import { AccountComponent } from './account/account.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'files', pathMatch: 'full' },
@@ -13,7 +14,9 @@ const routes: Routes = [
     { path: 'files/create', component: CreateFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'files/edit/:fileId', component: EditFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'files/:fileId', component: DetailFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-    { path: 'account', component: AccountComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+    { path: 'account', component: AccountComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: '404', component: NotFoundComponent },
+    { path: '**', redirectTo: '404' }
 ];
 
 @NgModule({
@@ -27,5 +30,6 @@ export const routingComponents = [
     CreateFileComponent,
     EditFileComponent,
     DetailFileComponent,
-    AccountComponent
+    AccountComponent,
+    NotFoundComponent
 ]
