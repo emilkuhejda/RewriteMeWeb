@@ -9,27 +9,5 @@ import { UserService } from './_services/user.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    constructor(
-        private msalService: MsalService,
-        private userService: UserService) { }
-
-    navigateToProfile(): void {
-        if (!this.msalService.isLoggedIn()) {
-            location.reload(true);
-        }
-
-        window.open(CommonVariables.ApiUrl + CommonVariables.Profile, '_blank');
-    }
-
-    login(): void {
-        this.msalService.login();
-    }
-
-    logout(): void {
-        this.msalService.logout();
-    }
-
-    isUserLoggedIn(): boolean {
-        return this.msalService.isLoggedIn();
-    }
+    constructor() { }
 }
