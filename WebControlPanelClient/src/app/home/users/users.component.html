@@ -18,6 +18,7 @@
                         <th class="table-header">Email</th>
                         <th class="table-header">Given name</th>
                         <td class="table-header">Family name</td>
+                        <td class="table-header">First registration</td>
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
@@ -26,6 +27,7 @@
                         <th>Email</th>
                         <th>Given name</th>
                         <th>Family name</th>
+                        <th>First registration</th>
                         <th>Actions</th>
                     </tr>
                 </tfoot>
@@ -34,6 +36,7 @@
                         <td>{{user.email}}</td>
                         <td>{{user.givenName}}</td>
                         <td>{{user.familyName}}</td>
+                        <td>{{user.dateRegistered|date:'dd-MM-yyyy HH:mm:ss'}}</td>
                         <td>
                             <a [routerLink]="['/users/purchases', user.id]">Purchases</a>
                             <span> | </span>
