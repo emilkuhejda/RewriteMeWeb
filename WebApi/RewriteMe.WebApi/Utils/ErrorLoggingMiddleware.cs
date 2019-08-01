@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Utils
@@ -27,8 +27,7 @@ namespace RewriteMe.WebApi.Utils
             }
             catch (Exception ex)
             {
-                var message = JsonConvert.SerializeObject(ex);
-                await _applicationLogService.ErrorAsync(message).ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
 
                 throw;
             }

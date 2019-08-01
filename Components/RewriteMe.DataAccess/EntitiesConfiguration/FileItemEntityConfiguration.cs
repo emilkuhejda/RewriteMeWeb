@@ -17,14 +17,15 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.FileName).IsRequired().HasMaxLength(150);
             builder.Property(x => x.Language).HasMaxLength(20);
             builder.Property(x => x.RecognitionState).IsRequired();
+            builder.Property(x => x.OriginalSourceFileName).HasMaxLength(100).IsRequired();
+            builder.Property(x => x.SourceFileName).HasMaxLength(100);
+            builder.Property(x => x.OriginalContentType).HasMaxLength(100).IsRequired();
             builder.Property(x => x.TotalTime).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
             builder.Property(x => x.DateUpdated).IsRequired();
-            builder.Property(x => x.AudioSourceVersion).IsRequired();
             builder.Property(x => x.IsDeleted).IsRequired();
 
             builder.HasMany(x => x.TranscribeItems).WithOne(x => x.FileItem).HasForeignKey(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.AudioSource).WithOne(x => x.FileItem).HasForeignKey<AudioSourceEntity>(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

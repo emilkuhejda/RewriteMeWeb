@@ -5,6 +5,7 @@ import { AdministratorService } from 'src/app/_services/administrator.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { first } from 'rxjs/operators';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { MustMatch } from 'src/app/_validators/must-match';
 
 @Component({
     selector: 'app-edit-administrator',
@@ -31,7 +32,7 @@ export class EditAdministratorComponent implements OnInit {
             username: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.minLength(6)]],
             confirmPassword: ['']
-        }, { validator: this.repeatPasswordValidate });
+        }, { validator: MustMatch('password', 'confirmPassword') });
 
         this.route.paramMap.subscribe(paramMap => {
             this.administratorId = paramMap.get("administratorId");
@@ -45,14 +46,6 @@ export class EditAdministratorComponent implements OnInit {
                     this.alertService.error(err.message);
                 });
         });
-    }
-
-    repeatPasswordValidate(group: FormGroup) {
-        var password = group.controls.password.value;
-        var confirmPassword = group.controls.confirmPassword.value;
-        let errors = password === confirmPassword ? null : { passwordsNotEqual: true };
-
-        group.controls.confirmPassword.setErrors(errors);
     }
 
     get controls() {

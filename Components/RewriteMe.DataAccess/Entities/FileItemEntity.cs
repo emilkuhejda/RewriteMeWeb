@@ -20,6 +20,12 @@ namespace RewriteMe.DataAccess.Entities
 
         public RecognitionState RecognitionState { get; set; }
 
+        public string OriginalSourceFileName { get; set; }
+
+        public string SourceFileName { get; set; }
+
+        public string OriginalContentType { get; set; }
+
         public TimeSpan TotalTime { get; set; }
 
         public DateTime DateCreated { get; set; }
@@ -28,13 +34,9 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateUpdated { get; set; }
 
-        public int AudioSourceVersion { get; set; }
-
         public bool IsDeleted { get; set; }
 
         public virtual UserEntity User { get; set; }
-
-        public virtual AudioSourceEntity AudioSource { get; set; }
 
         public virtual IList<TranscribeItemEntity> TranscribeItems { get; set; }
     }

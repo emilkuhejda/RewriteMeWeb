@@ -46,6 +46,6 @@ export class FileItemService {
         params = params.append('fileItemId', fileItemId);
         params = params.append('language', language);
         params = params.append('applicationId', CommonVariables.ApplicationId);
-        return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, null, { params: params });
+        return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, null, { params: params });
     }
 }
