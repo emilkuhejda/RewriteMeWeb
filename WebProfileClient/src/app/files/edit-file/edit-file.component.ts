@@ -5,7 +5,6 @@ import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { FileItem } from 'src/app/_models/file-item';
 import { ErrorResponse } from 'src/app/_models/error-response';
-import { CommonVariables } from 'src/app/_config/common-variables';
 
 @Component({
     selector: 'app-edit-file',
