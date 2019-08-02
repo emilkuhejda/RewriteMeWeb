@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Forms;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -18,6 +19,11 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(ContactForm contactForm)
         {
             await _contactFormRepository.AddAsync(contactForm).ConfigureAwait(false);
+        }
+
+        public async Task<ContactForm> GetAsync(Guid contactFormId)
+        {
+            return await _contactFormRepository.GetAsync(contactFormId).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<ContactForm>> GetAllAsync()

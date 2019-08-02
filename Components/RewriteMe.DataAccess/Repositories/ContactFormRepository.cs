@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,16 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 await context.ContactForms.AddAsync(contactForm.ToContactFormEntity()).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<ContactForm> GetAsync(Guid contactFormId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.ContactForms.AsNoTracking().SingleOrDefaultAsync(x => x.Id == contactFormId).ConfigureAwait(false);
+
+                return entity?.ToContactForm();
             }
         }
 
