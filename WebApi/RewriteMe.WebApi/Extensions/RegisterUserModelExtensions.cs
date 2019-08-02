@@ -1,4 +1,5 @@
-﻿using RewriteMe.Domain.UserManagement;
+﻿using System;
+using RewriteMe.Domain.UserManagement;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Extensions
@@ -12,7 +13,9 @@ namespace RewriteMe.WebApi.Extensions
                 Id = registerUserModel.Id,
                 Email = registerUserModel.Email,
                 GivenName = registerUserModel.GivenName,
-                FamilyName = registerUserModel.FamilyName
+                FamilyName = registerUserModel.FamilyName,
+                ApplicationId = registerUserModel.ApplicationId,
+                DateRegistered = DateTime.UtcNow
             };
         }
     }

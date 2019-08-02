@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Msal from 'msal';
-import { Router } from '@angular/router';
+import { CommonVariables } from '../_config/common-variables';
+import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,7 @@ export class MsalService {
 
     private authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
 
-    constructor(private router: Router) { }
+    constructor(private userService: UserService) { }
 
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID,
@@ -31,7 +32,7 @@ export class MsalService {
         this.authenticate();
     }
 
-    public authenticate(): void {
+    private authenticate(): void {
         var _this = this;
         this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
             _this.clientApplication.acquireTokenSilent(_this.tenantConfig.b2cScopes).then(
@@ -48,9 +49,26 @@ export class MsalService {
         });
     }
 
-    saveAccessTokenToCache(accessToken: string): void {
+    private saveAccessTokenToCache(accessToken: string): void {
         localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
-    };
+        this.register();
+    }
+
+    private register(): void {
+        if (!this.isLoggedIn())
+            return;
+
+        let token = this.getUser().idToken;
+        let userData = {
+            id: token['oid'],
+            ApplicationId: CommonVariables.ApplicationId,
+            Email: this.getUserEmail(),
+            GivenName: token['given_name'],
+            FamilyName: token['family_name']
+        };
+
+        this.userService.register(userData).subscribe();
+    }
 
     logout(): void {
         this.clientApplication.logout();

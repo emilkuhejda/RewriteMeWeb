@@ -11,5 +11,9 @@ namespace RewriteMe.Domain.UserManagement
         public string GivenName { get; set; }
 
         public string FamilyName { get; set; }
+
+        public Guid ApplicationId { get; set; }
+
+        public DateTime DateRegistered { get; set; }
     }
 }

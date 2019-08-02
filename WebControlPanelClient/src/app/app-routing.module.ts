@@ -10,6 +10,7 @@ import { SubscriptionsComponent } from './home/users/subscriptions/subscriptions
 import { AdministratorsComponent } from './home/administrators/administrators.component';
 import { CreateAdministratorComponent } from './home/administrators/create-administrator/create-administrator.component';
 import { EditAdministratorComponent } from './home/administrators/edit-administrator/edit-administrator.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -20,7 +21,9 @@ const routes: Routes = [
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
-    { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] }
+    { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] },
+    { path: '404', component: NotFoundComponent },
+    { path: '**', redirectTo: '404' }
 ];
 
 @NgModule({
@@ -37,5 +40,6 @@ export const routingComponents = [
     SubscriptionsComponent,
     AdministratorsComponent,
     CreateAdministratorComponent,
-    EditAdministratorComponent
+    EditAdministratorComponent,
+    NotFoundComponent
 ];
