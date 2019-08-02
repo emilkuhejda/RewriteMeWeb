@@ -20,7 +20,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _contactFormService = contactFormService;
         }
 
-        [HttpGet("/control-panel/contact-form")]
+        [HttpGet("/control-panel/contact-forms")]
         public async Task<IActionResult> GetAll()
         {
             var contactForms = await _contactFormService.GetAllAsync().ConfigureAwait(false);
@@ -28,7 +28,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok(contactForms);
         }
 
-        [HttpGet("/control-panel/contact-form/{contactFormId}")]
+        [HttpGet("/control-panel/contact-forms/{contactFormId}")]
         public async Task<IActionResult> Get(Guid contactFormId)
         {
             var contactForm = await _contactFormService.GetAsync(contactFormId).ConfigureAwait(false);
