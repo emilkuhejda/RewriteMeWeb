@@ -11,5 +11,5 @@ export class CommonVariables {
     public static ApiCreateAdministratorPath: string = "control-panel/administrators/create/";
     public static ApiUpdateAdministratorPath: string = "control-panel/administrators/update/";
     public static ApiDeleteAdministratorPath: string = "control-panel/administrators/delete/";
-    public static ApiContactFormsPath: string = "/control-panel/contact-forms/";
+    public static ApiContactFormsPath: string = "control-panel/contact-forms/";
 }
