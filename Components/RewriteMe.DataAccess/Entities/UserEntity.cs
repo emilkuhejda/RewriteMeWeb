@@ -13,6 +13,10 @@ namespace RewriteMe.DataAccess.Entities
 
         public string FamilyName { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
+        public DateTime DateRegistered { get; set; }
+
         public virtual IEnumerable<FileItemEntity> FileItems { get; set; }
 
         public virtual IEnumerable<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }

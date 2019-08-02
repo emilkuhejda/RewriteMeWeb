@@ -12,7 +12,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = userEntity.Id,
                 Email = userEntity.Email,
                 GivenName = userEntity.GivenName,
-                FamilyName = userEntity.FamilyName
+                FamilyName = userEntity.FamilyName,
+                ApplicationId = userEntity.ApplicationId,
+                DateRegistered = userEntity.DateRegistered
             };
         }
 
@@ -23,7 +25,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = user.Id,
                 Email = user.Email,
                 GivenName = user.GivenName,
-                FamilyName = user.FamilyName
+                FamilyName = user.FamilyName,
+                ApplicationId = user.ApplicationId,
+                DateRegistered = user.DateRegistered
             };
         }
     }
