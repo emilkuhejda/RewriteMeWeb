@@ -36,6 +36,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<UserSubscriptionRepository>().As<IUserSubscriptionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseRepository>().As<IBillingPurchaseRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationLogRepository>().As<IApplicationLogRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<ContactFormRepository>().As<IContactFormRepository>().InstancePerLifetimeScope();
 
             builder.RegisterType<AdministratorService>().As<IAdministratorService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
@@ -45,6 +46,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<SpeechResultService>().As<ISpeechResultService>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionService>().As<IUserSubscriptionService>().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationLogService>().As<IApplicationLogService>().InstancePerLifetimeScope();
+            builder.RegisterType<ContactFormService>().As<IContactFormService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseService>().As<IBillingPurchaseService>().InstancePerLifetimeScope();
