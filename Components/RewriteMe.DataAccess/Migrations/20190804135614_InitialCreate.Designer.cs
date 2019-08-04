@@ -10,16 +10,41 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190430181759_UpdateDatabaseScheme1")]
-    partial class UpdateDatabaseScheme1
+    [Migration("20190804135614_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.AdministratorEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("FirstName")
+                        .IsRequired();
+
+                    b.Property<string>("LastName")
+                        .IsRequired();
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired();
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired();
+
+                    b.Property<string>("Username")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Administrator");
+                });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.ApplicationLogEntity", b =>
                 {
@@ -43,32 +68,64 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("ApplicationLog");
                 });
 
-            modelBuilder.Entity("RewriteMe.DataAccess.Entities.AudioSourceEntity", b =>
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.BillingPurchaseEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ContentType")
+                    b.Property<bool>("AutoRenewing");
+
+                    b.Property<string>("ConsumptionState")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Platform")
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<Guid>("FileItemId");
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
-                    b.Property<byte[]>("OriginalSource")
+                    b.Property<string>("PurchaseId")
                         .IsRequired();
 
-                    b.Property<TimeSpan>("TotalTime");
+                    b.Property<string>("PurchaseState")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
-                    b.Property<int>("Version");
+                    b.Property<DateTime>("TransactionDateUtc");
 
-                    b.Property<byte[]>("WavSource");
+                    b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileItemId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.ToTable("AudioSource");
+                    b.ToTable("BillingPurchase");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.ContactFormEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<string>("Message")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactForm");
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
@@ -76,7 +133,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AudioSourceVersion");
+                    b.Property<Guid>("ApplicationId");
 
                     b.Property<DateTime>("DateCreated");
 
@@ -88,6 +145,8 @@ namespace RewriteMe.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(150);
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("Language")
                         .HasMaxLength(20);
 
@@ -95,7 +154,20 @@ namespace RewriteMe.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(150);
 
+                    b.Property<string>("OriginalContentType")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("OriginalSourceFileName")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
                     b.Property<int>("RecognitionState");
+
+                    b.Property<string>("SourceFileName")
+                        .HasMaxLength(100);
+
+                    b.Property<TimeSpan>("TotalTime");
 
                     b.Property<Guid>("UserId");
 
@@ -106,6 +178,40 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("FileItem");
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RecognizedAudioSample");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.SpeechResultEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DisplayText");
+
+                    b.Property<Guid>("RecognizedAudioSampleId");
+
+                    b.Property<TimeSpan>("TotalTime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecognizedAudioSampleId");
+
+                    b.ToTable("SpeechResult");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -113,6 +219,8 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<string>("Alternatives")
                         .IsRequired();
+
+                    b.Property<Guid>("ApplicationId");
 
                     b.Property<DateTime>("DateCreated");
 
@@ -122,8 +230,9 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<Guid>("FileItemId");
 
-                    b.Property<byte[]>("Source")
-                        .IsRequired();
+                    b.Property<string>("SourceFileName")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<TimeSpan>("StartTime");
 
@@ -142,6 +251,10 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("ApplicationId");
+
+                    b.Property<DateTime>("DateRegistered");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -165,6 +278,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("ApplicationId");
+
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<TimeSpan>("Time");
@@ -186,11 +301,11 @@ namespace RewriteMe.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("RewriteMe.DataAccess.Entities.AudioSourceEntity", b =>
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.BillingPurchaseEntity", b =>
                 {
-                    b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
-                        .WithOne("AudioSource")
-                        .HasForeignKey("RewriteMe.DataAccess.Entities.AudioSourceEntity", "FileItemId")
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("BillingPurchases")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -199,6 +314,22 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("FileItems")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("RecognizedAudioSamples")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.SpeechResultEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", "RecognizedAudioSample")
+                        .WithMany("SpeechResults")
+                        .HasForeignKey("RecognizedAudioSampleId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
