@@ -32,6 +32,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<ApplicationLogEntity> ApplicationLogs { get; set; }
 
+        public DbSet<ContactFormEntity> ContactForms { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -51,6 +53,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new UserSubscriptionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BillingPurchaseEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new ContactFormEntityConfiguration());
         }
     }
 }

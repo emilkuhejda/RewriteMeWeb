@@ -18,6 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\uploaded\**" />
+    <Content Remove="wwwroot\uploaded\**" />
+    <EmbeddedResource Remove="wwwroot\uploaded\**" />
+    <None Remove="wwwroot\uploaded\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\..\Components\RewriteMe.Common\AppSettings.Debug.json" Link="AppSettings.Debug.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
