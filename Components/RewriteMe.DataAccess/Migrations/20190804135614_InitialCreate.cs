@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using RewriteMe.Common.Helpers;
 
 namespace RewriteMe.DataAccess.Migrations
 {
@@ -254,6 +255,12 @@ namespace RewriteMe.DataAccess.Migrations
                 name: "IX_UserSubscription_UserId",
                 table: "UserSubscription",
                 column: "UserId");
+
+            var password = PasswordHelper.CreateHash("RewriteMePass12!");
+            migrationBuilder.InsertData(
+                table: "Administrator",
+                columns: new[] { "Id", "Username", "FirstName", "LastName", "PasswordHash", "PasswordSalt" },
+                values: new object[] { Guid.NewGuid(), "emil.kuhejda@gmail.com", "Emil", "Kuhejda", password.PasswordHash, password.PasswordSalt });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
