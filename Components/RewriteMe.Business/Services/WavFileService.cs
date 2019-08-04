@@ -50,14 +50,15 @@ namespace RewriteMe.Business.Services
             return fileName;
         }
 
-        public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile)
+        public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime)
         {
-            return await Task.Run(() => SplitWavFileInternal(inputFile)).ConfigureAwait(false);
+            return await Task.Run(() => SplitWavFileInternal(inputFile, remainingTime)).ConfigureAwait(false);
         }
 
-        private IEnumerable<WavPartialFile> SplitWavFileInternal(byte[] inputFile)
+        private IEnumerable<WavPartialFile> SplitWavFileInternal(byte[] inputFile, TimeSpan remainingTime)
         {
             var files = new List<WavPartialFile>();
+            var totalTime = TimeSpan.Zero;
 
             using (var stream = new MemoryStream(inputFile))
             using (var reader = new WaveFileReader(stream))
@@ -66,17 +67,36 @@ namespace RewriteMe.Business.Services
 
                 for (var i = 0; i < countItems; i++)
                 {
-                    var startTime = new TimeSpan(0, 0, i * FileLengthInSeconds);
-                    var endTile = new TimeSpan(0, 0, (i + 1) * FileLengthInSeconds);
-                    TrimWavFile(reader, startTime, endTile, files);
+                    var sampleDuration = ProcessSampleAudio(reader, remainingTime, totalTime, files);
+                    if (sampleDuration.Ticks <= 0)
+                        return files;
+
+                    totalTime = totalTime.Add(sampleDuration);
                 }
 
-                var start = new TimeSpan(0, 0, countItems * FileLengthInSeconds);
-                var end = new TimeSpan(0, 0, (int)reader.TotalTime.TotalSeconds);
-                TrimWavFile(reader, start, end, files);
+                ProcessSampleAudio(reader, remainingTime, totalTime, files);
 
                 return files;
             }
+        }
+
+        private TimeSpan ProcessSampleAudio(WaveFileReader reader, TimeSpan remainingTime, TimeSpan totalTime, IList<WavPartialFile> files)
+        {
+            var remainingTimeSpan = remainingTime.Subtract(totalTime);
+            if (remainingTimeSpan.Ticks <= 0)
+                return TimeSpan.MinValue;
+
+            var sampleDuration = remainingTimeSpan.TotalSeconds < FileLengthInSeconds
+                ? remainingTimeSpan
+                : TimeSpan.FromSeconds(FileLengthInSeconds);
+
+            var audioTotalTime = reader.TotalTime;
+            var end = totalTime.Add(sampleDuration);
+            var endTime = end > audioTotalTime ? audioTotalTime : end;
+
+            TrimWavFile(reader, totalTime, endTime, files);
+
+            return sampleDuration;
         }
 
         private void TrimWavFile(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavPartialFile> files)

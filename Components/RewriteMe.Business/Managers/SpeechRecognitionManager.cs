@@ -95,10 +95,11 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(fileItem.UserId).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
             var audioSource = await _fileItemService.GetAudioSource(fileItem.Id).ConfigureAwait(false);
-            var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource).ConfigureAwait(false);
+            var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
             try
