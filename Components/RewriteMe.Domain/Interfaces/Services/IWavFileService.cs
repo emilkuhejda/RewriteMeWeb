@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Transcription;
 
@@ -10,6 +11,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<string> ConvertToWavAsync(FileItem fileItem);
 
-        Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile);
+        Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime);
     }
 }
