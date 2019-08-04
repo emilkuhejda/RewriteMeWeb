@@ -11,6 +11,8 @@ import { AdministratorsComponent } from './home/administrators/administrators.co
 import { CreateAdministratorComponent } from './home/administrators/create-administrator/create-administrator.component';
 import { EditAdministratorComponent } from './home/administrators/edit-administrator/edit-administrator.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { ContactFormsComponent } from './home/contact-forms/contact-forms.component';
+import { DetailContactFormComponent } from './home/contact-forms/detail-contact-form/detail-contact-form.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -22,6 +24,8 @@ const routes: Routes = [
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
     { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] },
+    { path: 'contact-forms', component: ContactFormsComponent, canActivate: [AuthGuard] },
+    { path: 'contact-forms/:contactFormId', component: DetailContactFormComponent, canActivate: [AuthGuard] },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
@@ -41,5 +45,7 @@ export const routingComponents = [
     AdministratorsComponent,
     CreateAdministratorComponent,
     EditAdministratorComponent,
+    ContactFormsComponent,
+    DetailContactFormComponent,
     NotFoundComponent
 ];

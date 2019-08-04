@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TokenInterceptorService } from './_services/token-interceptor.service';
 import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { CreateSubscriptionDialogComponent } from './_directives/create-subscription-dialog/create-subscription-dialog.component';
+import { TruncatePipe } from './_pipes/truncate.pipe';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { CreateSubscriptionDialogComponent } from './_directives/create-subscrip
         CreateSubscriptionDialogComponent,
         SidebarComponent,
         TopbarComponent,
+        TruncatePipe,
         routingComponents
     ],
     imports: [

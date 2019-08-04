@@ -1,0 +1,48 @@
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Contact forms</h1>
+</div>
+
+<!-- Content -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Contact forms</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="table-header">Name</th>
+                        <th class="table-header">Email</th>
+                        <td class="table-header">Message</td>
+                        <th class="table-header">Date created</th>
+                        <th class="table-header">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        <th>Date created</th>
+                        <th>Actions</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr *ngFor="let contactForm of contactForms">
+                        <td>{{contactForm.name}}</td>
+                        <td>{{contactForm.email}}</td>
+                        <td>{{contactForm.message|truncate:[10]}}</td>
+                        <td>{{contactForm.dateCreated|date:'dd.MM.yyy HH:mm:ss'}}</td>
+                        <td>
+                            <a [routerLink]="['/contact-forms', contactForm.id]" class="btn btn-link">Detail</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
