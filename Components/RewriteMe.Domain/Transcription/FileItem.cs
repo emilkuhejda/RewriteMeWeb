@@ -42,6 +42,8 @@ namespace RewriteMe.Domain.Transcription
 
         public TimeSpan TotalTime { get; set; }
 
+        public TimeSpan TranscribedTime { get; set; }
+
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }

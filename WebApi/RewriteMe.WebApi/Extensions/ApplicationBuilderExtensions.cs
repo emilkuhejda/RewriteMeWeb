@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RewriteMe.DataAccess;
+using RewriteMe.DataAccess.Seed;
 using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Extensions
@@ -13,7 +14,7 @@ namespace RewriteMe.WebApi.Extensions
             app.UseMiddleware<ErrorLoggingMiddleware>();
         }
 
-        public static void Migrate(this IApplicationBuilder app)
+        public static void MigrateDatabase(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
@@ -21,6 +22,8 @@ namespace RewriteMe.WebApi.Extensions
                 using (var context = contextFactory.Create())
                 {
                     context.Database.Migrate();
+
+                    DbSeed.Seed(context);
                 }
             }
         }

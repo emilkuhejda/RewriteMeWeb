@@ -21,6 +21,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.SourceFileName).HasMaxLength(100);
             builder.Property(x => x.OriginalContentType).HasMaxLength(100).IsRequired();
             builder.Property(x => x.TotalTime).IsRequired();
+            builder.Property(x => x.TranscribedTime).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
             builder.Property(x => x.DateUpdated).IsRequired();
             builder.Property(x => x.IsDeleted).IsRequired();

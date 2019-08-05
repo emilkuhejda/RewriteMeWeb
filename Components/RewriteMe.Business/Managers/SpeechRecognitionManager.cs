@@ -41,15 +41,10 @@ namespace RewriteMe.Business.Managers
             _appSettings = options.Value;
         }
 
-        public async Task<bool> CanRunRecognition(Guid userId, Guid fileItemId)
+        public async Task<bool> CanRunRecognition(Guid userId)
         {
-            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
-            var fileTotalTime = fileItem.TotalTime;
-
             var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
-            var remainingTime = subscriptionRemainingTime.Subtract(fileTotalTime);
-
-            return remainingTime.Ticks > 0;
+            return subscriptionRemainingTime.TotalSeconds > 15;
         }
 
         public void RunRecognition(Guid userId, Guid fileItemId)
@@ -69,7 +64,7 @@ namespace RewriteMe.Business.Managers
                 throw new InvalidOperationException(message);
             }
 
-            var canRunRecognition = await CanRunRecognition(fileItem.UserId, fileItem.Id).ConfigureAwait(false);
+            var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
             if (!canRunRecognition)
             {
                 var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription.";
@@ -101,6 +96,9 @@ namespace RewriteMe.Business.Managers
             var audioSource = await _fileItemService.GetAudioSource(fileItem.Id).ConfigureAwait(false);
             var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
+
+            var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;
+            await _fileItemService.UpdateTranscribedTimeAsync(fileItem.Id, transcribedTime).ConfigureAwait(false);
 
             try
             {

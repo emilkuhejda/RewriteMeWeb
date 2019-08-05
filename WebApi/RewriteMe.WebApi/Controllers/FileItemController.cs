@@ -221,7 +221,7 @@ namespace RewriteMe.WebApi.Controllers
             if (!SupportedLanguages.IsSupported(language))
                 return StatusCode(406);
 
-            var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId, fileItemId).ConfigureAwait(false);
+            var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
             if (!canRunRecognition)
                 return StatusCode(403);
 

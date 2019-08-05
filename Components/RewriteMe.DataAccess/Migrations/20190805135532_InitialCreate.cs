@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using RewriteMe.Common.Helpers;
 
 namespace RewriteMe.DataAccess.Migrations
 {
@@ -118,6 +117,7 @@ namespace RewriteMe.DataAccess.Migrations
                     SourceFileName = table.Column<string>(maxLength: 100, nullable: true),
                     OriginalContentType = table.Column<string>(maxLength: 100, nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),
+                    TranscribedTime = table.Column<TimeSpan>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateProcessed = table.Column<DateTime>(nullable: true),
                     DateUpdated = table.Column<DateTime>(nullable: false),
@@ -255,12 +255,6 @@ namespace RewriteMe.DataAccess.Migrations
                 name: "IX_UserSubscription_UserId",
                 table: "UserSubscription",
                 column: "UserId");
-
-            var password = PasswordHelper.CreateHash("RewriteMePass12!");
-            migrationBuilder.InsertData(
-                table: "Administrator",
-                columns: new[] { "Id", "Username", "FirstName", "LastName", "PasswordHash", "PasswordSalt" },
-                values: new object[] { Guid.NewGuid(), "emil.kuhejda@gmail.com", "Emil", "Kuhejda", password.PasswordHash, password.PasswordSalt });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

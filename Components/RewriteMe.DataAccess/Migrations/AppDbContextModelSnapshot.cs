@@ -167,6 +167,8 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<TimeSpan>("TotalTime");
 
+                    b.Property<TimeSpan>("TranscribedTime");
+
                     b.Property<Guid>("UserId");
 
                     b.HasKey("Id");

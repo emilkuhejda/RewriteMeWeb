@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190804135614_InitialCreate")]
+    [Migration("20190805135532_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,6 +168,8 @@ namespace RewriteMe.DataAccess.Migrations
                         .HasMaxLength(100);
 
                     b.Property<TimeSpan>("TotalTime");
+
+                    b.Property<TimeSpan>("TranscribedTime");
 
                     b.Property<Guid>("UserId");
 

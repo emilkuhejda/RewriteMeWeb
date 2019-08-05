@@ -39,6 +39,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId);
 
+        Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
+
         Task<byte[]> GetAudioSource(Guid fileItemId);
 
         Task<UploadedFile> UploadFileAsync(Guid fileItemId, byte[] uploadedFileSource);
