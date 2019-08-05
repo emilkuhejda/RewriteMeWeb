@@ -41,6 +41,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId);
 
+        Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
+
         Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId);
     }
 }

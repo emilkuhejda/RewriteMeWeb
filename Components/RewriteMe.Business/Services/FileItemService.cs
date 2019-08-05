@@ -99,6 +99,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateDateProcessedAsync(fileItemId, applicationId).ConfigureAwait(false);
         }
 
+        public async Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime)
+        {
+            await _fileItemRepository.UpdateTranscribedTimeAsync(fileItemId, transcribedTime).ConfigureAwait(false);
+        }
+
         public async Task<byte[]> GetAudioSource(Guid fileItemId)
         {
             var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
