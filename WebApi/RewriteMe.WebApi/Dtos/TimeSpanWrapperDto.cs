@@ -2,9 +2,9 @@
 
 namespace RewriteMe.WebApi.Dtos
 {
-    public class RecognizedTimeDto
+    public class TimeSpanWrapperDto
     {
         [Required]
-        public long TotalTimeTicks { get; set; }
+        public long Ticks { get; set; }
     }
 }

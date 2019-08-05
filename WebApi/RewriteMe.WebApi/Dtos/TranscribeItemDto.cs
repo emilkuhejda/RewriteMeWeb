@@ -21,15 +21,15 @@ namespace RewriteMe.WebApi.Dtos
 
         [Required]
         [MaxLength(50)]
-        public string StartTimeString { get; set; }
+        public long StartTimeTicks { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string EndTimeString { get; set; }
+        public long EndTimeTicks { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string TotalTimeString { get; set; }
+        public long TotalTimeTicks { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }
