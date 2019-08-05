@@ -97,7 +97,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .Where(x => x.UserId == userId)
                     .Where(x => x.RecognitionState > RecognitionState.Prepared)
                     .AsNoTracking()
-                    .Select(x => x.TotalTime)
+                    .Select(x => x.TranscribedTime)
                     .SumAsync(x => x.Ticks)
                     .ConfigureAwait(false);
 
@@ -274,6 +274,19 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItemEntity = await context.FileItems.Where(x => !x.IsDeleted).SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (fileItemEntity == null)
+                    return;
+
+                fileItemEntity.TranscribedTime = transcribedTime;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -282,7 +295,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .Where(x => x.UserId == userId)
                     .Where(x => x.RecognitionState > RecognitionState.Prepared)
                     .AsNoTracking()
-                    .Select(x => x.TotalTime)
+                    .Select(x => x.TranscribedTime)
                     .SumAsync(x => x.Ticks)
                     .ConfigureAwait(false);
 
