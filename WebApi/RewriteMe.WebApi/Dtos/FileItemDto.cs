@@ -29,6 +29,10 @@ namespace RewriteMe.WebApi.Dtos
         public string TotalTimeString { get; set; }
 
         [Required]
+        [MaxLength(50)]
+        public string TranscribedTimeString { get; set; }
+
+        [Required]
         public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessed { get; set; }

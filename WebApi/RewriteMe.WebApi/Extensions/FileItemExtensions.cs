@@ -15,10 +15,11 @@ namespace RewriteMe.WebApi.Extensions
                 Language = fileItem.Language,
                 RecognitionStateString = fileItem.RecognitionState.ToString(),
                 TotalTimeString = fileItem.TotalTime.ToString(),
+                TranscribedTimeString = fileItem.TranscribedTime.ToString(),
                 DateCreated = fileItem.DateCreated,
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
-                IsDeleted = fileItem.IsDeleted,
+                IsDeleted = fileItem.IsDeleted
             };
         }
     }
