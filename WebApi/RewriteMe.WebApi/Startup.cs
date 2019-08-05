@@ -90,7 +90,7 @@ namespace RewriteMe.WebApi
 
             services.AddRewriteMeAuthorization(appSettings);
             services.AddAzureAdAuthorization(appSettings);
-            services.AddMvc().AddFilterProvider((serviceProvider) =>
+            services.AddMvc().AddFilterProvider(serviceProvider =>
             {
                 var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
                 var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
@@ -153,7 +153,7 @@ namespace RewriteMe.WebApi
                 .AllowAnyHeader()
                 .AllowCredentials());
 
-            app.Migrate();
+            app.MigrateDatabase();
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
