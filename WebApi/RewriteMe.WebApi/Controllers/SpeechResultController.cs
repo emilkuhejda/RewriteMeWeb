@@ -72,7 +72,7 @@ namespace RewriteMe.WebApi.Controllers
             var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(userId).ConfigureAwait(false);
             var recognizedTimeDto = new RecognizedTimeDto
             {
-                TotalTimeString = recognizedTime.ToString()
+                TotalTimeTicks = recognizedTime.Ticks
             };
 
             return Ok(recognizedTimeDto);

@@ -26,11 +26,11 @@ namespace RewriteMe.WebApi.Dtos
 
         [Required]
         [MaxLength(50)]
-        public string TotalTimeString { get; set; }
+        public long TotalTimeTicks { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string TranscribedTimeString { get; set; }
+        public long TranscribedTimeTicks { get; set; }
 
         [Required]
         public DateTime DateCreated { get; set; }

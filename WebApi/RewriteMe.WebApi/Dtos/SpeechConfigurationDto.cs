@@ -18,6 +18,6 @@ namespace RewriteMe.WebApi.Dtos
 
         [Required]
         [MaxLength(50)]
-        public string SubscriptionRemainingTimeString { get; set; }
+        public long SubscriptionRemainingTimeTicks { get; set; }
     }
 }
