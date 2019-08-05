@@ -10,14 +10,14 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190805103349_InitialCreate")]
+    [Migration("20190805135532_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -168,6 +168,8 @@ namespace RewriteMe.DataAccess.Migrations
                         .HasMaxLength(100);
 
                     b.Property<TimeSpan>("TotalTime");
+
+                    b.Property<TimeSpan>("TranscribedTime");
 
                     b.Property<Guid>("UserId");
 

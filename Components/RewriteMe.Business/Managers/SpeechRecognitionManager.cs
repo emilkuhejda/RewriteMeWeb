@@ -44,7 +44,7 @@ namespace RewriteMe.Business.Managers
         public async Task<bool> CanRunRecognition(Guid userId)
         {
             var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
-            return subscriptionRemainingTime.Ticks > 0;
+            return subscriptionRemainingTime.TotalSeconds > 15;
         }
 
         public void RunRecognition(Guid userId, Guid fileItemId)
