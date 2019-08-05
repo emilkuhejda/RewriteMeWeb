@@ -66,14 +66,15 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files/deleted-total-time")]
-        [ProducesResponseType(typeof(TimeSpan), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemsTotalTime")]
         public async Task<IActionResult> GetDeletedTotalTime()
         {
             var userId = HttpContext.User.GetNameIdentifier();
             var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
 
-            return Ok(totalTime);
+            var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
+            return Ok(timeSpanWrapperDto);
         }
 
         [HttpGet("/api/files/{fileItemId}")]
@@ -180,7 +181,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpDelete("/api/files/delete")]
-        [ProducesResponseType(typeof(TimeSpan), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
         public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
@@ -189,7 +190,8 @@ namespace RewriteMe.WebApi.Controllers
             await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
             var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
 
-            return Ok(totalTime);
+            var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
+            return Ok(timeSpanWrapperDto);
         }
 
         [HttpDelete("/api/files/delete-all")]

@@ -13,9 +13,9 @@ namespace RewriteMe.WebApi.Extensions
                 FileItemId = transcribeItem.FileItemId,
                 Alternatives = transcribeItem.Alternatives,
                 UserTranscript = transcribeItem.UserTranscript,
-                StartTimeString = transcribeItem.StartTime.ToString(),
-                EndTimeString = transcribeItem.EndTime.ToString(),
-                TotalTimeString = transcribeItem.TotalTime.ToString(),
+                StartTimeTicks = transcribeItem.StartTime.Ticks,
+                EndTimeTicks = transcribeItem.EndTime.Ticks,
+                TotalTimeTicks = transcribeItem.TotalTime.Ticks,
                 DateCreated = transcribeItem.DateCreated,
                 DateUpdated = transcribeItem.DateUpdated
             };
