@@ -14,271 +14,348 @@
     <!-- Custom styles for this template-->
     <!--<link href="css/sb-admin-2.css" rel="stylesheet">-->
     <style>
+        *,
+        *::before,
+        *::after {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
 
-*,
-*::before,
-*::after {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
+        html {
+            font-family: sans-serif;
+            line-height: 1.15;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
 
-html {
-  font-family: sans-serif;
-  line-height: 1.15;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #858796;
+            text-align: left;
+            background-color: #4e73df;
+            background-image: -webkit-gradient(linear, left top, left bottom, color-stop(10%, #4e73df), to(#224abe));
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            background-size: cover;
+            height: 100%;
+        }
+        
+        .container {
+            width: 100%;
+            padding-right: 0.75rem;
+            padding-left: 0.75rem;
+            margin-right: auto;
+            margin-left: auto;
+        }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
 
-body {
-  height: 100%;
-}
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+        }
 
-body {
-  margin: 0;
-  font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #858796;
-  text-align: left;
-  background-color: #fff;
-}
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
 
-.bg-gradient-primary {
-  background-color: #4e73df;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(10%, #4e73df), to(#224abe));
-  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
-  background-size: cover;
-}
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
 
-.container {
-  width: 100%;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-  margin-right: auto;
-  margin-left: auto;
-}
+        .justify-content-center {
+            -webkit-box-pack: center !important;
+            -ms-flex-pack: center !important;
+            justify-content: center !important;
+        }
 
-@media (min-width: 576px) {
-  .container {
-    max-width: 540px;
-  }
-}
+        .row {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: -0.75rem;
+            margin-left: -0.75rem;
+        }
 
-@media (min-width: 768px) {
-  .container {
-    max-width: 720px;
-  }
-}
+        .d-none {
+            display: none !important;
+        }
 
-@media (min-width: 992px) {
-  .container {
-    max-width: 960px;
-  }
-}
+        .col-xl-10,
+        .col-lg-12,
+        .col-lg-6,
+        .col-md-9,
+        .col-xl-auto {
+            position: relative;
+            width: 100%;
+            padding-right: 0.75rem;
+            padding-left: 0.75rem;
+        }
 
-@media (min-width: 1200px) {
-  .container {
-    max-width: 1140px;
-  }
-}
+        @media (min-width: 1200px) {
+            .col-xl-10 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 83.33333%;
+                flex: 0 0 83.33333%;
+                max-width: 83.33333%;
+            }
+        }
 
-.justify-content-center {
-  -webkit-box-pack: center !important;
-  -ms-flex-pack: center !important;
-  justify-content: center !important;
-}
+        @media (min-width: 992px) {
+            .col-lg-12 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 100%;
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
 
-.row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  margin-right: -0.75rem;
-  margin-left: -0.75rem;
-}
+            .col-lg-6 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 50%;
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
 
-.d-none {
-  display: none !important;
-}
+            .d-lg-block {
+                display: block !important;
+            }
+        }
 
-.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col,
-.col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm,
-.col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md,
-.col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg,
-.col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,
-.col-xl-auto {
-  position: relative;
-  width: 100%;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-}
+        @media (min-width: 768px) {
+            .col-md-9 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 75%;
+                flex: 0 0 75%;
+                max-width: 75%;
+            }
+        }
 
-@media (min-width: 1200px) {
-  .col-xl-10 {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 83.33333%;
-    flex: 0 0 83.33333%;
-    max-width: 83.33333%;
-  }
-}
+        .card {
+            position: relative;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid #e3e6f0;
+            border-radius: 0.35rem;
+        }
 
-@media (min-width: 992px) {
-  .col-lg-12 {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 100%;
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
+        .o-hidden {
+            overflow: hidden !important;
+        }
 
-  .col-lg-6 {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 50%;
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
+        .border-0 {
+            border: 0 !important;
+        }
 
-  .d-lg-block {
-    display: block !important;
-  }
-}
+        .shadow-lg {
+            -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+        }
 
-@media (min-width: 768px) {
-  .col-md-9 {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 75%;
-    flex: 0 0 75%;
-    max-width: 75%;
-  }
-}
+        .my-5 {
+            margin-top: 3rem !important;
+        }
 
-.card {
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: border-box;
-  border: 1px solid #e3e6f0;
-  border-radius: 0.35rem;
-}
+        .p-0 {
+            padding: 0 !important;
+        }
 
-.o-hidden {
-  overflow: hidden !important;
-}
+        .card-body {
+            -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 1.25rem;
+        }
 
-.border-0 {
-  border: 0 !important;
-}
+        .row {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: -0.75rem;
+            margin-left: -0.75rem;
+        }
 
-.shadow-lg {
-  -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-}
+        .bg-login-image {
+            background: url("https://rewrite-me.com/login/img/login-image.jpg");
+            background-position: center;
+            background-size: cover;
+        }
 
-.my-5 {
-  margin-top: 3rem !important;
-}
+        .p-5 {
+            padding: 3rem !important;
+        }
 
-.p-0 {
-  padding: 0 !important;
-}
+        .text-center {
+            text-align: center !important;
+        }
 
-.card-body {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  padding: 1.25rem;
-}
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            line-height: 1.2;
+        }
 
-.row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  margin-right: -0.75rem;
-  margin-left: -0.75rem;
-}
+        .text-gray-900 {
+            color: #3a3b45 !important;
+        }
 
-.bg-login-image {
-  background: url("https://rewrite-me.com/login/img/login-image.jpg");
-  background-position: center;
-  background-size: cover;
-}
-
-.p-5 {
-  padding: 3rem !important;
-}
-
-.text-center {
-  text-align: center !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-.text-gray-900 {
-  color: #3a3b45 !important;
-}
-
-.mb-4,
-.my-4 {
-  margin-bottom: 1.5rem !important;
-}
-
+        .mb-4,
+        .my-4 {
+            margin-bottom: 1.5rem !important;
+        }
     </style>
 
 </head>
 
-<body class="bg-gradient-primary">
+<body>
 
-<div class="container">
+    <div class="container">
 
-    <!-- Outer Row -->
-    <div class="row justify-content-center">
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
 
-        <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="col-xl-10 col-lg-12 col-md-9">
 
-            <div class="card o-hidden border-0 shadow-lg my-5">
-                <div class="card-body p-0">
-                    <!-- Nested Row within Card Body -->
-                    <div class="row">
-                        <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                        <div class="col-lg-6">
-                            <div class="p-5">
-                                <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                    </div>
+
+                                    <!-- <div id="api"></div> -->
+                                    <div id="api" data-name="Unified">
+                                        <div class="social" aria-label="Sign in with your social account" role="form">
+                                            <div class="intro">
+                                                <h2>Sign in with your social account</h2>
+                                            </div>
+                                            <div class="options">
+                                                <div>
+                                                    <button class="accountButton firstButton" id="GoogleExchange"
+                                                        tabindex="1">Google</button>
+                                                </div>
+                                                <div>
+                                                    <button class="accountButton" id="FacebookExchange"
+                                                        tabindex="1">Facebook</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="divider">
+                                            <h2>OR</h2>
+                                        </div>
+
+                                        <div class="localAccount" aria-label="Sign in with your existing account"
+                                            role="form">
+                                            <div class="intro">
+                                                <h2>
+                                                    Sign in with your existing account
+                                                </h2>
+                                            </div>
+                                            <div class="error pageLevel" aria-hidden="true" style="display: none;">
+                                                <p role="alert"></p>
+                                            </div>
+                                            <div class="entry">
+                                                <div class="entry-item">
+                                                    <label for="logonIdentifier">
+                                                        Email Address
+                                                    </label>
+                                                    <div class="error itemLevel" aria-hidden="true"
+                                                        style="display: none;">
+                                                        <p role="alert" tabindex="1"></p>
+                                                    </div>
+                                                    <input type="email" id="logonIdentifier"
+                                                        name="Username or email address"
+                                                        pattern="^[a-zA-Z0-9.!#$%&amp;’'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+                                                        placeholder="Email Address" value="" tabindex="1">
+                                                </div>
+                                                <div class="entry-item">
+                                                    <div class="password-label">
+                                                        <label for="password">Password</label>
+                                                        <a id="forgotPassword" tabindex="2"
+                                                            href="/rewriteme.onmicrosoft.com/B2C_1_RewriteMe_SignUp_SignIn/api/CombinedSigninAndSignup/forgotPassword?csrf_token=UkhMVnNOOGhRU0hJQnNrTzR6Y1p5b05oUlM5SDdVTXU3K1o2clhzck5lYmw2amZsVjBKV05tNnRvVFAzaTh6ODIxbDNZdEU4RjV5Qml0allzWS9DNGc9PTsyMDE5LTA4LTA2VDA1OjE5OjIwLjc2NzU5NjZaOzY4UGxHditTRm10alpvUVZIM0U2a1E9PTt7Ik9yY2hlc3RyYXRpb25TdGVwIjoxfQ==&amp;tx=StateProperties=eyJUSUQiOiI0OTEyNDVmNy0zNjEwLTRlZjAtOTNkNi04ZTVkYTY4ZGVlYWYifQ&amp;p=B2C_1_RewriteMe_SignUp_SignIn">Forgot
+                                                            your password?</a>
+                                                    </div>
+                                                    <div class="error itemLevel" aria-hidden="true"
+                                                        style="display: none;">
+                                                        <p role="alert"></p>
+                                                    </div>
+                                                    <input type="password" id="password" name="Password"
+                                                        placeholder="Password" tabindex="1">
+                                                </div>
+                                                <div class="working"></div>
+                                                <div class="rememberMe">
+                                                    <input id="rememberMe" type="checkbox" name="rememberMe"
+                                                        tabindex="1">
+                                                    <label for="rememberMe">Keep me signed in</label>
+                                                </div>
+                                                <div class="buttons">
+                                                    <button id="next" tabindex="1">Sign in</button>
+                                                </div>
+                                            </div>
+                                            <div class="divider">
+                                                <h2>OR</h2>
+                                            </div>
+                                            <div class="create">
+                                                <p>
+                                                    Don't have an account?<a id="createAccount" tabindex="1"
+                                                        href="/rewriteme.onmicrosoft.com/B2C_1_RewriteMe_SignUp_SignIn/api/CombinedSigninAndSignup/unified?local=signup&amp;csrf_token=UkhMVnNOOGhRU0hJQnNrTzR6Y1p5b05oUlM5SDdVTXU3K1o2clhzck5lYmw2amZsVjBKV05tNnRvVFAzaTh6ODIxbDNZdEU4RjV5Qml0allzWS9DNGc9PTsyMDE5LTA4LTA2VDA1OjE5OjIwLjc2NzU5NjZaOzY4UGxHditTRm10alpvUVZIM0U2a1E9PTt7Ik9yY2hlc3RyYXRpb25TdGVwIjoxfQ==&amp;tx=StateProperties=eyJUSUQiOiI0OTEyNDVmNy0zNjEwLTRlZjAtOTNkNi04ZTVkYTY4ZGVlYWYifQ&amp;p=B2C_1_RewriteMe_SignUp_SignIn">Sign
+                                                        up now</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--End of API-->
                                 </div>
-
-                                <div id="api"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
     </div>
-
-</div>
 </body>
 
 </html>
