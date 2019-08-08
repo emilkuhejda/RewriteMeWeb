@@ -7,8 +7,6 @@ import { UserService } from './user.service';
     providedIn: 'root'
 })
 export class MsalService {
-    private B2CTodoAccessTokenKey = "b2c.access.token";
-
     private tenantConfig = {
         tenant: "rewriteme.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
@@ -18,13 +16,25 @@ export class MsalService {
 
     private authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
 
-    constructor(private userService: UserService) { }
+    constructor() { }
 
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID,
         this.authority,
-        function (errorDesc: any, token: any, error: any, tokenType: any) { },
-        { cacheLocation: 'localStorage' }
+        function (errorDesc: any, token: any, error: any, tokenType: any) {
+            if (errorDesc !== undefined)
+                return;
+
+            if (token === undefined)
+                return;
+
+            localStorage.setItem(CommonVariables.B2CTodoAccessTokenKey, token);
+        },
+        {
+            cacheLocation: 'localStorage',
+            redirectUri: CommonVariables.RedirectUri,
+            navigateToLoginRequestUrl: false
+        }
     );
 
     public login(): void {
@@ -33,45 +43,12 @@ export class MsalService {
     }
 
     private authenticate(): void {
-        var _this = this;
-        this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
-            _this.clientApplication.acquireTokenSilent(_this.tenantConfig.b2cScopes).then(
-                function (accessToken: any) {
-                    _this.saveAccessTokenToCache(accessToken);
-                }, function (error: any) {
-                    _this.clientApplication.acquireTokenPopup(_this.tenantConfig.b2cScopes).then(
-                        function (accessToken: any) {
-                            _this.saveAccessTokenToCache(accessToken);
-                        }, function (error: any) {
-                        });
-                })
-        }, function (error: any) {
-        });
-    }
-
-    private saveAccessTokenToCache(accessToken: string): void {
-        localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
-        this.register();
-    }
-
-    private register(): void {
-        if (!this.isLoggedIn())
-            return;
-
-        let token = this.getUser().idToken;
-        let userData = {
-            id: token['oid'],
-            ApplicationId: CommonVariables.ApplicationId,
-            Email: this.getUserEmail(),
-            GivenName: token['given_name'],
-            FamilyName: token['family_name']
-        };
-
-        this.userService.register(userData).subscribe();
+        this.clientApplication.loginRedirect(this.tenantConfig.b2cScopes);
     }
 
     logout(): void {
         this.clientApplication.logout();
+        localStorage.clear();
     };
 
     isLoggedIn(): boolean {
@@ -82,11 +59,19 @@ export class MsalService {
         return this.getUser().idToken['emails'][0];
     }
 
-    getUser() {
-        return this.clientApplication.getUser()
+    getUserId(): string {
+        return this.getUser().idToken['oid'];
     }
 
-    getToken() {
-        return localStorage.getItem(this.B2CTodoAccessTokenKey);
+    getGivenName(): string {
+        return this.getUser().idToken['given_name'];
+    }
+
+    getFamilyName(): string {
+        return this.getUser().idToken['family_name'];
+    }
+
+    private getUser() {
+        return this.clientApplication.getUser();
     }
 }
