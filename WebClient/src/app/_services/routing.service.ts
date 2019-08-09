@@ -21,9 +21,9 @@ export class RoutingService {
 
     private getApiUri(): string {
         if (isDevMode()) {
-            return CommonVariables.ApiUrlDevelopment;
+            return CommonVariables.ApiUriDevelopment;
         }
 
-        return CommonVariables.ApiUrlProduction;
+        return CommonVariables.ApiUriProduction;
     }
 }
