@@ -5,20 +5,23 @@ import { map } from 'rxjs/operators';
 import { UserSubscriptionMapper } from '../_mappers/user-subscription-mapper';
 import { Observable } from 'rxjs';
 import { UserSubscription } from '../_models/user-subscription';
+import { RoutingService } from './routing.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SubscriptionsService {
-    constructor(private http: HttpClient) { }
+    constructor(
+        private routingService: RoutingService,
+        private http: HttpClient) { }
 
     create(formData: FormData) {
         formData.append("applicationId", CommonVariables.ApplicationId);
 
-        return this.http.post(CommonVariables.ApiUrl + CommonVariables.ApiCreateSubscriptionPath, formData);
+        return this.http.post(this.routingService.getCreateSubscriptionUri(), formData);
     }
 
     getAll(userId: string): Observable<UserSubscription[]> {
-        return this.http.get<UserSubscription[]>(CommonVariables.ApiUrl + CommonVariables.ApiSubscriptionsPath + userId).pipe(map(UserSubscriptionMapper.convertAll));
+        return this.http.get<UserSubscription[]>(this.routingService.getSubscriptionsUri() + userId).pipe(map(UserSubscriptionMapper.convertAll));
     }
 }
