@@ -4,23 +4,26 @@ import { CommonVariables } from '../_config/common-variables';
 import { FileItem } from '../_models/file-item';
 import { map } from 'rxjs/operators';
 import { FileItemMapper } from '../_mappers/file-item-mapper';
+import { RoutingService } from '../_service/routing.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileItemService {
-    constructor(private http: HttpClient) { }
+    constructor(
+        private routingService: RoutingService,
+        private http: HttpClient) { }
 
     get(fileItemId: string) {
-        return this.http.get<FileItem>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath + fileItemId).pipe(map(FileItemMapper.convert));
+        return this.http.get<FileItem>(this.routingService.getFileItemsUri() + fileItemId).pipe(map(FileItemMapper.convert));
     }
 
     getAll() {
-        return this.http.get<FileItem[]>(CommonVariables.ApiUrl + CommonVariables.ApiFileItemsPath).pipe(map(FileItemMapper.convertAll));
+        return this.http.get<FileItem[]>(this.routingService.getFileItemsUri()).pipe(map(FileItemMapper.convertAll));
     }
 
     upload(formData: FormData, params: HttpParams) {
-        let uploadRequest = new HttpRequest("POST", CommonVariables.ApiUrl + CommonVariables.ApiUploadFileItemPath, formData, {
+        let uploadRequest = new HttpRequest("POST", this.routingService.getUploadFileItemUri(), formData, {
             params: params,
             reportProgress: true
         });
@@ -31,14 +34,14 @@ export class FileItemService {
     update(formData: FormData) {
         formData.append("applicationId", CommonVariables.ApplicationId);
 
-        return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiUpdateFileItemPath, formData);
+        return this.http.put(this.routingService.getUpdateFileItemUri(), formData);
     }
 
     delete(fileItemId: string) {
         let params = new HttpParams();
         params = params.append('fileItemId', fileItemId);
         params = params.append('applicationId', CommonVariables.ApplicationId);
-        return this.http.delete(CommonVariables.ApiUrl + CommonVariables.ApiDeleteFileItemPath, { params: params });
+        return this.http.delete(this.routingService.getDeleteFileItemUri(), { params: params });
     }
 
     transcribe(fileItemId: string, language: string) {
@@ -46,6 +49,6 @@ export class FileItemService {
         params = params.append('fileItemId', fileItemId);
         params = params.append('language', language);
         params = params.append('applicationId', CommonVariables.ApplicationId);
-        return this.http.put(CommonVariables.ApiUrl + CommonVariables.ApiTranscribeFileItemPath, null, { params: params });
+        return this.http.put(this.routingService.getTranscribeFileItemUri(), null, { params: params });
     }
 }

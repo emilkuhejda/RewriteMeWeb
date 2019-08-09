@@ -16,7 +16,7 @@ export class RoutingService {
     }
 
     getProfileUri(): string {
-        return this.getApiUri() + "ProfileUri";
+        return this.getApiUri() + "ProfileUri/";
     }
 
     private getApiUri(): string {
