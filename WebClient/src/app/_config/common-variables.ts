@@ -4,6 +4,6 @@ export class CommonVariables {
     public static ApiUrl: string = "https://localhost:44357/";
     public static ApiRegisterUserPath: string = "api/users/register/";
     public static ApiCreateContactFormPath: string = "api/contact-form/create/";
-    public static RedirectUri: string = "http://localhost:4200/home/register-user/";
+    public static RedirectUri: string = "https://localhost:44357/home/register-user/";
     public static ProfileUri: string = CommonVariables.ApiUrl + "profile/";
 }

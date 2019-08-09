@@ -142,7 +142,19 @@ namespace RewriteMe.WebApi
                     !Path.HasExtension(context.Request.Path.Value) &&
                     !context.Request.Path.Value.StartsWith("/api/", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    context.Request.Path = "/home/index.html";
+                    if (context.Request.Path.Value.StartsWith("/control-panel/", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        context.Request.Path = "/control-panel/index.html";
+                    }
+                    else if (context.Request.Path.Value.StartsWith("/profile/", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        context.Request.Path = "/profile/index.html";
+                    }
+                    else
+                    {
+                        context.Request.Path = "/home/index.html";
+                    }
+
                     await next();
                 }
             });

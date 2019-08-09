@@ -18,9 +18,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\control-panel\**" />
+    <Compile Remove="wwwroot\home\**" />
+    <Compile Remove="wwwroot\profile\**" />
+    <Compile Remove="wwwroot\templates\**" />
     <Compile Remove="wwwroot\uploaded\**" />
+    <Content Remove="wwwroot\control-panel\**" />
+    <Content Remove="wwwroot\home\**" />
+    <Content Remove="wwwroot\profile\**" />
+    <Content Remove="wwwroot\templates\**" />
     <Content Remove="wwwroot\uploaded\**" />
+    <EmbeddedResource Remove="wwwroot\control-panel\**" />
+    <EmbeddedResource Remove="wwwroot\home\**" />
+    <EmbeddedResource Remove="wwwroot\profile\**" />
+    <EmbeddedResource Remove="wwwroot\templates\**" />
     <EmbeddedResource Remove="wwwroot\uploaded\**" />
+    <None Remove="wwwroot\control-panel\**" />
+    <None Remove="wwwroot\home\**" />
+    <None Remove="wwwroot\profile\**" />
+    <None Remove="wwwroot\templates\**" />
     <None Remove="wwwroot\uploaded\**" />
   </ItemGroup>
 
@@ -69,6 +85,7 @@
 
   <ItemGroup>
     <Folder Include="Views\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
