@@ -8,7 +8,6 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
-    [Route("control-panel/[controller]")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
@@ -22,7 +21,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _userSubscriptionService = userSubscriptionService;
         }
 
-        [HttpPost("/control-panel/subscriptions/create")]
+        [HttpPost("/api/control-panel/subscriptions/create")]
         public async Task<IActionResult> Create([FromForm]CreateSubscriptionModel createSubscriptionModel)
         {
             var userSubscription = new UserSubscription
@@ -38,7 +37,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpGet("/control-panel/subscriptions/{userId}")]
+        [HttpGet("/api/control-panel/subscriptions/{userId}")]
         public async Task<IActionResult> GetSubscriptions(Guid userId)
         {
             var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId).ConfigureAwait(false);

@@ -6,7 +6,6 @@ using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
-    [Route("control-panel/[controller]")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
@@ -24,7 +23,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _billingPurchaseService = billingPurchaseService;
         }
 
-        [HttpGet("/control-panel/users")]
+        [HttpGet("/api/control-panel/users")]
         public async Task<IActionResult> Get()
         {
             var users = await _userService.GetAllAsync().ConfigureAwait(false);
@@ -32,7 +31,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok(users);
         }
 
-        [HttpGet("/control-panel/purchases/{userId}")]
+        [HttpGet("/api/control-panel/purchases/{userId}")]
         public async Task<IActionResult> GetPurchases(Guid userId)
         {
             var billingPurchases = await _billingPurchaseService.GetAllByUserAsync(userId).ConfigureAwait(false);
