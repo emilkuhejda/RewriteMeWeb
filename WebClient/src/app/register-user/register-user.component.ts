@@ -3,6 +3,7 @@ import { MsalService } from '../_services/msal.service';
 import { UserService } from '../_services/user.service';
 import { CommonVariables } from '../_config/common-variables';
 import { Router } from '@angular/router';
+import { RoutingService } from '../_services/routing.service';
 
 @Component({
     selector: 'app-register-user',
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
 export class RegisterUserComponent implements OnInit {
     constructor(
         private router: Router,
+        private routingService: RoutingService,
         private userService: UserService,
         private msalService: MsalService) { }
 
@@ -38,7 +40,7 @@ export class RegisterUserComponent implements OnInit {
 
         this.userService.register(userData).subscribe(
             () => {
-                document.location.href = CommonVariables.ProfileUri;
+                document.location.href = this.routingService.getProfileUri();
             },
             () => {
                 this.router.navigate(['/']);

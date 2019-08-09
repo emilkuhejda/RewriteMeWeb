@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MsalService } from '../_services/msal.service';
-import { CommonVariables } from '../_config/common-variables';
 import { ContactFormService } from '../_services/contact-form.service';
+import { RoutingService } from '../_services/routing.service';
 
 @Component({
     selector: 'app-home',
@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
+        private routingService: RoutingService,
         private contactFormService: ContactFormService,
         private msalService: MsalService) { }
 
@@ -34,7 +35,7 @@ export class HomeComponent implements OnInit {
             location.reload(true);
         }
 
-        document.location.href = CommonVariables.ProfileUri;
+        document.location.href = this.routingService.getProfileUri();
     }
 
     get controls() {

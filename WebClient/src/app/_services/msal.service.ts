@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Msal from 'msal';
 import { CommonVariables } from '../_config/common-variables';
-import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root'
@@ -32,7 +31,7 @@ export class MsalService {
         },
         {
             cacheLocation: 'localStorage',
-            redirectUri: CommonVariables.RedirectUri,
+            redirectUri: CommonVariables.LoginRedirectUri,
             navigateToLoginRequestUrl: false
         }
     );
