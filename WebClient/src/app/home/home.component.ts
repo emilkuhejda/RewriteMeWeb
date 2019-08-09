@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
             location.reload(true);
         }
 
-        window.open(CommonVariables.ApiUrl + CommonVariables.Profile, '_blank');
+        document.location.href = CommonVariables.ProfileUri;
     }
 
     get controls() {

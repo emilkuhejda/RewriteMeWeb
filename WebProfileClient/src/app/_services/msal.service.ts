@@ -52,15 +52,16 @@ export class MsalService {
 
     saveAccessTokenToCache(accessToken: string): void {
         localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
-    };
+    }
 
     logout(): void {
         this.clientApplication.logout();
-    };
+        localStorage.clear();
+    }
 
     isLoggedIn(): boolean {
         return this.clientApplication.getUser() != null;
-    };
+    }
 
     getUserEmail(): string {
         return this.getUser().idToken['emails'][0];

@@ -31,7 +31,7 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
-        [HttpPost("/authenticate")]
+        [HttpPost("/api/authenticate")]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)

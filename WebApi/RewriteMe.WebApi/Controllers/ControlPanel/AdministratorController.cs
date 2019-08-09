@@ -8,7 +8,6 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
-    [Route("control-panel/[controller]")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
@@ -22,21 +21,21 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _administratorService = administratorService;
         }
 
-        [HttpGet("/control-panel/administrators/{administratorId}")]
+        [HttpGet("/api/control-panel/administrators/{administratorId}")]
         public async Task<IActionResult> Get(Guid administratorId)
         {
             var administrators = await _administratorService.GetAsync(administratorId).ConfigureAwait(false);
             return Ok(administrators);
         }
 
-        [HttpGet("/control-panel/administrators")]
+        [HttpGet("/api/control-panel/administrators")]
         public async Task<IActionResult> GetAll()
         {
             var administrators = await _administratorService.GetAllAsync().ConfigureAwait(false);
             return Ok(administrators);
         }
 
-        [HttpPost("/control-panel/administrators/create")]
+        [HttpPost("/api/control-panel/administrators/create")]
         public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
             var administrator = createAdministratorModel.ToAdministrator();
@@ -49,7 +48,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpPut("/control-panel/administrators/update")]
+        [HttpPut("/api/control-panel/administrators/update")]
         public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
         {
             var administrator = updateAdministrator.ToAdministrator();
@@ -62,7 +61,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpDelete("/control-panel/administrators/delete")]
+        [HttpDelete("/api/control-panel/administrators/delete")]
         public async Task<IActionResult> Delete(Guid administratorId)
         {
             await _administratorService.DeleteAsync(administratorId).ConfigureAwait(false);
