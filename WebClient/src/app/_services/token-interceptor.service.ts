@@ -10,7 +10,7 @@ export class TokenInterceptorService {
 
     intercept(request: HttpRequest<any>, next: HttpHandler) {
         if (this.msalService.isLoggedIn()) {
-            let token = this.msalService.getToken();
+            let token = this.msalService.getB2CToken();
             if (token) {
                 request = request.clone({
                     setHeaders: {

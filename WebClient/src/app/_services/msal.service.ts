@@ -114,7 +114,7 @@ export class MsalService {
         return this.getUser().idToken['family_name'];
     }
 
-    getToken() {
+    getB2CToken() {
         return localStorage.getItem(CommonVariables.B2CAccessTokenKey);
     }
 
