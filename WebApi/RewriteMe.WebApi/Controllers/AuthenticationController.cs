@@ -44,7 +44,7 @@ namespace RewriteMe.WebApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, administrator.Id.ToString())
             };
 
-            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 60);
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 7);
 
             return Ok(administrator.ToDto(token));
         }
