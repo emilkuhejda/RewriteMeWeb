@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -31,6 +32,7 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
+        [AllowAnonymous]
         [HttpPost("/api/authenticate")]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

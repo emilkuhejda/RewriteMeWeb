@@ -20,7 +20,7 @@ export class RegisterUserComponent implements OnInit {
     ngOnInit() {
         let isLoggedIn = this.msalService.isLoggedIn();
         if (!isLoggedIn) {
-            this.msalService.login();
+            this.msalService.loginOrRedirect();
         } else {
             this.register();
         }
