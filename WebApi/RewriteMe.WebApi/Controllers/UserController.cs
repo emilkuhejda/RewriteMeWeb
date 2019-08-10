@@ -1,18 +1,16 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers
@@ -75,24 +73,16 @@ namespace RewriteMe.WebApi.Controllers
                 userSubscriptionDto = new UserSubscriptionDto { Id = Guid.Empty };
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.SecretKey);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 60);
 
             var registrationModelDto = new RegistrationModelDto
             {
-                Token = tokenString,
+                Token = token,
                 UserSubscription = userSubscriptionDto
             };
 
