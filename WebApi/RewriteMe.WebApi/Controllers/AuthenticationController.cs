@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Dtos;
@@ -41,7 +42,8 @@ namespace RewriteMe.WebApi.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, administrator.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, administrator.Id.ToString()),
+                new Claim(ClaimTypes.Role, Role.Admin.ToString())
             };
 
             var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 7);
