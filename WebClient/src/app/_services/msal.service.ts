@@ -1,33 +1,51 @@
 import { Injectable } from '@angular/core';
 import * as Msal from 'msal';
 import { CommonVariables } from '../_config/common-variables';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MsalService {
+    public static passwordResetError: string = "AADB2C90118";
+    public static undefinedError: string = "0";
+
     private tenantConfig = {
         tenant: "rewriteme.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
         signUpSignIn: "B2C_1_RewriteMe_SignUp_SignIn",
+        passwordReset: "B2C_1_RewriteMe_Password_Reset",
+        authorityBase: "https://login.microsoftonline.com/tfp/",
         b2cScopes: ["https://rewriteme.onmicrosoft.com/access-api/user_impersonation"]
     };
 
-    private authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
+    private authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
 
-    constructor() { }
+    constructor(private router: Router) { }
 
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID,
         this.authority,
-        function (errorDesc: any, token: any, error: any, tokenType: any) {
-            if (errorDesc !== undefined)
-                return;
+        function (errorDesc: any, token: any) {
+            localStorage.removeItem(CommonVariables.B2CAccessErrorKey);
 
-            if (token === undefined)
-                return;
+            if (errorDesc !== undefined) {
+                if (errorDesc.includes(MsalService.passwordResetError)) {
+                    localStorage.setItem(CommonVariables.B2CAccessErrorKey, MsalService.passwordResetError);
+                    return false;
+                }
 
-            localStorage.setItem(CommonVariables.B2CTodoAccessTokenKey, token);
+                localStorage.setItem(CommonVariables.B2CAccessErrorKey, MsalService.undefinedError);
+                return false;
+            }
+
+            if (token === undefined) {
+                localStorage.setItem(CommonVariables.B2CAccessErrorKey, MsalService.undefinedError);
+                return false;
+            }
+
+            localStorage.setItem(CommonVariables.B2CAccessTokenKey, token);
+            return true;
         },
         {
             cacheLocation: 'localStorage',
@@ -36,8 +54,30 @@ export class MsalService {
         }
     );
 
+    public loginOrRedirect(): void {
+        let error = localStorage.getItem(CommonVariables.B2CAccessErrorKey);
+        localStorage.removeItem(CommonVariables.B2CAccessErrorKey);
+
+        if (error === MsalService.passwordResetError) {
+            this.passwordReset();
+            return;
+        }
+
+        if (error === MsalService.undefinedError) {
+            this.router.navigate(['/']);
+            return;
+        }
+
+        this.login();
+    }
+
     public login(): void {
-        this.clientApplication.authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
+        this.clientApplication.authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
+        this.authenticate();
+    }
+
+    private passwordReset(): void {
+        this.clientApplication.authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.passwordReset;
         this.authenticate();
     }
 
