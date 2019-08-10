@@ -1,8 +1,13 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Dtos;
@@ -21,49 +26,76 @@ namespace RewriteMe.WebApi.Controllers
         private readonly IUserService _userService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly AppSettings _appSettings;
 
         public UserController(
             IUserService userService,
             IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+            IApplicationLogService applicationLogService,
+            IOptions<AppSettings> options)
         {
             _userService = userService;
             _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _appSettings = options.Value;
         }
 
-        [AllowAnonymous]
-        [HttpPost("/api/users/register")]
-        [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
+        [HttpPost("/api/b2c/users/register")]
+        [ProducesResponseType(typeof(RegistrationModelDto), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
-            var user = registerUserModel.ToUser();
-            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{user.Id}'.").ConfigureAwait(false);
+            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{registerUserModel.Id}'.").ConfigureAwait(false);
 
-            var userAlreadyExists = await _userService.UserAlreadyExistsAsync(user.Id).ConfigureAwait(false);
-            if (userAlreadyExists)
+            UserSubscriptionDto userSubscriptionDto;
+            var user = await _userService.GetAsync(registerUserModel.Id).ConfigureAwait(false);
+            if (user == null)
             {
-                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' already exists in the database.").ConfigureAwait(false);
-                return Ok(new UserSubscriptionDto { Id = Guid.Empty });
+                user = registerUserModel.ToUser();
+                await _userService.AddAsync(user).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
+
+                var userSubscription = new UserSubscription
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    ApplicationId = user.ApplicationId,
+                    Time = TimeSpan.FromMinutes(5),
+                    DateCreated = DateTime.UtcNow
+                };
+
+                await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
+
+                userSubscriptionDto = userSubscription.ToDto();
+            }
+            else
+            {
+                userSubscriptionDto = new UserSubscriptionDto { Id = Guid.Empty };
             }
 
-            await _userService.AddAsync(user).ConfigureAwait(false);
-            await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
-
-            var userSubscription = new UserSubscription
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.SecretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                ApplicationId = registerUserModel.ApplicationId,
-                Time = TimeSpan.FromMinutes(5),
-                DateCreated = DateTime.UtcNow
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
-            await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(userSubscription.ToDto());
+            var registrationModelDto = new RegistrationModelDto
+            {
+                Token = tokenString,
+                UserSubscription = userSubscriptionDto
+            };
+
+            return Ok(registrationModelDto);
         }
     }
 }

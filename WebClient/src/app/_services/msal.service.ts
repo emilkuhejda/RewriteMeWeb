@@ -94,6 +94,10 @@ export class MsalService {
         return this.clientApplication.getUser() != null;
     };
 
+    saveToken(token: string) {
+        localStorage.setItem(CommonVariables.AccessTokenKey, token);
+    }
+
     getUserEmail(): string {
         return this.getUser().idToken['emails'][0];
     }
@@ -108,6 +112,10 @@ export class MsalService {
 
     getFamilyName(): string {
         return this.getUser().idToken['family_name'];
+    }
+
+    getToken() {
+        return localStorage.getItem(CommonVariables.B2CAccessTokenKey);
     }
 
     private getUser() {

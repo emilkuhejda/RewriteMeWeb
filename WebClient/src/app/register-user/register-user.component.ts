@@ -4,6 +4,7 @@ import { UserService } from '../_services/user.service';
 import { CommonVariables } from '../_config/common-variables';
 import { Router } from '@angular/router';
 import { RoutingService } from '../_services/routing.service';
+import { RegistrationModel } from '../_models/registration-model';
 
 @Component({
     selector: 'app-register-user',
@@ -39,7 +40,8 @@ export class RegisterUserComponent implements OnInit {
         };
 
         this.userService.register(userData).subscribe(
-            () => {
+            (data: RegistrationModel) => {
+                this.msalService.saveToken(data.token);
                 document.location.href = this.routingService.getProfileUri();
             },
             () => {

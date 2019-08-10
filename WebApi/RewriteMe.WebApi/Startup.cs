@@ -99,12 +99,12 @@ namespace RewriteMe.WebApi
                 {
                     new FilterProviderOption
                     {
-                        RoutePrefix = "api",
+                        RoutePrefix = "api/b2c",
                         Filter = azureAdAuthorizeFilter
                     },
                     new FilterProviderOption
                     {
-                        RoutePrefix = "control-panel",
+                        RoutePrefix = "api",
                         Filter = rewriteMeAuthorizeFilter
                     }
                 };

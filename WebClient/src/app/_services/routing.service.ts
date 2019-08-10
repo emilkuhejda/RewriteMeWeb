@@ -8,7 +8,7 @@ export class RoutingService {
     constructor() { }
 
     getRegisterUserUri(): string {
-        return this.getApiUri() + "api/users/register/";
+        return this.getApiUri() + "api/b2c/users/register/";
     }
 
     getCreateContactFormUri(): string {
