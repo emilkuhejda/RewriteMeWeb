@@ -41,6 +41,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/subscriptions")]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
@@ -52,6 +53,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPost("/api/subscriptions/create")]
         [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
@@ -70,6 +72,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/subscriptions/speech-configuration")]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
         public async Task<IActionResult> GetSpeechConfiguration()
         {

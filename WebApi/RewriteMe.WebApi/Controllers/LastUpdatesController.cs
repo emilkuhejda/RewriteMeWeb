@@ -31,6 +31,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/last-updates")]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {

@@ -42,6 +42,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPost("/api/b2c/users/register")]
         [ProducesResponseType(typeof(RegistrationModelDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
         {
