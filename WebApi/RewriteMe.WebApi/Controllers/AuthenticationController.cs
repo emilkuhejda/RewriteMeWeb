@@ -33,12 +33,12 @@ namespace RewriteMe.WebApi.Controllers
         [AllowAnonymous]
         [HttpPost("/api/authenticate")]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
         {
             var administrator = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
             if (administrator == null)
-                return Forbid();
+                return NotFound();
 
             var claims = new[]
             {

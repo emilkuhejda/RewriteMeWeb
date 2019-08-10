@@ -72,11 +72,11 @@ export class FilesComponent implements OnInit {
                         if (err.status === 400)
                             error = "Audio file was not found";
 
-                        if (err.status === 403)
-                            error = "Your subscription does not have enough free minutes";
-
                         if (err.status === 406)
                             error = "Language is not supported";
+
+                        if (err.status === 409)
+                            error = "Your subscription does not have enough free minutes";
 
                         this.alertService.error(error);
                     }
