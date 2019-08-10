@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString())
             };
 
-            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 60);
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 180);
             return Ok(token);
         }
     }
