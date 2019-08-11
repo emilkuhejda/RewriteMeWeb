@@ -12,7 +12,7 @@ export class LoginGuard implements CanActivate {
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        if (!localStorage.getItem(CommonVariables.CurrentUser)) {
+        if (!localStorage.getItem(CommonVariables.CurrentIdentity)) {
             return true;
         }
 
