@@ -35,6 +35,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPost("/api/speech-results/create")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
         public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)
         {
@@ -51,6 +52,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPut("/api/speech-results/update")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
         public async Task<IActionResult> Update(IEnumerable<SpeechResultModel> speechResultModels)
         {
@@ -65,6 +67,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/speech-results/recognized-time")]
         [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetRecognizedTime")]
         public async Task<IActionResult> GetRecognizedTime()
         {

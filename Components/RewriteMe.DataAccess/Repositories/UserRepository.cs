@@ -36,6 +36,15 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<User> GetAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.Users.SingleOrDefaultAsync(x => x.Id == userId).ConfigureAwait(false);
+                return entity?.ToUser();
+            }
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())
