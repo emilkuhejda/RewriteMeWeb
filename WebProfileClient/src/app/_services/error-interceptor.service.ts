@@ -14,7 +14,7 @@ export class ErrorInterceptorService {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(request).pipe(
             catchError(err => {
-                if (err.status === 401) {
+                if (err.status === 401 || err.status === 403) {
                     this.msalService.logout();
                     location.reload(true);
                 }

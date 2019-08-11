@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
     public class ContactFormController : ControllerBase
     {

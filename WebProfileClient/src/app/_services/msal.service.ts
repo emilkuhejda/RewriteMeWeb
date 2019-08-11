@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
     providedIn: 'root'
 })
 export class MsalService {
-    private B2CTodoAccessTokenKey = "b2c.access.token";
+    private AccessTokenKey = "access.token";
 
     private tenantConfig = {
         tenant: "rewriteme.onmicrosoft.com",
@@ -51,7 +51,7 @@ export class MsalService {
     }
 
     saveAccessTokenToCache(accessToken: string): void {
-        localStorage.setItem(this.B2CTodoAccessTokenKey, accessToken);
+        localStorage.setItem(this.AccessTokenKey, accessToken);
     }
 
     logout(): void {
@@ -60,7 +60,8 @@ export class MsalService {
     }
 
     isLoggedIn(): boolean {
-        return this.clientApplication.getUser() != null;
+        let token = localStorage.getItem(this.AccessTokenKey);
+        return this.clientApplication.getUser() != null && token != null;
     }
 
     getUserEmail(): string {
@@ -76,6 +77,6 @@ export class MsalService {
     }
 
     getToken() {
-        return localStorage.getItem(this.B2CTodoAccessTokenKey);
+        return localStorage.getItem(this.AccessTokenKey);
     }
 }

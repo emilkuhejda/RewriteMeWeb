@@ -7,6 +7,10 @@ import { CommonVariables } from '../_config/common-variables';
 export class RoutingService {
     constructor() { }
 
+    getHangfireUri() {
+        return this.getApiUri() + "hangfire/"
+    }
+
     getAuthenticateUri(): string {
         return this.getApiUri() + "api/authenticate/";
     }
@@ -45,6 +49,10 @@ export class RoutingService {
 
     getContactFormsUri(): string {
         return this.getApiUri() + "api/control-panel/contact-forms/";
+    }
+
+    getGenerateHangfireAccessUri(): string {
+        return this.getApiUri() + "api/generate-hangfire-access/";
     }
 
     private getApiUri(): string {

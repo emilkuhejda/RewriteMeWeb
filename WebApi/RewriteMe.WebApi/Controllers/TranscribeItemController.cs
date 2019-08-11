@@ -33,6 +33,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
         public async Task<ActionResult> GetAll(Guid fileItemId)
         {
@@ -43,6 +44,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items-all")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
         public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
@@ -54,6 +56,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
@@ -64,6 +67,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
@@ -75,6 +79,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPut("/api/transcribe-items/update-transcript")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {

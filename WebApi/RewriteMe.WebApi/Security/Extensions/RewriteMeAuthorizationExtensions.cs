@@ -1,12 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Security.Extensions
 {
@@ -17,10 +14,7 @@ namespace RewriteMe.WebApi.Security.Extensions
             var issuerSigningKey = Encoding.ASCII.GetBytes(appSettings.SecretKey);
 
             services
-                .AddAuthorization(options =>
-                {
-                    options.AddRewriteMePolicy();
-                })
+                .AddAuthorization(options => { options.AddRewriteMePolicy(); })
                 .AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = Constants.RewriteMeScheme;
@@ -28,21 +22,6 @@ namespace RewriteMe.WebApi.Security.Extensions
                 })
                 .AddJwtBearer(Constants.RewriteMeScheme, x =>
                 {
-                    x.Events = new JwtBearerEvents
-                    {
-                        OnTokenValidated = async context =>
-                        {
-                            var administratorService = context.HttpContext.RequestServices.GetRequiredService<IAdministratorService>();
-                            var administratorId = Guid.Parse(context.Principal.Identity.Name);
-                            var administrator = await administratorService.GetAsync(administratorId).ConfigureAwait(false);
-                            if (administrator == null)
-                            {
-                                context.Fail("Unauthorized");
-                            }
-
-                            await Task.CompletedTask.ConfigureAwait(false);
-                        }
-                    };
                     x.RequireHttpsMetadata = false;
                     x.SaveToken = true;
                     x.TokenValidationParameters = new TokenValidationParameters

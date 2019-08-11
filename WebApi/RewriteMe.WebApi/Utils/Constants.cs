@@ -1,4 +1,4 @@
-﻿namespace RewriteMe.WebApi.Security
+﻿namespace RewriteMe.WebApi.Utils
 {
     public static class Constants
     {
@@ -7,5 +7,7 @@
 
         public static string AzureAdScheme { get; } = "AzureAd";
         public static string AzureAdPolicy { get; } = "AzureAdPolicy";
+
+        public static string HangfireAccessToken { get; } = "HangfireAccessToken";
     }
 }

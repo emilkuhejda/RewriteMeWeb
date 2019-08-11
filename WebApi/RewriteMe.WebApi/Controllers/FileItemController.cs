@@ -45,6 +45,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files")]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(DateTime updatedAfter, Guid applicationId)
         {
@@ -56,6 +57,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files/deleted")]
         [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
         public async Task<IActionResult> GetDeletedFileItemIds(DateTime updatedAfter, Guid applicationId)
         {
@@ -67,6 +69,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files/deleted-total-time")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemsTotalTime")]
         public async Task<IActionResult> GetDeletedTotalTime()
         {
@@ -79,6 +82,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpGet("/api/files/{fileItemId}")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetFileItem")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
@@ -91,6 +95,7 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPost("/api/files/upload")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
@@ -156,6 +161,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpPut("/api/files/update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [DisableRequestSizeLimit]
@@ -182,6 +188,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpDelete("/api/files/delete")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
         public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
@@ -196,6 +203,7 @@ namespace RewriteMe.WebApi.Controllers
 
         [HttpDelete("/api/files/delete-all")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "DeleteAllFileItems")]
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
@@ -209,8 +217,9 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPut("/api/files/transcribe")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
@@ -225,7 +234,7 @@ namespace RewriteMe.WebApi.Controllers
 
             var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
             if (!canRunRecognition)
-                return StatusCode(403);
+                return StatusCode(409);
 
             await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
 
