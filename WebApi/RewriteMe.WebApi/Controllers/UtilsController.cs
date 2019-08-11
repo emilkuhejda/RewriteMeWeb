@@ -68,7 +68,9 @@ namespace RewriteMe.WebApi.Controllers
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.Add(expireTime),
-                Secure = true
+                Path = "/",
+                HttpOnly = false,
+                IsEssential = true
             };
 
             Response.Cookies.Append(Constants.HangfireAccessToken, token, cookieOptions);
