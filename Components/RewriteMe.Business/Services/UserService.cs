@@ -26,6 +26,11 @@ namespace RewriteMe.Business.Services
             await _userRepository.AddAsync(user).ConfigureAwait(false);
         }
 
+        public async Task UpdateAsync(User user)
+        {
+            await _userRepository.UpdateAsync(user).ConfigureAwait(false);
+        }
+
         public async Task<User> GetAsync(Guid userId)
         {
             return await _userRepository.GetAsync(userId).ConfigureAwait(false);
