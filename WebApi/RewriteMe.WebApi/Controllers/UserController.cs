@@ -85,6 +85,7 @@ namespace RewriteMe.WebApi.Controllers
             var registrationModelDto = new RegistrationModelDto
             {
                 Token = token,
+                Identity = user.ToDto(),
                 UserSubscription = userSubscriptionDto
             };
 
