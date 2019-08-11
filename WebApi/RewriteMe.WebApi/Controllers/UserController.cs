@@ -39,7 +39,7 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
-        [HttpPost("/api/users/update")]
+        [HttpPut("/api/users/update")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

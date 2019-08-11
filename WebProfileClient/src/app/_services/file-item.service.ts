@@ -4,7 +4,7 @@ import { CommonVariables } from '../_config/common-variables';
 import { FileItem } from '../_models/file-item';
 import { map } from 'rxjs/operators';
 import { FileItemMapper } from '../_mappers/file-item-mapper';
-import { RoutingService } from '../_service/routing.service';
+import { RoutingService } from './routing.service';
 
 @Injectable({
     providedIn: 'root'

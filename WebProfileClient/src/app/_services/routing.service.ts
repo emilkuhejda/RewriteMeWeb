@@ -43,6 +43,14 @@ export class RoutingService {
         return this.getApiUri() + "api/files/transcribe/";
     }
 
+    getUpdateUserUri(): string {
+        return this.getApiUri() + "api/users/update/";
+    }
+
+    getSubscriptionRemainingTimeUri(): string {
+        return this.getApiUri() + "api/subscriptions/remaining-time/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;
