@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -46,7 +47,7 @@ namespace RewriteMe.WebApi.Controllers
                 new Claim(ClaimTypes.Role, Role.Admin.ToString())
             };
 
-            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 7);
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(7));
 
             return Ok(administrator.ToDto(token));
         }

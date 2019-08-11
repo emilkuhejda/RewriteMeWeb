@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Security.Extensions
 {

@@ -80,7 +80,7 @@ namespace RewriteMe.WebApi.Controllers
                 new Claim(ClaimTypes.Role, Role.User.ToString())
             };
 
-            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, 180);
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
 
             var registrationModelDto = new RegistrationModelDto
             {

@@ -18,6 +18,7 @@ using RewriteMe.WebApi.Filters;
 using RewriteMe.WebApi.Security;
 using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
+using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace RewriteMe.WebApi
@@ -124,6 +125,9 @@ namespace RewriteMe.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var appSettingsSection = Configuration.GetSection("ApplicationSettings");
+            var appSettings = appSettingsSection.Get<AppSettings>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -177,7 +181,11 @@ namespace RewriteMe.WebApi
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rewrite Me API v1"); });
 
             app.UseHangfireServer();
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new RewriteMeHangfireAuthorizationFilter(appSettings.HangfireSecretKey) }
+            });
+
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 3, DelaysInSeconds = new[] { 30, 60, 120, 240 } });
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Security.Extensions
 {
@@ -13,10 +14,7 @@ namespace RewriteMe.WebApi.Security.Extensions
             var issuerSigningKey = Encoding.ASCII.GetBytes(appSettings.SecretKey);
 
             services
-                .AddAuthorization(options =>
-                {
-                    options.AddRewriteMePolicy();
-                })
+                .AddAuthorization(options => { options.AddRewriteMePolicy(); })
                 .AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = Constants.RewriteMeScheme;
