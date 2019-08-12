@@ -39,6 +39,25 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
+        [HttpPut("/api/users/update")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [SwaggerOperation(OperationId = "UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel updateUserModel)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await _userService.GetAsync(userId).ConfigureAwait(false);
+            if (user == null)
+                return BadRequest();
+
+            user.GivenName = updateUserModel.GivenName;
+            user.FamilyName = updateUserModel.FamilyName;
+            await _userService.UpdateAsync(user).ConfigureAwait(false);
+
+            return Ok(user.ToDto());
+        }
+
         [HttpPost("/api/b2c/users/register")]
         [ProducesResponseType(typeof(RegistrationModelDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -85,6 +104,7 @@ namespace RewriteMe.WebApi.Controllers
             var registrationModelDto = new RegistrationModelDto
             {
                 Token = token,
+                Identity = user.ToDto(),
                 UserSubscription = userSubscriptionDto
             };
 

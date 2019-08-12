@@ -19,7 +19,7 @@ export class AuthenticationService {
         return this.http.post<any>(this.routingService.getAuthenticateUri(), { username: username, password: password })
             .pipe(map(user => {
                 if (user && user.token) {
-                    localStorage.setItem(CommonVariables.CurrentUser, JSON.stringify(user));
+                    localStorage.setItem(CommonVariables.CurrentIdentity, JSON.stringify(user));
                 }
 
                 this.statusChanged.emit(this.isLoggedIn());
@@ -34,7 +34,7 @@ export class AuthenticationService {
     }
 
     getIdentity(): Identity {
-        return JSON.parse(localStorage.getItem(CommonVariables.CurrentUser));
+        return JSON.parse(localStorage.getItem(CommonVariables.CurrentIdentity));
     }
 
     isLoggedIn(): boolean {

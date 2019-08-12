@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranscribeItem } from '../_models/transcribe-item';
 import { TranscribeItemMapper } from '../_mappers/transcribe-item-mapper';
 import { map } from 'rxjs/operators';
-import { RoutingService } from '../_service/routing.service';
+import { RoutingService } from './routing.service';
 
 @Injectable({
     providedIn: 'root'

@@ -101,5 +101,15 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(speechConfigurationDto);
         }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [HttpGet("/api/subscriptions/remaining-time")]
+        public async Task<IActionResult> GetSubscriptionRemainingTime()
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+
+            return Ok(remainingTime);
+        }
     }
 }

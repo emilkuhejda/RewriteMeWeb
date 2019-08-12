@@ -11,6 +11,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task AddAsync(User user);
 
+        Task UpdateAsync(User user);
+
         Task<User> GetAsync(Guid userId);
 
         Task<IEnumerable<User>> GetAllAsync();
