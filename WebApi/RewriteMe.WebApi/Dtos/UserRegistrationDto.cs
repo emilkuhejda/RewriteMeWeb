@@ -7,7 +7,7 @@ namespace RewriteMe.WebApi.Dtos
         [Required]
         public string Token { get; set; }
 
-        public UserIdentityDto Identity { get; set; }
+        public IdentityDto Identity { get; set; }
 
         public UserSubscriptionDto UserSubscription { get; set; }
     }

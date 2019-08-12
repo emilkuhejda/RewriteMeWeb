@@ -40,7 +40,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/users/update")]
-        [ProducesResponseType(typeof(UserIdentityDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IdentityDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateUser")]
