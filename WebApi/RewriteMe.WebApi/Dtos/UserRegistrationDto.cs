@@ -2,7 +2,7 @@
 
 namespace RewriteMe.WebApi.Dtos
 {
-    public class RegistrationModelDto
+    public class UserRegistrationDto
     {
         [Required]
         public string Token { get; set; }
