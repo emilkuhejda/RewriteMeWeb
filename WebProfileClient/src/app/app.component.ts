@@ -7,10 +7,7 @@ import { MsalService } from './_services/msal.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-    title = 'RewriteMe';
-
-    constructor(private msalService: MsalService) {
-    }
+    constructor(private msalService: MsalService) { }
 
     ngOnInit(): void {
     }

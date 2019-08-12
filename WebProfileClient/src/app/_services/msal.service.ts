@@ -22,7 +22,15 @@ export class MsalService {
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID,
         this.authority,
-        function (errorDesc: any, token: any, error: any, tokenType: any) { },
+        function (errorDesc: any, token: any, error: any, tokenType: any) {
+            if (errorDesc !== undefined)
+                return;
+
+            if (token === undefined)
+                return;
+
+            localStorage.setItem(CommonVariables.B2CSuccessCallbackToken, token);
+        },
         { cacheLocation: 'localStorage' }
     );
 
@@ -38,6 +46,12 @@ export class MsalService {
         this.clientApplication.loginRedirect(this.tenantConfig.b2cScopes);
     }
 
+    getCallbackToken() {
+        var token = localStorage.getItem(CommonVariables.B2CSuccessCallbackToken);
+        localStorage.removeItem(CommonVariables.B2CSuccessCallbackToken);
+        return token;
+    }
+
     logout(): void {
         this.clientApplication.logout();
         localStorage.clear();
@@ -48,17 +62,25 @@ export class MsalService {
         return this.clientApplication.getUser() != null && token != null;
     }
 
-    getMsalUser() {
-        return this.clientApplication.getUser();
+    getMsalGivenName() {
+        return this.clientApplication.getUser().idToken['given_name'];
     }
 
-    getUserName(): string {
+    getMsalFamilyName() {
+        return this.clientApplication.getUser().idToken['family_name'];
+    }
+
+    getIdentityUserName(): string {
         let identity = this.getIdentity();
         return `${identity.givenName} ${identity.familyName}`;
     }
 
     getToken() {
         return localStorage.getItem(CommonVariables.AccessTokenKey);
+    }
+
+    saveCurrentIdentity(identity: Identity) {
+        localStorage.setItem(CommonVariables.CurrentIdentity, JSON.stringify(identity));
     }
 
     getIdentity(): Identity {

@@ -5,6 +5,7 @@ import { AlertService } from '../_services/alert.service';
 import { MsalService } from '../_services/msal.service';
 import { ErrorResponse } from '../_models/error-response';
 import { ActivatedRoute } from '@angular/router';
+import { Identity } from '../_models/identity';
 
 @Component({
     selector: 'app-account',
@@ -22,28 +23,50 @@ export class AccountComponent implements OnInit {
         private alertService: AlertService) { }
 
     ngOnInit() {
+        this.updateUserData();
+
         this.route.fragment.subscribe((fragment: string) => {
             let response = new URLSearchParams(fragment).get('state');
-            if (response === null) {
-                this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
-                    (remainingTime) => {
-                        this.remainingTime = remainingTime;
-                    },
-                    (error: ErrorResponse) => {
-                        this.alertService.error(error.message);
-                    }
-                );
-            } else {
-                let user = this.msalService.getMsalUser();
+            if (response !== null)
+                return;
+
+            this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
+                (remainingTime) => {
+                    this.remainingTime = remainingTime;
+                },
+                (error: ErrorResponse) => {
+                    this.alertService.error(error.message);
+                }
+            );
+
+            let callbackToken = this.msalService.getCallbackToken();
+            if (callbackToken != null) {
+                this.updateUserData();
             }
         });
     }
 
-    editProfile() {
+    private updateUserData(): void {
+        let updateData = {
+            givenName: this.msalService.getMsalGivenName(),
+            familyName: this.msalService.getMsalFamilyName()
+        };
+
+        this.userService.updateUser(updateData).subscribe(
+            (identity: Identity) => {
+                this.msalService.saveCurrentIdentity(identity);
+            },
+            (error: ErrorResponse) => {
+                this.alertService.error(error.message);
+            }
+        );
+    }
+
+    editProfile(): void {
         this.msalService.editProfile();
     }
 
-    resetPassword() {
+    resetPassword(): void {
         this.msalService.resetPassword();
     }
 }
