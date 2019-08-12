@@ -11,7 +11,7 @@ export class UserSubscriptionService {
         private routingService: RoutingService,
         private http: HttpClient) { }
 
-    getSubscriptionRemainingTimeUri(): Observable<any> {
-        return this.http.get(this.routingService.getSubscriptionRemainingTimeUri());
+    getSubscriptionRemainingTimeUri(): Observable<string> {
+        return this.http.get<string>(this.routingService.getSubscriptionRemainingTimeUri());
     }
 }

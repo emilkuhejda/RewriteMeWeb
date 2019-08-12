@@ -4,6 +4,7 @@ import { UserSubscriptionService } from '../_services/user-subscription.service'
 import { AlertService } from '../_services/alert.service';
 import { MsalService } from '../_services/msal.service';
 import { ErrorResponse } from '../_models/error-response';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-account',
@@ -11,20 +12,38 @@ import { ErrorResponse } from '../_models/error-response';
     styleUrls: ['./account.component.css']
 })
 export class AccountComponent implements OnInit {
+    remainingTime: string;
+
     constructor(
+        private route: ActivatedRoute,
         private userService: UserService,
         private userSubscriptionService: UserSubscriptionService,
         private msalService: MsalService,
         private alertService: AlertService) { }
 
     ngOnInit() {
-        this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
-            (data) => {
-                console.log(data);
-            },
-            (error: ErrorResponse) => {
-                this.alertService.error(error.message);
+        this.route.fragment.subscribe((fragment: string) => {
+            let response = new URLSearchParams(fragment).get('state');
+            if (response === null) {
+                this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
+                    (remainingTime) => {
+                        this.remainingTime = remainingTime;
+                    },
+                    (error: ErrorResponse) => {
+                        this.alertService.error(error.message);
+                    }
+                );
+            } else {
+                let user = this.msalService.getMsalUser();
             }
-        )
+        });
+    }
+
+    editProfile() {
+        this.msalService.editProfile();
+    }
+
+    resetPassword() {
+        this.msalService.resetPassword();
     }
 }
