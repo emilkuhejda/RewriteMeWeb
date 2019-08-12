@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as Msal from 'msal';
 import { Identity } from '../_models/identity';
 import { CommonVariables } from '../_config/common-variables';
@@ -7,6 +7,8 @@ import { CommonVariables } from '../_config/common-variables';
     providedIn: 'root'
 })
 export class MsalService {
+    identityChanged: EventEmitter<Identity> = new EventEmitter();
+
     private tenantConfig = {
         tenant: "rewriteme.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
@@ -81,6 +83,8 @@ export class MsalService {
 
     saveCurrentIdentity(identity: Identity) {
         localStorage.setItem(CommonVariables.CurrentIdentity, JSON.stringify(identity));
+
+        this.identityChanged.emit(identity);
     }
 
     getIdentity(): Identity {
