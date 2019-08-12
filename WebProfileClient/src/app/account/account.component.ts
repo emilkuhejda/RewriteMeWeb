@@ -23,8 +23,6 @@ export class AccountComponent implements OnInit {
         private alertService: AlertService) { }
 
     ngOnInit() {
-        this.updateUserData();
-
         this.route.fragment.subscribe((fragment: string) => {
             let response = new URLSearchParams(fragment).get('state');
             if (response !== null)
@@ -33,9 +31,6 @@ export class AccountComponent implements OnInit {
             this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
                 (remainingTime) => {
                     this.remainingTime = remainingTime;
-                },
-                (error: ErrorResponse) => {
-                    this.alertService.error(error.message);
                 }
             );
 
