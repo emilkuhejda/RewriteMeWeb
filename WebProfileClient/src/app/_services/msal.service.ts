@@ -1,57 +1,57 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as Msal from 'msal';
-import { Router } from '@angular/router';
+import { Identity } from '../_models/identity';
+import { CommonVariables } from '../_config/common-variables';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MsalService {
-    private AccessTokenKey = "access.token";
+    identityChanged: EventEmitter<Identity> = new EventEmitter();
 
     private tenantConfig = {
         tenant: "rewriteme.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
         signUpSignIn: "B2C_1_RewriteMe_SignUp_SignIn",
+        editProfile: "B2C_1_RewriteMe_Edit",
+        passwordReset: "B2C_1_RewriteMe_Password_Reset",
+        authorityBase: "https://login.microsoftonline.com/tfp/",
         b2cScopes: ["https://rewriteme.onmicrosoft.com/access-api/user_impersonation"]
     };
 
-    private authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
-
-    constructor(private router: Router) { }
+    private authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
 
     private clientApplication = new Msal.UserAgentApplication(
         this.tenantConfig.clientID,
         this.authority,
-        function (errorDesc: any, token: any, error: any, tokenType: any) { },
+        function (errorDesc: any, token: any, error: any, tokenType: any) {
+            if (errorDesc !== undefined)
+                return;
+
+            if (token === undefined)
+                return;
+
+            localStorage.setItem(CommonVariables.B2CSuccessCallbackToken, token);
+        },
         { cacheLocation: 'localStorage' }
     );
 
-    public login(): void {
-        this.clientApplication.authority = "https://login.microsoftonline.com/tfp/" + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
-        this.authenticate();
+    constructor() { }
+
+    editProfile() {
+        this.clientApplication.authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.editProfile;
+        this.clientApplication.loginRedirect(this.tenantConfig.b2cScopes);
     }
 
-    public authenticate(): void {
-        var _this = this;
-        this.clientApplication.loginPopup(this.tenantConfig.b2cScopes).then(function (idToken: any) {
-            _this.clientApplication.acquireTokenSilent(_this.tenantConfig.b2cScopes).then(
-                function (accessToken: any) {
-                    _this.saveAccessTokenToCache(accessToken);
-                }, function (error: any) {
-                    _this.clientApplication.acquireTokenPopup(_this.tenantConfig.b2cScopes).then(
-                        function (accessToken: any) {
-                            _this.saveAccessTokenToCache(accessToken);
-                        }, function (error: any) {
-                            console.log("error: ", error);
-                        });
-                })
-        }, function (error: any) {
-            console.log("error: ", error);
-        });
+    resetPassword() {
+        this.clientApplication.authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.passwordReset;
+        this.clientApplication.loginRedirect(this.tenantConfig.b2cScopes);
     }
 
-    saveAccessTokenToCache(accessToken: string): void {
-        localStorage.setItem(this.AccessTokenKey, accessToken);
+    getCallbackToken() {
+        var token = localStorage.getItem(CommonVariables.B2CSuccessCallbackToken);
+        localStorage.removeItem(CommonVariables.B2CSuccessCallbackToken);
+        return token;
     }
 
     logout(): void {
@@ -60,23 +60,34 @@ export class MsalService {
     }
 
     isLoggedIn(): boolean {
-        let token = localStorage.getItem(this.AccessTokenKey);
+        let token = localStorage.getItem(CommonVariables.AccessTokenKey);
         return this.clientApplication.getUser() != null && token != null;
     }
 
-    getUserEmail(): string {
-        return this.getUser().idToken['emails'][0];
+    getMsalGivenName() {
+        return this.clientApplication.getUser().idToken['given_name'];
     }
 
-    getUserName(): string {
-        return `${this.getUser().idToken['given_name']} ${this.getUser().idToken['family_name']}`;
+    getMsalFamilyName() {
+        return this.clientApplication.getUser().idToken['family_name'];
     }
 
-    getUser() {
-        return this.clientApplication.getUser();
+    getIdentityUserName(): string {
+        let identity = this.getIdentity();
+        return `${identity.givenName} ${identity.familyName}`;
     }
 
     getToken() {
-        return localStorage.getItem(this.AccessTokenKey);
+        return localStorage.getItem(CommonVariables.AccessTokenKey);
+    }
+
+    saveCurrentIdentity(identity: Identity) {
+        localStorage.setItem(CommonVariables.CurrentIdentity, JSON.stringify(identity));
+
+        this.identityChanged.emit(identity);
+    }
+
+    getIdentity(): Identity {
+        return JSON.parse(localStorage.getItem(CommonVariables.CurrentIdentity));
     }
 }

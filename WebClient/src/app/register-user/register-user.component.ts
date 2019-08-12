@@ -42,6 +42,7 @@ export class RegisterUserComponent implements OnInit {
         this.userService.register(userData).subscribe(
             (data: RegistrationModel) => {
                 this.msalService.saveToken(data.token);
+                this.msalService.saveCurrentIdentity(JSON.stringify(data.identity));
                 document.location.href = this.routingService.getProfileUri();
             },
             () => {

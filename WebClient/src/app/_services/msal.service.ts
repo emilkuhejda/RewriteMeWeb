@@ -98,6 +98,10 @@ export class MsalService {
         localStorage.setItem(CommonVariables.AccessTokenKey, token);
     }
 
+    saveCurrentIdentity(identity: any) {
+        localStorage.setItem(CommonVariables.CurrentIdentity, identity);
+    }
+
     getUserEmail(): string {
         return this.getUser().idToken['emails'][0];
     }

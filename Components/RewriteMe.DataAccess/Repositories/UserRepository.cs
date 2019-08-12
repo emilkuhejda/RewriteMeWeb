@@ -36,6 +36,16 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateAsync(User user)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var userEntity = user.ToUserEntity();
+                context.Entry(userEntity).State = EntityState.Modified;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<User> GetAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())

@@ -12,6 +12,14 @@ export class TopbarComponent implements OnInit {
     constructor(private msalService: MsalService) { }
 
     ngOnInit() {
-        this.userName = this.msalService.getUserName();
+        this.msalService.identityChanged.subscribe(() => {
+            this.initialize();
+        });
+
+        this.initialize();
+    }
+
+    private initialize(): void {
+        this.userName = this.msalService.getIdentityUserName();
     }
 }
