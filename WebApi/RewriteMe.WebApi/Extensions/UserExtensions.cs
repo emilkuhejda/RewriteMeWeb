@@ -5,9 +5,9 @@ namespace RewriteMe.WebApi.Extensions
 {
     public static class UserExtensions
     {
-        public static UserDto ToDto(this User user)
+        public static UserIdentityDto ToIdentityDto(this User user)
         {
-            return new UserDto
+            return new UserIdentityDto
             {
                 Id = user.Id,
                 Email = user.Email,

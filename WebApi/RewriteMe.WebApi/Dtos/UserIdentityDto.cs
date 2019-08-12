@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RewriteMe.WebApi.Dtos
 {
-    public class UserDto
+    public class UserIdentityDto
     {
         [Required]
         public Guid Id { get; set; }
