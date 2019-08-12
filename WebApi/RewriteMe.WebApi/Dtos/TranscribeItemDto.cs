@@ -20,15 +20,12 @@ namespace RewriteMe.WebApi.Dtos
         public string UserTranscript { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long StartTimeTicks { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long EndTimeTicks { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long TotalTimeTicks { get; set; }
 
         [Required]

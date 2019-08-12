@@ -9,27 +9,21 @@ namespace RewriteMe.WebApi.Dtos
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(150)]
         public string Name { get; set; }
 
         [Required]
-        [MaxLength(150)]
         public string FileName { get; set; }
 
         [Required]
-        [MaxLength(20)]
         public string Language { get; set; }
 
         [Required]
-        [MaxLength(20)]
         public string RecognitionStateString { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long TotalTimeTicks { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long TranscribedTimeTicks { get; set; }
 
         [Required]
