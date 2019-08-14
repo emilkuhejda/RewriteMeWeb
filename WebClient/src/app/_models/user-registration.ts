@@ -1,4 +1,4 @@
-export class RegistrationModel {
+export class UserRegistration {
     token: string;
     identity: any;
     userSubscription: any;

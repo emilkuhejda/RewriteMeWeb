@@ -12,7 +12,6 @@ namespace RewriteMe.WebApi.Dtos
         public Guid UserId { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public long TimeTicks { get; set; }
 
         [Required]
