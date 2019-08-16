@@ -18,7 +18,6 @@ namespace RewriteMe.Business.Managers
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
-        private readonly IWavFileService _wavFileService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IWavFileManager _wavFileManager;
@@ -28,7 +27,6 @@ namespace RewriteMe.Business.Managers
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
-            IWavFileService wavFileService,
             IUserSubscriptionService userSubscriptionService,
             IApplicationLogService applicationLogService,
             IWavFileManager wavFileManager,
@@ -37,7 +35,6 @@ namespace RewriteMe.Business.Managers
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
-            _wavFileService = wavFileService;
             _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
             _wavFileManager = wavFileManager;
@@ -99,8 +96,7 @@ namespace RewriteMe.Business.Managers
             var remainingTime = await _userSubscriptionService.GetRemainingTime(fileItem.UserId).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
-            var audioSource = await _fileItemService.GetAudioSource(fileItem.Id).ConfigureAwait(false);
-            var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
+            var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
             var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -82,6 +83,12 @@ namespace RewriteMe.Business.Managers
 
             fileItem.RecognitionState = recognitionState;
             fileItem.SourceFileName = sourceFileName;
+        }
+
+        public async Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(Guid fileItemId, TimeSpan remainingTime)
+        {
+            var audioSource = await _fileItemService.GetAudioSource(fileItemId).ConfigureAwait(false);
+            return await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
         }
     }
 }

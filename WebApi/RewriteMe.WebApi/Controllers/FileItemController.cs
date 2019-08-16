@@ -29,18 +29,15 @@ namespace RewriteMe.WebApi.Controllers
         private readonly IFileItemService _fileItemService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
-        private readonly IWavFileManager _wavFileManager;
 
         public FileItemController(
             IFileItemService fileItemService,
             IApplicationLogService applicationLogService,
-            ISpeechRecognitionManager speechRecognitionManager,
-            IWavFileManager wavFileManager)
+            ISpeechRecognitionManager speechRecognitionManager)
         {
             _fileItemService = fileItemService;
             _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
-            _wavFileManager = wavFileManager;
         }
 
         [HttpGet("/api/files")]
