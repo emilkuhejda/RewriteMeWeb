@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
@@ -34,25 +33,31 @@ namespace RewriteMe.Business.Managers
             _appSettings = options.Value;
         }
 
-        public void RunConversionToWav(FileItem fileItem, Guid userId)
+        public async Task RunConversionToWavAsync(FileItem fileItem, Guid userId)
         {
+            if (fileItem.RecognitionState != RecognitionState.None && !string.IsNullOrWhiteSpace(fileItem.SourceFileName))
+            {
+                var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
+                if (File.Exists(convertedFilePath))
+                    return;
+            }
+
             var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
             if (!File.Exists(filePath))
                 return;
 
             try
             {
-                _applicationLogService.InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId);
+                await _applicationLogService.InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId).ConfigureAwait(false);
 
-                AsyncHelper.RunSync(() => RunConversionToWavAsync(fileItem));
+                await RunConversionToWavAsync(fileItem).ConfigureAwait(false);
 
-                _applicationLogService.InfoAsync($"File WAV conversion is completed for file ID: {fileItem.Id}.", userId);
+                await _applicationLogService.InfoAsync($"File WAV conversion is completed for file ID: {fileItem.Id}.", userId).ConfigureAwait(false);
             }
             catch
             {
-                AsyncHelper.RunSync(() => _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.None, _appSettings.ApplicationId));
-
-                _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {fileItem.Id}.", userId);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.None, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {fileItem.Id}.", userId);
                 throw;
             }
         }
@@ -71,8 +76,12 @@ namespace RewriteMe.Business.Managers
                 sourceFileName = _wavFileService.CopyWavAsync(fileItem);
             }
 
+            var recognitionState = RecognitionState.Prepared;
             await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFileName).ConfigureAwait(false);
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Prepared, _appSettings.ApplicationId).ConfigureAwait(false);
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
+
+            fileItem.RecognitionState = recognitionState;
+            fileItem.SourceFileName = sourceFileName;
         }
     }
 }

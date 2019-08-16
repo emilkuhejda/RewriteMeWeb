@@ -154,8 +154,6 @@ namespace RewriteMe.WebApi.Controllers
                 return BadRequest();
             }
 
-            BackgroundJob.Enqueue(() => _wavFileManager.RunConversionToWav(fileItem, userId));
-
             return Ok(fileItem.ToDto());
         }
 

@@ -21,6 +21,7 @@ namespace RewriteMe.Business.Managers
         private readonly IWavFileService _wavFileService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
 
         public SpeechRecognitionManager(
@@ -30,6 +31,7 @@ namespace RewriteMe.Business.Managers
             IWavFileService wavFileService,
             IUserSubscriptionService userSubscriptionService,
             IApplicationLogService applicationLogService,
+            IWavFileManager wavFileManager,
             IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
@@ -38,6 +40,7 @@ namespace RewriteMe.Business.Managers
             _wavFileService = wavFileService;
             _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _wavFileManager = wavFileManager;
             _appSettings = options.Value;
         }
 
@@ -55,6 +58,7 @@ namespace RewriteMe.Business.Managers
         private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+            await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             if (fileItem.RecognitionState < RecognitionState.Prepared)
@@ -80,6 +84,8 @@ namespace RewriteMe.Business.Managers
                 await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
                 await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
+
+                await _fileItemService.RemoveSourceFileNameAsync(fileItem).ConfigureAwait(false);
             }
             catch
             {
