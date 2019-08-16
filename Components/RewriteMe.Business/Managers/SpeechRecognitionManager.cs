@@ -18,26 +18,26 @@ namespace RewriteMe.Business.Managers
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
-        private readonly IWavFileService _wavFileService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
-            IWavFileService wavFileService,
             IUserSubscriptionService userSubscriptionService,
             IApplicationLogService applicationLogService,
+            IWavFileManager wavFileManager,
             IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
-            _wavFileService = wavFileService;
             _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _wavFileManager = wavFileManager;
             _appSettings = options.Value;
         }
 
@@ -55,6 +55,7 @@ namespace RewriteMe.Business.Managers
         private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+            await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             if (fileItem.RecognitionState < RecognitionState.Prepared)
@@ -80,6 +81,8 @@ namespace RewriteMe.Business.Managers
                 await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
                 await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
+
+                await _fileItemService.RemoveSourceFileNameAsync(fileItem).ConfigureAwait(false);
             }
             catch
             {
@@ -93,8 +96,7 @@ namespace RewriteMe.Business.Managers
             var remainingTime = await _userSubscriptionService.GetRemainingTime(fileItem.UserId).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
-            var audioSource = await _fileItemService.GetAudioSource(fileItem.Id).ConfigureAwait(false);
-            var wavFiles = await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
+            var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
             var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;
