@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -32,6 +33,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
@@ -43,6 +45,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/transcribe-items-all")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
@@ -55,6 +58,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
@@ -67,6 +71,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
@@ -78,6 +83,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/transcribe-items/update-transcript")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]

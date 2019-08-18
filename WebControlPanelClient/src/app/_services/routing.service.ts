@@ -55,6 +55,10 @@ export class RoutingService {
         return this.getApiUri() + "api/generate-hangfire-access/";
     }
 
+    getHasAccessUri(): string {
+        return this.getApiUri() + "api/control-panel/has-access/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

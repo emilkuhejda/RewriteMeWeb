@@ -6,12 +6,16 @@ import { Observable } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class UtilService {
+export class UtilsService {
     constructor(
         private routingService: RoutingService,
         private http: HttpClient) { }
 
     generateHangfireAccess(): Observable<any> {
         return this.http.get(this.routingService.getGenerateHangfireAccessUri());
+    }
+
+    hasAccess(): Observable<boolean> {
+        return this.http.get<boolean>(this.routingService.getHasAccessUri());
     }
 }

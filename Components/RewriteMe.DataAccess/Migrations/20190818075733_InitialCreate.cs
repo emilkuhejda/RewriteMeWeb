@@ -121,7 +121,8 @@ namespace RewriteMe.DataAccess.Migrations
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateProcessed = table.Column<DateTime>(nullable: true),
                     DateUpdated = table.Column<DateTime>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false)
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    IsPermanentlyDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

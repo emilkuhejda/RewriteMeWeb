@@ -15,7 +15,7 @@ namespace RewriteMe.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -144,6 +144,8 @@ namespace RewriteMe.DataAccess.Migrations
                         .HasMaxLength(150);
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsPermanentlyDeleted");
 
                     b.Property<string>("Language")
                         .HasMaxLength(20);
