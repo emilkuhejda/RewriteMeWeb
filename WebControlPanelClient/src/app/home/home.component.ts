@@ -3,6 +3,7 @@ import { AlertService } from '../_services/alert.service';
 import { ErrorResponse } from '../_models/error-response';
 import { RoutingService } from '../_services/routing.service';
 import { UtilsService } from '../_services/utils.service';
+import { AuthenticationService } from '../_services/authentication.service';
 
 @Component({
     selector: 'app-home',
@@ -13,10 +14,18 @@ export class HomeComponent implements OnInit {
     constructor(
         private utilsService: UtilsService,
         private routingService: RoutingService,
+        private authenticationService: AuthenticationService,
         private alertService: AlertService) { }
 
     ngOnInit() {
-        this.utilsService.hasAccess().subscribe();
+        this.utilsService.hasAccess().subscribe(
+            access => {
+                if (!access) {
+                    this.authenticationService.logout();
+                    location.reload(true);
+                }
+            }
+        );
     }
 
     generateHangfireAccess() {
