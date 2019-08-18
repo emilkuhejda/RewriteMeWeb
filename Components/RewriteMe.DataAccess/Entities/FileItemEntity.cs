@@ -38,6 +38,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public bool IsDeleted { get; set; }
 
+        public bool IsPermanentlyDeleted { get; set; }
+
         public virtual UserEntity User { get; set; }
 
         public virtual IList<TranscribeItemEntity> TranscribeItems { get; set; }
