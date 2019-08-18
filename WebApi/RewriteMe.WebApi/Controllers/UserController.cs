@@ -40,6 +40,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/users/update")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IdentityDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
