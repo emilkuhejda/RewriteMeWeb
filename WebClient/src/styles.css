@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body {
+    height: 100%;
+}
+
+section.masthead {
+    padding-top: calc(6rem + 72px);
+    padding-bottom: 6rem;
+}
+
+@media (min-width: 992px) {
+    section.masthead {
+        padding-top: calc(6rem + 106px);
+        padding-bottom: 6rem;
+    }
+}
