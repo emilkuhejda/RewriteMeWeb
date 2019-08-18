@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UtilService } from '../_services/util.service';
 import { AlertService } from '../_services/alert.service';
 import { ErrorResponse } from '../_models/error-response';
 import { RoutingService } from '../_services/routing.service';
+import { UtilsService } from '../_services/utils.service';
 
 @Component({
     selector: 'app-home',
@@ -11,16 +11,18 @@ import { RoutingService } from '../_services/routing.service';
 })
 export class HomeComponent implements OnInit {
     constructor(
-        private utilService: UtilService,
+        private utilsService: UtilsService,
         private routingService: RoutingService,
         private alertService: AlertService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.utilsService.hasAccess().subscribe();
+    }
 
     generateHangfireAccess() {
         this.alertService.clear();
 
-        this.utilService.generateHangfireAccess().subscribe(
+        this.utilsService.generateHangfireAccess().subscribe(
             () => {
                 this.alertService.success("Access token was generated");
             },
