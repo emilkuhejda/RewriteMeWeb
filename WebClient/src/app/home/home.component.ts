@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MsalService } from '../_services/msal.service';
 import { ContactFormService } from '../_services/contact-form.service';
-import { RoutingService } from '../_services/routing.service';
 
 @Component({
     selector: 'app-home',
@@ -18,9 +16,7 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private routingService: RoutingService,
-        private contactFormService: ContactFormService,
-        private msalService: MsalService) { }
+        private contactFormService: ContactFormService) { }
 
     ngOnInit() {
         this.contactForm = this.formBuilder.group({
@@ -28,14 +24,6 @@ export class HomeComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             message: ['', Validators.required]
         });
-    }
-
-    navigateToProfile(): void {
-        if (!this.msalService.isLoggedIn()) {
-            location.reload(true);
-        }
-
-        document.location.href = this.routingService.getProfileUri();
     }
 
     get controls() {
@@ -68,17 +56,5 @@ export class HomeComponent implements OnInit {
         ).add(
             () => { this.loading = false }
         );
-    }
-
-    login(): void {
-        this.msalService.login();
-    }
-
-    logout(): void {
-        this.msalService.logout();
-    }
-
-    isUserLoggedIn(): boolean {
-        return this.msalService.isLoggedIn();
     }
 }
