@@ -35,6 +35,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/refresh-token")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "RefreshToken")]

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Dtos;
@@ -34,6 +35,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/speech-results/create")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
@@ -51,6 +53,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/speech-results/update")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
@@ -66,6 +69,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/speech-results/recognized-time")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetRecognizedTime")]

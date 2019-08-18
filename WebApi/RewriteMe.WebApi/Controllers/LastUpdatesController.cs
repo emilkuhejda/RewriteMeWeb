@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -30,6 +31,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/last-updates")]
+        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]

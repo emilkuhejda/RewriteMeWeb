@@ -52,6 +52,8 @@ namespace RewriteMe.Domain.Transcription
 
         public bool IsDeleted { get; set; }
 
+        public bool IsPermanentlyDeleted { get; set; }
+
         public IEnumerable<TranscribeItem> TranscribeItems { get; set; }
     }
 }
