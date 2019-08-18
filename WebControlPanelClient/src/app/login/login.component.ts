@@ -51,6 +51,7 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 () => {
                     this.router.navigate([this.returnUrl]);
+                    window.location.reload();
                 },
                 (err: ErrorResponse) => {
                     let error = err.status === 404 ? "Username or password is incorrect" : err.message;
