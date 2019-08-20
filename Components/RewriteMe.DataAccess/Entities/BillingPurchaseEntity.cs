@@ -14,6 +14,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public bool AutoRenewing { get; set; }
 
+        public string PurchaseToken { get; set; }
+
         public string PurchaseState { get; set; }
 
         public string ConsumptionState { get; set; }

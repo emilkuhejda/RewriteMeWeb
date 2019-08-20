@@ -92,6 +92,9 @@ namespace RewriteMe.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
+                    b.Property<string>("PurchaseToken")
+                        .IsRequired();
+
                     b.Property<DateTime>("TransactionDateUtc");
 
                     b.Property<Guid>("UserId");
