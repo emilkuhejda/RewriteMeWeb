@@ -4,8 +4,10 @@ namespace RewriteMe.Domain.Transcription
 {
     public static class SubscriptionProducts
     {
-        public static SubscriptionProduct Product1Hour { get; } = new SubscriptionProduct("product.subscription.1hour", TimeSpan.FromHours(1));
+        public static SubscriptionProduct ProductBasic { get; } = new SubscriptionProduct("product.subscription.basic", TimeSpan.FromHours(1));
 
-        public static SubscriptionProduct[] All { get; } = { Product1Hour };
+        public static SubscriptionProduct ProductAdvanced { get; } = new SubscriptionProduct("product.subscription.advanced", TimeSpan.FromHours(10));
+
+        public static SubscriptionProduct[] All { get; } = { ProductBasic, ProductAdvanced };
     }
 }
