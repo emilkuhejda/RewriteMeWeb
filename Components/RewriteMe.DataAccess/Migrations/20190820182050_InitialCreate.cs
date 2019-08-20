@@ -86,6 +86,7 @@ namespace RewriteMe.DataAccess.Migrations
                     PurchaseId = table.Column<string>(nullable: false),
                     ProductId = table.Column<string>(maxLength: 100, nullable: false),
                     AutoRenewing = table.Column<bool>(nullable: false),
+                    PurchaseToken = table.Column<string>(nullable: false),
                     PurchaseState = table.Column<string>(maxLength: 100, nullable: false),
                     ConsumptionState = table.Column<string>(maxLength: 100, nullable: false),
                     Platform = table.Column<string>(maxLength: 50, nullable: false),

@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190818075733_InitialCreate")]
+    [Migration("20190820182050_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,9 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<string>("PurchaseState")
                         .IsRequired()
                         .HasMaxLength(100);
+
+                    b.Property<string>("PurchaseToken")
+                        .IsRequired();
 
                     b.Property<DateTime>("TransactionDateUtc");
 
