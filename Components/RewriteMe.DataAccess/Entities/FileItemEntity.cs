@@ -43,5 +43,7 @@ namespace RewriteMe.DataAccess.Entities
         public virtual UserEntity User { get; set; }
 
         public virtual IList<TranscribeItemEntity> TranscribeItems { get; set; }
+
+        public virtual IList<FileItemSourceEntity> FileItemSources { get; set; }
     }
 }
