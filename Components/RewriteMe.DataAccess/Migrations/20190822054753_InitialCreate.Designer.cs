@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190820182050_InitialCreate")]
+    [Migration("20190822054753_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -185,6 +185,26 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("FileItem");
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemSourceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<Guid>("FileItemId");
+
+                    b.Property<byte[]>("Source")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileItemId")
+                        .IsUnique();
+
+                    b.ToTable("FileItemSource");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -252,6 +272,25 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasIndex("FileItemId");
 
                     b.ToTable("TranscribeItem");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemSourceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<Guid>("FileItemId");
+
+                    b.Property<byte[]>("Source")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileItemId");
+
+                    b.ToTable("TranscribeItemSource");
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserEntity", b =>
@@ -324,6 +363,14 @@ namespace RewriteMe.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemSourceEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
+                        .WithOne("FileItemSource")
+                        .HasForeignKey("RewriteMe.DataAccess.Entities.FileItemSourceEntity", "FileItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
                 {
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
@@ -344,6 +391,14 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithMany("TranscribeItems")
+                        .HasForeignKey("FileItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemSourceEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
+                        .WithMany("TranscribeItemSources")
                         .HasForeignKey("FileItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

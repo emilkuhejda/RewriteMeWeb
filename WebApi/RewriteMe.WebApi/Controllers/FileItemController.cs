@@ -29,15 +29,18 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IFileItemService _fileItemService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly IFileItemSourceService _fileItemSourceService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
 
         public FileItemController(
             IFileItemService fileItemService,
             IApplicationLogService applicationLogService,
+            IFileItemSourceService fileItemSourceService,
             ISpeechRecognitionManager speechRecognitionManager)
         {
             _fileItemService = fileItemService;
             _applicationLogService = applicationLogService;
+            _fileItemSourceService = fileItemSourceService;
             _speechRecognitionManager = speechRecognitionManager;
         }
 
@@ -147,6 +150,7 @@ namespace RewriteMe.WebApi.Controllers
             try
             {
                 await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+                await _fileItemSourceService.AddFileItemSourceAsync(fileItem).ConfigureAwait(false);
             }
             catch (DbUpdateException ex)
             {
