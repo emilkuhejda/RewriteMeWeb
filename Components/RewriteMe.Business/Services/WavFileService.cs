@@ -122,6 +122,7 @@ namespace RewriteMe.Business.Services
 
                 return new WavPartialFile
                 {
+                    Id = Guid.NewGuid(),
                     Path = outputFileName,
                     StartTime = start,
                     EndTime = end,

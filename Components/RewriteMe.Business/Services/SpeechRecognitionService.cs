@@ -73,7 +73,7 @@ namespace RewriteMe.Business.Services
                 var dateCreated = DateTime.UtcNow;
                 var transcribeItem = new TranscribeItem
                 {
-                    Id = Guid.NewGuid(),
+                    Id = wavPartialFile.Id,
                     FileItemId = fileItemId,
                     ApplicationId = _appSettings.ApplicationId,
                     Alternatives = alternatives,
