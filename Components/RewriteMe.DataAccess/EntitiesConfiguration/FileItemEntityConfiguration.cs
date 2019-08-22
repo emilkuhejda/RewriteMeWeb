@@ -27,7 +27,9 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.IsDeleted).IsRequired();
             builder.Property(x => x.IsPermanentlyDeleted).IsRequired();
 
+            builder.HasOne(x => x.FileItemSource).WithOne(x => x.FileItem).HasForeignKey<FileItemSourceEntity>(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.TranscribeItems).WithOne(x => x.FileItem).HasForeignKey(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.TranscribeItemSources).WithOne(x => x.FileItem).HasForeignKey(x => x.FileItemId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
