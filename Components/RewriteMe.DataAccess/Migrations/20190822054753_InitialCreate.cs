@@ -177,6 +177,26 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FileItemSource",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    FileItemId = table.Column<Guid>(nullable: false),
+                    Source = table.Column<byte[]>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileItemSource", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FileItemSource_FileItem_FileItemId",
+                        column: x => x.FileItemId,
+                        principalTable: "FileItem",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TranscribeItem",
                 columns: table => new
                 {
@@ -197,6 +217,26 @@ namespace RewriteMe.DataAccess.Migrations
                     table.PrimaryKey("PK_TranscribeItem", x => x.Id);
                     table.ForeignKey(
                         name: "FK_TranscribeItem_FileItem_FileItemId",
+                        column: x => x.FileItemId,
+                        principalTable: "FileItem",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TranscribeItemSource",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    FileItemId = table.Column<Guid>(nullable: false),
+                    Source = table.Column<byte[]>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TranscribeItemSource", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TranscribeItemSource_FileItem_FileItemId",
                         column: x => x.FileItemId,
                         principalTable: "FileItem",
                         principalColumn: "Id",
@@ -239,6 +279,12 @@ namespace RewriteMe.DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FileItemSource_FileItemId",
+                table: "FileItemSource",
+                column: "FileItemId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecognizedAudioSample_UserId",
                 table: "RecognizedAudioSample",
                 column: "UserId");
@@ -251,6 +297,11 @@ namespace RewriteMe.DataAccess.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_TranscribeItem_FileItemId",
                 table: "TranscribeItem",
+                column: "FileItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TranscribeItemSource_FileItemId",
+                table: "TranscribeItemSource",
                 column: "FileItemId");
 
             migrationBuilder.CreateIndex(
@@ -274,10 +325,16 @@ namespace RewriteMe.DataAccess.Migrations
                 name: "ContactForm");
 
             migrationBuilder.DropTable(
+                name: "FileItemSource");
+
+            migrationBuilder.DropTable(
                 name: "SpeechResult");
 
             migrationBuilder.DropTable(
                 name: "TranscribeItem");
+
+            migrationBuilder.DropTable(
+                name: "TranscribeItemSource");
 
             migrationBuilder.DropTable(
                 name: "UserSubscription");
