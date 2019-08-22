@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
@@ -14,11 +16,12 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task AddAsync(TranscribeItemSource transcribeItemSource)
+        public async Task AddAsync(IEnumerable<TranscribeItemSource> transcribeItemSources)
         {
             using (var context = _contextFactory.Create())
             {
-                await context.TranscribeItemSources.AddAsync(transcribeItemSource.ToTranscribeItemSourceEntity()).ConfigureAwait(false);
+                var transcribeItems = transcribeItemSources.Select(x => x.ToTranscribeItemSourceEntity());
+                await context.TranscribeItemSources.AddRangeAsync(transcribeItems).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

@@ -19,6 +19,7 @@ namespace RewriteMe.Business.Managers
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly ITranscribeItemSourceService _transcribeItemSourceService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
@@ -28,6 +29,7 @@ namespace RewriteMe.Business.Managers
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
+            ITranscribeItemSourceService transcribeItemSourceService,
             IApplicationLogService applicationLogService,
             IWavFileManager wavFileManager,
             IOptions<AppSettings> options)
@@ -36,6 +38,7 @@ namespace RewriteMe.Business.Managers
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
+            _transcribeItemSourceService = transcribeItemSourceService;
             _applicationLogService = applicationLogService;
             _wavFileManager = wavFileManager;
             _appSettings = options.Value;
@@ -98,6 +101,8 @@ namespace RewriteMe.Business.Managers
 
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
+
+            await _transcribeItemSourceService.AddWavFileSources(fileItem.Id, files).ConfigureAwait(false);
 
             var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;
             await _fileItemService.UpdateTranscribedTimeAsync(fileItem.Id, transcribedTime).ConfigureAwait(false);
