@@ -5,6 +5,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IFileItemSourceService
     {
-        Task AddAsync(FileItemSource fileItemSource);
+        Task AddFileItemSourceAsync(FileItem fileItem);
     }
 }
