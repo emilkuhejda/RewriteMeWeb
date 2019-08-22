@@ -30,7 +30,9 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<AdministratorRepository>().As<IAdministratorRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemRepository>().As<IFileItemRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<FileItemSourceRepository>().As<IFileItemSourceRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemRepository>().As<ITranscribeItemRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<TranscribeItemSourceRepository>().As<ITranscribeItemSourceRepository>().InstancePerLifetimeScope();
             builder.RegisterType<RecognizedAudioSampleRepository>().As<IRecognizedAudioSampleRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechResultRepository>().As<ISpeechResultRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionRepository>().As<IUserSubscriptionRepository>().InstancePerLifetimeScope();
@@ -41,7 +43,9 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<AdministratorService>().As<IAdministratorService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemService>().As<IFileItemService>().InstancePerLifetimeScope();
+            builder.RegisterType<FileItemSourceService>().As<IFileItemSourceService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemService>().As<ITranscribeItemService>().InstancePerLifetimeScope();
+            builder.RegisterType<TranscribeItemSourceService>().As<ITranscribeItemSourceService>().InstancePerLifetimeScope();
             builder.RegisterType<RecognizedAudioSampleService>().As<IRecognizedAudioSampleService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechResultService>().As<ISpeechResultService>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionService>().As<IUserSubscriptionService>().InstancePerLifetimeScope();
