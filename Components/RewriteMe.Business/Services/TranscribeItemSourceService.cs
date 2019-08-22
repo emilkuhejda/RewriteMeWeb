@@ -29,7 +29,7 @@ namespace RewriteMe.Business.Services
                 var source = await File.ReadAllBytesAsync(wavFile.Path).ConfigureAwait(false);
                 var transcribeItemSource = new TranscribeItemSource
                 {
-                    Id = Guid.NewGuid(),
+                    Id = wavFile.Id,
                     FileItemId = fileItemId,
                     Source = source,
                     DateCreated = DateTime.UtcNow
