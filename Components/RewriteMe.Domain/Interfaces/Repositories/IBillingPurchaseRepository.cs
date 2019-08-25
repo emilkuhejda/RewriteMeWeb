@@ -10,5 +10,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task AddAsync(BillingPurchase billingPurchase);
 
         Task<IEnumerable<BillingPurchase>> GetAllByUserAsync(Guid userId);
+
+        Task<BillingPurchase> GetAsync(Guid purchaseId);
     }
 }

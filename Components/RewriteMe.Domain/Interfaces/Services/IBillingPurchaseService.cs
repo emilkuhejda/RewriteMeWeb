@@ -8,5 +8,7 @@ namespace RewriteMe.Domain.Interfaces.Services
     public interface IBillingPurchaseService
     {
         Task<IEnumerable<BillingPurchase>> GetAllByUserAsync(Guid userId);
+
+        Task<BillingPurchase> GetAsync(Guid purchaseId);
     }
 }

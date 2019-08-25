@@ -17,8 +17,8 @@
                     <tr>
                         <th class="table-header">Purchase Id</th>
                         <th class="table-header">Product Id</th>
-                        <td class="table-header">Purchase state</td>
-                        <th class="table-header">Consumption state</th>
+                        <th class="table-header">Purchase state</th>
+                        <th class="table-header">Purchase token</th>
                         <th class="table-header">Transaction date</th>
                     </tr>
                 </thead>
@@ -27,16 +27,16 @@
                         <th>Purchase Id</th>
                         <th>Product Id</th>
                         <th>Purchase state</th>
-                        <th>Consumption state</th>
+                        <th>Purchase token</th>
                         <th>Transaction date</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     <tr *ngFor="let billingPurchase of billingPurchases">
-                        <td>{{billingPurchase.purchaseId}}</td>
+                        <td><a [routerLink]="['/users/purchases/detail', billingPurchase.id]">{{billingPurchase.purchaseId}}</a></td>
                         <td>{{billingPurchase.productId}}</td>
                         <td>{{billingPurchase.purchaseState}}</td>
-                        <td>{{billingPurchase.consumptionState}}</td>
+                        <td>{{billingPurchase.purchaseToken|truncate:[10]}}</td>
                         <td>{{billingPurchase.transactionDateUtc|date:'dd.MM.yyy HH:mm:ss'}}</td>
                     </tr>
                 </tbody>

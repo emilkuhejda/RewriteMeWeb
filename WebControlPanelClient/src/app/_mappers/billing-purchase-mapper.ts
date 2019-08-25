@@ -18,6 +18,7 @@ export class BillingPurchaseMapper {
         billingPurchase.purchaseId = data.purchaseId;
         billingPurchase.productId = data.productId;
         billingPurchase.autoRenewing = data.autoRenewing;
+        billingPurchase.purchaseToken = data.purchaseToken;
         billingPurchase.purchaseState = data.purchaseState;
         billingPurchase.consumptionState = data.consumptionState;
         billingPurchase.platform = data.platform;

@@ -40,5 +40,14 @@ namespace RewriteMe.DataAccess.Repositories
                 return billingPurchases.Select(x => x.ToBillingPurchase());
             }
         }
+
+        public async Task<BillingPurchase> GetAsync(Guid purchaseId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.BillingPurchases.FirstOrDefaultAsync(x => x.Id == purchaseId).ConfigureAwait(false);
+                return entity?.ToBillingPurchase();
+            }
+        }
     }
 }

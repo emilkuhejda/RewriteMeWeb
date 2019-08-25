@@ -20,5 +20,10 @@ namespace RewriteMe.Business.Services
         {
             return await _billingPurchaseRepository.GetAllByUserAsync(userId).ConfigureAwait(false);
         }
+
+        public async Task<BillingPurchase> GetAsync(Guid purchaseId)
+        {
+            return await _billingPurchaseRepository.GetAsync(purchaseId).ConfigureAwait(false);
+        }
     }
 }
