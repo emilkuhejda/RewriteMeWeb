@@ -4,6 +4,7 @@ export class BillingPurchase {
     purchaseId: string;
     productId: string;
     autoRenewing: string;
+    purchaseToken: string;
     purchaseState: string;
     consumptionState: string;
     platform: string;

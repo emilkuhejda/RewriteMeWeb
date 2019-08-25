@@ -17,4 +17,8 @@ export class BillingPurchaseService {
     getAll(userId: string): Observable<BillingPurchase[]> {
         return this.http.get<BillingPurchase[]>(this.routingService.getPurchasesUri() + userId).pipe(map(BillingPurchaseMapper.convertAll));
     }
+
+    get(purchaseId: string): Observable<BillingPurchase> {
+        return this.http.get<BillingPurchase>(this.routingService.getPurchaseUri() + purchaseId).pipe(map(BillingPurchaseMapper.convert));
+    }
 }

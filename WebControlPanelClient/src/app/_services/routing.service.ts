@@ -22,7 +22,11 @@ export class RoutingService {
     getPurchasesUri(): string {
         return this.getApiUri() + "api/control-panel/purchases/";
     }
-
+    
+    getPurchaseUri(): string {
+        return this.getApiUri() + "api/control-panel/purchases/detail/";
+    }
+    
     getSubscriptionsUri(): string {
         return this.getApiUri() + "api/control-panel/subscriptions/";
     }
