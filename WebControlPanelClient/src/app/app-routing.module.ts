@@ -13,6 +13,7 @@ import { EditAdministratorComponent } from './home/administrators/edit-administr
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ContactFormsComponent } from './home/contact-forms/contact-forms.component';
 import { DetailContactFormComponent } from './home/contact-forms/detail-contact-form/detail-contact-form.component';
+import { DetailPurchaseComponent } from './home/users/purchases/detail-purchase/detail-purchase.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'users/purchases/:userId', component: PurchasesComponent, canActivate: [AuthGuard] },
+    { path: 'users/purchases/:userId/:purchaseId', component: DetailPurchaseComponent, canActivate: [AuthGuard] },
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
@@ -41,6 +43,7 @@ export const routingComponents = [
     LoginComponent,
     UsersComponent,
     PurchasesComponent,
+    DetailPurchaseComponent,
     SubscriptionsComponent,
     AdministratorsComponent,
     CreateAdministratorComponent,

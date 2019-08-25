@@ -1,0 +1,60 @@
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><a (click)="goBack()">Billing purchases</a></h1>
+</div>
+
+<!-- Content -->
+<div *ngIf="billingPurchase" class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Order ID: {{billingPurchase.purchaseId}}</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="form-group">
+            <label for="product-id">Product Id</label>
+            <input type="text" id="product-id" class="form-control" [readonly]="true"
+                [(ngModel)]="billingPurchase.productId" />
+        </div>
+
+        <div class="form-group">
+            <label for="auto-renewing">Auto renewing</label>
+            <input type="text" id="auto-renewing" class="form-control" [readonly]="true"
+                [(ngModel)]="billingPurchase.autoRenewing" />
+        </div>
+
+        <div class="form-group">
+            <label for="purchase-token">Purchase token</label>
+            <textarea id="purchase-token" class="form-control" rows="5"
+                [readonly]="true">{{billingPurchase.purchaseToken}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="purchase-state">Purchase state</label>
+            <input type="text" id="purchase-state" class="form-control" [readonly]="true"
+                [(ngModel)]="billingPurchase.purchaseState" />
+        </div>
+
+        <div class="form-group">
+            <label for="consumption-state">Consumption state</label>
+            <input type="text" id="consumption-state" class="form-control" [readonly]="true"
+                [(ngModel)]="billingPurchase.consumptionState" />
+        </div>
+
+        <div class="form-group">
+            <label for="platform">Platform</label>
+            <input type="text" id="platform" class="form-control" [readonly]="true"
+                [(ngModel)]="billingPurchase.platform" />
+        </div>
+
+        <div class="form-group">
+            <label for="transaction-date-utc">Transaction date</label>
+            <input type="text" id="transaction-date-utc" class="form-control" [readonly]="true"
+                [(ngModel)]="transactionDate" />
+        </div>
+
+        <div class="form-group">
+            <button (click)="goBack()" class="btn btn-primary">Back</button>
+        </div>
+    </div>
+</div>
