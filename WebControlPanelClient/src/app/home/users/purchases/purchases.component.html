@@ -33,7 +33,7 @@
                 </tfoot>
                 <tbody>
                     <tr *ngFor="let billingPurchase of billingPurchases">
-                        <td><a [routerLink]="['/users/purchases', userId, billingPurchase.id]">{{billingPurchase.purchaseId}}</a></td>
+                        <td><a [routerLink]="['/users/purchases/detail', billingPurchase.id]">{{billingPurchase.purchaseId}}</a></td>
                         <td>{{billingPurchase.productId}}</td>
                         <td>{{billingPurchase.purchaseState}}</td>
                         <td>{{billingPurchase.purchaseToken|truncate:[10]}}</td>

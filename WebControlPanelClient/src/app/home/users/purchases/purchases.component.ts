@@ -16,7 +16,6 @@ import 'datatables.net-bs4';
 export class PurchasesComponent implements OnInit {
     private tableWidget: any;
     billingPurchases: BillingPurchase[];
-    userId: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -25,8 +24,8 @@ export class PurchasesComponent implements OnInit {
 
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
-            this.userId = paramMap.get("userId");
-            this.billingPurchaseService.getAll(this.userId).subscribe(
+            let userId = paramMap.get("userId");
+            this.billingPurchaseService.getAll(userId).subscribe(
                 (billingPurchases: BillingPurchase[]) => {
                     this.billingPurchases = billingPurchases.sort((a, b) => {
                         return <any>new Date(b.transactionDateUtc) - <any>new Date(a.transactionDateUtc);

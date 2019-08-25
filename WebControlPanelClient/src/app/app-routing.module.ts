@@ -21,7 +21,7 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'users/purchases/:userId', component: PurchasesComponent, canActivate: [AuthGuard] },
-    { path: 'users/purchases/:userId/:purchaseId', component: DetailPurchaseComponent, canActivate: [AuthGuard] },
+    { path: 'users/purchases/detail/:purchaseId', component: DetailPurchaseComponent, canActivate: [AuthGuard] },
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
