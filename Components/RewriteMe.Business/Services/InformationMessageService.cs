@@ -25,5 +25,10 @@ namespace RewriteMe.Business.Services
         {
             return await _informationMessageRepository.GetAllAsync(updatedAfter).ConfigureAwait(false);
         }
+
+        public async Task<DateTime> GetLastUpdateAsync()
+        {
+            return await _informationMessageRepository.GetLastUpdateAsync().ConfigureAwait(false);
+        }
     }
 }

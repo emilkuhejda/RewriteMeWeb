@@ -40,5 +40,17 @@ namespace RewriteMe.DataAccess.Repositories
                 return entities.Select(x => x.ToInformationMessage());
             }
         }
+
+        public async Task<DateTime> GetLastUpdateAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.InformationMessages
+                    .OrderByDescending(x => x.DateCreated)
+                    .Select(x => x.DateCreated)
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+            }
+        }
     }
 }

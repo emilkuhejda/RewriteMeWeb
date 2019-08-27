@@ -10,5 +10,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task AddAsync(InformationMessage informationMessage);
 
         Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter);
+
+        Task<DateTime> GetLastUpdateAsync();
     }
 }
