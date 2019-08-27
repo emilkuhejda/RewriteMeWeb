@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.Entities;
 using RewriteMe.DataAccess.EntitiesConfiguration;
-using RewriteMe.Domain.Messages;
 
 namespace RewriteMe.DataAccess
 {
@@ -39,7 +38,7 @@ namespace RewriteMe.DataAccess
 
         public DbSet<ContactFormEntity> ContactForms { get; set; }
 
-        public DbSet<InformationMessage> InformationMessages { get; set; }
+        public DbSet<InformationMessageEntity> InformationMessages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
