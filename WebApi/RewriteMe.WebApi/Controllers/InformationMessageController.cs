@@ -26,7 +26,7 @@ namespace RewriteMe.WebApi.Controllers
             _informationMessageService = informationMessageService;
         }
 
-        [HttpGet("/api/information-message")]
+        [HttpGet("/api/information-messages")]
         [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<InformationMessageDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
