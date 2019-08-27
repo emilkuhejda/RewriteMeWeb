@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.Entities;
 using RewriteMe.DataAccess.EntitiesConfiguration;
+using RewriteMe.Domain.Messages;
 
 namespace RewriteMe.DataAccess
 {
@@ -38,6 +39,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<ContactFormEntity> ContactForms { get; set; }
 
+        public DbSet<InformationMessage> InformationMessages { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -60,6 +63,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new BillingPurchaseEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ContactFormEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new InformationMessageEntityConfiguration());
         }
     }
 }
