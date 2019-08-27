@@ -12,6 +12,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
     public class LastUpdatesController : ControllerBase
@@ -34,7 +35,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/last-updates")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]
