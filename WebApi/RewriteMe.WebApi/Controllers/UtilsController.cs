@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Notifications;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Utils;
@@ -21,14 +18,10 @@ namespace RewriteMe.WebApi.Controllers
     [ApiController]
     public class UtilsController : ControllerBase
     {
-        private readonly IPushNotificationsService _pushNotificationsService;
         private readonly AppSettings _appSettings;
 
-        public UtilsController(
-            IPushNotificationsService pushNotificationsService,
-            IOptions<AppSettings> options)
+        public UtilsController(IOptions<AppSettings> options)
         {
-            _pushNotificationsService = pushNotificationsService;
             _appSettings = options.Value;
         }
 
@@ -84,24 +77,6 @@ namespace RewriteMe.WebApi.Controllers
             Response.Cookies.Append(Constants.HangfireAccessToken, token, cookieOptions);
 
             return Ok();
-        }
-
-        [HttpGet("/api/notification")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SendNotification()
-        {
-            var pushNotification = new PushNotification
-            {
-                Content = new NotificationContent
-                {
-                    Name = "The RewriteMe Campaign",
-                    Title = "RewriteMe",
-                    Body = "Hello :)"
-                }
-            };
-
-            var content = await _pushNotificationsService.SendAsync(pushNotification).ConfigureAwait(false);
-            return Ok(content);
         }
     }
 }

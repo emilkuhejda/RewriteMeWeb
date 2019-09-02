@@ -10,6 +10,7 @@ using Microsoft.Rest;
 using Newtonsoft.Json;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Messages;
 using RewriteMe.Domain.Notifications;
 using RewriteMe.Domain.Settings;
 
@@ -17,6 +18,7 @@ namespace RewriteMe.Business.Services
 {
     public class PushNotificationsService : IPushNotificationsService
     {
+        private const string TargetType = "devices_target";
         private const string MediaType = "application/json";
 
         private readonly AppSettings _appSettings;
@@ -26,8 +28,23 @@ namespace RewriteMe.Business.Services
             _appSettings = options.Value;
         }
 
-        public async Task<NotificationResult> SendAsync(PushNotification pushNotification)
+        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage)
         {
+            var pushNotification = new PushNotification
+            {
+                Target = new NotificationTarget
+                {
+                    Type = TargetType,
+                    Devices = new[] { new Guid("04b7bd02-23a2-4ee5-85d2-ba94ce5bb38d") }
+                },
+                Content = new NotificationContent
+                {
+                    Name = informationMessage.CampaignName,
+                    Title = informationMessage.Title,
+                    Body = informationMessage.Message
+                }
+            };
+
             using (var result = await SendWithHttpMessagesAsync(pushNotification).ConfigureAwait(false))
             {
                 return result.Body;

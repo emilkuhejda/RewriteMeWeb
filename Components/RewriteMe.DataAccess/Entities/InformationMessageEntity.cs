@@ -1,4 +1,5 @@
 ﻿using System;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.DataAccess.Entities
 {
@@ -14,7 +15,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public string Description { get; set; }
 
-        public string Language { get; set; }
+        public Language Language { get; set; }
 
         public bool SentOnOsx { get; set; }
 
