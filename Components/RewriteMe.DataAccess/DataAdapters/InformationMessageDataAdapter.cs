@@ -14,6 +14,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Title = entity.Title,
                 Message = entity.Message,
                 Description = entity.Description,
+                Language = entity.Language,
+                SentOnOsx = entity.SentOnOsx,
+                SentOnAndroid = entity.SentOnAndroid,
                 DateCreated = entity.DateCreated
             };
         }
@@ -27,6 +30,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Title = informationMessage.Title,
                 Message = informationMessage.Message,
                 Description = informationMessage.Description,
+                Language = informationMessage.Language,
+                SentOnOsx = informationMessage.SentOnOsx,
+                SentOnAndroid = informationMessage.SentOnAndroid,
                 DateCreated = informationMessage.DateCreated
             };
         }
