@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using Newtonsoft.Json;
+using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Notifications;
 using RewriteMe.Domain.Settings;
@@ -55,14 +56,25 @@ namespace RewriteMe.Business.Services
             var httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
 
+            var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             var statusCode = httpResponse.StatusCode;
             if (statusCode != HttpStatusCode.Accepted)
             {
-                httpClient.Dispose();
-                httpRequest.Dispose();
-                httpResponse.Dispose();
-
-                throw new HttpOperationException($"Operation returned an invalid status code '{statusCode}'");
+                try
+                {
+                    var notificationError = JsonConvert.DeserializeObject<NotificationError>(responseContent);
+                    throw new NotificationErrorException(notificationError);
+                }
+                catch (JsonException ex)
+                {
+                    throw new SerializationException("Unable to deserialize the response.", ex);
+                }
+                finally
+                {
+                    httpClient.Dispose();
+                    httpRequest.Dispose();
+                    httpResponse.Dispose();
+                }
             }
 
             var result = new HttpOperationResponse<NotificationResult>
@@ -71,7 +83,6 @@ namespace RewriteMe.Business.Services
                 Response = httpResponse
             };
 
-            var responseContent = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             try
             {
                 result.Body = JsonConvert.DeserializeObject<NotificationResult>(responseContent);
