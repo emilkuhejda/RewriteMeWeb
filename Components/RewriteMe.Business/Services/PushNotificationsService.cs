@@ -60,21 +60,18 @@ namespace RewriteMe.Business.Services
             var statusCode = httpResponse.StatusCode;
             if (statusCode != HttpStatusCode.Accepted)
             {
-                try
-                {
-                    var notificationError = JsonConvert.DeserializeObject<NotificationError>(responseContent);
-                    throw new NotificationErrorException(notificationError);
-                }
-                catch (JsonException ex)
-                {
-                    throw new SerializationException("Unable to deserialize the response.", ex);
-                }
-                finally
-                {
-                    httpClient.Dispose();
-                    httpRequest.Dispose();
-                    httpResponse.Dispose();
-                }
+                HandleSerialization(
+                    () =>
+                    {
+                        var notificationError = JsonConvert.DeserializeObject<NotificationError>(responseContent);
+                        throw new NotificationErrorException(notificationError);
+                    },
+                    () =>
+                    {
+                        httpClient.Dispose();
+                        httpRequest.Dispose();
+                        httpResponse.Dispose();
+                    });
             }
 
             var result = new HttpOperationResponse<NotificationResult>
@@ -83,9 +80,26 @@ namespace RewriteMe.Business.Services
                 Response = httpResponse
             };
 
+            HandleSerialization(
+                () =>
+                {
+                    result.Body = JsonConvert.DeserializeObject<NotificationResult>(responseContent);
+                },
+                () =>
+                {
+                    httpClient.Dispose();
+                    httpRequest.Dispose();
+                    httpResponse.Dispose();
+                });
+
+            return result;
+        }
+
+        private void HandleSerialization(Action serializeAction, Action onFinishedAction)
+        {
             try
             {
-                result.Body = JsonConvert.DeserializeObject<NotificationResult>(responseContent);
+                serializeAction();
             }
             catch (JsonException ex)
             {
@@ -93,12 +107,8 @@ namespace RewriteMe.Business.Services
             }
             finally
             {
-                httpClient.Dispose();
-                httpRequest.Dispose();
-                httpResponse.Dispose();
+                onFinishedAction();
             }
-
-            return result;
         }
     }
 }
