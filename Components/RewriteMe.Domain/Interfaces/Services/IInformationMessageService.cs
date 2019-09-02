@@ -7,7 +7,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IInformationMessageService
     {
-        Task AddAsync(IEnumerable<InformationMessage> informationMessages);
+        Task AddAsync(InformationMessage informationMessage);
 
         Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter);
 

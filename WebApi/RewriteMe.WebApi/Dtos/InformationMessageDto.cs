@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using RewriteMe.Domain.Messages;
 
 namespace RewriteMe.WebApi.Dtos
 {
@@ -6,12 +8,8 @@ namespace RewriteMe.WebApi.Dtos
     {
         public Guid Id { get; set; }
 
-        public string Title { get; set; }
-
-        public string Message { get; set; }
-
-        public string Description { get; set; }
-
         public DateTime DateCreated { get; set; }
+
+        public IEnumerable<LanguageVersion> LanguageVersions { get; set; }
     }
 }

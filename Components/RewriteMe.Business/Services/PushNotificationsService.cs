@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using Newtonsoft.Json;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Messages;
@@ -30,6 +32,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<NotificationResult> SendAsync(InformationMessage informationMessage)
         {
+            var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == Language.English);
             var pushNotification = new PushNotification
             {
                 Target = new NotificationTarget
@@ -40,8 +43,8 @@ namespace RewriteMe.Business.Services
                 Content = new NotificationContent
                 {
                     Name = informationMessage.CampaignName,
-                    Title = informationMessage.Title,
-                    Body = informationMessage.Message
+                    Title = languageVersion.Title,
+                    Body = languageVersion.Message
                 }
             };
 

@@ -36,10 +36,18 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpPost("/api/control-panel/information-messages/create")]
         public async Task<IActionResult> Create([FromForm]CreateInformationMessageModel createInformationMessageModel)
         {
-            var enInformationMessage = createInformationMessageModel.ToInformationMessage(Language.English);
-            var skInformationMessage = createInformationMessageModel.ToInformationMessage(Language.Slovak);
+            var informationMessage = createInformationMessageModel.ToInformationMessage();
 
-            await _informationMessageService.AddAsync(new[] { enInformationMessage, skInformationMessage }).ConfigureAwait(false);
+            await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
+            return Ok();
+        }
+
+        [HttpPut("/api/control-panel/information-messages/{informationMessage}")]
+        public async Task<IActionResult> SendNotifications(Guid informationMessage, Language language)
+        {
+            var id = informationMessage;
+            var lang = language;
+
             return Ok();
         }
     }

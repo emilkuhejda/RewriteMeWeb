@@ -1,5 +1,5 @@
 ﻿using System;
-using RewriteMe.Domain.Enums;
+using System.Collections.Generic;
 
 namespace RewriteMe.Domain.Messages
 {
@@ -9,18 +9,12 @@ namespace RewriteMe.Domain.Messages
 
         public string CampaignName { get; set; }
 
-        public string Title { get; set; }
-
-        public string Message { get; set; }
-
-        public string Description { get; set; }
-
-        public Language Language { get; set; }
-
         public bool SentOnOsx { get; set; }
 
         public bool SentOnAndroid { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public virtual IEnumerable<LanguageVersion> LanguageVersions { get; set; }
     }
 }

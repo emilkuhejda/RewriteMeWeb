@@ -7,17 +7,31 @@ namespace RewriteMe.WebApi.Extensions
 {
     public static class CreateInformationMessageModelExtensions
     {
-        public static InformationMessage ToInformationMessage(this CreateInformationMessageModel model, Language language)
+        public static InformationMessage ToInformationMessage(this CreateInformationMessageModel model)
         {
+            var languageVersions = new[]
+            {
+                GetLanguageVersion(model, Language.English),
+                GetLanguageVersion(model, Language.Slovak)
+            };
+
             return new InformationMessage
             {
                 Id = Guid.NewGuid(),
                 CampaignName = model.CampaignName,
+                DateCreated = DateTime.UtcNow,
+                LanguageVersions = languageVersions
+            };
+        }
+
+        private static LanguageVersion GetLanguageVersion(this CreateInformationMessageModel model, Language language)
+        {
+            return new LanguageVersion
+            {
                 Title = model.GetTitle(language),
                 Message = model.GetMessage(language),
                 Description = model.GetDescription(language),
                 Language = language,
-                DateCreated = DateTime.UtcNow
             };
         }
 

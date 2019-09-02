@@ -16,9 +16,9 @@ namespace RewriteMe.Business.Services
             _informationMessageRepository = informationMessageRepository;
         }
 
-        public async Task AddAsync(IEnumerable<InformationMessage> informationMessages)
+        public async Task AddAsync(InformationMessage informationMessage)
         {
-            await _informationMessageRepository.AddAsync(informationMessages).ConfigureAwait(false);
+            await _informationMessageRepository.AddAsync(informationMessage).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter)

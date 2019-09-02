@@ -10,10 +10,8 @@ namespace RewriteMe.WebApi.Extensions
             return new InformationMessageDto
             {
                 Id = informationMessage.Id,
-                Title = informationMessage.Title,
-                Message = informationMessage.Message,
-                Description = informationMessage.Description,
-                DateCreated = informationMessage.DateCreated
+                DateCreated = informationMessage.DateCreated,
+                LanguageVersions = informationMessage.LanguageVersions
             };
         }
     }

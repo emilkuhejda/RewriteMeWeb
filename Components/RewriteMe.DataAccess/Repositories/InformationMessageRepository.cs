@@ -18,11 +18,11 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task AddAsync(IEnumerable<InformationMessage> informationMessages)
+        public async Task AddAsync(InformationMessage informationMessage)
         {
             using (var context = _contextFactory.Create())
             {
-                await context.InformationMessages.AddRangeAsync(informationMessages.Select(x => x.ToInformationMessageEntity())).ConfigureAwait(false);
+                await context.InformationMessages.AddRangeAsync(informationMessage.ToInformationMessageEntity()).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

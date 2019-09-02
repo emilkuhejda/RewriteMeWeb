@@ -1,4 +1,5 @@
-﻿using RewriteMe.DataAccess.Entities;
+﻿using System.Linq;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Messages;
 
 namespace RewriteMe.DataAccess.DataAdapters
@@ -11,13 +12,10 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = entity.Id,
                 CampaignName = entity.CampaignName,
-                Title = entity.Title,
-                Message = entity.Message,
-                Description = entity.Description,
-                Language = entity.Language,
                 SentOnOsx = entity.SentOnOsx,
                 SentOnAndroid = entity.SentOnAndroid,
-                DateCreated = entity.DateCreated
+                DateCreated = entity.DateCreated,
+                LanguageVersions = entity.LanguageVersions.Select(x => x.ToLanguageVersion())
             };
         }
 
@@ -27,13 +25,10 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = informationMessage.Id,
                 CampaignName = informationMessage.CampaignName,
-                Title = informationMessage.Title,
-                Message = informationMessage.Message,
-                Description = informationMessage.Description,
-                Language = informationMessage.Language,
                 SentOnOsx = informationMessage.SentOnOsx,
                 SentOnAndroid = informationMessage.SentOnAndroid,
-                DateCreated = informationMessage.DateCreated
+                DateCreated = informationMessage.DateCreated,
+                LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity())
             };
         }
     }
