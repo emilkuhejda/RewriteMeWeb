@@ -40,6 +40,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<InformationMessageEntity> InformationMessages { get; set; }
 
+        public DbSet<UserDeviceEntity> UserDevices { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -63,6 +65,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ContactFormEntityConfiguration());
             modelBuilder.ApplyConfiguration(new InformationMessageEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserDeviceEntityConfiguration());
         }
     }
 }
