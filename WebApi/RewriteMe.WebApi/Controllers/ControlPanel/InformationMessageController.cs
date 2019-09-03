@@ -91,6 +91,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
 
                 return StatusCode((int)ex.NotificationError.Code);
             }
+            catch (EmptyDeviceListException)
+            {
+                return StatusCode(409);
+            }
         }
     }
 }

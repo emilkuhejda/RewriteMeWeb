@@ -43,7 +43,11 @@ namespace RewriteMe.Business.Services
             if (languageVersion == null)
                 return null;
 
-            var devices = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
+            var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
+            var devices = installationIds.ToList();
+            if (!devices.Any())
+                throw new EmptyDeviceListException();
+
             var pushNotification = new PushNotification
             {
                 Target = new NotificationTarget
@@ -96,8 +100,8 @@ namespace RewriteMe.Business.Services
                 HandleSerialization(
                     () =>
                     {
-                        var notificationError = JsonConvert.DeserializeObject<NotificationError>(responseContent);
-                        throw new NotificationErrorException(notificationError);
+                        var wrapper = JsonConvert.DeserializeObject<NotificationErrorWrapper>(responseContent);
+                        throw new NotificationErrorException(wrapper.Error);
                     },
                     () =>
                     {
