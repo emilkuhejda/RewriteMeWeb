@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = informationMessage.Id,
                 CampaignName = informationMessage.CampaignName,
                 DateCreated = informationMessage.DateCreated,
-                LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity())
+                LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList()
             };
         }
     }

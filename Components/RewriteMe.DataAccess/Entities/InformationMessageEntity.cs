@@ -11,6 +11,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateCreated { get; set; }
 
-        public virtual IEnumerable<LanguageVersionEntity> LanguageVersions { get; set; }
+        public virtual IList<LanguageVersionEntity> LanguageVersions { get; set; }
     }
 }

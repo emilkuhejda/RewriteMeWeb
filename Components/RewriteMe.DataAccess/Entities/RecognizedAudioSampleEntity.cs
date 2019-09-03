@@ -13,6 +13,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public virtual UserEntity User { get; set; }
 
-        public virtual IEnumerable<SpeechResultEntity> SpeechResults { get; set; }
+        public virtual IList<SpeechResultEntity> SpeechResults { get; set; }
     }
 }
