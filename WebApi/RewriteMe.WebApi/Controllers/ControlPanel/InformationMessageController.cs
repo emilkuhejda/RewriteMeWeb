@@ -13,7 +13,7 @@ using RewriteMe.WebApi.Models;
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
     [Produces("application/json")]
-    //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
     public class InformationMessageController : ControllerBase
