@@ -30,9 +30,12 @@ namespace RewriteMe.Business.Services
             _appSettings = options.Value;
         }
 
-        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage)
+        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, Language language)
         {
-            var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == Language.English);
+            var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == language);
+            if (languageVersion == null)
+                return null;
+
             var pushNotification = new PushNotification
             {
                 Target = new NotificationTarget
