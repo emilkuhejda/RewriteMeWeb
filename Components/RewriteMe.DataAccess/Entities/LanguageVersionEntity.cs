@@ -17,6 +17,10 @@ namespace RewriteMe.DataAccess.Entities
 
         public Language Language { get; set; }
 
+        public bool SentOnOsx { get; set; }
+
+        public bool SentOnAndroid { get; set; }
+
         public virtual InformationMessageEntity InformationMessage { get; set; }
     }
 }

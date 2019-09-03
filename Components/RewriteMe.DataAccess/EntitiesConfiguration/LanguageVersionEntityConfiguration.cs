@@ -16,6 +16,8 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.Message).IsRequired().HasMaxLength(150);
             builder.Property(x => x.Description).IsRequired();
             builder.Property(x => x.Language).IsRequired();
+            builder.Property(x => x.SentOnOsx).IsRequired();
+            builder.Property(x => x.SentOnAndroid).IsRequired();
         }
     }
 }

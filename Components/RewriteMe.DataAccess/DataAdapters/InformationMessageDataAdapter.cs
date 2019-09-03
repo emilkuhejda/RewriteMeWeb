@@ -12,8 +12,6 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = entity.Id,
                 CampaignName = entity.CampaignName,
-                SentOnOsx = entity.SentOnOsx,
-                SentOnAndroid = entity.SentOnAndroid,
                 DateCreated = entity.DateCreated,
                 LanguageVersions = entity.LanguageVersions.Select(x => x.ToLanguageVersion())
             };
@@ -25,8 +23,6 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = informationMessage.Id,
                 CampaignName = informationMessage.CampaignName,
-                SentOnOsx = informationMessage.SentOnOsx,
-                SentOnAndroid = informationMessage.SentOnAndroid,
                 DateCreated = informationMessage.DateCreated,
                 LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity())
             };

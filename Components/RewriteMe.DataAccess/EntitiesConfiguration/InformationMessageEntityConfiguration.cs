@@ -12,8 +12,6 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.CampaignName).IsRequired().HasMaxLength(150);
-            builder.Property(x => x.SentOnOsx).IsRequired();
-            builder.Property(x => x.SentOnAndroid).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
 
             builder.HasMany(x => x.LanguageVersions).WithOne(x => x.InformationMessage).HasForeignKey(x => x.InformationMessageId).OnDelete(DeleteBehavior.Cascade);

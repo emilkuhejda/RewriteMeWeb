@@ -14,7 +14,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Title = entity.Title,
                 Message = entity.Message,
                 Description = entity.Description,
-                Language = entity.Language
+                Language = entity.Language,
+                SentOnOsx = entity.SentOnOsx,
+                SentOnAndroid = entity.SentOnAndroid
             };
         }
 
@@ -27,7 +29,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Title = languageVersion.Title,
                 Message = languageVersion.Message,
                 Description = languageVersion.Description,
-                Language = languageVersion.Language
+                Language = languageVersion.Language,
+                SentOnOsx = languageVersion.SentOnOsx,
+                SentOnAndroid = languageVersion.SentOnAndroid
             };
         }
     }
