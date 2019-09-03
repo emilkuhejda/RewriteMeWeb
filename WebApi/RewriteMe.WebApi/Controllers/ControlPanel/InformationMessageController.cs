@@ -52,7 +52,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/information-messages/send")]
-        public async Task<IActionResult> SendNotifications([FromBody]Guid informationMessage, [FromBody]Language language)
+        public async Task<IActionResult> SendNotifications([FromForm]Guid informationMessage, [FromForm]Language language)
         {
             var id = informationMessage;
             var lang = language;

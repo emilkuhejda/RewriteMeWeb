@@ -60,8 +60,16 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = informationMessage.ToInformationMessageEntity();
-                context.Entry(entity).State = EntityState.Modified;
+                var entity = await context.InformationMessages
+                    .Include(x => x.LanguageVersions)
+                    .SingleOrDefaultAsync(x => x.Id == informationMessage.Id)
+                    .ConfigureAwait(false);
+
+                if (entity == null)
+                    return;
+
+                entity.CampaignName = informationMessage.CampaignName;
+                entity.LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList();
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
