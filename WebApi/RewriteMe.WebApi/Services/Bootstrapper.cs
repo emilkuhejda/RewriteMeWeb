@@ -41,6 +41,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<ContactFormRepository>().As<IContactFormRepository>().InstancePerLifetimeScope();
             builder.RegisterType<InformationMessageRepository>().As<IInformationMessageRepository>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageVersionRepository>().As<ILanguageVersionRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserDeviceRepository>().As<IUserDeviceRepository>().InstancePerLifetimeScope();
 
             builder.RegisterType<AdministratorService>().As<IAdministratorService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();

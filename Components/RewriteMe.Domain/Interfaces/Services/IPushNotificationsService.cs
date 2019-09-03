@@ -7,6 +7,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IPushNotificationsService
     {
-        Task<NotificationResult> SendAsync(InformationMessage informationMessage, Language language);
+        Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language);
     }
 }

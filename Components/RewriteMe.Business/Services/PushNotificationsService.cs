@@ -11,6 +11,7 @@ using Microsoft.Rest;
 using Newtonsoft.Json;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
+using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Messages;
 using RewriteMe.Domain.Notifications;
@@ -23,25 +24,30 @@ namespace RewriteMe.Business.Services
         private const string TargetType = "devices_target";
         private const string MediaType = "application/json";
 
+        private readonly IUserDeviceRepository _userDeviceRepository;
         private readonly AppSettings _appSettings;
 
-        public PushNotificationsService(IOptions<AppSettings> options)
+        public PushNotificationsService(
+            IUserDeviceRepository userDeviceRepository,
+            IOptions<AppSettings> options)
         {
+            _userDeviceRepository = userDeviceRepository;
             _appSettings = options.Value;
         }
 
-        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, Language language)
+        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language)
         {
             var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == language);
             if (languageVersion == null)
                 return null;
 
+            var devices = await _userDeviceRepository.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
             var pushNotification = new PushNotification
             {
                 Target = new NotificationTarget
                 {
                     Type = TargetType,
-                    Devices = new[] { new Guid("04b7bd02-23a2-4ee5-85d2-ba94ce5bb38d") }
+                    Devices = devices
                 },
                 Content = new NotificationContent
                 {

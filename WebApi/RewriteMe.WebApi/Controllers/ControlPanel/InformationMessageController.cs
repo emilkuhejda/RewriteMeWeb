@@ -58,7 +58,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/information-messages/send")]
-        public async Task<IActionResult> SendNotifications([FromForm]Guid informationMessageId, [FromForm]Language language)
+        public async Task<IActionResult> SendNotifications([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
         {
             if (language == Language.Undefined)
                 return StatusCode(406);
@@ -71,7 +71,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             {
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
 
-                var notificationResult = await _pushNotificationsService.SendAsync(informationMessage, language).ConfigureAwait(false);
+                var notificationResult = await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
                 if (notificationResult == null)
                     return BadRequest();
 
