@@ -24,17 +24,20 @@ namespace RewriteMe.WebApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly IUserDeviceService _userDeviceService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public UserController(
             IUserService userService,
             IUserSubscriptionService userSubscriptionService,
+            IUserDeviceService userDeviceService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _userService = userService;
             _userSubscriptionService = userSubscriptionService;
+            _userDeviceService = userDeviceService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
@@ -63,15 +66,15 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(typeof(UserRegistrationDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "RegisterUser")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserModel registerUserModel)
+        public async Task<IActionResult> Register([FromBody] RegistrationUserModel registrationUserModel)
         {
-            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{registerUserModel.Id}'.").ConfigureAwait(false);
+            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{registrationUserModel.Id}'.").ConfigureAwait(false);
 
             UserSubscriptionDto userSubscriptionDto;
-            var user = await _userService.GetAsync(registerUserModel.Id).ConfigureAwait(false);
+            var user = await _userService.GetAsync(registrationUserModel.Id).ConfigureAwait(false);
             if (user == null)
             {
-                user = registerUserModel.ToUser();
+                user = registrationUserModel.ToUser();
                 await _userService.AddAsync(user).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
 
@@ -94,6 +97,9 @@ namespace RewriteMe.WebApi.Controllers
                 userSubscriptionDto = new UserSubscriptionDto { Id = Guid.Empty };
             }
 
+            var userDevice = registrationUserModel.Device.ToUserDevice(user.Id);
+            await _userDeviceService.AddOrUpdateAsync(userDevice).ConfigureAwait(false);
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -110,6 +116,20 @@ namespace RewriteMe.WebApi.Controllers
             };
 
             return Ok(registrationModelDto);
+        }
+
+        [HttpPut("/api/users/update-language")]
+        [Authorize(Roles = nameof(Role.User))]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [SwaggerOperation(OperationId = "UpdateLanguage")]
+        public async Task<IActionResult> UpdateLanguage(Guid installationId, Language language)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _userDeviceService.UpdateLanguageAsync(userId, installationId, language).ConfigureAwait(false);
+
+            return Ok(new OkDto());
         }
     }
 }

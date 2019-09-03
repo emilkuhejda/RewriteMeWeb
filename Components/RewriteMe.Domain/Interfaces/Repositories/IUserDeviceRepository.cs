@@ -10,6 +10,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task AddOrUpdateAsync(UserDevice userDevice);
 
+        Task UpdateLanguageAsync(Guid userId, Guid installationId, Language language);
+
         Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language);
     }
 }
