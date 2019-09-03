@@ -24,9 +24,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.UserDevices
-                    .SingleOrDefaultAsync(x => x.Id == userDevice.Id &&
-                                               x.UserId == userDevice.UserId &&
-                                               x.InstallationId == userDevice.InstallationId)
+                    .SingleOrDefaultAsync(x => x.UserId == userDevice.UserId && x.InstallationId == userDevice.InstallationId)
                     .ConfigureAwait(false);
 
                 if (entity == null)
@@ -37,6 +35,24 @@ namespace RewriteMe.DataAccess.Repositories
                 {
                     context.Entry(userDevice.ToUserDeviceEntity()).State = EntityState.Modified;
                 }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateLanguageAsync(Guid userId, Guid installationId, Language language)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.UserDevices
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(x => x.UserId == userId && x.InstallationId == installationId)
+                    .ConfigureAwait(false);
+
+                if (entity == null)
+                    return;
+
+                entity.Language = language;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

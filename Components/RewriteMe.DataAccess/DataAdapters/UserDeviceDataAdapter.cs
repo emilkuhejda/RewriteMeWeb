@@ -15,7 +15,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 RuntimePlatform = entity.RuntimePlatform,
                 InstalledVersionNumber = entity.InstalledVersionNumber,
                 Language = entity.Language,
-                DateCreated = entity.DateCreated
+                DateRegistered = entity.DateRegistered
             };
         }
 
@@ -29,7 +29,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 RuntimePlatform = userDevice.RuntimePlatform,
                 InstalledVersionNumber = userDevice.InstalledVersionNumber,
                 Language = userDevice.Language,
-                DateCreated = userDevice.DateCreated
+                DateRegistered = userDevice.DateRegistered
             };
         }
     }
