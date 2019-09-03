@@ -17,14 +17,16 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateRegistered { get; set; }
 
-        public virtual IEnumerable<FileItemEntity> FileItems { get; set; }
+        public virtual IList<FileItemEntity> FileItems { get; set; }
 
-        public virtual IEnumerable<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }
+        public virtual IList<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }
 
-        public virtual IEnumerable<UserSubscriptionEntity> UserSubscriptions { get; set; }
+        public virtual IList<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
-        public virtual IEnumerable<BillingPurchaseEntity> BillingPurchases { get; set; }
+        public virtual IList<BillingPurchaseEntity> BillingPurchases { get; set; }
 
-        public virtual IEnumerable<ApplicationLogEntity> ApplicationLogs { get; set; }
+        public virtual IList<ApplicationLogEntity> ApplicationLogs { get; set; }
+
+        public virtual IList<UserDeviceEntity> UserDevices { get; set; }
     }
 }

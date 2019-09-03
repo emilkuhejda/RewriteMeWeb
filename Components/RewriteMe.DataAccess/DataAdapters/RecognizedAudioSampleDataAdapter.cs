@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = recognizedAudioSample.Id,
                 UserId = recognizedAudioSample.UserId,
                 DateCreated = recognizedAudioSample.DateCreated,
-                SpeechResults = recognizedAudioSample.SpeechResults?.Select(x => x.ToSpeechResultEntity())
+                SpeechResults = recognizedAudioSample.SpeechResults?.Select(x => x.ToSpeechResultEntity()).ToList()
             };
         }
     }

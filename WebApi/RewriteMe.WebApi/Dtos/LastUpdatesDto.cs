@@ -16,5 +16,8 @@ namespace RewriteMe.WebApi.Dtos
 
         [Required]
         public DateTime UserSubscription { get; set; }
+
+        [Required]
+        public DateTime InformationMessage { get; set; }
     }
 }

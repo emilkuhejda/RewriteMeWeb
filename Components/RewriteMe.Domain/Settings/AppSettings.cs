@@ -1,4 +1,5 @@
 ﻿using System;
+using RewriteMe.Domain.Notifications;
 
 namespace RewriteMe.Domain.Settings
 {
@@ -11,6 +12,8 @@ namespace RewriteMe.Domain.Settings
         public string HangfireSecretKey { get; set; }
 
         public string ConnectionString { get; set; }
+
+        public NotificationSettings NotificationSettings { get; set; }
 
         public Authentication Authentication { get; set; }
 

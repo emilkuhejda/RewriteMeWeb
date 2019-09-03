@@ -203,6 +203,53 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("FileItemSource");
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.InformationMessageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CampaignName")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InformationMessage");
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.LanguageVersionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<Guid>("InformationMessageId");
+
+                    b.Property<int>("Language");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.Property<bool>("SentOnAndroid");
+
+                    b.Property<bool>("SentOnOsx");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InformationMessageId");
+
+                    b.ToTable("LanguageVersion");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -291,6 +338,32 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("TranscribeItemSource");
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserDeviceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<Guid>("InstallationId");
+
+                    b.Property<string>("InstalledVersionNumber")
+                        .IsRequired()
+                        .HasMaxLength(20);
+
+                    b.Property<int>("Language");
+
+                    b.Property<int>("RuntimePlatform");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserDevice");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -369,6 +442,14 @@ namespace RewriteMe.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.LanguageVersionEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.InformationMessageEntity", "InformationMessage")
+                        .WithMany("LanguageVersions")
+                        .HasForeignKey("InformationMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
                 {
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
@@ -398,6 +479,14 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithMany("TranscribeItemSources")
                         .HasForeignKey("FileItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserDeviceEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("UserDevices")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
