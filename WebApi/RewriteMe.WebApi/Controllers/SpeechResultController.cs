@@ -16,6 +16,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
     public class SpeechResultController : Controller
@@ -35,7 +36,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/speech-results/create")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
@@ -53,7 +53,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/speech-results/update")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
@@ -69,7 +68,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/speech-results/recognized-time")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetRecognizedTime")]

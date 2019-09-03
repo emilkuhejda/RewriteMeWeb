@@ -12,6 +12,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
     public class LastUpdatesController : ControllerBase
@@ -19,19 +20,21 @@ namespace RewriteMe.WebApi.Controllers
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
+        private readonly IInformationMessageService _informationMessageService;
 
         public LastUpdatesController(
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
-            IUserSubscriptionService userSubscriptionService)
+            IUserSubscriptionService userSubscriptionService,
+            IInformationMessageService informationMessageService)
         {
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
+            _informationMessageService = informationMessageService;
         }
 
         [HttpGet("/api/last-updates")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]
@@ -43,13 +46,15 @@ namespace RewriteMe.WebApi.Controllers
             var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
             var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
             var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync().ConfigureAwait(false);
 
             return Ok(new LastUpdatesDto
             {
                 FileItem = fileItemLastUpdate,
                 DeletedFileItem = deletedFileItemLastUpdate,
                 TranscribeItem = transcribeItemLastUpdate,
-                UserSubscription = userSubscriptionUpdate
+                UserSubscription = userSubscriptionUpdate,
+                InformationMessage = informationMessageUpdate
             });
         }
     }

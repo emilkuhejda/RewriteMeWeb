@@ -22,6 +22,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.HasMany(x => x.UserSubscriptions).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.BillingPurchases).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.ApplicationLogs).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.UserDevices).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

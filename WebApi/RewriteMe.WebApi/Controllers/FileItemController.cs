@@ -23,6 +23,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
     public class FileItemController : ControllerBase
@@ -45,7 +46,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetFileItems")]
@@ -58,7 +58,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files/deleted")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
@@ -71,7 +70,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files/deleted-total-time")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemsTotalTime")]
@@ -85,7 +83,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/files/{fileItemId}")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetFileItem")]
@@ -98,7 +95,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/files/upload")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -165,7 +161,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/files/update")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
@@ -193,7 +188,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpDelete("/api/files/delete")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
@@ -209,7 +203,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpDelete("/api/files/delete-all")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "DeleteAllFileItems")]
@@ -223,7 +216,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPut("/api/files/transcribe")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

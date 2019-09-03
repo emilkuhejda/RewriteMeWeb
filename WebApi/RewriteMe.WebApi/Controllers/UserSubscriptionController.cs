@@ -19,6 +19,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
     public class UserSubscriptionController : ControllerBase
@@ -41,7 +42,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/subscriptions")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
@@ -54,7 +54,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpPost("/api/subscriptions/create")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
@@ -74,7 +73,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/subscriptions/speech-configuration")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
@@ -108,7 +106,6 @@ namespace RewriteMe.WebApi.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("/api/subscriptions/remaining-time")]
-        [Authorize(Roles = nameof(Role.User))]
         public async Task<IActionResult> GetSubscriptionRemainingTime()
         {
             var userId = HttpContext.User.GetNameIdentifier();
