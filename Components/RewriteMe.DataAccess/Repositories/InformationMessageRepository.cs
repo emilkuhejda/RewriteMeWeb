@@ -27,6 +27,21 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<InformationMessage> GetAsync(Guid informationMessageId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.InformationMessages
+                    .Where(x => x.Id == informationMessageId)
+                    .Include(x => x.LanguageVersions)
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync()
+                    .ConfigureAwait(false);
+
+                return entity?.ToInformationMessage();
+            }
+        }
+
         public async Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
@@ -38,6 +53,16 @@ namespace RewriteMe.DataAccess.Repositories
                     .ConfigureAwait(false);
 
                 return entities.Select(x => x.ToInformationMessage());
+            }
+        }
+
+        public async Task UpdateAsync(InformationMessage informationMessage)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = informationMessage.ToInformationMessageEntity();
+                context.Entry(entity).State = EntityState.Modified;
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 

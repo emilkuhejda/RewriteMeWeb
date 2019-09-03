@@ -34,16 +34,25 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPost("/api/control-panel/information-messages/create")]
-        public async Task<IActionResult> Create([FromForm]CreateInformationMessageModel createInformationMessageModel)
+        public async Task<IActionResult> Create([FromForm]InformationMessageModel informationMessageModel)
         {
-            var informationMessage = createInformationMessageModel.ToInformationMessage();
-
+            var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
             await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
+
             return Ok();
         }
 
-        [HttpPut("/api/control-panel/information-messages/{informationMessage}")]
-        public async Task<IActionResult> SendNotifications(Guid informationMessage, Language language)
+        [HttpPut("/api/control-panel/information-messages/{informationMessageId}")]
+        public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
+        {
+            var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
+            await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [HttpPut("/api/control-panel/information-messages/send")]
+        public async Task<IActionResult> SendNotifications([FromBody]Guid informationMessage, [FromBody]Language language)
         {
             var id = informationMessage;
             var lang = language;

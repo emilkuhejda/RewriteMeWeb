@@ -2,7 +2,7 @@
 
 namespace RewriteMe.WebApi.Models
 {
-    public class CreateInformationMessageModel
+    public class InformationMessageModel
     {
         [Required]
         public string CampaignName { get; set; }

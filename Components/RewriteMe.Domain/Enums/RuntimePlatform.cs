@@ -2,7 +2,8 @@
 {
     public enum RuntimePlatform
     {
-        Android = 0,
-        Osx = 1
+        Undefined = 0,
+        Android,
+        Osx
     }
 }

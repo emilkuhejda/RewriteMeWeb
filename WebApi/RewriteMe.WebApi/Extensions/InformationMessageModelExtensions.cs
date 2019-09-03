@@ -5,29 +5,31 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Extensions
 {
-    public static class CreateInformationMessageModelExtensions
+    public static class InformationMessageModelExtensions
     {
-        public static InformationMessage ToInformationMessage(this CreateInformationMessageModel model)
+        public static InformationMessage ToInformationMessage(this InformationMessageModel model, Guid informationMessageId)
         {
             var languageVersions = new[]
             {
-                GetLanguageVersion(model, Language.English),
-                GetLanguageVersion(model, Language.Slovak)
+                GetLanguageVersion(model, informationMessageId, Language.English),
+                GetLanguageVersion(model, informationMessageId, Language.Slovak)
             };
 
             return new InformationMessage
             {
-                Id = Guid.NewGuid(),
+                Id = informationMessageId,
                 CampaignName = model.CampaignName,
                 DateCreated = DateTime.UtcNow,
                 LanguageVersions = languageVersions
             };
         }
 
-        private static LanguageVersion GetLanguageVersion(this CreateInformationMessageModel model, Language language)
+        private static LanguageVersion GetLanguageVersion(this InformationMessageModel model, Guid informationMessageId, Language language)
         {
             return new LanguageVersion
             {
+                Id = Guid.NewGuid(),
+                InformationMessageId = informationMessageId,
                 Title = model.GetTitle(language),
                 Message = model.GetMessage(language),
                 Description = model.GetDescription(language),
@@ -35,7 +37,7 @@ namespace RewriteMe.WebApi.Extensions
             };
         }
 
-        private static string GetTitle(this CreateInformationMessageModel model, Language language)
+        private static string GetTitle(this InformationMessageModel model, Language language)
         {
             switch (language)
             {
@@ -48,7 +50,7 @@ namespace RewriteMe.WebApi.Extensions
             }
         }
 
-        private static string GetMessage(this CreateInformationMessageModel model, Language language)
+        private static string GetMessage(this InformationMessageModel model, Language language)
         {
             switch (language)
             {
@@ -61,7 +63,7 @@ namespace RewriteMe.WebApi.Extensions
             }
         }
 
-        private static string GetDescription(this CreateInformationMessageModel model, Language language)
+        private static string GetDescription(this InformationMessageModel model, Language language)
         {
             switch (language)
             {
