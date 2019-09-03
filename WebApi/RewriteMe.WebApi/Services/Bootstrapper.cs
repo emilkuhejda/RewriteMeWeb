@@ -55,6 +55,8 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<ApplicationLogService>().As<IApplicationLogService>().InstancePerLifetimeScope();
             builder.RegisterType<ContactFormService>().As<IContactFormService>().InstancePerLifetimeScope();
             builder.RegisterType<InformationMessageService>().As<IInformationMessageService>().InstancePerLifetimeScope();
+            builder.RegisterType<LanguageVersionService>().As<ILanguageVersionService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserDeviceService>().As<IUserDeviceService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseService>().As<IBillingPurchaseService>().InstancePerLifetimeScope();

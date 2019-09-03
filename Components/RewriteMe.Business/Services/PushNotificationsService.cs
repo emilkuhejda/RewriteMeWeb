@@ -11,7 +11,6 @@ using Microsoft.Rest;
 using Newtonsoft.Json;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
-using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Messages;
 using RewriteMe.Domain.Notifications;
@@ -24,14 +23,17 @@ namespace RewriteMe.Business.Services
         private const string TargetType = "devices_target";
         private const string MediaType = "application/json";
 
-        private readonly IUserDeviceRepository _userDeviceRepository;
+        private readonly IUserDeviceService _userDeviceService;
+        private readonly ILanguageVersionService _languageVersionService;
         private readonly AppSettings _appSettings;
 
         public PushNotificationsService(
-            IUserDeviceRepository userDeviceRepository,
+            IUserDeviceService userDeviceService,
+            ILanguageVersionService languageVersionService,
             IOptions<AppSettings> options)
         {
-            _userDeviceRepository = userDeviceRepository;
+            _userDeviceService = userDeviceService;
+            _languageVersionService = languageVersionService;
             _appSettings = options.Value;
         }
 
@@ -41,7 +43,7 @@ namespace RewriteMe.Business.Services
             if (languageVersion == null)
                 return null;
 
-            var devices = await _userDeviceRepository.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
+            var devices = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
             var pushNotification = new PushNotification
             {
                 Target = new NotificationTarget
@@ -59,6 +61,8 @@ namespace RewriteMe.Business.Services
 
             using (var result = await SendWithHttpMessagesAsync(pushNotification).ConfigureAwait(false))
             {
+                await _languageVersionService.UpdateSendStatusAsync(languageVersion.Id, runtimePlatform, true).ConfigureAwait(false);
+
                 return result.Body;
             }
         }

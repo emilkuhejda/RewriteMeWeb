@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -21,6 +22,32 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entity = languageVersion.ToLanguageVersionEntity();
                 context.Entry(entity).State = EntityState.Modified;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateAndroidSendStatus(Guid languageVersionId, bool status)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.LanguageVersions.SingleOrDefaultAsync(x => x.Id == languageVersionId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.SentOnAndroid = status;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateOsxSendStatus(Guid languageVersionId, bool status)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.LanguageVersions.SingleOrDefaultAsync(x => x.Id == languageVersionId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.SentOnOsx = status;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
