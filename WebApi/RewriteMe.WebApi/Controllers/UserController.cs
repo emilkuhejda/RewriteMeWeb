@@ -117,5 +117,19 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(registrationModelDto);
         }
+
+        [HttpPut("/api/users/update-language")]
+        [Authorize(Roles = nameof(Role.User))]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [SwaggerOperation(OperationId = "UpdateLanguage")]
+        public async Task<IActionResult> UpdateLanguage(Guid installationId, Language language)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _userDeviceService.UpdateLanguageAsync(userId, installationId, language).ConfigureAwait(false);
+
+            return Ok(new OkDto());
+        }
     }
 }

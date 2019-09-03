@@ -40,6 +40,24 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateLanguageAsync(Guid userId, Guid installationId, Language language)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.UserDevices
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(x => x.UserId == userId && x.InstallationId == installationId)
+                    .ConfigureAwait(false);
+
+                if (entity == null)
+                    return;
+
+                entity.Language = language;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language)
         {
             using (var context = _contextFactory.Create())
