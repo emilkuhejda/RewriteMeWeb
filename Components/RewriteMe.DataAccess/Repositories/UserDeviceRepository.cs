@@ -24,9 +24,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.UserDevices
-                    .SingleOrDefaultAsync(x => x.Id == userDevice.Id &&
-                                               x.UserId == userDevice.UserId &&
-                                               x.InstallationId == userDevice.InstallationId)
+                    .SingleOrDefaultAsync(x => x.UserId == userDevice.UserId && x.InstallationId == userDevice.InstallationId)
                     .ConfigureAwait(false);
 
                 if (entity == null)

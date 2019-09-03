@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RewriteMe.WebApi.Models
 {
-    public class RegisterUserModel
+    public class RegistrationUserModel
     {
         [Required]
         public Guid Id { get; set; }
@@ -19,5 +19,7 @@ namespace RewriteMe.WebApi.Models
 
         [Required]
         public string FamilyName { get; set; }
+
+        public RegistrationDeviceModel Device { get; set; }
     }
 }
