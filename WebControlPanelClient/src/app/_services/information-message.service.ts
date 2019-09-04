@@ -17,4 +17,8 @@ export class InformationMessageService {
     getAll(): Observable<InformationMessage[]> {
         return this.http.get<InformationMessage[]>(this.routingService.getInformationMessagesUri()).pipe(map(InformationMessageMapper.convertAll));
     }
+
+    get(informationMessageId: string): Observable<InformationMessage> {
+        return this.http.get<InformationMessage>(this.routingService.getInformationMessagesUri() + informationMessageId).pipe(map(InformationMessageMapper.convert));
+    }
 }

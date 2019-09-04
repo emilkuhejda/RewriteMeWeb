@@ -32,6 +32,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _applicationLogService = applicationLogService;
         }
 
+        [HttpGet("/api/control-panel/information-messages/{informationMessageId}")]
+        public async Task<IActionResult> Get(Guid informationMessageId)
+        {
+            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+            return Ok(informationMessage);
+        }
+
         [HttpGet("/api/control-panel/information-messages")]
         public async Task<IActionResult> GetAll()
         {
