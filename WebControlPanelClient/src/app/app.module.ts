@@ -14,6 +14,8 @@ import { TokenInterceptorService } from './_services/token-interceptor.service';
 import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { CreateSubscriptionDialogComponent } from './_directives/create-subscription-dialog/create-subscription-dialog.component';
 import { TruncatePipe } from './_pipes/truncate.pipe';
+import { MatTabsModule } from '@angular/material/tabs';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -32,7 +34,9 @@ import { TruncatePipe } from './_pipes/truncate.pipe';
         HttpClientModule,
         ReactiveFormsModule,
         FormsModule,
-        GecoDialogModule
+        GecoDialogModule,
+        BrowserAnimationsModule,
+        MatTabsModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,
