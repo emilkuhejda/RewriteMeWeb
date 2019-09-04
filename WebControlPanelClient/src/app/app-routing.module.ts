@@ -15,6 +15,8 @@ import { ContactFormsComponent } from './home/contact-forms/contact-forms.compon
 import { DetailContactFormComponent } from './home/contact-forms/detail-contact-form/detail-contact-form.component';
 import { DetailPurchaseComponent } from './home/users/purchases/detail-purchase/detail-purchase.component';
 import { InformationMessagesComponent } from './home/information-messages/information-messages.component';
+import { CreateInformationMessageComponent } from './home/information-messages/create-information-message/create-information-message.component';
+import { DetailInformationMessageComponent } from './home/information-messages/detail-information-message/detail-information-message.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -30,6 +32,8 @@ const routes: Routes = [
     { path: 'contact-forms', component: ContactFormsComponent, canActivate: [AuthGuard] },
     { path: 'contact-forms/:contactFormId', component: DetailContactFormComponent, canActivate: [AuthGuard] },
     { path: 'information-messages', component: InformationMessagesComponent, canActivate: [AuthGuard] },
+    { path: 'information-messages/create', component: CreateInformationMessageComponent, canActivate: [AuthGuard] },
+    { path: 'information-messages/detail/:informationMessageId', component: DetailInformationMessageComponent, canActivate: [AuthGuard] },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
@@ -53,5 +57,7 @@ export const routingComponents = [
     ContactFormsComponent,
     DetailContactFormComponent,
     InformationMessagesComponent,
+    CreateInformationMessageComponent,
+    DetailInformationMessageComponent,
     NotFoundComponent
 ];
