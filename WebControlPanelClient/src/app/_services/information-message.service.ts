@@ -21,4 +21,8 @@ export class InformationMessageService {
     get(informationMessageId: string): Observable<InformationMessage> {
         return this.http.get<InformationMessage>(this.routingService.getInformationMessagesUri() + informationMessageId).pipe(map(InformationMessageMapper.convert));
     }
+
+    create(formData: any) {
+        return this.http.post(this.routingService.getCreateInformationMessageUri(), formData);
+    }
 }

@@ -52,7 +52,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
             await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
 
-            return Ok();
+            return Ok(informationMessage.Id);
         }
 
         [HttpPut("/api/control-panel/information-messages/{informationMessageId}")]

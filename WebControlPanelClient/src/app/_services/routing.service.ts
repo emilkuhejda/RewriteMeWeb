@@ -59,6 +59,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/information-messages/";
     }
 
+    getCreateInformationMessageUri(): string {
+        return this.getApiUri() + "api/control-panel/information-messages/create/";
+    }
+
     getGenerateHangfireAccessUri(): string {
         return this.getApiUri() + "api/generate-hangfire-access/";
     }
