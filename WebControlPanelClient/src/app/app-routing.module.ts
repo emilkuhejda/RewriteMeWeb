@@ -14,6 +14,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { ContactFormsComponent } from './home/contact-forms/contact-forms.component';
 import { DetailContactFormComponent } from './home/contact-forms/detail-contact-form/detail-contact-form.component';
 import { DetailPurchaseComponent } from './home/users/purchases/detail-purchase/detail-purchase.component';
+import { InformationMessagesComponent } from './home/information-messages/information-messages.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const routes: Routes = [
     { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] },
     { path: 'contact-forms', component: ContactFormsComponent, canActivate: [AuthGuard] },
     { path: 'contact-forms/:contactFormId', component: DetailContactFormComponent, canActivate: [AuthGuard] },
+    { path: 'information-messages', component: InformationMessagesComponent, canActivate: [AuthGuard] },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
@@ -50,5 +52,6 @@ export const routingComponents = [
     EditAdministratorComponent,
     ContactFormsComponent,
     DetailContactFormComponent,
+    InformationMessagesComponent,
     NotFoundComponent
 ];

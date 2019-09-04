@@ -35,7 +35,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpGet("/api/control-panel/information-messages")]
         public async Task<IActionResult> GetAll()
         {
-            var informationMessages = await _informationMessageService.GetAllAsync(default(DateTime)).ConfigureAwait(false);
+            var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
             return Ok(informationMessages);
         }
 

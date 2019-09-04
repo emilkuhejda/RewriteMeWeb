@@ -22,11 +22,11 @@ export class RoutingService {
     getPurchasesUri(): string {
         return this.getApiUri() + "api/control-panel/purchases/";
     }
-    
+
     getPurchaseUri(): string {
         return this.getApiUri() + "api/control-panel/purchases/detail/";
     }
-    
+
     getSubscriptionsUri(): string {
         return this.getApiUri() + "api/control-panel/subscriptions/";
     }
@@ -53,6 +53,10 @@ export class RoutingService {
 
     getContactFormsUri(): string {
         return this.getApiUri() + "api/control-panel/contact-forms/";
+    }
+
+    getInformationMessagesUri(): string {
+        return this.getApiUri() + "api/control-panel/information-messages/";
     }
 
     getGenerateHangfireAccessUri(): string {

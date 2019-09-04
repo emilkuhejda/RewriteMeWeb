@@ -31,6 +31,11 @@ namespace RewriteMe.Business.Services
             return await _informationMessageRepository.GetAllAsync(updatedAfter).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<InformationMessage>> GetAllShallowAsync()
+        {
+            return await _informationMessageRepository.GetAllShallowAsync().ConfigureAwait(false);
+        }
+
         public async Task UpdateAsync(InformationMessage informationMessage)
         {
             await _informationMessageRepository.UpdateAsync(informationMessage).ConfigureAwait(false);
