@@ -12,6 +12,9 @@ namespace RewriteMe.WebApi.Models
         public Guid ApplicationId { get; set; }
 
         [Required]
+        public Guid InstallationId { get; set; }
+
+        [Required]
         public string Email { get; set; }
 
         [Required]
