@@ -22,7 +22,15 @@ export class InformationMessageService {
         return this.http.get<InformationMessage>(this.routingService.getInformationMessagesUri() + informationMessageId).pipe(map(InformationMessageMapper.convert));
     }
 
-    create(formData: any) {
+    create(formData: FormData) {
         return this.http.post(this.routingService.getCreateInformationMessageUri(), formData);
+    }
+
+    update(informationMessageId: string, formData: FormData) {
+        return this.http.put(this.routingService.getInformationMessagesUri() + informationMessageId, formData);
+    }
+
+    sendNotification(formData: FormData) {
+        return this.http.put(this.routingService.getSendNotificationUri(), formData);
     }
 }

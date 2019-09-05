@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { InformationMessageService } from 'src/app/_services/information-message.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-information-message',
@@ -54,13 +55,15 @@ export class CreateInformationMessageComponent implements OnInit {
         formData.append('descriptionEn', this.controls.descriptionEn.value);
         formData.append('descriptionSk', this.controls.descriptionSk.value);
 
-        this.informationMessageService.create(formData).subscribe(
-            (informationMessageId) => {
-                this.router.navigate(['information-messages/detail', informationMessageId]);
-            },
-            (err: ErrorResponse) => {
-                this.alertService.error(err.message);
-                this.loading = false;
-            });
+        this.informationMessageService.create(formData)
+            .pipe(first())
+            .subscribe(
+                (informationMessageId) => {
+                    this.router.navigate(['information-messages/detail', informationMessageId]);
+                },
+                (err: ErrorResponse) => {
+                    this.alertService.error(err.message);
+                    this.loading = false;
+                });
     }
 }

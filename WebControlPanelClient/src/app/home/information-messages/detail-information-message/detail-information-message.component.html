@@ -11,9 +11,81 @@
     </div>
     <!-- Card Body -->
     <div class="card-body">
-        <mat-tab-group>
-            <mat-tab label="Android">Content 1</mat-tab>
-            <mat-tab label="iOS">Content 2</mat-tab>
-        </mat-tab-group>
+        <form [formGroup]="editForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="form-group">
+                <label for="campaignName">Campaign name</label>
+                <input type="text" formControlName="campaignName" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && controls.campaignName.errors }" />
+                <div *ngIf="submitted && controls.campaignName.errors" class="invalid-feedback">
+                    <div *ngIf="controls.campaignName.errors.required">Campaign name is required</div>
+                </div>
+            </div>
+
+            <mat-tab-group>
+                <mat-tab label="English">
+                    <div class="form-group mt-3">
+                        <label for="titleEn">Title</label>
+                        <input type="text" formControlName="titleEn" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && controls.titleEn.errors }" />
+                        <div *ngIf="submitted && controls.titleEn.errors" class="invalid-feedback">
+                            <div *ngIf="controls.titleEn.errors.required">Title is required</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="messageEn">Message</label>
+                        <textarea class="form-control" rows="3" formControlName="messageEn"
+                            [ngClass]="{ 'is-invalid': submitted && controls.messageEn.errors }"></textarea>
+                        <div *ngIf="submitted && controls.messageEn.errors" class="invalid-feedback">
+                            <div *ngIf="controls.messageEn.errors.required">Message is required</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionEn">Description</label>
+                        <textarea class="form-control" rows="6" formControlName="descriptionEn"
+                            [ngClass]="{ 'is-invalid': submitted && controls.descriptionEn.errors }"></textarea>
+                        <div *ngIf="submitted && controls.descriptionEn.errors" class="invalid-feedback">
+                            <div *ngIf="controls.descriptionEn.errors.required">Description is required</div>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Slovak">
+                    <div class="form-group mt-3">
+                        <label for="titleSk">Title</label>
+                        <input type="text" formControlName="titleSk" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && controls.titleSk.errors }" />
+                        <div *ngIf="submitted && controls.titleSk.errors" class="invalid-feedback">
+                            <div *ngIf="controls.titleSk.errors.required">Title is required</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="messageSk">Message</label>
+                        <textarea class="form-control" rows="3" formControlName="messageSk"
+                            [ngClass]="{ 'is-invalid': submitted && controls.messageSk.errors }"></textarea>
+                        <div *ngIf="submitted && controls.messageSk.errors" class="invalid-feedback">
+                            <div *ngIf="controls.messageSk.errors.required">Message is required</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descriptionSk">Description</label>
+                        <textarea class="form-control" rows="6" formControlName="descriptionSk"
+                            [ngClass]="{ 'is-invalid': submitted && controls.descriptionSk.errors }"></textarea>
+                        <div *ngIf="submitted && controls.descriptionSk.errors" class="invalid-feedback">
+                            <div *ngIf="controls.descriptionSk.errors.required">Description is required</div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+
+            <div class="form-group">
+                <button [disabled]="loading" class="btn btn-primary mr-2">Submit</button>
+                <img *ngIf="loading"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            </div>
+        </form>
     </div>
 </div>

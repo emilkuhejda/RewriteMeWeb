@@ -65,7 +65,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/information-messages/send")]
-        public async Task<IActionResult> SendNotifications([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
+        public async Task<IActionResult> SendNotification([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
         {
             if (language == Language.Undefined)
                 return StatusCode(406);
