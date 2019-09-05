@@ -14,7 +14,6 @@ namespace RewriteMe.WebApi.Extensions
                 Email = registrationUserModel.Email,
                 GivenName = registrationUserModel.GivenName,
                 FamilyName = registrationUserModel.FamilyName,
-                ApplicationId = registrationUserModel.ApplicationId,
                 DateRegistered = DateTime.UtcNow
             };
         }
