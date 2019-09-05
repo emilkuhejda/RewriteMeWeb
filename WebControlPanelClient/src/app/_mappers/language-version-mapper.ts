@@ -1,4 +1,5 @@
 import { LanguageVersion } from '../_models/language-version';
+import { Language } from '../_enums/language';
 
 export class LanguageVersionMapper {
     public static convertAll(data): LanguageVersion[] {
@@ -21,7 +22,7 @@ export class LanguageVersionMapper {
         languageVersion.title = data.title;
         languageVersion.message = data.message;
         languageVersion.description = data.description;
-        languageVersion.language = data.language;
+        languageVersion.language = <Language>data.language;
         languageVersion.sentOnAndroid = data.sentOnAndroid;
         languageVersion.sentOnOsx = data.sentOnOsx;
 

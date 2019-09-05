@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { InformationMessage } from 'src/app/_models/information-message';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { first } from 'rxjs/operators';
+import { Language } from 'src/app/_enums/language';
 
 @Component({
     selector: 'app-detail-information-message',
@@ -40,16 +41,21 @@ export class DetailInformationMessageComponent implements OnInit {
             this.informationMessageId = paramMap.get("informationMessageId");
             this.informationMessageService.get(this.informationMessageId).subscribe(
                 (informationMessage: InformationMessage) => {
-                    let englishVersion = informationMessage.languageVersions.find(version => version.language == "1");
-                    let slovakVersion = informationMessage.languageVersions.find(version => version.language == "2");
+                    let englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
+                    let slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
 
-                    this.controls.campaignName.setValue(informationMessage.campaignName);
-                    this.controls.titleEn.setValue(englishVersion.title);
-                    this.controls.messageEn.setValue(englishVersion.message);
-                    this.controls.descriptionEn.setValue(englishVersion.description);
-                    this.controls.titleSk.setValue(slovakVersion.title);
-                    this.controls.messageSk.setValue(slovakVersion.message);
-                    this.controls.descriptionSk.setValue(slovakVersion.description);
+                    if (englishVersion !== undefined) {
+                        this.controls.campaignName.setValue(informationMessage.campaignName);
+                        this.controls.titleEn.setValue(englishVersion.title);
+                        this.controls.messageEn.setValue(englishVersion.message);
+                        this.controls.descriptionEn.setValue(englishVersion.description);
+                    }
+
+                    if (slovakVersion !== undefined) {
+                        this.controls.titleSk.setValue(slovakVersion.title);
+                        this.controls.messageSk.setValue(slovakVersion.message);
+                        this.controls.descriptionSk.setValue(slovakVersion.description);
+                    }
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
