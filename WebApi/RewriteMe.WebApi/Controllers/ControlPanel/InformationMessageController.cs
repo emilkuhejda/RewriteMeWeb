@@ -77,10 +77,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             try
             {
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
-
-                var notificationResult = await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
-                if (notificationResult == null)
-                    return BadRequest();
+                await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
                 return Ok();
             }
@@ -98,8 +95,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
 
                 return StatusCode((int)ex.NotificationError.Code);
             }
-            catch (EmptyDeviceListException)
+            catch (LanguageVersionNotExistsException)
             {
+                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                return NotFound();
+            }
+            catch (PushNotificationWasSentException)
+            {
+                await _applicationLogService.ErrorAsync($"Push notification was already send for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
                 return StatusCode(409);
             }
         }

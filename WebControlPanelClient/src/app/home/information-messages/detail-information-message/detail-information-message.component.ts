@@ -135,6 +135,9 @@ export class DetailInformationMessageComponent implements OnInit {
                 (err: ErrorResponse) => {
                     let error = err.message;
 
+                    if (err.status === 404)
+                        error = "Language version not found.";
+
                     if (err.status === 406)
                         error = "Language is not supported.";
 

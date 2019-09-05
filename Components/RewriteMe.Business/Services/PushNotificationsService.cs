@@ -41,12 +41,12 @@ namespace RewriteMe.Business.Services
         {
             var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == language);
             if (languageVersion == null)
-                return null;
+                throw new LanguageVersionNotExistsException();
 
             var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
             var devices = installationIds.ToList();
             if (!devices.Any())
-                throw new EmptyDeviceListException();
+                return null;
 
             var pushNotification = new PushNotification
             {
