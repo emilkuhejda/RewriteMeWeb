@@ -7,6 +7,8 @@ import { InformationMessage } from 'src/app/_models/information-message';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { first } from 'rxjs/operators';
 import { Language } from 'src/app/_enums/language';
+import { LanguageVersion } from 'src/app/_models/language-version';
+import { RuntimePlatform } from 'src/app/_enums/runtime-platform';
 
 @Component({
     selector: 'app-detail-information-message',
@@ -16,6 +18,9 @@ import { Language } from 'src/app/_enums/language';
 export class DetailInformationMessageComponent implements OnInit {
     private informationMessageId: string;
     editForm: FormGroup;
+    englishVersion: LanguageVersion;
+    slovakVersion: LanguageVersion;
+    sendingNotification: boolean;
     loading: boolean = false;
     submitted: boolean = false;
 
@@ -41,20 +46,20 @@ export class DetailInformationMessageComponent implements OnInit {
             this.informationMessageId = paramMap.get("informationMessageId");
             this.informationMessageService.get(this.informationMessageId).subscribe(
                 (informationMessage: InformationMessage) => {
-                    let englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
-                    let slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
+                    this.englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
+                    this.slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
 
-                    if (englishVersion !== undefined) {
+                    if (this.englishVersion !== undefined) {
                         this.controls.campaignName.setValue(informationMessage.campaignName);
-                        this.controls.titleEn.setValue(englishVersion.title);
-                        this.controls.messageEn.setValue(englishVersion.message);
-                        this.controls.descriptionEn.setValue(englishVersion.description);
+                        this.controls.titleEn.setValue(this.englishVersion.title);
+                        this.controls.messageEn.setValue(this.englishVersion.message);
+                        this.controls.descriptionEn.setValue(this.englishVersion.description);
                     }
 
-                    if (slovakVersion !== undefined) {
-                        this.controls.titleSk.setValue(slovakVersion.title);
-                        this.controls.messageSk.setValue(slovakVersion.message);
-                        this.controls.descriptionSk.setValue(slovakVersion.description);
+                    if (this.slovakVersion !== undefined) {
+                        this.controls.titleSk.setValue(this.slovakVersion.title);
+                        this.controls.messageSk.setValue(this.slovakVersion.message);
+                        this.controls.descriptionSk.setValue(this.slovakVersion.description);
                     }
                 },
                 (err: ErrorResponse) => {
@@ -94,5 +99,50 @@ export class DetailInformationMessageComponent implements OnInit {
                     this.alertService.error(err.message);
                     this.loading = false;
                 });
+    }
+
+    sendNotification(languageVersion: LanguageVersion, runtimePlatform: RuntimePlatform) {
+        let pushNotificationWasSentErrorMessage = "Push notification was sent on that platform.";
+        this.sendingNotification = true;
+
+        if (runtimePlatform == RuntimePlatform.Android) {
+            if (languageVersion.sentOnAndroid) {
+                this.alertService.error(pushNotificationWasSentErrorMessage);
+                this.sendingNotification = false;
+                return;
+            }
+        }
+
+        if (runtimePlatform == RuntimePlatform.Osx) {
+            if (languageVersion.sentOnOsx) {
+                this.alertService.error(pushNotificationWasSentErrorMessage);
+                this.sendingNotification = false;
+                return;
+            }
+        }
+
+        let formData = new FormData();
+        formData.append('informationMessageId', this.informationMessageId);
+        formData.append('runtimePlatform', runtimePlatform.toString());
+        formData.append('language', languageVersion.language.toString());
+
+        this.informationMessageService.sendNotification(formData)
+            .pipe(first())
+            .subscribe(
+                () => {
+                    this.alertService.success("Push notification was successfully sent.");
+                },
+                (err: ErrorResponse) => {
+                    let error = err.message;
+
+                    if (err.status === 406)
+                        error = "Language is not supported.";
+
+                    if (err.status === 409)
+                        error = pushNotificationWasSentErrorMessage;
+
+                    this.alertService.error(error);
+                })
+            .add(() => this.sendingNotification = false);
     }
 }
