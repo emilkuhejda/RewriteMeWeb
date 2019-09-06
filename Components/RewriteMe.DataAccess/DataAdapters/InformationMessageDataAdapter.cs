@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = entity.Id,
                 CampaignName = entity.CampaignName,
                 DateCreated = entity.DateCreated,
-                LanguageVersions = entity.LanguageVersions.Select(x => x.ToLanguageVersion())
+                LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion())
             };
         }
 
@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = informationMessage.Id,
                 CampaignName = informationMessage.CampaignName,
                 DateCreated = informationMessage.DateCreated,
-                LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList()
+                LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToLanguageVersionEntity()).ToList()
             };
         }
     }

@@ -369,8 +369,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("ApplicationId");
-
                     b.Property<DateTime>("DateRegistered");
 
                     b.Property<string>("Email")

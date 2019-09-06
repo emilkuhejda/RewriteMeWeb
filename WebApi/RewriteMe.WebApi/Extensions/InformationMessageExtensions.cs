@@ -1,4 +1,5 @@
-﻿using RewriteMe.Domain.Messages;
+﻿using System.Linq;
+using RewriteMe.Domain.Messages;
 using RewriteMe.WebApi.Dtos;
 
 namespace RewriteMe.WebApi.Extensions
@@ -11,7 +12,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Id = informationMessage.Id,
                 DateCreated = informationMessage.DateCreated,
-                LanguageVersions = informationMessage.LanguageVersions
+                LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToDto())
             };
         }
     }

@@ -47,7 +47,21 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.InformationMessages
+                    .Include(x => x.LanguageVersions)
                     .Where(x => x.DateCreated >= updatedAfter)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return entities.Select(x => x.ToInformationMessage());
+            }
+        }
+
+        public async Task<IEnumerable<InformationMessage>> GetAllShallowAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.InformationMessages
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
