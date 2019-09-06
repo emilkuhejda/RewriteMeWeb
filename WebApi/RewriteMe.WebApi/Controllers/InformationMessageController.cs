@@ -33,7 +33,8 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetInformationMessages")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter)
         {
-            var informationMessages = await _informationMessageService.GetAllAsync(updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
 
             return Ok(informationMessages.Select(x => x.ToDto()));
         }

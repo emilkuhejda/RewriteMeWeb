@@ -7,9 +7,13 @@ namespace RewriteMe.DataAccess.Entities
     {
         public Guid Id { get; set; }
 
+        public Guid? UserId { get; set; }
+
         public string CampaignName { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public virtual UserEntity User { get; set; }
 
         public virtual IList<LanguageVersionEntity> LanguageVersions { get; set; }
     }
