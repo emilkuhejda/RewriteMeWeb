@@ -25,6 +25,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public virtual IList<ApplicationLogEntity> ApplicationLogs { get; set; }
 
+        public virtual IList<InformationMessageEntity> InformationMessages { get; set; }
+
         public virtual IList<UserDeviceEntity> UserDevices { get; set; }
     }
 }

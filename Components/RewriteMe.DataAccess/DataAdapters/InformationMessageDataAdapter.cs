@@ -11,6 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new InformationMessage
             {
                 Id = entity.Id,
+                UserId = entity.UserId,
                 CampaignName = entity.CampaignName,
                 DateCreated = entity.DateCreated,
                 LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion())
@@ -22,6 +23,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new InformationMessageEntity
             {
                 Id = informationMessage.Id,
+                UserId = informationMessage.UserId,
                 CampaignName = informationMessage.CampaignName,
                 DateCreated = informationMessage.DateCreated,
                 LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToLanguageVersionEntity()).ToList()
