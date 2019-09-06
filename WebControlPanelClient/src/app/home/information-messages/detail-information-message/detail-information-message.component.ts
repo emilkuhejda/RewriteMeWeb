@@ -23,6 +23,7 @@ export class DetailInformationMessageComponent implements OnInit {
     sendingNotification: boolean;
     loading: boolean = false;
     submitted: boolean = false;
+    canUpdate: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -46,21 +47,7 @@ export class DetailInformationMessageComponent implements OnInit {
             this.informationMessageId = paramMap.get("informationMessageId");
             this.informationMessageService.get(this.informationMessageId).subscribe(
                 (informationMessage: InformationMessage) => {
-                    this.englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
-                    this.slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
-
-                    if (this.englishVersion !== undefined) {
-                        this.controls.campaignName.setValue(informationMessage.campaignName);
-                        this.controls.titleEn.setValue(this.englishVersion.title);
-                        this.controls.messageEn.setValue(this.englishVersion.message);
-                        this.controls.descriptionEn.setValue(this.englishVersion.description);
-                    }
-
-                    if (this.slovakVersion !== undefined) {
-                        this.controls.titleSk.setValue(this.slovakVersion.title);
-                        this.controls.messageSk.setValue(this.slovakVersion.message);
-                        this.controls.descriptionSk.setValue(this.slovakVersion.description);
-                    }
+                    this.initialize(informationMessage);
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
@@ -96,7 +83,11 @@ export class DetailInformationMessageComponent implements OnInit {
                     this.router.navigate(['/information-messages']);
                 },
                 (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
+                    let error = err.message;
+                    if (err.status === 400)
+                        error = "Push notification cannot be updated because they were already sent.";
+
+                    this.alertService.error(error);
                     this.loading = false;
                 });
     }
@@ -129,7 +120,8 @@ export class DetailInformationMessageComponent implements OnInit {
         this.informationMessageService.sendNotification(formData)
             .pipe(first())
             .subscribe(
-                () => {
+                (informationMessage: InformationMessage) => {
+                    this.initialize(informationMessage);
                     this.alertService.success("Push notification was successfully sent.");
                 },
                 (err: ErrorResponse) => {
@@ -147,5 +139,25 @@ export class DetailInformationMessageComponent implements OnInit {
                     this.alertService.error(error);
                 })
             .add(() => this.sendingNotification = false);
+    }
+
+    private initialize(informationMessage: InformationMessage) {
+        this.englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
+        this.slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
+
+        if (this.englishVersion !== undefined) {
+            this.controls.campaignName.setValue(informationMessage.campaignName);
+            this.controls.titleEn.setValue(this.englishVersion.title);
+            this.controls.messageEn.setValue(this.englishVersion.message);
+            this.controls.descriptionEn.setValue(this.englishVersion.description);
+        }
+
+        if (this.slovakVersion !== undefined) {
+            this.controls.titleSk.setValue(this.slovakVersion.title);
+            this.controls.messageSk.setValue(this.slovakVersion.message);
+            this.controls.descriptionSk.setValue(this.slovakVersion.description);
+        }
+
+        this.canUpdate = [this.englishVersion, this.slovakVersion].every(languageVersion => !languageVersion.sentOnAndroid && !languageVersion.sentOnOsx);
     }
 }

@@ -59,6 +59,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
         {
             var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
+            var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
+            if (!canUpdate)
+                return BadRequest();
+
             await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
 
             return Ok(informationMessage);
@@ -79,7 +83,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
                 await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
-                return Ok();
+                return Ok(informationMessage);
             }
             catch (SerializationException ex)
             {

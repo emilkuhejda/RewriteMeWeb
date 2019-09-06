@@ -11,11 +11,13 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<InformationMessage> GetAsync(Guid informationMessageId);
 
-        Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter);
+        Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter);
 
         Task<IEnumerable<InformationMessage>> GetAllShallowAsync();
 
         Task UpdateAsync(InformationMessage informationMessage);
+
+        Task<bool> CanUpdateAsync(Guid informationMessageId);
 
         Task<DateTime> GetLastUpdateAsync();
     }

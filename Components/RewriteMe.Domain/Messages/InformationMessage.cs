@@ -7,10 +7,12 @@ namespace RewriteMe.Domain.Messages
     {
         public Guid Id { get; set; }
 
+        public Guid? UserId { get; set; }
+
         public string CampaignName { get; set; }
 
         public DateTime DateCreated { get; set; }
 
-        public virtual IEnumerable<LanguageVersion> LanguageVersions { get; set; }
+        public virtual IList<LanguageVersion> LanguageVersions { get; set; }
     }
 }

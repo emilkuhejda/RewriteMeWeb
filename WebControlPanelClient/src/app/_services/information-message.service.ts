@@ -31,6 +31,6 @@ export class InformationMessageService {
     }
 
     sendNotification(formData: FormData) {
-        return this.http.put(this.routingService.getSendNotificationUri(), formData);
+        return this.http.put(this.routingService.getSendNotificationUri(), formData).pipe(map(InformationMessageMapper.convert));
     }
 }
