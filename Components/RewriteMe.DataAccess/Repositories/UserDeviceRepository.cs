@@ -24,6 +24,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.UserDevices
+                    .AsNoTracking()
                     .SingleOrDefaultAsync(x => x.UserId == userDevice.UserId && x.InstallationId == userDevice.InstallationId)
                     .ConfigureAwait(false);
 
@@ -33,7 +34,9 @@ namespace RewriteMe.DataAccess.Repositories
                 }
                 else
                 {
-                    context.Entry(userDevice.ToUserDeviceEntity()).State = EntityState.Modified;
+                    var userDeviceEntity = userDevice.ToUserDeviceEntity();
+                    userDeviceEntity.Id = entity.Id;
+                    context.Entry(userDeviceEntity).State = EntityState.Modified;
                 }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);

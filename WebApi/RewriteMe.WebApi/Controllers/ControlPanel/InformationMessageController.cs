@@ -32,10 +32,17 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _applicationLogService = applicationLogService;
         }
 
+        [HttpGet("/api/control-panel/information-messages/{informationMessageId}")]
+        public async Task<IActionResult> Get(Guid informationMessageId)
+        {
+            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+            return Ok(informationMessage);
+        }
+
         [HttpGet("/api/control-panel/information-messages")]
         public async Task<IActionResult> GetAll()
         {
-            var informationMessages = await _informationMessageService.GetAllAsync(default(DateTime)).ConfigureAwait(false);
+            var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
             return Ok(informationMessages);
         }
 
@@ -45,7 +52,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
             await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
 
-            return Ok();
+            return Ok(informationMessage.Id);
         }
 
         [HttpPut("/api/control-panel/information-messages/{informationMessageId}")]
@@ -58,7 +65,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/information-messages/send")]
-        public async Task<IActionResult> SendNotifications([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
+        public async Task<IActionResult> SendNotification([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
         {
             if (language == Language.Undefined)
                 return StatusCode(406);
@@ -70,10 +77,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             try
             {
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
-
-                var notificationResult = await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
-                if (notificationResult == null)
-                    return BadRequest();
+                await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
                 return Ok();
             }
@@ -91,8 +95,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
 
                 return StatusCode((int)ex.NotificationError.Code);
             }
-            catch (EmptyDeviceListException)
+            catch (LanguageVersionNotExistsException)
             {
+                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                return NotFound();
+            }
+            catch (PushNotificationWasSentException)
+            {
+                await _applicationLogService.ErrorAsync($"Push notification was already send for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
                 return StatusCode(409);
             }
         }

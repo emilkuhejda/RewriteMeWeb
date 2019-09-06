@@ -13,6 +13,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter);
 
+        Task<IEnumerable<InformationMessage>> GetAllShallowAsync();
+
         Task UpdateAsync(InformationMessage informationMessage);
 
         Task<DateTime> GetLastUpdateAsync();

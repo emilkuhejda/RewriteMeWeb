@@ -82,7 +82,7 @@ namespace RewriteMe.WebApi.Controllers
                 {
                     Id = Guid.NewGuid(),
                     UserId = user.Id,
-                    ApplicationId = user.ApplicationId,
+                    ApplicationId = registrationUserModel.ApplicationId,
                     Time = TimeSpan.FromMinutes(5),
                     DateCreated = DateTime.UtcNow
                 };

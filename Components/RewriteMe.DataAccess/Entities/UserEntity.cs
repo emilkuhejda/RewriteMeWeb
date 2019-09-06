@@ -13,8 +13,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public string FamilyName { get; set; }
 
-        public Guid ApplicationId { get; set; }
-
         public DateTime DateRegistered { get; set; }
 
         public virtual IList<FileItemEntity> FileItems { get; set; }
