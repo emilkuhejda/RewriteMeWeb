@@ -17,6 +17,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateAsync(InformationMessage informationMessage);
 
+        Task<bool> CanUpdateAsync(Guid informationMessageId);
+
         Task<DateTime> GetLastUpdateAsync();
     }
 }

@@ -59,6 +59,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
         {
             var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
+            var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
+            if (!canUpdate)
+                return BadRequest();
+
             await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
 
             return Ok(informationMessage);

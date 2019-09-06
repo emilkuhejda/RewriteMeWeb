@@ -41,6 +41,11 @@ namespace RewriteMe.Business.Services
             await _informationMessageRepository.UpdateAsync(informationMessage).ConfigureAwait(false);
         }
 
+        public async Task<bool> CanUpdateAsync(Guid informationMessageId)
+        {
+            return await _informationMessageRepository.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
+        }
+
         public async Task<DateTime> GetLastUpdateAsync()
         {
             return await _informationMessageRepository.GetLastUpdateAsync().ConfigureAwait(false);

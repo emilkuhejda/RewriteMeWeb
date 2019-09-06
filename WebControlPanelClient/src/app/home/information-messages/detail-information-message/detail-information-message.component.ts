@@ -23,6 +23,7 @@ export class DetailInformationMessageComponent implements OnInit {
     sendingNotification: boolean;
     loading: boolean = false;
     submitted: boolean = false;
+    canUpdate: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -82,7 +83,11 @@ export class DetailInformationMessageComponent implements OnInit {
                     this.router.navigate(['/information-messages']);
                 },
                 (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
+                    let error = err.message;
+                    if (err.status === 400)
+                        error = "Push notification cannot be updated because they were already sent.";
+
+                    this.alertService.error(error);
                     this.loading = false;
                 });
     }
@@ -116,7 +121,6 @@ export class DetailInformationMessageComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 (informationMessage: InformationMessage) => {
-                    console.log(informationMessage);
                     this.initialize(informationMessage);
                     this.alertService.success("Push notification was successfully sent.");
                 },
@@ -153,5 +157,7 @@ export class DetailInformationMessageComponent implements OnInit {
             this.controls.messageSk.setValue(this.slovakVersion.message);
             this.controls.descriptionSk.setValue(this.slovakVersion.description);
         }
+
+        this.canUpdate = [this.englishVersion, this.slovakVersion].every(languageVersion => !languageVersion.sentOnAndroid && !languageVersion.sentOnOsx);
     }
 }

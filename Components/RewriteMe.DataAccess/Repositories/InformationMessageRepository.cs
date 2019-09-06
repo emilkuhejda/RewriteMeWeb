@@ -89,6 +89,14 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<bool> CanUpdateAsync(Guid informationMessageId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.LanguageVersions.AllAsync(x => !x.SentOnAndroid && !x.SentOnOsx).ConfigureAwait(false);
+            }
+        }
+
         public async Task<DateTime> GetLastUpdateAsync()
         {
             using (var context = _contextFactory.Create())
