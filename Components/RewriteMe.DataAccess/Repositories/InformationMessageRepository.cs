@@ -42,13 +42,13 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter)
+        public async Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.InformationMessages
                     .Include(x => x.LanguageVersions)
-                    .Where(x => x.DateCreated >= updatedAfter)
+                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DateCreated >= updatedAfter)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -62,6 +62,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.InformationMessages
+                    .Where(x => !x.UserId.HasValue)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);

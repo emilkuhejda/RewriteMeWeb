@@ -11,7 +11,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<InformationMessage> GetAsync(Guid informationMessageId);
 
-        Task<IEnumerable<InformationMessage>> GetAllAsync(DateTime updatedAfter);
+        Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter);
 
         Task<IEnumerable<InformationMessage>> GetAllShallowAsync();
 
