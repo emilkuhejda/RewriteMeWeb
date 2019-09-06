@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Messages;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ILanguageVersionService
     {
-        Task UpdateSendStatusAsync(Guid languageVersionId, RuntimePlatform runtimePlatform, bool status);
+        Task UpdateSendStatusAsync(LanguageVersion languageVersion, RuntimePlatform runtimePlatform, bool status);
     }
 }

@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = entity.UserId,
                 CampaignName = entity.CampaignName,
                 DateCreated = entity.DateCreated,
-                LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion())
+                LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion()).ToList()
             };
         }
 

@@ -39,36 +39,38 @@ namespace RewriteMe.Business.Services
 
         public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language)
         {
-            var languageVersion = informationMessage.LanguageVersions.First(x => x.Language == language);
+            var languageVersion = informationMessage.LanguageVersions.FirstOrDefault(x => x.Language == language);
             if (languageVersion == null)
                 throw new LanguageVersionNotExistsException();
 
+            NotificationResult notificationResult = null;
             var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
             var devices = installationIds.ToList();
-            if (!devices.Any())
-                return null;
-
-            var pushNotification = new PushNotification
+            if (devices.Any())
             {
-                Target = new NotificationTarget
+                var pushNotification = new PushNotification
                 {
-                    Type = TargetType,
-                    Devices = devices
-                },
-                Content = new NotificationContent
+                    Target = new NotificationTarget
+                    {
+                        Type = TargetType,
+                        Devices = devices
+                    },
+                    Content = new NotificationContent
+                    {
+                        Name = informationMessage.CampaignName,
+                        Title = languageVersion.Title,
+                        Body = languageVersion.Message
+                    }
+                };
+
+                using (var result = await SendWithHttpMessagesAsync(pushNotification).ConfigureAwait(false))
                 {
-                    Name = informationMessage.CampaignName,
-                    Title = languageVersion.Title,
-                    Body = languageVersion.Message
+                    notificationResult = result.Body;
                 }
-            };
-
-            using (var result = await SendWithHttpMessagesAsync(pushNotification).ConfigureAwait(false))
-            {
-                await _languageVersionService.UpdateSendStatusAsync(languageVersion.Id, runtimePlatform, true).ConfigureAwait(false);
-
-                return result.Body;
             }
+
+            await _languageVersionService.UpdateSendStatusAsync(languageVersion, runtimePlatform, true).ConfigureAwait(false);
+            return notificationResult;
         }
 
         private async Task<HttpOperationResponse<NotificationResult>> SendWithHttpMessagesAsync(PushNotification pushNotification, CancellationToken cancellationToken = default(CancellationToken))
