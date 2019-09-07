@@ -46,6 +46,12 @@ namespace RewriteMe.Business.Services
             if (languageVersion == null)
                 throw new LanguageVersionNotExistsException();
 
+            if (runtimePlatform == RuntimePlatform.Android && languageVersion.SentOnAndroid)
+                throw new PushNotificationWasSentException();
+
+            if (runtimePlatform == RuntimePlatform.Osx && languageVersion.SentOnOsx)
+                throw new PushNotificationWasSentException();
+
             NotificationResult notificationResult = null;
             var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
             var devices = installationIds.ToList();

@@ -106,7 +106,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             }
             catch (PushNotificationWasSentException)
             {
-                await _applicationLogService.ErrorAsync($"Push notification was already send for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
                 return StatusCode(409);
             }
         }
