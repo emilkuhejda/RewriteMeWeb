@@ -17,6 +17,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdateAsync(InformationMessage informationMessage);
 
+        Task UpdateDatePublishedAsync(Guid informationMessageId, DateTime datePublished);
+
         Task<bool> CanUpdateAsync(Guid informationMessageId);
 
         Task<DateTime> GetLastUpdateAsync();

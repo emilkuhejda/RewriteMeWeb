@@ -9,6 +9,7 @@ import { first } from 'rxjs/operators';
 import { Language } from 'src/app/_enums/language';
 import { LanguageVersion } from 'src/app/_models/language-version';
 import { RuntimePlatform } from 'src/app/_enums/runtime-platform';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-detail-information-message',
@@ -24,6 +25,7 @@ export class DetailInformationMessageComponent implements OnInit {
     loading: boolean = false;
     submitted: boolean = false;
     canUpdate: boolean = false;
+    canToSendAll: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -34,24 +36,18 @@ export class DetailInformationMessageComponent implements OnInit {
 
     ngOnInit() {
         this.editForm = this.formBuilder.group({
-            campaignName: ['', Validators.required],
-            titleEn: ['', Validators.required],
-            titleSk: ['', Validators.required],
-            messageEn: ['', Validators.required],
-            messageSk: ['', Validators.required],
+            campaignName: ['', [Validators.required, Validators.maxLength(150)]],
+            titleEn: ['', [Validators.required, Validators.maxLength(150)]],
+            titleSk: ['', [Validators.required, Validators.maxLength(150)]],
+            messageEn: ['', [Validators.required, Validators.maxLength(250)]],
+            messageSk: ['', [Validators.required, Validators.maxLength(250)]],
             descriptionEn: ['', Validators.required],
             descriptionSk: ['', Validators.required]
         });
 
         this.route.paramMap.subscribe(paramMap => {
             this.informationMessageId = paramMap.get("informationMessageId");
-            this.informationMessageService.get(this.informationMessageId).subscribe(
-                (informationMessage: InformationMessage) => {
-                    this.initialize(informationMessage);
-                },
-                (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
-                });
+            this.initializeInformationMessage();
         });
     }
 
@@ -92,33 +88,53 @@ export class DetailInformationMessageComponent implements OnInit {
                 });
     }
 
+    sendToAll() {
+        this.loading = true;
+
+        let responseData1 = this.sendNotificationInternal(this.englishVersion, RuntimePlatform.Android);
+        let responseData2 = this.sendNotificationInternal(this.englishVersion, RuntimePlatform.Osx);
+        let responseData3 = this.sendNotificationInternal(this.slovakVersion, RuntimePlatform.Android);
+        let responseData4 = this.sendNotificationInternal(this.slovakVersion, RuntimePlatform.Osx);
+        let responses = [];
+
+        if (responseData1 != null) {
+            responses.push(responseData1);
+        }
+
+        if (responseData2 != null) {
+            responses.push(responseData2);
+        }
+
+        if (responseData3 != null) {
+            responses.push(responseData3);
+        }
+
+        if (responseData4 != null) {
+            responses.push(responseData4);
+        }
+
+        if (responses.length == 0)
+            return;
+
+        forkJoin(responses)
+            .subscribe(() => this.initializeInformationMessage())
+            .add(() => {
+                this.sendingNotification = false;
+                this.loading = false;
+            });
+    }
+
     sendNotification(languageVersion: LanguageVersion, runtimePlatform: RuntimePlatform) {
         let pushNotificationWasSentErrorMessage = "Push notification was sent on that platform.";
-        this.sendingNotification = true;
 
-        if (runtimePlatform == RuntimePlatform.Android) {
-            if (languageVersion.sentOnAndroid) {
-                this.alertService.error(pushNotificationWasSentErrorMessage);
-                this.sendingNotification = false;
-                return;
-            }
+        var result = this.sendNotificationInternal(languageVersion, runtimePlatform);
+        if (result == null) {
+            this.alertService.error(pushNotificationWasSentErrorMessage);
+            this.sendingNotification = false;
+            return;
         }
 
-        if (runtimePlatform == RuntimePlatform.Osx) {
-            if (languageVersion.sentOnOsx) {
-                this.alertService.error(pushNotificationWasSentErrorMessage);
-                this.sendingNotification = false;
-                return;
-            }
-        }
-
-        let formData = new FormData();
-        formData.append('informationMessageId', this.informationMessageId);
-        formData.append('runtimePlatform', runtimePlatform.toString());
-        formData.append('language', languageVersion.language.toString());
-
-        this.informationMessageService.sendNotification(formData)
-            .pipe(first())
+        result.pipe(first())
             .subscribe(
                 (informationMessage: InformationMessage) => {
                     this.initialize(informationMessage);
@@ -141,6 +157,39 @@ export class DetailInformationMessageComponent implements OnInit {
             .add(() => this.sendingNotification = false);
     }
 
+    private sendNotificationInternal(languageVersion: LanguageVersion, runtimePlatform: RuntimePlatform) {
+        this.sendingNotification = true;
+
+        if (runtimePlatform == RuntimePlatform.Android) {
+            if (languageVersion.sentOnAndroid) {
+                return null;
+            }
+        }
+
+        if (runtimePlatform == RuntimePlatform.Osx) {
+            if (languageVersion.sentOnOsx) {
+                return null;
+            }
+        }
+
+        let formData = new FormData();
+        formData.append('informationMessageId', this.informationMessageId);
+        formData.append('runtimePlatform', runtimePlatform.toString());
+        formData.append('language', languageVersion.language.toString());
+
+        return this.informationMessageService.sendNotification(formData);
+    }
+
+    private initializeInformationMessage() {
+        this.informationMessageService.get(this.informationMessageId).subscribe(
+            (informationMessage: InformationMessage) => {
+                this.initialize(informationMessage);
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            });
+    }
+
     private initialize(informationMessage: InformationMessage) {
         this.englishVersion = informationMessage.languageVersions.find(version => version.language == Language.English);
         this.slovakVersion = informationMessage.languageVersions.find(version => version.language == Language.Slovak);
@@ -159,5 +208,7 @@ export class DetailInformationMessageComponent implements OnInit {
         }
 
         this.canUpdate = [this.englishVersion, this.slovakVersion].every(languageVersion => !languageVersion.sentOnAndroid && !languageVersion.sentOnOsx);
+        this.canToSendAll = [this.englishVersion, this.slovakVersion].some(languageVersion => !languageVersion.sentOnAndroid || !languageVersion.sentOnOsx);
+        let r = [this.englishVersion, this.slovakVersion].some(languageVersion => !languageVersion.sentOnAndroid || !languageVersion.sentOnOsx);
     }
 }

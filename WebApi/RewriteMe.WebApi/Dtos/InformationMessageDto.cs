@@ -10,7 +10,7 @@ namespace RewriteMe.WebApi.Dtos
         public Guid Id { get; set; }
 
         [Required]
-        public DateTime DateCreated { get; set; }
+        public DateTime DatePublished { get; set; }
 
         public IEnumerable<LanguageVersionDto> LanguageVersions { get; set; }
     }

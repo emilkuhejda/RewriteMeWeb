@@ -214,6 +214,8 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
+                    b.Property<DateTime?>("DatePublished");
+
                     b.Property<Guid?>("UserId");
 
                     b.HasKey("Id");
@@ -237,7 +239,7 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(150);
+                        .HasMaxLength(250);
 
                     b.Property<bool>("SentOnAndroid");
 

@@ -14,6 +14,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = entity.UserId,
                 CampaignName = entity.CampaignName,
                 DateCreated = entity.DateCreated,
+                DatePublished = entity.DatePublished,
                 LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion()).ToList()
             };
         }
@@ -26,6 +27,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = informationMessage.UserId,
                 CampaignName = informationMessage.CampaignName,
                 DateCreated = informationMessage.DateCreated,
+                DatePublished = informationMessage.DatePublished,
                 LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToLanguageVersionEntity()).ToList()
             };
         }
