@@ -89,6 +89,22 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateDatePublishedAsync(Guid informationMessageId, DateTime datePublished)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == informationMessageId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                if (entity.DatePublished.HasValue)
+                    return;
+
+                entity.DatePublished = datePublished;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<bool> CanUpdateAsync(Guid informationMessageId)
         {
             using (var context = _contextFactory.Create())

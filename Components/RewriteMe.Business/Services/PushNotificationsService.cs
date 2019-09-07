@@ -24,15 +24,18 @@ namespace RewriteMe.Business.Services
         private const string MediaType = "application/json";
 
         private readonly IUserDeviceService _userDeviceService;
+        private readonly IInformationMessageService _informationMessageService;
         private readonly ILanguageVersionService _languageVersionService;
         private readonly AppSettings _appSettings;
 
         public PushNotificationsService(
             IUserDeviceService userDeviceService,
+            IInformationMessageService informationMessageService,
             ILanguageVersionService languageVersionService,
             IOptions<AppSettings> options)
         {
             _userDeviceService = userDeviceService;
+            _informationMessageService = informationMessageService;
             _languageVersionService = languageVersionService;
             _appSettings = options.Value;
         }
@@ -70,6 +73,11 @@ namespace RewriteMe.Business.Services
             }
 
             await _languageVersionService.UpdateSendStatusAsync(languageVersion, runtimePlatform, true).ConfigureAwait(false);
+            if (!informationMessage.DatePublished.HasValue)
+            {
+                await _informationMessageService.UpdateDatePublishedAsync(informationMessage.Id, DateTime.UtcNow).ConfigureAwait(false);
+            }
+
             return notificationResult;
         }
 
