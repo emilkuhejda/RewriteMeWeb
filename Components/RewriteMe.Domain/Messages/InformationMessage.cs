@@ -13,6 +13,8 @@ namespace RewriteMe.Domain.Messages
 
         public DateTime DateCreated { get; set; }
 
+        public DateTime? DatePublished { get; set; }
+
         public virtual IList<LanguageVersion> LanguageVersions { get; set; }
     }
 }

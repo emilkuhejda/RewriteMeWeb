@@ -11,7 +11,7 @@ namespace RewriteMe.WebApi.Extensions
             return new InformationMessageDto
             {
                 Id = informationMessage.Id,
-                DateCreated = informationMessage.DateCreated,
+                DatePublished = informationMessage.DatePublished.GetValueOrDefault(),
                 LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToDto())
             };
         }

@@ -48,7 +48,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entities = await context.InformationMessages
                     .Include(x => x.LanguageVersions)
-                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DateCreated >= updatedAfter)
+                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DatePublished.HasValue && x.DatePublished >= updatedAfter)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -102,10 +102,10 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 return await context.InformationMessages
-                    .OrderByDescending(x => x.DateCreated)
-                    .Select(x => x.DateCreated)
+                    .OrderByDescending(x => x.DatePublished)
+                    .Select(x => x.DatePublished)
                     .FirstOrDefaultAsync()
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(false) ?? DateTime.MinValue;
             }
         }
     }
