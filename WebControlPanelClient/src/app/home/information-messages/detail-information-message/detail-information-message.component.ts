@@ -158,21 +158,16 @@ export class DetailInformationMessageComponent implements OnInit {
     }
 
     private sendNotificationInternal(languageVersion: LanguageVersion, runtimePlatform: RuntimePlatform) {
-        let pushNotificationWasSentErrorMessage = "Push notification was sent on that platform.";
         this.sendingNotification = true;
 
         if (runtimePlatform == RuntimePlatform.Android) {
             if (languageVersion.sentOnAndroid) {
-                this.alertService.error(pushNotificationWasSentErrorMessage);
-                this.sendingNotification = false;
                 return null;
             }
         }
 
         if (runtimePlatform == RuntimePlatform.Osx) {
             if (languageVersion.sentOnOsx) {
-                this.alertService.error(pushNotificationWasSentErrorMessage);
-                this.sendingNotification = false;
                 return null;
             }
         }
