@@ -13,6 +13,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateCreated { get; set; }
 
+        public DateTime? DatePublished { get; set; }
+
         public virtual UserEntity User { get; set; }
 
         public virtual IList<LanguageVersionEntity> LanguageVersions { get; set; }

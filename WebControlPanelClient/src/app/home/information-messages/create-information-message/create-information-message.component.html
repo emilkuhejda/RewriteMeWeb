@@ -18,6 +18,7 @@
                     [ngClass]="{ 'is-invalid': submitted && controls.campaignName.errors }" />
                 <div *ngIf="submitted && controls.campaignName.errors" class="invalid-feedback">
                     <div *ngIf="controls.campaignName.errors.required">Campaign name is required</div>
+                    <div *ngIf="controls.campaignName.errors.maxlength">Max length is 150 characters</div>
                 </div>
             </div>
 
@@ -27,6 +28,7 @@
                     [ngClass]="{ 'is-invalid': submitted && controls.titleEn.errors }" />
                 <div *ngIf="submitted && controls.titleEn.errors" class="invalid-feedback">
                     <div *ngIf="controls.titleEn.errors.required">Title is required</div>
+                    <div *ngIf="controls.titleEn.errors.maxlength">Max length is 150 characters</div>
                 </div>
             </div>
 
@@ -36,6 +38,7 @@
                     [ngClass]="{ 'is-invalid': submitted && controls.titleSk.errors }" />
                 <div *ngIf="submitted && controls.titleSk.errors" class="invalid-feedback">
                     <div *ngIf="controls.titleSk.errors.required">Title is required</div>
+                    <div *ngIf="controls.titleSk.errors.maxlength">Max length is 150 characters</div>
                 </div>
             </div>
 
@@ -45,6 +48,7 @@
                     [ngClass]="{ 'is-invalid': submitted && controls.messageEn.errors }"></textarea>
                 <div *ngIf="submitted && controls.messageEn.errors" class="invalid-feedback">
                     <div *ngIf="controls.messageEn.errors.required">Message is required</div>
+                    <div *ngIf="controls.messageEn.errors.maxlength">Max length is 250 characters</div>
                 </div>
             </div>
 
@@ -54,6 +58,7 @@
                     [ngClass]="{ 'is-invalid': submitted && controls.messageSk.errors }"></textarea>
                 <div *ngIf="submitted && controls.messageSk.errors" class="invalid-feedback">
                     <div *ngIf="controls.messageSk.errors.required">Message is required</div>
+                    <div *ngIf="controls.messageSk.errors.maxlength">Max length is 250 characters</div>
                 </div>
             </div>
 
@@ -67,7 +72,7 @@
             </div>
 
             <div class="form-group">
-                <label for="descriptionSk">Description (en)</label>
+                <label for="descriptionSk">Description (sk)</label>
                 <textarea class="form-control" rows="6" formControlName="descriptionSk"
                     [ngClass]="{ 'is-invalid': submitted && controls.descriptionSk.errors }"></textarea>
                 <div *ngIf="submitted && controls.descriptionSk.errors" class="invalid-feedback">
@@ -76,7 +81,7 @@
             </div>
 
             <div class="form-group">
-                <button [disabled]="loading" class="btn btn-primary mr-2">Submit</button>
+                <button [disabled]="loading" class="btn btn-primary mr-2">Create</button>
                 <img *ngIf="loading"
                     src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
             </div>

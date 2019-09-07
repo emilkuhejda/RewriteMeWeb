@@ -10,8 +10,8 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190903051217_UpdateDatabaseEntities")]
-    partial class UpdateDatabaseEntities
+    [Migration("20190907185223_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -216,7 +216,13 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
+                    b.Property<DateTime?>("DatePublished");
+
+                    b.Property<Guid?>("UserId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("InformationMessage");
                 });
@@ -235,7 +241,7 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(150);
+                        .HasMaxLength(250);
 
                     b.Property<bool>("SentOnAndroid");
 
@@ -345,7 +351,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateRegistered");
 
                     b.Property<Guid>("InstallationId");
 
@@ -370,8 +376,6 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("ApplicationId");
 
                     b.Property<DateTime>("DateRegistered");
 
@@ -441,6 +445,14 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithOne("FileItemSource")
                         .HasForeignKey("RewriteMe.DataAccess.Entities.FileItemSourceEntity", "FileItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.InformationMessageEntity", b =>
+                {
+                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
+                        .WithMany("InformationMessages")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

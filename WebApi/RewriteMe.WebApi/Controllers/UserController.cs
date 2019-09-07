@@ -97,8 +97,11 @@ namespace RewriteMe.WebApi.Controllers
                 userSubscriptionDto = new UserSubscriptionDto { Id = Guid.Empty };
             }
 
-            var userDevice = registrationUserModel.Device.ToUserDevice(user.Id);
-            await _userDeviceService.AddOrUpdateAsync(userDevice).ConfigureAwait(false);
+            if (registrationUserModel.Device != null)
+            {
+                var userDevice = registrationUserModel.Device.ToUserDevice(user.Id);
+                await _userDeviceService.AddOrUpdateAsync(userDevice).ConfigureAwait(false);
+            }
 
             var claims = new[]
             {
