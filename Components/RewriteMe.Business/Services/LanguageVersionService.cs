@@ -21,16 +21,14 @@ namespace RewriteMe.Business.Services
             switch (runtimePlatform)
             {
                 case RuntimePlatform.Android:
-                    languageVersion.SentOnAndroid = true;
+                    await _languageVersionRepository.UpdateAndroidSendStatus(languageVersion.Id, true).ConfigureAwait(false);
                     break;
                 case RuntimePlatform.Osx:
-                    languageVersion.SentOnOsx = true;
+                    await _languageVersionRepository.UpdateOsxSendStatus(languageVersion.Id, true).ConfigureAwait(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(runtimePlatform));
             }
-
-            await _languageVersionRepository.UpdateAsync(languageVersion).ConfigureAwait(false);
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
-using RewriteMe.Domain.Messages;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface ILanguageVersionRepository
     {
-        Task UpdateAsync(LanguageVersion languageVersion);
+        Task UpdateAndroidSendStatus(Guid languageVersionId, bool status);
+
+        Task UpdateOsxSendStatus(Guid languageVersionId, bool status);
     }
 }
