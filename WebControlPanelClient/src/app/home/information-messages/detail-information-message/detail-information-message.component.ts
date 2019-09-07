@@ -34,11 +34,11 @@ export class DetailInformationMessageComponent implements OnInit {
 
     ngOnInit() {
         this.editForm = this.formBuilder.group({
-            campaignName: ['', Validators.required],
-            titleEn: ['', Validators.required],
-            titleSk: ['', Validators.required],
-            messageEn: ['', Validators.required],
-            messageSk: ['', Validators.required],
+            campaignName: ['', [Validators.required, Validators.maxLength(150)]],
+            titleEn: ['', [Validators.required, Validators.maxLength(150)]],
+            titleSk: ['', [Validators.required, Validators.maxLength(150)]],
+            messageEn: ['', [Validators.required, Validators.maxLength(250)]],
+            messageSk: ['', [Validators.required, Validators.maxLength(250)]],
             descriptionEn: ['', Validators.required],
             descriptionSk: ['', Validators.required]
         });
