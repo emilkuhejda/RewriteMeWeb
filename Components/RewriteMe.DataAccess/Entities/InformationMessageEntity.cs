@@ -11,7 +11,11 @@ namespace RewriteMe.DataAccess.Entities
 
         public string CampaignName { get; set; }
 
+        public bool WasOpened { get; set; }
+
         public DateTime DateCreated { get; set; }
+
+        public DateTime? DateUpdated { get; set; }
 
         public DateTime? DatePublished { get; set; }
 

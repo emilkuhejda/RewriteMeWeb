@@ -48,8 +48,11 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entities = await context.InformationMessages
                     .Include(x => x.LanguageVersions)
-                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DatePublished.HasValue && x.DatePublished >= updatedAfter)
                     .AsNoTracking()
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) &&
+                                ((x.DatePublished.HasValue && x.DatePublished >= updatedAfter) ||
+                                 (x.DateUpdated.HasValue && x.DateUpdated >= updatedAfter)))
                     .ToListAsync()
                     .ConfigureAwait(false);
 
@@ -84,6 +87,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.CampaignName = informationMessage.CampaignName;
+                entity.DateUpdated = DateTime.UtcNow;
                 entity.LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList();
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -101,6 +105,42 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.DatePublished = datePublished;
+                entity.DateUpdated = datePublished;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<InformationMessage> MarkAsOpened(Guid userId, Guid informationMessageId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == informationMessageId && x.UserId == userId).ConfigureAwait(false);
+                if (entity == null)
+                    return null;
+
+                entity.DateUpdated = DateTime.UtcNow;
+                entity.WasOpened = true;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+
+                return entity.ToInformationMessage();
+            }
+        }
+
+        public async Task MarkAsOpened(Guid userId, IEnumerable<Guid> ids)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                foreach (var id in ids)
+                {
+                    var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId).ConfigureAwait(false);
+                    if (entity == null)
+                        continue;
+
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.WasOpened = true;
+                }
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -118,8 +158,8 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 return await context.InformationMessages
-                    .OrderByDescending(x => x.DatePublished)
-                    .Select(x => x.DatePublished)
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false) ?? DateTime.MinValue;
             }

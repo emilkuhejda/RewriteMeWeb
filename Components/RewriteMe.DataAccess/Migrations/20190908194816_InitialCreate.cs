@@ -142,7 +142,9 @@ namespace RewriteMe.DataAccess.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: true),
                     CampaignName = table.Column<string>(maxLength: 150, nullable: false),
+                    WasOpened = table.Column<bool>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
+                    DateUpdated = table.Column<DateTime>(nullable: true),
                     DatePublished = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
