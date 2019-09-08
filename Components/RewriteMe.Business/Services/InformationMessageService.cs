@@ -51,6 +51,11 @@ namespace RewriteMe.Business.Services
             return await _informationMessageRepository.MarkAsOpened(userId, informationMessageId).ConfigureAwait(false);
         }
 
+        public async Task MarkAsOpened(Guid userId, IEnumerable<Guid> ids)
+        {
+            await _informationMessageRepository.MarkAsOpened(userId, ids).ConfigureAwait(false);
+        }
+
         public async Task<bool> CanUpdateAsync(Guid informationMessageId)
         {
             return await _informationMessageRepository.CanUpdateAsync(informationMessageId).ConfigureAwait(false);

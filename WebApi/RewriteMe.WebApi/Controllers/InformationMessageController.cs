@@ -64,5 +64,17 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(informationMessage.ToDto());
         }
+
+        [HttpPut("/api/information-messages/mark-messages-as-opened")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [SwaggerOperation(OperationId = "MarkMessagesAsOpened")]
+        public async Task<IActionResult> MarkMessagesAsOpened(IEnumerable<Guid> ids)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+
+            await _informationMessageService.MarkAsOpened(userId, ids).ConfigureAwait(false);
+            return Ok(new OkDto());
+        }
     }
 }

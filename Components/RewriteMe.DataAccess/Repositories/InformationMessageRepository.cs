@@ -127,6 +127,24 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task MarkAsOpened(Guid userId, IEnumerable<Guid> ids)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                foreach (var id in ids)
+                {
+                    var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId).ConfigureAwait(false);
+                    if (entity == null)
+                        continue;
+
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.WasOpened = true;
+                }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<bool> CanUpdateAsync(Guid informationMessageId)
         {
             using (var context = _contextFactory.Create())
