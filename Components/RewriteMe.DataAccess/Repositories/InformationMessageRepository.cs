@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Messages;
 
@@ -109,6 +110,43 @@ namespace RewriteMe.DataAccess.Repositories
 
                 entity.DatePublished = datePublished;
                 entity.DateUpdated = datePublished;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task MarkAsOpened(Guid userId, Guid informationMessageId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.InformationMessages
+                    .SingleOrDefaultAsync(x => x.Id == informationMessageId)
+                    .ConfigureAwait(false);
+
+                if (entity == null)
+                    return;
+
+                if (entity.UserId.HasValue && entity.UserId == userId)
+                {
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.WasOpened = true;
+                }
+
+                if (!entity.UserId.HasValue)
+                {
+                    var exists = await context.OpenedMessages.AnyAsync(x => x.InformationMessageId == informationMessageId && x.UserId == userId).ConfigureAwait(false);
+                    if (exists)
+                        return;
+
+                    var openedMessageEntity = new OpenedMessageEntity
+                    {
+                        Id = Guid.NewGuid(),
+                        InformationMessageId = informationMessageId,
+                        UserId = userId
+                    };
+
+                    await context.OpenedMessages.AddAsync(openedMessageEntity).ConfigureAwait(false);
+                }
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
