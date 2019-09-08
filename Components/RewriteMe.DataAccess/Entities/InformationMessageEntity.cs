@@ -22,7 +22,5 @@ namespace RewriteMe.DataAccess.Entities
         public virtual UserEntity User { get; set; }
 
         public virtual IList<LanguageVersionEntity> LanguageVersions { get; set; }
-
-        public virtual IList<OpenedMessageEntity> OpenedMessages { get; set; }
     }
 }

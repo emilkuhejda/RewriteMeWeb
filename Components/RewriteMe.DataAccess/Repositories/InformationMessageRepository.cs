@@ -118,34 +118,12 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.InformationMessages
-                    .SingleOrDefaultAsync(x => x.Id == informationMessageId)
-                    .ConfigureAwait(false);
-
+                var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == informationMessageId && x.UserId == userId).ConfigureAwait(false);
                 if (entity == null)
                     return;
 
-                if (entity.UserId.HasValue && entity.UserId == userId)
-                {
-                    entity.DateUpdated = DateTime.UtcNow;
-                    entity.WasOpened = true;
-                }
-
-                if (!entity.UserId.HasValue)
-                {
-                    var exists = await context.OpenedMessages.AnyAsync(x => x.InformationMessageId == informationMessageId && x.UserId == userId).ConfigureAwait(false);
-                    if (exists)
-                        return;
-
-                    var openedMessageEntity = new OpenedMessageEntity
-                    {
-                        Id = Guid.NewGuid(),
-                        InformationMessageId = informationMessageId,
-                        UserId = userId
-                    };
-
-                    await context.OpenedMessages.AddAsync(openedMessageEntity).ConfigureAwait(false);
-                }
+                entity.DateUpdated = DateTime.UtcNow;
+                entity.WasOpened = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

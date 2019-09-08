@@ -15,7 +15,6 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.DateCreated).IsRequired();
 
             builder.HasMany(x => x.LanguageVersions).WithOne(x => x.InformationMessage).HasForeignKey(x => x.InformationMessageId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(x => x.OpenedMessages).WithOne(x => x.InformationMessage).HasForeignKey(x => x.InformationMessageId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -40,8 +40,6 @@ namespace RewriteMe.DataAccess
 
         public DbSet<InformationMessageEntity> InformationMessages { get; set; }
 
-        public DbSet<OpenedMessageEntity> OpenedMessages { get; set; }
-
         public DbSet<LanguageVersionEntity> LanguageVersions { get; set; }
 
         public DbSet<UserDeviceEntity> UserDevices { get; set; }
@@ -69,7 +67,6 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ContactFormEntityConfiguration());
             modelBuilder.ApplyConfiguration(new InformationMessageEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new OpenedMessageEntityConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageVersionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserDeviceEntityConfiguration());
         }
