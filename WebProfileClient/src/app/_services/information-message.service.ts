@@ -26,4 +26,8 @@ export class InformationMessageService {
     get(informationMessageId: string): Observable<InformationMessage> {
         return this.http.get<InformationMessage>(this.routingService.getInformationMessagesUri() + informationMessageId).pipe(map(InformationMessageMapper.convert));
     }
+
+    markAsOpened(informationMessageId: string): Observable<InformationMessage> {
+        return this.http.put<InformationMessage>(this.routingService.getMarkMessageAsOpenedUri(), informationMessageId).pipe(map(InformationMessageMapper.convert));
+    }
 }
