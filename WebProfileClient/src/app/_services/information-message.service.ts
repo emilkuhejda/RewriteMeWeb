@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { RoutingService } from './routing.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -11,7 +11,9 @@ import { CommonVariables } from '../_config/common-variables';
     providedIn: 'root'
 })
 export class InformationMessageService {
-    public openedMessages: string[] = [];
+    public messageWasOpened: EventEmitter<void> = new EventEmitter();
+
+    private openedMessages: string[] = [];
 
     constructor(
         private routingService: RoutingService,
@@ -54,6 +56,8 @@ export class InformationMessageService {
 
         this.openedMessages.push(informationMessageId);
         localStorage.setItem(CommonVariables.OpenedMessagesKey, JSON.stringify(this.openedMessages));
+
+        this.messageWasOpened.emit();
     }
 
     updateWasOpenedProperty(informationMessages: InformationMessage[]) {

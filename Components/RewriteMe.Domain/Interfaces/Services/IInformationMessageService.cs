@@ -11,7 +11,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<InformationMessage> GetAsync(Guid informationMessageId);
 
-        Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter, int? count);
+        Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter);
 
         Task<IEnumerable<InformationMessage>> GetAllShallowAsync();
 

@@ -26,9 +26,9 @@ namespace RewriteMe.Business.Services
             return await _informationMessageRepository.GetAsync(informationMessageId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter, int? count)
+        public async Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter)
         {
-            return await _informationMessageRepository.GetAllAsync(userId, updatedAfter, count).ConfigureAwait(false);
+            return await _informationMessageRepository.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<InformationMessage>> GetAllShallowAsync()

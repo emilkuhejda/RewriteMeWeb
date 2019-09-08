@@ -21,14 +21,18 @@ export class TopbarComponent implements OnInit {
 
     ngOnInit() {
         this.msalService.identityChanged.subscribe(() => {
-            this.initialize();
+            this.initializeUserName();
         });
 
-        this.initialize();
+        this.informationMessageService.messageWasOpened.subscribe(() => {
+            this.initializeMessages();
+        });
+
+        this.initializeUserName();
         this.initializeMessages();
     }
 
-    private initialize(): void {
+    private initializeUserName(): void {
         this.userName = this.msalService.getIdentityUserName();
     }
 
@@ -40,8 +44,8 @@ export class TopbarComponent implements OnInit {
                 });
 
                 this.informationMessageService.updateWasOpenedProperty(informationMessages);
-                this.informationMessages = informationMessages;
                 this.unopenedMessagesCount = informationMessages.filter(x => !x.wasOpened).length;
+                this.informationMessages = informationMessages.slice(0, 5);
             });
     }
 }

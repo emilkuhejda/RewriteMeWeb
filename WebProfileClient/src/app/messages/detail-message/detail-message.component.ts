@@ -29,6 +29,7 @@ export class DetailMessageComponent implements OnInit {
                             this.informationMessageService.markAsOpened(messageId).subscribe(
                                 (informationMessage: InformationMessage) => {
                                     this.informationMessage.wasOpened = informationMessage.wasOpened;
+                                    this.informationMessageService.messageWasOpened.emit();
                                 }
                             );
                         }
