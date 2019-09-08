@@ -25,10 +25,20 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Files:</h6>
-                <a class="collapse-item" [routerLink]="['/files']" routerLinkActive="active" [routerLinkActiveOptions]={exact:true}>Overview</a>
-                <a class="collapse-item" [routerLink]="['/files/create']" routerLinkActive="active" [routerLinkActiveOptions]={exact:true}>Create</a>
+                <a class="collapse-item" [routerLink]="['/files']" routerLinkActive="active"
+                    [routerLinkActiveOptions]={exact:true}>Overview</a>
+                <a class="collapse-item" [routerLink]="['/files/create']" routerLinkActive="active"
+                    [routerLinkActiveOptions]={exact:true}>Create</a>
             </div>
         </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/messages']" routerLinkActive="active"
+            [routerLinkActiveOptions]={exact:true}>
+            <i class="fas fa-fw fa-table"></i>
+            <span>Message center</span>
+        </a>
     </li>
 </ul>
 <!-- End of Sidebar -->
