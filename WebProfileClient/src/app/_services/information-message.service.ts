@@ -28,6 +28,8 @@ export class InformationMessageService {
     }
 
     markAsOpened(informationMessageId: string): Observable<InformationMessage> {
-        return this.http.put<InformationMessage>(this.routingService.getMarkMessageAsOpenedUri(), informationMessageId).pipe(map(InformationMessageMapper.convert));
+        let params = new HttpParams();
+        params = params.append('informationMessageId', informationMessageId);
+        return this.http.put<InformationMessage>(this.routingService.getMarkMessageAsOpenedUri(), null, { params: params }).pipe(map(InformationMessageMapper.convert));
     }
 }

@@ -49,7 +49,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(informationMessage.ToDto());
         }
 
-        [HttpPut("/api/information-messages/mark-as-opened/{informationMessageId}")]
+        [HttpPut("/api/information-messages/mark-as-opened")]
         [ProducesResponseType(typeof(InformationMessageDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

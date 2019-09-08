@@ -16,6 +16,7 @@ export class InformationMessageMapper {
     public static convert(data): InformationMessage {
         let informationMessage = new InformationMessage();
         informationMessage.id = data.id;
+        informationMessage.isUserSpecific = data.isUserSpecific;
         informationMessage.wasOpened = data.wasOpened;
         informationMessage.dateUpdated = data.dateUpdated;
         informationMessage.datePublished = data.dateCreated;

@@ -10,6 +10,9 @@ namespace RewriteMe.WebApi.Dtos
         public Guid Id { get; set; }
 
         [Required]
+        public bool IsUserSpecific { get; set; }
+
+        [Required]
         public bool WasOpened { get; set; }
 
         [Required]
