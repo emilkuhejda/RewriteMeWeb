@@ -19,7 +19,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateDatePublishedAsync(Guid informationMessageId, DateTime datePublished);
 
-        Task MarkAsOpened(Guid userId, Guid informationMessageId);
+        Task<InformationMessage> MarkAsOpened(Guid userId, Guid informationMessageId);
 
         Task<bool> CanUpdateAsync(Guid informationMessageId);
 

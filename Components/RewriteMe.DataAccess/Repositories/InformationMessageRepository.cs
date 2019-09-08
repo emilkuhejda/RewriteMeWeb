@@ -114,18 +114,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task MarkAsOpened(Guid userId, Guid informationMessageId)
+        public async Task<InformationMessage> MarkAsOpened(Guid userId, Guid informationMessageId)
         {
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.InformationMessages.SingleOrDefaultAsync(x => x.Id == informationMessageId && x.UserId == userId).ConfigureAwait(false);
                 if (entity == null)
-                    return;
+                    return null;
 
                 entity.DateUpdated = DateTime.UtcNow;
                 entity.WasOpened = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
+
+                return entity.ToInformationMessage();
             }
         }
 
