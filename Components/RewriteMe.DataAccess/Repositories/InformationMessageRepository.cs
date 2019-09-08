@@ -49,8 +49,10 @@ namespace RewriteMe.DataAccess.Repositories
                 var query = context.InformationMessages
                     .Include(x => x.LanguageVersions)
                     .AsNoTracking()
-                    .OrderByDescending(x => x.DatePublished)
-                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DatePublished.HasValue && x.DatePublished >= updatedAfter);
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) &&
+                                ((x.DatePublished.HasValue && x.DatePublished >= updatedAfter) ||
+                                 (x.DateUpdated.HasValue && x.DateUpdated >= updatedAfter)));
 
                 if (count.HasValue)
                     query = query.Take(count.Value);
@@ -88,6 +90,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.CampaignName = informationMessage.CampaignName;
+                entity.DateUpdated = DateTime.UtcNow;
                 entity.LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList();
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -105,6 +108,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.DatePublished = datePublished;
+                entity.DateUpdated = datePublished;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -122,8 +126,8 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 return await context.InformationMessages
-                    .OrderByDescending(x => x.DatePublished)
-                    .Select(x => x.DatePublished)
+                    .OrderByDescending(x => x.DateUpdated)
+                    .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false) ?? DateTime.MinValue;
             }
