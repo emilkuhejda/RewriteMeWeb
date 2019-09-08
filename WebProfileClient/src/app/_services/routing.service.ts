@@ -51,6 +51,14 @@ export class RoutingService {
         return this.getApiUri() + "api/subscriptions/remaining-time/";
     }
 
+    getInformationMessagesUri(): string {
+        return this.getApiUri() + "api/information-messages/";
+    }
+
+    getMarkMessageAsOpenedUri(): string {
+        return this.getApiUri() + "api/information-messages/mark-as-opened/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

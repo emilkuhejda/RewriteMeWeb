@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190907185223_InitialCreate")]
+    [Migration("20190908194816_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,7 +218,11 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime?>("DatePublished");
 
+                    b.Property<DateTime?>("DateUpdated");
+
                     b.Property<Guid?>("UserId");
+
+                    b.Property<bool>("WasOpened");
 
                     b.HasKey("Id");
 

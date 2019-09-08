@@ -216,7 +216,11 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime?>("DatePublished");
 
+                    b.Property<DateTime?>("DateUpdated");
+
                     b.Property<Guid?>("UserId");
+
+                    b.Property<bool>("WasOpened");
 
                     b.HasKey("Id");
 

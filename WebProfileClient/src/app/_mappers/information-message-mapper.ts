@@ -1,4 +1,5 @@
 import { InformationMessage } from '../_models/information-message';
+
 import { LanguageVersionMapper } from './language-version-mapper';
 
 export class InformationMessageMapper {
@@ -15,12 +16,10 @@ export class InformationMessageMapper {
     public static convert(data): InformationMessage {
         let informationMessage = new InformationMessage();
         informationMessage.id = data.id;
-        informationMessage.userId = data.userId;
-        informationMessage.campaignName = data.campaignName;
+        informationMessage.isUserSpecific = data.isUserSpecific;
         informationMessage.wasOpened = data.wasOpened;
-        informationMessage.dateCreated = data.dateCreated;
-        informationMessage.dateUpdated = data.dateUpdated;
-        informationMessage.datePublished = data.datePublished;
+        informationMessage.dateUpdated = new Date(data.dateUpdated);
+        informationMessage.datePublished = new Date(data.datePublished);
         informationMessage.languageVersions = LanguageVersionMapper.convertAll(data.languageVersions);
 
         return informationMessage;

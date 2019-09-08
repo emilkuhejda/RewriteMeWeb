@@ -4,8 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.Rest;
+using RewriteMe.Business.InformationMessages;
 using RewriteMe.Common.Helpers;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Settings;
@@ -20,6 +24,8 @@ namespace RewriteMe.Business.Managers
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ITranscribeItemSourceService _transcribeItemSourceService;
+        private readonly IInformationMessageService _informationMessageService;
+        private readonly IPushNotificationsService _pushNotificationsService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
@@ -30,6 +36,8 @@ namespace RewriteMe.Business.Managers
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
             ITranscribeItemSourceService transcribeItemSourceService,
+            IInformationMessageService informationMessageService,
+            IPushNotificationsService pushNotificationsService,
             IApplicationLogService applicationLogService,
             IWavFileManager wavFileManager,
             IOptions<AppSettings> options)
@@ -39,6 +47,8 @@ namespace RewriteMe.Business.Managers
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _transcribeItemSourceService = transcribeItemSourceService;
+            _informationMessageService = informationMessageService;
+            _pushNotificationsService = pushNotificationsService;
             _applicationLogService = applicationLogService;
             _wavFileManager = wavFileManager;
             _appSettings = options.Value;
@@ -92,6 +102,8 @@ namespace RewriteMe.Business.Managers
                 await _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
                 throw;
             }
+
+            await SendNotificationsAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem)
@@ -127,6 +139,44 @@ namespace RewriteMe.Business.Managers
             {
                 if (File.Exists(file.Path))
                     File.Delete(file.Path);
+            }
+        }
+
+        private async Task SendNotificationsAsync(Guid userId, Guid fileItemId)
+        {
+            var informationMessage = GenericNotifications.GetTranscriptionSuccess(userId, fileItemId);
+
+            await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
+            try
+            {
+                var tasks = new[]
+                {
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.English),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.English),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.Slovak)
+                };
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+            catch (SerializationException ex)
+            {
+                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.Message}'", userId).ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
+            }
+            catch (NotificationErrorException ex)
+            {
+                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.NotificationError.Message}'", userId).ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
+            }
+            catch (LanguageVersionNotExistsException)
+            {
+                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.", userId).ConfigureAwait(false);
+            }
+            catch (PushNotificationWasSentException)
+            {
+                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.", userId).ConfigureAwait(false);
             }
         }
     }

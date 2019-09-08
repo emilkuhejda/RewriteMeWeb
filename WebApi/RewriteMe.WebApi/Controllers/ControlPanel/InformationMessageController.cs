@@ -102,11 +102,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             catch (LanguageVersionNotExistsException)
             {
                 await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+
                 return NotFound();
             }
             catch (PushNotificationWasSentException)
             {
                 await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+
                 return StatusCode(409);
             }
         }
