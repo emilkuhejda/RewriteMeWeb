@@ -16,6 +16,8 @@ export class InformationMessageMapper {
     public static convert(data): InformationMessage {
         let informationMessage = new InformationMessage();
         informationMessage.id = data.id;
+        informationMessage.wasOpened = data.wasOpened;
+        informationMessage.dateUpdated = data.dateUpdated;
         informationMessage.datePublished = data.dateCreated;
         informationMessage.languageVersions = LanguageVersionMapper.convertAll(data.languageVersions);
 

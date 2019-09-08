@@ -3,6 +3,8 @@ import { Language } from '../_enums/language';
 
 export class InformationMessage {
     id: string;
+    wasOpened: boolean;
+    dateUpdated: string;
     datePublished: string;
     languageVersions: LanguageVersion[];
 

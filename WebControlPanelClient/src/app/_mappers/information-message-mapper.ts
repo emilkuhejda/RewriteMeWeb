@@ -17,7 +17,10 @@ export class InformationMessageMapper {
         informationMessage.id = data.id;
         informationMessage.userId = data.userId;
         informationMessage.campaignName = data.campaignName;
+        informationMessage.wasOpened = data.wasOpened;
         informationMessage.dateCreated = data.dateCreated;
+        informationMessage.dateUpdated = data.dateUpdated;
+        informationMessage.datePublished = data.datePublished;
         informationMessage.languageVersions = LanguageVersionMapper.convertAll(data.languageVersions);
 
         return informationMessage;
