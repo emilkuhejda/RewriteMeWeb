@@ -51,6 +51,10 @@ export class RoutingService {
         return this.getApiUri() + "api/subscriptions/remaining-time/";
     }
 
+    getInformationMessagesUri(): string {
+        return this.getApiUri() + "api/information-messages/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

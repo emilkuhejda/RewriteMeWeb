@@ -42,16 +42,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter)
+        public async Task<IEnumerable<InformationMessage>> GetAllAsync(Guid userId, DateTime updatedAfter, int? count)
         {
             using (var context = _contextFactory.Create())
             {
-                var entities = await context.InformationMessages
+                var query = context.InformationMessages
                     .Include(x => x.LanguageVersions)
-                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DatePublished.HasValue && x.DatePublished >= updatedAfter)
                     .AsNoTracking()
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .OrderByDescending(x => x.DatePublished)
+                    .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) && x.DatePublished.HasValue && x.DatePublished >= updatedAfter);
+
+                if (count.HasValue)
+                    query = query.Take(count.Value);
+
+                var entities = await query.ToListAsync().ConfigureAwait(false);
 
                 return entities.Select(x => x.ToInformationMessage());
             }

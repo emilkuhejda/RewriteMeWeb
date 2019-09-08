@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MsalService } from 'src/app/_services/msal.service';
+import { InformationMessageService } from 'src/app/_services/information-message.service';
+import { InformationMessage } from 'src/app/_models/information-message';
 
 @Component({
     selector: 'app-topbar',
@@ -7,9 +9,15 @@ import { MsalService } from 'src/app/_services/msal.service';
     styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent implements OnInit {
-    userName: string;
+    private recordsToDisplay: number = 3;
 
-    constructor(private msalService: MsalService) { }
+    userName: string;
+    informationMessages: InformationMessage[];
+    unopenedMessagesCount: number;
+
+    constructor(
+        private msalService: MsalService,
+        private informationMessageService: InformationMessageService) { }
 
     ngOnInit() {
         this.msalService.identityChanged.subscribe(() => {
@@ -17,9 +25,20 @@ export class TopbarComponent implements OnInit {
         });
 
         this.initialize();
+        this.initializeMessages();
     }
 
     private initialize(): void {
         this.userName = this.msalService.getIdentityUserName();
+    }
+
+    private initializeMessages() {
+        this.informationMessageService.getAll(this.recordsToDisplay).subscribe(
+            (informationMessages: InformationMessage[]) => {
+                this.informationMessages = informationMessages.sort((a, b) => {
+                    return <any>new Date(b.datePublished) - <any>new Date(a.datePublished);
+                });
+                this.unopenedMessagesCount = informationMessages.length;
+            });
     }
 }

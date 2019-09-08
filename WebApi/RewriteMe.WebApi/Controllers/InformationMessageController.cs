@@ -31,12 +31,22 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<InformationMessageDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "GetInformationMessages")]
-        public async Task<IActionResult> GetAll(DateTime updatedAfter)
+        public async Task<IActionResult> GetAll(DateTime updatedAfter, int? count)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), count).ConfigureAwait(false);
 
             return Ok(informationMessages.Select(x => x.ToDto()));
+        }
+
+        [HttpGet("/api/control-panel/information-messages/{informationMessageId}")]
+        [ProducesResponseType(typeof(InformationMessageDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> Get(Guid informationMessageId)
+        {
+            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+            return Ok(informationMessage);
         }
     }
 }
