@@ -19,9 +19,12 @@ export class MessagesComponent implements OnInit {
     ngOnInit() {
         this.informationMessageService.getAll(undefined).subscribe(
             (informationMessages: InformationMessage[]) => {
-                this.informationMessages = informationMessages.sort((a, b) => {
+                informationMessages = informationMessages.sort((a, b) => {
                     return <any>new Date(b.datePublished) - <any>new Date(a.datePublished);
                 });
+
+                this.informationMessageService.updateWasOpenedProperty(informationMessages);
+                this.informationMessages = informationMessages;
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
