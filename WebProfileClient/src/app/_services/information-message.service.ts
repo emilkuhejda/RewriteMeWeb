@@ -5,14 +5,28 @@ import { Observable } from 'rxjs';
 import { InformationMessage } from '../_models/information-message';
 import { map } from 'rxjs/operators';
 import { InformationMessageMapper } from '../_mappers/information-message-mapper';
+import { CommonVariables } from '../_config/common-variables';
 
 @Injectable({
     providedIn: 'root'
 })
 export class InformationMessageService {
+    public openedMessages: string[] = [];
+
     constructor(
         private routingService: RoutingService,
-        private http: HttpClient) { }
+        private http: HttpClient) {
+        this.initializeOpenedMessages();
+    }
+
+    private initializeOpenedMessages(): string[] {
+        var values = localStorage.getItem(CommonVariables.OpenedMessagesKey);
+        if (values == null) {
+            return;
+        }
+
+        this.openedMessages = JSON.parse(values);
+    }
 
     getAll(count: number): Observable<InformationMessage[]> {
         let params = new HttpParams();
@@ -31,5 +45,26 @@ export class InformationMessageService {
         let params = new HttpParams();
         params = params.append('informationMessageId', informationMessageId);
         return this.http.put<InformationMessage>(this.routingService.getMarkMessageAsOpenedUri(), null, { params: params }).pipe(map(InformationMessageMapper.convert));
+    }
+
+    markAsOpenedLocally(informationMessageId: string) {
+        if (this.openedMessages.some(x => x == informationMessageId)) {
+            return;
+        }
+
+        this.openedMessages.push(informationMessageId);
+        localStorage.setItem(CommonVariables.OpenedMessagesKey, JSON.stringify(this.openedMessages));
+    }
+
+    updateWasOpenedProperty(informationMessages: InformationMessage[]) {
+        let informationMessage = new InformationMessage();
+        for (informationMessage of informationMessages) {
+            if (informationMessage.isUserSpecific) continue;
+
+            var dateToCompare = new Date();
+            dateToCompare.setDate(dateToCompare.getDate() - 7);
+
+            informationMessage.wasOpened = informationMessage.datePublished < dateToCompare || this.openedMessages.some(x => x == informationMessage.id);
+        }
     }
 }

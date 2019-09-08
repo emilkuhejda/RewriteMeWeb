@@ -24,12 +24,17 @@ export class DetailMessageComponent implements OnInit {
             this.informationMessageService.get(messageId).subscribe(
                 (informationMessage: InformationMessage) => {
                     this.informationMessage = informationMessage;
-                    if (informationMessage.isUserSpecific && !informationMessage.wasOpened) {
-                        this.informationMessageService.markAsOpened(messageId).subscribe(
-                            (informationMessage: InformationMessage) => {
-                                this.informationMessage.wasOpened = informationMessage.wasOpened;
-                            }
-                        );
+                    if (informationMessage.isUserSpecific) {
+                        if (!informationMessage.wasOpened) {
+                            this.informationMessageService.markAsOpened(messageId).subscribe(
+                                (informationMessage: InformationMessage) => {
+                                    this.informationMessage.wasOpened = informationMessage.wasOpened;
+                                }
+                            );
+                        }
+                    }
+                    else {
+                        this.informationMessageService.markAsOpenedLocally(informationMessage.id);
                     }
                 },
                 (err: ErrorResponse) => {

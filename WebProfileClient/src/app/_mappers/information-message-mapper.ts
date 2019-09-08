@@ -18,8 +18,8 @@ export class InformationMessageMapper {
         informationMessage.id = data.id;
         informationMessage.isUserSpecific = data.isUserSpecific;
         informationMessage.wasOpened = data.wasOpened;
-        informationMessage.dateUpdated = data.dateUpdated;
-        informationMessage.datePublished = data.dateCreated;
+        informationMessage.dateUpdated = new Date(data.dateUpdated);
+        informationMessage.datePublished = new Date(data.datePublished);
         informationMessage.languageVersions = LanguageVersionMapper.convertAll(data.languageVersions);
 
         return informationMessage;

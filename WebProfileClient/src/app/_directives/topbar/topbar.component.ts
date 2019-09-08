@@ -35,10 +35,13 @@ export class TopbarComponent implements OnInit {
     private initializeMessages() {
         this.informationMessageService.getAll(this.recordsToDisplay).subscribe(
             (informationMessages: InformationMessage[]) => {
-                this.informationMessages = informationMessages.sort((a, b) => {
+                informationMessages = informationMessages.sort((a, b) => {
                     return <any>new Date(b.datePublished) - <any>new Date(a.datePublished);
                 });
-                this.unopenedMessagesCount = informationMessages.length;
+
+                this.informationMessageService.updateWasOpenedProperty(informationMessages);
+                this.informationMessages = informationMessages;
+                this.unopenedMessagesCount = informationMessages.filter(x => !x.wasOpened).length;
             });
     }
 }

@@ -24,7 +24,7 @@
                 </h6>
                 <a *ngFor="let informationMessage of informationMessages"
                     class="dropdown-item d-flex align-items-center" [routerLink]="['/messages', informationMessage.id]">
-                    <div class="font-weight-bold">
+                    <div [class.font-weight-bold]="!informationMessage.wasOpened">
                         <div class="text-truncate">{{informationMessage.getTitle()}}</div>
                         <div class="text-truncate small text-gray-500">{{informationMessage.getMessage()}}</div>
                     </div>

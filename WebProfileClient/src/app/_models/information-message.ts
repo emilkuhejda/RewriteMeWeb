@@ -5,8 +5,8 @@ export class InformationMessage {
     id: string;
     isUserSpecific: boolean;
     wasOpened: boolean;
-    dateUpdated: string;
-    datePublished: string;
+    dateUpdated: Date;
+    datePublished: Date;
     languageVersions: LanguageVersion[];
 
     getTitle(): string {
