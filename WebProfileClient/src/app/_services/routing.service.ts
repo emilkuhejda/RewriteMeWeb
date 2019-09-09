@@ -15,6 +15,18 @@ export class RoutingService {
         return this.getApiUri() + "api/files/";
     }
 
+    getTemporaryDeletedFileItemsUri(): string {
+        return this.getApiUri() + "api/files/temporary-deleted/";
+    }
+
+    getPermanentDeleteAll(): string {
+        return this.getApiUri() + "api/files/permanent-delete-all/";
+    }
+
+    getRestoreAllUri(): string {
+        return this.getApiUri() + "api/files/restore-all/";
+    }
+
     getTranscribeItemsUri(): string {
         return this.getApiUri() + "api/transcribe-items/";
     }

@@ -69,6 +69,16 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(ids);
         }
 
+        [HttpGet("/api/files/temporary-deleted")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> GetTemporaryDeletedFileItems()
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var fileItems = await _fileItemService.GetTemporaryDeletedFileItemsAsync(userId).ConfigureAwait(false);
+
+            return Ok(fileItems);
+        }
+
         [HttpGet("/api/files/deleted-total-time")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -211,6 +221,26 @@ namespace RewriteMe.WebApi.Controllers
             var userId = HttpContext.User.GetNameIdentifier();
 
             await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
+
+            return Ok(new OkDto());
+        }
+
+        [HttpPut("/api/files/permanent-delete-all")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+
+            return Ok(new OkDto());
+        }
+
+        [HttpPut("/api/files/restore-all")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }
