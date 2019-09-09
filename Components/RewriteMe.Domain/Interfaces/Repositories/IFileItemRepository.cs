@@ -31,7 +31,9 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId);
 
-        Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId, bool isPermanentDelete);
+        Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId);
+
+        Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId);
 
         Task RestoreAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId);
 

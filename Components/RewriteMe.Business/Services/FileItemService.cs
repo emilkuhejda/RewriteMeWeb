@@ -74,9 +74,14 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
         }
 
-        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId, bool isPermanentDelete)
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
-            await _fileItemRepository.DeleteAllAsync(userId, fileItems, applicationId, isPermanentDelete).ConfigureAwait(false);
+            await _fileItemRepository.DeleteAllAsync(userId, fileItems, applicationId).ConfigureAwait(false);
+        }
+
+        public async Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            await _fileItemRepository.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
         }
 
         public async Task RestoreAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)

@@ -174,7 +174,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId, bool isPermanentDelete)
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
             var deletedFileItems = fileItems.ToList();
             using (var context = _contextFactory.Create())
@@ -198,11 +198,30 @@ namespace RewriteMe.DataAccess.Repositories
                     entity.ApplicationId = applicationId;
                     entity.DateUpdated = DateTime.UtcNow;
                     entity.IsDeleted = true;
+                }
 
-                    if (isPermanentDelete)
-                    {
-                        entity.IsPermanentlyDeleted = true;
-                    }
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => fileItemIds.Contains(x.Id) && x.UserId == userId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!entities.Any())
+                    return;
+
+                foreach (var entity in entities)
+                {
+                    entity.ApplicationId = applicationId;
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.IsDeleted = true;
+                    entity.IsPermanentlyDeleted = true;
                 }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
