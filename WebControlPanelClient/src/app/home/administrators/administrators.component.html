@@ -12,6 +12,7 @@
     <div class="card-header py-3 align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Administrators</h6>
     </div>
+
     <!-- Card Body -->
     <div class="card-body">
         <div class="table-responsive">
@@ -40,8 +41,7 @@
                         <td>
                             <button (click)="delete(administrator)" class="btn btn-link">Delete</button>
                             <span> | </span>
-                            <a [routerLink]="['/administrators/edit', administrator.id]"
-                                class="btn btn-link">Edit</a>
+                            <a [routerLink]="['/administrators/edit', administrator.id]" class="btn btn-link">Edit</a>
                         </td>
                     </tr>
                 </tbody>

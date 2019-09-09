@@ -12,6 +12,9 @@ export class UserSubscriptionMapper {
     }
 
     public static convert(data): UserSubscription {
+        if (data === null || data === undefined)
+            return null;
+
         let userSubscription = new UserSubscription();
         userSubscription.id = data.id;
         userSubscription.userId = data.userId;

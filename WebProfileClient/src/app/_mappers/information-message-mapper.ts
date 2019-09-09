@@ -14,6 +14,9 @@ export class InformationMessageMapper {
     }
 
     public static convert(data): InformationMessage {
+        if (data === null || data === undefined)
+            return null;
+
         let informationMessage = new InformationMessage();
         informationMessage.id = data.id;
         informationMessage.isUserSpecific = data.isUserSpecific;

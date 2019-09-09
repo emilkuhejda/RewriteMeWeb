@@ -12,6 +12,9 @@ export class ContactFormMapper {
     }
 
     public static convert(data): ContactForm {
+        if (data === null || data === undefined)
+            return null;
+
         let contactForm = new ContactForm();
         contactForm.id = data.id;
         contactForm.name = data.name;

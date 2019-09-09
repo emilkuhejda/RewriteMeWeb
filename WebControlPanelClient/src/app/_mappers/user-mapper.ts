@@ -12,6 +12,9 @@ export class UserMapper {
     }
 
     public static convert(data): User {
+        if (data === null || data === undefined)
+            return null;
+
         let user = new User();
         user.id = data.id;
         user.email = data.email;

@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { first } from 'rxjs/operators';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { MustMatch } from 'src/app/_validators/must-match';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-edit-administrator',
@@ -19,6 +20,7 @@ export class EditAdministratorComponent implements OnInit {
     submitted: boolean = false;
 
     constructor(
+        private location: Location,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -46,6 +48,10 @@ export class EditAdministratorComponent implements OnInit {
                     this.alertService.error(err.message);
                 });
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     get controls() {

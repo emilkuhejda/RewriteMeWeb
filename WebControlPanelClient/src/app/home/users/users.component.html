@@ -9,6 +9,7 @@
     <div class="card-header py-3 align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Users Overview</h6>
     </div>
+
     <!-- Card Body -->
     <div class="card-body">
         <div class="table-responsive">
@@ -41,6 +42,8 @@
                             <a [routerLink]="['/users/purchases', user.id]">Purchases</a>
                             <span> | </span>
                             <a [routerLink]="['/users/subscriptions', user.id]">Subscriptions</a>
+                            <span> | </span>
+                            <a [routerLink]="['/users/files', user.id]">Files</a>
                         </td>
                     </tr>
                 </tbody>

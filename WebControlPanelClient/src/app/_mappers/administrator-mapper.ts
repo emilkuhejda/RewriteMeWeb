@@ -12,6 +12,9 @@ export class AdministratorMapper {
     }
 
     public static convert(data): Administrator {
+        if (data === null || data === undefined)
+            return null;
+
         let administrator = new Administrator();
         administrator.id = data.id;
         administrator.username = data.username;

@@ -9,6 +9,7 @@ import { CreateSubscriptionDialogComponent } from 'src/app/_directives/create-su
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-subscriptions',
@@ -21,6 +22,7 @@ export class SubscriptionsComponent implements OnInit {
     userSubscriptions: UserSubscription[];
 
     constructor(
+        private location: Location,
         private route: ActivatedRoute,
         private subscriptionsService: SubscriptionsService,
         private alertService: AlertService,
@@ -31,6 +33,10 @@ export class SubscriptionsComponent implements OnInit {
             this.userId = paramMap.get("userId");
             this.initialize();
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     create() {

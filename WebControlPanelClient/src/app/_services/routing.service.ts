@@ -35,6 +35,18 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/subscriptions/create/";
     }
 
+    getFileItemsUri(): string {
+        return this.getApiUri() + "api/control-panel/files/";
+    }
+
+    getDetailFileItemsUri(): string {
+        return this.getApiUri() + "api/control-panel/files/detail/";
+    }
+
+    getRestoreFileItemUri(): string {
+        return this.getApiUri() + "api/control-panel/files/restore/";
+    }
+
     getAdministratorsUri(): string {
         return this.getApiUri() + "api/control-panel/administrators/";
     }
