@@ -5,6 +5,7 @@ import { InformationMessageService } from 'src/app/_services/information-message
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { first } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-create-information-message',
@@ -17,6 +18,7 @@ export class CreateInformationMessageComponent implements OnInit {
     submitted: boolean = false;
 
     constructor(
+        private location: Location,
         private formBuilder: FormBuilder,
         private router: Router,
         private informationMessageService: InformationMessageService,
@@ -32,6 +34,10 @@ export class CreateInformationMessageComponent implements OnInit {
             descriptionEn: ['', Validators.required],
             descriptionSk: ['', Validators.required]
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     get controls() {

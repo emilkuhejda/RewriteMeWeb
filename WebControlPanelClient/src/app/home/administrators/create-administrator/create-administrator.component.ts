@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { first } from 'rxjs/operators';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { MustMatch } from 'src/app/_validators/must-match';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-create-administrator',
@@ -18,6 +19,7 @@ export class CreateAdministratorComponent implements OnInit {
     submitted: boolean = false;
 
     constructor(
+        private location: Location,
         private formBuilder: FormBuilder,
         private router: Router,
         private administratorService: AdministratorService,
@@ -31,6 +33,10 @@ export class CreateAdministratorComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['']
         }, { validator: MustMatch('password', 'confirmPassword') });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     get controls() {

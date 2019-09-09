@@ -7,7 +7,12 @@
 <div class="card shadow mb-4">
     <!-- Card Header - Dropdown -->
     <div class="card-header py-3 align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Billing purchases</h6>
+        <h6 class="m-0 font-weight-bold text-primary">
+            <a (click)="goBack()">
+                <i class="fa fa-arrow-circle-left "></i>
+                Billing purchases
+            </a>
+        </h6>
     </div>
     <!-- Card Body -->
     <div class="card-body">
@@ -33,7 +38,9 @@
                 </tfoot>
                 <tbody>
                     <tr *ngFor="let billingPurchase of billingPurchases">
-                        <td><a [routerLink]="['/users/purchases/detail', billingPurchase.id]">{{billingPurchase.purchaseId}}</a></td>
+                        <td><a
+                                [routerLink]="['/users/purchases/detail', billingPurchase.id]">{{billingPurchase.purchaseId}}</a>
+                        </td>
                         <td>{{billingPurchase.productId}}</td>
                         <td>{{billingPurchase.purchaseState}}</td>
                         <td>{{billingPurchase.purchaseToken|truncate:[10]}}</td>

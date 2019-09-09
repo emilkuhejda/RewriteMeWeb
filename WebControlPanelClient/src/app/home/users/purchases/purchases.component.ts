@@ -7,6 +7,7 @@ import { BillingPurchase } from 'src/app/_models/billing-purchase';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-purchases',
@@ -18,6 +19,7 @@ export class PurchasesComponent implements OnInit {
     billingPurchases: BillingPurchase[];
 
     constructor(
+        private location: Location,
         private route: ActivatedRoute,
         private billingPurchaseService: BillingPurchaseService,
         private alertService: AlertService) { }
@@ -38,6 +40,10 @@ export class PurchasesComponent implements OnInit {
                 }
             );
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     ngAfterViewInit() {

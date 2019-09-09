@@ -10,6 +10,7 @@ import { Language } from 'src/app/_enums/language';
 import { LanguageVersion } from 'src/app/_models/language-version';
 import { RuntimePlatform } from 'src/app/_enums/runtime-platform';
 import { forkJoin } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-detail-information-message',
@@ -19,6 +20,7 @@ import { forkJoin } from 'rxjs';
 export class DetailInformationMessageComponent implements OnInit {
     private informationMessageId: string;
     editForm: FormGroup;
+    campaignName: string;
     englishVersion: LanguageVersion;
     slovakVersion: LanguageVersion;
     sendingNotification: boolean;
@@ -28,6 +30,7 @@ export class DetailInformationMessageComponent implements OnInit {
     canToSendAll: boolean = false;
 
     constructor(
+        private location: Location,
         private formBuilder: FormBuilder,
         private router: Router,
         private route: ActivatedRoute,
@@ -49,6 +52,10 @@ export class DetailInformationMessageComponent implements OnInit {
             this.informationMessageId = paramMap.get("informationMessageId");
             this.initializeInformationMessage();
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     get controls() {
@@ -184,6 +191,7 @@ export class DetailInformationMessageComponent implements OnInit {
         this.informationMessageService.get(this.informationMessageId).subscribe(
             (informationMessage: InformationMessage) => {
                 this.initialize(informationMessage);
+                this.campaignName = informationMessage.campaignName;
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
