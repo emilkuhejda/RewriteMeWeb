@@ -51,9 +51,24 @@
                     </table>
                 </div>
             </mat-tab>
-            
-            <mat-tab label="Deleted files"></mat-tab>
-            
+
+            <mat-tab label="Deleted files">
+                <div class="p-3">
+                    <ul class="list-group">
+                        <li *ngFor="let fileItem of deletedFileItems">
+                            <div class="row">
+                                <div class="col">{{fileItem.name}}</div>
+                                <div class="col-2">
+                                    <a (click)="restore(fileItem)">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </mat-tab>
+
             <mat-tab label="Permanently deleted files"></mat-tab>
         </mat-tab-group>
     </div>
