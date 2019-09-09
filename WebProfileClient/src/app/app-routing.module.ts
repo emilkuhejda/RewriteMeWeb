@@ -9,6 +9,7 @@ import { AccountComponent } from './account/account.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { DetailMessageComponent } from './messages/detail-message/detail-message.component';
 import { MessagesComponent } from './messages/messages.component';
+import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'files', pathMatch: 'full' },
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: 'account', component: AccountComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'messages', component: MessagesComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'messages/:messageId', component: DetailMessageComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: 'recycle-bin', component: RecycleBinComponent, pathMatch: 'full', canActivate: [AuthGuard] }
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
@@ -37,5 +39,6 @@ export const routingComponents = [
     AccountComponent,
     MessagesComponent,
     DetailMessageComponent,
+    RecycleBinComponent,
     NotFoundComponent
 ]

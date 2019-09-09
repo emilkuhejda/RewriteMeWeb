@@ -46,6 +46,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<IEnumerable<FileItem>> GetTemporaryDeletedFileItemsAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => x.IsDeleted && !x.IsPermanentlyDeleted)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return entities?.Select(x => x.ToFileItem());
+            }
+        }
+
         public async Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
@@ -160,7 +174,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
+        public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId, bool isPermanentDelete)
         {
             var deletedFileItems = fileItems.ToList();
             using (var context = _contextFactory.Create())
@@ -184,6 +198,35 @@ namespace RewriteMe.DataAccess.Repositories
                     entity.ApplicationId = applicationId;
                     entity.DateUpdated = DateTime.UtcNow;
                     entity.IsDeleted = true;
+
+                    if (isPermanentDelete)
+                    {
+                        entity.IsPermanentlyDeleted = true;
+                    }
+                }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task RestoreAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => fileItemIds.Contains(x.Id) && x.UserId == userId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!entities.Any())
+                    return;
+
+                foreach (var entity in entities)
+                {
+                    entity.ApplicationId = applicationId;
+                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.IsDeleted = false;
+                    entity.IsPermanentlyDeleted = false;
                 }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
