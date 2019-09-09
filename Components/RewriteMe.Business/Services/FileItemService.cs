@@ -54,6 +54,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<FileItem> GetAsAdminAsync(Guid fileItemId)
+        {
+            return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+        }
+
         public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
         {
             return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);

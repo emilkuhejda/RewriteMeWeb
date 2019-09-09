@@ -14,6 +14,9 @@ export class FileItemMapper {
     }
 
     public static convert(data): FileItem {
+        if (data === null || data === undefined)
+            return null;
+
         let fileItem = new FileItem();
         fileItem.id = data.id;
         fileItem.name = data.name;

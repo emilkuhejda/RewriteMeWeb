@@ -18,6 +18,10 @@ export class FileItemService {
         return this.http.get<FileItem[]>(this.routingService.getFileItemsUri() + userId).pipe(map(FileItemMapper.convertAll))
     }
 
+    get(fileItemId: string): Observable<FileItem> {
+        return this.http.get<FileItem>(this.routingService.getDetailFileItemsUri() + fileItemId).pipe(map(FileItemMapper.convert))
+    }
+
     restore(userId: string, fileItemId: string) {
         let params = new HttpParams();
         params = params.append('userId', userId);

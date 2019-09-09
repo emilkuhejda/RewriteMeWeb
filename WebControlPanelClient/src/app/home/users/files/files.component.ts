@@ -14,7 +14,7 @@ import { DialogComponent } from 'src/app/_directives/dialog/dialog.component';
     styleUrls: ['./files.component.css']
 })
 export class FilesComponent implements OnInit {
-    private userId: string;
+    userId: string;
     fileItems: FileItem[] = [];
     deletedFileItems: FileItem[] = [];
     permanentlyDeletedFileItems: FileItem[] = [];

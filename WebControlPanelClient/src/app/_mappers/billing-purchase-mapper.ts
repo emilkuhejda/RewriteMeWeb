@@ -12,6 +12,9 @@ export class BillingPurchaseMapper {
     }
 
     public static convert(data): BillingPurchase {
+        if (data === null || data === undefined)
+            return null;
+
         let billingPurchase = new BillingPurchase();
         billingPurchase.id = data.id;
         billingPurchase.userId = data.userId;

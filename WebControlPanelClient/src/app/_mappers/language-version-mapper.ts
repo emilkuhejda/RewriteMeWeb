@@ -16,6 +16,9 @@ export class LanguageVersionMapper {
     }
 
     public static convert(data): LanguageVersion {
+        if (data === null || data === undefined)
+            return null;
+
         let languageVersion = new LanguageVersion();
         languageVersion.id = data.id;
         languageVersion.informationMessageId = data.informationMessageId;

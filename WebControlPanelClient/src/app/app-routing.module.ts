@@ -18,6 +18,7 @@ import { InformationMessagesComponent } from './home/information-messages/inform
 import { CreateInformationMessageComponent } from './home/information-messages/create-information-message/create-information-message.component';
 import { DetailInformationMessageComponent } from './home/information-messages/detail-information-message/detail-information-message.component';
 import { FilesComponent } from './home/users/files/files.component';
+import { DetailFileComponent } from './users/files/detail-file/detail-file.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const routes: Routes = [
     { path: 'users/purchases/detail/:purchaseId', component: DetailPurchaseComponent, canActivate: [AuthGuard] },
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'users/files/:userId', component: FilesComponent, canActivate: [AuthGuard] },
+    { path: 'users/files/:userId/:fileItemId', component: DetailFileComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
     { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] },
@@ -54,6 +56,7 @@ export const routingComponents = [
     DetailPurchaseComponent,
     SubscriptionsComponent,
     FilesComponent,
+    DetailFileComponent,
     AdministratorsComponent,
     CreateAdministratorComponent,
     EditAdministratorComponent,

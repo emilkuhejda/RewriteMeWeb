@@ -27,9 +27,17 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpGet("/api/control-panel/files/{userId}")]
-        public async Task<IActionResult> Get(Guid userId)
+        public async Task<IActionResult> GetAll(Guid userId)
         {
             var fileItems = await _fileItemService.GetAllForUserAsync(userId).ConfigureAwait(false);
+
+            return Ok(fileItems);
+        }
+
+        [HttpGet("/api/control-panel/files/detail/{fileItemId}")]
+        public async Task<IActionResult> Get(Guid fileItemId)
+        {
+            var fileItems = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
 
             return Ok(fileItems);
         }

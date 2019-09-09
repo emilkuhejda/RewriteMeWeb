@@ -116,6 +116,19 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<FileItem> GetAsAdminAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = await context.FileItems
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == fileItemId)
+                    .ConfigureAwait(false);
+
+                return fileItem?.ToFileItem();
+            }
+        }
+
         public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
         {
             using (var context = _contextFactory.Create())

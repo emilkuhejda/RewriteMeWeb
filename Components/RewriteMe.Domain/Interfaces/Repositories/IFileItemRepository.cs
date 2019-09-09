@@ -23,6 +23,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<FileItem> GetAsync(Guid userId, Guid fileItemId);
 
+        Task<FileItem> GetAsAdminAsync(Guid fileItemId);
+
         Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);

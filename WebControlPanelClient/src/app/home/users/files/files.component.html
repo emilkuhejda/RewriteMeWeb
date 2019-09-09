@@ -41,7 +41,7 @@
                         </tfoot>
                         <tbody>
                             <tr *ngFor="let fileItem of fileItems">
-                                <td>{{fileItem.name}}</td>
+                                <td><a [routerLink]="['/users/files', userId, fileItem.id]">{{fileItem.name}}</a></td>
                                 <td>{{fileItem.fileName}}</td>
                                 <td>{{fileItem.recognitionState|recognitionState}}</td>
                                 <td>{{fileItem.totalTime}}</td>
@@ -58,9 +58,14 @@
                         <li *ngFor="let fileItem of deletedFileItems" class="list-group-item">
                             <div class="row">
                                 <div class="col">
-                                    <label class="mr-2">{{fileItem.name}} / {{fileItem.fileName}}</label>
-                                    <span
-                                        class="text-gray-500 text-xs">({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})</span>
+                                    <label class="mr-2">
+                                        <a [routerLink]="['/users/files', userId, fileItem.id]">
+                                            {{fileItem.name}} / {{fileItem.fileName}}
+                                        </a>
+                                    </label>
+                                    <span class="text-gray-500 text-xs">
+                                        ({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})
+                                    </span>
                                 </div>
                                 <div class="col-2 text-right">
                                     <a (click)="restore(fileItem)">
@@ -79,9 +84,14 @@
                         <li *ngFor="let fileItem of permanentlyDeletedFileItems" class="list-group-item">
                             <div class="row">
                                 <div class="col">
-                                    <label class="mr-2">{{fileItem.name}} / {{fileItem.fileName}}</label>
-                                    <span
-                                        class="text-gray-500 text-xs">({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})</span>
+                                    <label class="mr-2">
+                                        <a [routerLink]="['/users/files', userId, fileItem.id]">
+                                            {{fileItem.name}} / {{fileItem.fileName}}
+                                        </a>
+                                    </label>
+                                    <span class="text-gray-500 text-xs">
+                                        ({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})
+                                    </span>
                                 </div>
                                 <div class="col-2 text-right">
                                     <a (click)="restore(fileItem)">
