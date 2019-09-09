@@ -49,6 +49,20 @@ export class FileItemService {
         return this.http.delete(this.routingService.getDeleteFileItemUri(), { params: params });
     }
 
+    permanentDeleteAll(fileItemIds: string[]) {
+        let params = new HttpParams();
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+
+        return this.http.put(this.routingService.getPermanentDeleteAll(), fileItemIds, { params: params });
+    }
+
+    restoreAll(fileItemIds: string[]) {
+        let params = new HttpParams();
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+
+        return this.http.put(this.routingService.getRestoreAllUri(), fileItemIds, { params: params });
+    }
+
     transcribe(fileItemId: string, language: string) {
         let params = new HttpParams();
         params = params.append('fileItemId', fileItemId);

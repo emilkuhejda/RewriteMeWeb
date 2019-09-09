@@ -13,6 +13,7 @@ using RewriteMe.Domain;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
+using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -221,6 +222,22 @@ namespace RewriteMe.WebApi.Controllers
             var userId = HttpContext.User.GetNameIdentifier();
 
             await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId, false).ConfigureAwait(false);
+
+            return Ok(new OkDto());
+        }
+
+        [HttpPut("/api/files/permanent-delete-all")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
+        {
+            var userId = HttpContext.User.GetNameIdentifier();
+            var deletedFileItems = fileItemIds.Select(x => new DeletedFileItem
+            {
+                Id = x,
+                DeletedDate = DateTime.UtcNow
+            });
+
+            await _fileItemService.DeleteAllAsync(userId, deletedFileItems, applicationId, true).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }
