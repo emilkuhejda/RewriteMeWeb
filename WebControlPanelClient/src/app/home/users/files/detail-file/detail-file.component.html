@@ -1,0 +1,137 @@
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Users</h1>
+</div>
+
+<!-- Content -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <a (click)="goBack()">
+                <i class="fa fa-arrow-circle-left mr-2"></i>
+                <span *ngIf="fileItem">{{fileItem.name}}</span>
+            </a>
+        </h6>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+        <ul *ngIf="fileItem" class="list-group">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Id</div>
+                    <div class="col">{{fileItem.id}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">User Id</div>
+                    <div class="col">{{fileItem.userId}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Application Id</div>
+                    <div class="col">{{fileItem.applicationId}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Name</div>
+                    <div class="col">{{fileItem.name}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">File name</div>
+                    <div class="col">{{fileItem.fileName}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Language</div>
+                    <div class="col">{{fileItem.language}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Recognition state</div>
+                    <div class="col">{{fileItem.recognitionState|recognitionState}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Original source file name</div>
+                    <div class="col">{{fileItem.originalSourceFileName}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Original source path</div>
+                    <div class="col">{{fileItem.originalSourcePath}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Source file name</div>
+                    <div class="col">{{fileItem.sourceFileName}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Source path</div>
+                    <div class="col">{{fileItem.sourcePath}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Original content type</div>
+                    <div class="col">{{fileItem.originalContentType}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Total time</div>
+                    <div class="col">{{fileItem.totalTime}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Transcribed time</div>
+                    <div class="col">{{fileItem.transcribedTime}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Date created</div>
+                    <div class="col">{{fileItem.dateCreated|date:'dd.MM.yyy HH:mm:ss'}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Date processed</div>
+                    <div class="col">{{fileItem.dateProcessed|date:'dd.MM.yyy HH:mm:ss'}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Date updated</div>
+                    <div class="col">{{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Is deleted</div>
+                    <div class="col">{{fileItem.isDeleted}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Is permanently deleted</div>
+                    <div class="col">{{fileItem.isPermanentlyDeleted}}</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Users</h1>
+</div>
+
+<!-- Content -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <a (click)="goBack()">
+                <i class="fa fa-arrow-circle-left mr-2"></i>
+                <span>Files</span>
+            </a>
+        </h6>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+        <mat-tab-group>
+            <mat-tab label="Files">
+                <div class="table-responsive p-3">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="table-header">Name</th>
+                                <th class="table-header">File name</th>
+                                <th class="table-header">Recognition state</th>
+                                <th class="table-header">Total time</th>
+                                <th class="table-header">Date created</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>File name</th>
+                                <th>Recognition state</th>
+                                <th>Total time</th>
+                                <th>Date created</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr *ngFor="let fileItem of fileItems">
+                                <td><a [routerLink]="['/users/files', userId, fileItem.id]">{{fileItem.name}}</a></td>
+                                <td>{{fileItem.fileName}}</td>
+                                <td>{{fileItem.recognitionState|recognitionState}}</td>
+                                <td>{{fileItem.totalTime}}</td>
+                                <td>{{fileItem.dateCreated|date:'dd.MM.yyy HH:mm:ss'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Deleted files">
+                <div class="p-3">
+                    <ul class="list-group">
+                        <li *ngFor="let fileItem of deletedFileItems" class="list-group-item">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="mr-2">
+                                        <a [routerLink]="['/users/files', userId, fileItem.id]">
+                                            {{fileItem.name}} / {{fileItem.fileName}}
+                                        </a>
+                                    </label>
+                                    <span class="text-gray-500 text-xs">
+                                        ({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})
+                                    </span>
+                                </div>
+                                <div class="col-2 text-right">
+                                    <a (click)="restore(fileItem)">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Permanently deleted files">
+                <div class="p-3">
+                    <ul class="list-group">
+                        <li *ngFor="let fileItem of permanentlyDeletedFileItems" class="list-group-item">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="mr-2">
+                                        <a [routerLink]="['/users/files', userId, fileItem.id]">
+                                            {{fileItem.name}} / {{fileItem.fileName}}
+                                        </a>
+                                    </label>
+                                    <span class="text-gray-500 text-xs">
+                                        ({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})
+                                    </span>
+                                </div>
+                                <div class="col-2 text-right">
+                                    <a (click)="restore(fileItem)">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

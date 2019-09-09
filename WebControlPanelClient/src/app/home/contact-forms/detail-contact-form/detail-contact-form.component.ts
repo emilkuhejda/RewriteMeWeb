@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ContactForm } from 'src/app/_models/contact-form';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-detail-contact-form',
@@ -14,6 +15,7 @@ export class DetailContactFormComponent implements OnInit {
     contactForm: ContactForm;
 
     constructor(
+        private location: Location,
         private route: ActivatedRoute,
         private contactFormService: ContactFormService,
         private alertService: AlertService) { }
@@ -29,5 +31,9 @@ export class DetailContactFormComponent implements OnInit {
                     this.alertService.error(err.message);
                 });
         });
+    }
+
+    goBack() {
+        this.location.back();
     }
 }

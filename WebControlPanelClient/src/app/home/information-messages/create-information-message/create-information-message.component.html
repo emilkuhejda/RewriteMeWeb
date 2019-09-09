@@ -7,8 +7,14 @@
 <div class="card shadow mb-4">
     <!-- Card Header - Dropdown -->
     <div class="card-header py-3 align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Create push notification</h6>
+        <h6 class="m-0 font-weight-bold text-primary">
+            <a (click)="goBack()">
+                <i class="fa fa-arrow-circle-left mr-2"></i>
+                <span>Create push notification</span>
+            </a>
+        </h6>
     </div>
+
     <!-- Card Body -->
     <div class="card-body">
         <form [formGroup]="createForm" (ngSubmit)="onSubmit()" novalidate>

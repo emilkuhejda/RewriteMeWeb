@@ -34,6 +34,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<FileItem>> GetAllForUserAsync(Guid userId)
+        {
+            return await _fileItemRepository.GetAllForUserAsync(userId).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<FileItem>> GetTemporaryDeletedFileItemsAsync(Guid userId)
         {
             return await _fileItemRepository.GetTemporaryDeletedFileItemsAsync(userId).ConfigureAwait(false);
@@ -47,6 +52,11 @@ namespace RewriteMe.Business.Services
         public async Task<FileItem> GetAsync(Guid userId, Guid fileItemId)
         {
             return await _fileItemRepository.GetAsync(userId, fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task<FileItem> GetAsAdminAsync(Guid fileItemId)
+        {
+            return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
         }
 
         public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
