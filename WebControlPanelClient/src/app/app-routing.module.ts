@@ -18,7 +18,7 @@ import { InformationMessagesComponent } from './home/information-messages/inform
 import { CreateInformationMessageComponent } from './home/information-messages/create-information-message/create-information-message.component';
 import { DetailInformationMessageComponent } from './home/information-messages/detail-information-message/detail-information-message.component';
 import { FilesComponent } from './home/users/files/files.component';
-import { DetailFileComponent } from './users/files/detail-file/detail-file.component';
+import { DetailFileComponent } from './home/users/files/detail-file/detail-file.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
