@@ -5,6 +5,7 @@ import { FileItem } from '../_models/file-item';
 import { map } from 'rxjs/operators';
 import { FileItemMapper } from '../_mappers/file-item-mapper';
 import { RoutingService } from './routing.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -14,12 +15,16 @@ export class FileItemService {
         private routingService: RoutingService,
         private http: HttpClient) { }
 
-    get(fileItemId: string) {
+    get(fileItemId: string): Observable<FileItemMapper> {
         return this.http.get<FileItem>(this.routingService.getFileItemsUri() + fileItemId).pipe(map(FileItemMapper.convert));
     }
 
-    getAll() {
+    getAll(): Observable<FileItemMapper[]> {
         return this.http.get<FileItem[]>(this.routingService.getFileItemsUri()).pipe(map(FileItemMapper.convertAll));
+    }
+
+    getDeletedFileItems(): Observable<FileItemMapper[]> {
+        return this.http.get<FileItem[]>(this.routingService.getTemporaryDeletedFileItemsUri()).pipe(map(FileItemMapper.convertAll));
     }
 
     upload(formData: FormData, params: HttpParams) {
@@ -42,6 +47,20 @@ export class FileItemService {
         params = params.append('fileItemId', fileItemId);
         params = params.append('applicationId', CommonVariables.ApplicationId);
         return this.http.delete(this.routingService.getDeleteFileItemUri(), { params: params });
+    }
+
+    permanentDeleteAll(fileItemIds: string[]) {
+        let params = new HttpParams();
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+
+        return this.http.put(this.routingService.getPermanentDeleteAll(), fileItemIds, { params: params });
+    }
+
+    restoreAll(fileItemIds: string[]) {
+        let params = new HttpParams();
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+
+        return this.http.put(this.routingService.getRestoreAllUri(), fileItemIds, { params: params });
     }
 
     transcribe(fileItemId: string, language: string) {
