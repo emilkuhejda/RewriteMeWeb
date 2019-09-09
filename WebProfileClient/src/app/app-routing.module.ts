@@ -20,7 +20,7 @@ const routes: Routes = [
     { path: 'account', component: AccountComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'messages', component: MessagesComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'messages/:messageId', component: DetailMessageComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-    { path: 'recycle-bin', component: RecycleBinComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+    { path: 'recycle-bin', component: RecycleBinComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
