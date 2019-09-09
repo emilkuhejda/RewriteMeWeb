@@ -13,6 +13,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
+        Task<IEnumerable<FileItem>> GetAllForUserAsync(Guid userId);
+
         Task<IEnumerable<FileItem>> GetTemporaryDeletedFileItemsAsync(Guid userId);
 
         Task<IEnumerable<Guid>> GetAllDeletedIdsAsync(Guid userId, DateTime updatedAfter, Guid applicationId);

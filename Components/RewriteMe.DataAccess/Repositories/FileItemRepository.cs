@@ -46,6 +46,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<IEnumerable<FileItem>> GetAllForUserAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItems = await context.FileItems
+                    .Where(x => x.UserId == userId)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return fileItems.Select(x => x.ToFileItem());
+            }
+        }
+
         public async Task<IEnumerable<FileItem>> GetTemporaryDeletedFileItemsAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())

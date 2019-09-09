@@ -16,15 +16,24 @@ export class FileItemMapper {
     public static convert(data): FileItem {
         let fileItem = new FileItem();
         fileItem.id = data.id;
+        fileItem.userId = data.userId;
+        fileItem.applicationId = data.applicationId;
         fileItem.name = data.name;
         fileItem.fileName = data.fileName;
         fileItem.language = data.language;
-        fileItem.recognitionState = <RecognitionState>RecognitionState[<string>data.recognitionStateString];
-        fileItem.totalTime = data.totalTimeString;
+        fileItem.recognitionState = <RecognitionState>data.recognitionState;
+        fileItem.originalSourceFileName = data.originalSourceFileName;
+        fileItem.originalSourcePath = data.originalSourcePath;
+        fileItem.sourceFileName = data.sourceFileName;
+        fileItem.sourcePath = data.sourcePath;
+        fileItem.originalContentType = data.originalContentType;
+        fileItem.totalTime = data.totalTime;
+        fileItem.transcribedTime = data.transcribedTime;
         fileItem.dateCreated = data.dateCreated;
         fileItem.dateProcessed = data.dateProcessed;
         fileItem.dateUpdated = data.dateUpdated;
         fileItem.isDeleted = data.isDeleted;
+        fileItem.isPermanentlyDeleted = data.isPermanentlyDeleted;
 
         return fileItem;
     }
