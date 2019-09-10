@@ -72,7 +72,7 @@ namespace RewriteMe.Business.Services
                     }
                 };
 
-                using (var result = await SendWithHttpMessagesAsync(pushNotification).ConfigureAwait(false))
+                using (var result = await SendWithHttpMessagesAsync(pushNotification, runtimePlatform).ConfigureAwait(false))
                 {
                     notificationResult = result.Body;
                 }
@@ -87,7 +87,7 @@ namespace RewriteMe.Business.Services
             return notificationResult;
         }
 
-        private async Task<HttpOperationResponse<NotificationResult>> SendWithHttpMessagesAsync(PushNotification pushNotification, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task<HttpOperationResponse<NotificationResult>> SendWithHttpMessagesAsync(PushNotification pushNotification, RuntimePlatform runtimePlatform, CancellationToken cancellationToken = default(CancellationToken))
         {
             var notificationSettings = _appSettings.NotificationSettings;
 
@@ -96,7 +96,10 @@ namespace RewriteMe.Business.Services
             httpClient.DefaultRequestHeaders.Add(notificationSettings.ApiKeyName, notificationSettings.AccessToken);
 
             var content = JsonConvert.SerializeObject(pushNotification);
-            var url = $"{notificationSettings.BaseUrl}/{notificationSettings.Organization}/{notificationSettings.AppNameAndroid}/{notificationSettings.Apis}";
+            var applicationName = runtimePlatform == RuntimePlatform.Android
+                ? notificationSettings.AppNameAndroid
+                : notificationSettings.AppNameOsx;
+            var url = $"{notificationSettings.BaseUrl}/{notificationSettings.Organization}/{applicationName}/{notificationSettings.Apis}";
 
             var httpRequest = new HttpRequestMessage
             {
