@@ -44,7 +44,7 @@ export class SubscriptionsComponent implements OnInit {
         let onAccept = (dialogComponent: CreateSubscriptionDialogComponent) => {
             let formData = new FormData();
             formData.append("userId", this.userId);
-            formData.append("minutes", dialogComponent.selectedMinutes.toString());
+            formData.append("seconds", dialogComponent.totalSeconds.toString());
             this.subscriptionsService.create(formData).subscribe(
                 () => {
                     this.alertService.success("User subscription was successfully created", false);
