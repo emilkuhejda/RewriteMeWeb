@@ -19,6 +19,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/users/";
     }
 
+    getDeleteUserUri(): string {
+        return this.getApiUri() + "/api/control-panel/users/delete/";
+    }
+
     getPurchasesUri(): string {
         return this.getApiUri() + "api/control-panel/purchases/";
     }
