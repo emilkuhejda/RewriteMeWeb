@@ -3,11 +3,11 @@ import { User } from 'src/app/_models/user';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { UserService } from 'src/app/_services/user.service';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { ConfirmationDialogComponent } from 'src/app/_directives/confirmation-dialog/confirmation-dialog.component';
 import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
-import { GecoDialog } from 'angular-dynamic-dialog';
-import { ConfirmationDialogComponent } from 'src/app/_directives/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
     selector: 'app-users',
