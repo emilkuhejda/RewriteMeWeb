@@ -5,6 +5,7 @@ import { FileItem } from 'src/app/_models/file-item';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { RecognitionState } from 'src/app/_enums/recognition-state';
 
 @Component({
     selector: 'app-detail-file',
@@ -35,5 +36,20 @@ export class DetailFileComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    updateRecognitionState(recognitionState: RecognitionState) {
+        this.fileItemService.updateRecognitionState(this.fileItem.id, recognitionState).subscribe(
+            (fileItem: FileItem) => {
+                if (fileItem == null) {
+                    this.alertService.error("Recognition state was not changed.");
+                    return;
+                }
+
+                this.fileItem = fileItem;
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            });
     }
 }

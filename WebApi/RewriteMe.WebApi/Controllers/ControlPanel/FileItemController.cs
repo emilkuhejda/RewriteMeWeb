@@ -37,9 +37,9 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpGet("/api/control-panel/files/detail/{fileItemId}")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
-            var fileItems = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
 
-            return Ok(fileItems);
+            return Ok(fileItem);
         }
 
         [HttpPut("/api/control-panel/files/restore")]
@@ -48,6 +48,15 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             await _fileItemService.RestoreAllAsync(userId, new[] { fileItemId }, _appSettings.ApplicationId).ConfigureAwait(false);
 
             return Ok();
+        }
+
+        [HttpPut("/api/control-panel/files/update-recognition-state")]
+        public async Task<IActionResult> UpdateRecognitionState(Guid fileItemId, RecognitionState recognitionState)
+        {
+            await _fileItemService.UpdateRecognitionStateAsync(fileItemId, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+
+            return Ok(fileItem);
         }
     }
 }

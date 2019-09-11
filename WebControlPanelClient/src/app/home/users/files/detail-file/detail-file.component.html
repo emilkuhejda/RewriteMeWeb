@@ -16,8 +16,27 @@
     </div>
 
     <!-- Card Body -->
-    <div class="card-body">
-        <ul *ngIf="fileItem" class="list-group">
+    <div *ngIf="fileItem" class="card-body">
+        <nav class="navbar navbar-expand navbar-light bg-light mb-4">
+            <a class="navbar-brand" href="#">Recognition state</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{fileItem.recognitionState|recognitionState}}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" (click)="updateRecognitionState(0)">None</a>
+                        <a class="dropdown-item" (click)="updateRecognitionState(1)">Converting</a>
+                        <a class="dropdown-item" (click)="updateRecognitionState(2)">Prepared</a>
+                        <a class="dropdown-item" (click)="updateRecognitionState(3)">In progress</a>
+                        <a class="dropdown-item" (click)="updateRecognitionState(4)">Completed</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <ul class="list-group">
             <li class="list-group-item">
                 <div class="row">
                     <div class="col">Id</div>
