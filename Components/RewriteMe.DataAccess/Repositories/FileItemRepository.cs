@@ -31,6 +31,16 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<bool> ExistsAsync(Guid fileItemId, string fileName)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems
+                    .AnyAsync(x => x.Id == fileItemId && x.FileName == fileName)
+                    .ConfigureAwait(false);
+            }
+        }
+
         public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             using (var context = _contextFactory.Create())

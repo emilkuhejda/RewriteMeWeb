@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
@@ -45,10 +46,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/files/update-recognition-state")]
-        public async Task<IActionResult> UpdateRecognitionState(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
+        public async Task<IActionResult> UpdateRecognitionState(UpdateRecognitionStateModel updateModel)
         {
-            await _fileItemService.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
-            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+            var fileItemExists = await _fileItemService.ExistsAsync(updateModel.FileItemId, updateModel.FileName).ConfigureAwait(false);
+            if (!fileItemExists)
+                return BadRequest();
+
+            await _fileItemService.UpdateRecognitionStateAsync(updateModel.FileItemId, updateModel.RecognitionState, updateModel.ApplicationId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsAdminAsync(updateModel.FileItemId).ConfigureAwait(false);
 
             return Ok(fileItem);
         }

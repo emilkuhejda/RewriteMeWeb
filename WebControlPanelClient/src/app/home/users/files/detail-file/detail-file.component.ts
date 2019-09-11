@@ -8,6 +8,7 @@ import { ErrorResponse } from 'src/app/_models/error-response';
 import { RecognitionState } from 'src/app/_enums/recognition-state';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { UpdateRecognitionStateDialogComponent } from 'src/app/_directives/update-recognition-state-dialog/update-recognition-state-dialog.component';
+import { CommonVariables } from 'src/app/_config/common-variables';
 
 @Component({
     selector: 'app-detail-file',
@@ -50,7 +51,14 @@ export class DetailFileComponent implements OnInit {
                 return;
             }
 
-            this.fileItemService.updateRecognitionState(this.fileItem.id, recognitionState).subscribe(
+            let data = {
+                fileItemId: this.fileItem.id,
+                fileName: dialogComponent.fileName,
+                recognitionState: recognitionState.toString(),
+                applicationId: CommonVariables.ApplicationId
+            };
+
+            this.fileItemService.updateRecognitionState(data).subscribe(
                 (fileItem: FileItem) => {
                     if (fileItem == null) {
                         this.alertService.error("Recognition state was not changed.");
@@ -60,7 +68,11 @@ export class DetailFileComponent implements OnInit {
                     this.fileItem = fileItem;
                 },
                 (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
+                    let error = err.message;
+                    if (err.status === 400)
+                        error = "File was not found.";
+
+                    this.alertService.error(error);
                 })
                 .add(() => dialogComponent.close());
         };
