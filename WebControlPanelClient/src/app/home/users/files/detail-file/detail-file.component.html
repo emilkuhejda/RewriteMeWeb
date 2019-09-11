@@ -17,7 +17,7 @@
 
     <!-- Card Body -->
     <div *ngIf="fileItem" class="card-body">
-        <nav class="navbar navbar-expand navbar-light bg-light mb-4">
+        <nav *ngIf="!fileItem.isDeleted" class="navbar navbar-expand navbar-light bg-light mb-4">
             <a class="navbar-brand" href="#">Recognition state</a>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">

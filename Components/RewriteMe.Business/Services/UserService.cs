@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -9,16 +10,25 @@ namespace RewriteMe.Business.Services
 {
     public class UserService : IUserService
     {
+        private readonly IFileAccessService _fileAccessService;
         private readonly IUserRepository _userRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(
+            IFileAccessService fileAccessService,
+            IUserRepository userRepository)
         {
+            _fileAccessService = fileAccessService;
             _userRepository = userRepository;
         }
 
-        public async Task<bool> UserAlreadyExistsAsync(Guid userId)
+        public async Task<bool> ExistsAsync(Guid userId)
         {
-            return await _userRepository.UserAlreadyExistsAsync(userId).ConfigureAwait(false);
+            return await _userRepository.ExistsAsync(userId).ConfigureAwait(false);
+        }
+
+        public async Task<bool> ExistsAsync(Guid userId, string email)
+        {
+            return await _userRepository.ExistsAsync(userId, email).ConfigureAwait(false);
         }
 
         public async Task AddAsync(User user)
@@ -39,6 +49,29 @@ namespace RewriteMe.Business.Services
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _userRepository.GetAllAsync().ConfigureAwait(false);
+        }
+
+        public async Task<bool> DeleteAsync(Guid userId)
+        {
+            var user = await _userRepository.GetWithFilesAsync(userId).ConfigureAwait(false);
+            if (user == null)
+                return false;
+
+            var fileItems = user.FileItems.ToList();
+            if (fileItems.Any())
+            {
+                foreach (var fileItem in fileItems)
+                {
+                    var directoryInfo = _fileAccessService.GetFileItemDirectoryInfo(fileItem.Id);
+                    if (directoryInfo.Exists)
+                    {
+                        directoryInfo.Delete(true);
+                    }
+                }
+            }
+
+            await _userRepository.DeleteAsync(user).ConfigureAwait(false);
+            return true;
         }
     }
 }

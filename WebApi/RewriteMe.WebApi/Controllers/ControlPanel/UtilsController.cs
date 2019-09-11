@@ -1,8 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
@@ -13,10 +19,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     public class UtilsController : ControllerBase
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
+        private readonly AppSettings _appSettings;
 
-        public UtilsController(ISpeechRecognitionService speechRecognitionService)
+        public UtilsController(
+            ISpeechRecognitionService speechRecognitionService,
+            IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
+            _appSettings = options.Value;
         }
 
         [HttpGet("/api/control-panel/has-access")]
@@ -31,6 +41,29 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             var canCreateSpeechClient = await _speechRecognitionService.CanCreateSpeechClientAsync().ConfigureAwait(false);
             if (!canCreateSpeechClient)
                 return BadRequest();
+
+            return Ok();
+        }
+
+        [HttpGet("/api/control-panel/generate-hangfire-access")]
+        public IActionResult GenerateHangfireAccess()
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Role, Role.Admin.ToString())
+            };
+
+            var expireTime = TimeSpan.FromMinutes(5);
+            var token = TokenHelper.Generate(_appSettings.HangfireSecretKey, claims, expireTime);
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.Add(expireTime),
+                Path = "/",
+                HttpOnly = false,
+                IsEssential = true
+            };
+
+            Response.Cookies.Append(Constants.HangfireAccessToken, token, cookieOptions);
 
             return Ok();
         }

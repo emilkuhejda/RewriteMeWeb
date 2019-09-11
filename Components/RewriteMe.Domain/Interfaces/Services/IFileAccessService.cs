@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -14,5 +15,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         string GetTranscriptionsDirectoryPath(Guid fileItemId);
 
         string GetTranscriptionPath(TranscribeItem transcribeItem);
+
+        DirectoryInfo GetFileItemDirectoryInfo(Guid fileItemId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
@@ -25,6 +26,20 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             var users = await _userService.GetAllAsync().ConfigureAwait(false);
 
             return Ok(users);
+        }
+
+        [HttpDelete("/api/control-panel/users/delete")]
+        public async Task<IActionResult> DeleteUser(Guid userId, string email)
+        {
+            var userExists = await _userService.ExistsAsync(userId, email).ConfigureAwait(false);
+            if (!userExists)
+                return BadRequest();
+
+            var isSuccess = await _userService.DeleteAsync(userId).ConfigureAwait(false);
+            if (!isSuccess)
+                return NotFound();
+
+            return Ok();
         }
     }
 }

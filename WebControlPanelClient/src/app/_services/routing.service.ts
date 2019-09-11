@@ -19,6 +19,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/users/";
     }
 
+    getDeleteUserUri(): string {
+        return this.getApiUri() + "api/control-panel/users/delete/";
+    }
+
     getPurchasesUri(): string {
         return this.getApiUri() + "api/control-panel/purchases/";
     }
@@ -84,7 +88,7 @@ export class RoutingService {
     }
 
     getGenerateHangfireAccessUri(): string {
-        return this.getApiUri() + "api/generate-hangfire-access/";
+        return this.getApiUri() + "api/control-panel/generate-hangfire-access/";
     }
 
     getHasAccessUri(): string {

@@ -20,14 +20,16 @@ namespace RewriteMe.WebApi.Controllers
     [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
-    public class TranscribeItemController : ControllerBase
+    public class TranscribeItemController : RewriteMeControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IFileAccessService _fileAccessService;
 
         public TranscribeItemController(
             ITranscribeItemService transcribeItemService,
-            IFileAccessService fileAccessService)
+            IFileAccessService fileAccessService,
+            IUserService userService)
+            : base(userService)
         {
             _transcribeItemService = transcribeItemService;
             _fileAccessService = fileAccessService;
@@ -39,6 +41,10 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
         public async Task<ActionResult> GetAll(Guid fileItemId)
         {
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
@@ -50,8 +56,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
         public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }
@@ -62,6 +71,10 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
             var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
             var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
@@ -73,6 +86,10 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
             var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
             var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
@@ -85,6 +102,10 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
         {
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var dateUpdated = DateTime.UtcNow;
             await _transcribeItemService
                 .UpdateUserTranscriptAsync(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated, updateTranscribeItem.ApplicationId)
