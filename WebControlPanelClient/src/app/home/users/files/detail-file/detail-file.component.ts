@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { RecognitionState } from 'src/app/_enums/recognition-state';
 import { GecoDialog } from 'angular-dynamic-dialog';
-import { DialogComponent } from 'src/app/_directives/dialog/dialog.component';
+import { UpdateRecognitionStateDialogComponent } from 'src/app/_directives/update-recognition-state-dialog/update-recognition-state-dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -43,7 +43,13 @@ export class DetailFileComponent implements OnInit {
 
     updateRecognitionState(recognitionState: RecognitionState) {
         this.alertService.clear();
-        let onAccept = (dialogComponent: DialogComponent) => {
+        let onAccept = (dialogComponent: UpdateRecognitionStateDialogComponent) => {
+            if (dialogComponent.fileName !== this.fileItem.fileName) {
+                this.alertService.error("File name must be correct.");
+                dialogComponent.close();
+                return;
+            }
+
             this.fileItemService.updateRecognitionState(this.fileItem.id, recognitionState).subscribe(
                 (fileItem: FileItem) => {
                     if (fileItem == null) {
@@ -65,7 +71,7 @@ export class DetailFileComponent implements OnInit {
             onAccept: onAccept
         };
 
-        let modal = this.modal.openDialog(DialogComponent, {
+        let modal = this.modal.openDialog(UpdateRecognitionStateDialogComponent, {
             data: data,
             useStyles: 'none'
         });
