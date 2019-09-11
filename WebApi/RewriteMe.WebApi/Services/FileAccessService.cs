@@ -55,5 +55,13 @@ namespace RewriteMe.WebApi.Services
 
             return Path.Combine(directoryPath, transcribeItem.SourceFileName);
         }
+
+        public DirectoryInfo GetFileItemDirectoryInfo(Guid fileItemId)
+        {
+            var rootDirectory = GetRootPath();
+            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
+
+            return new DirectoryInfo(directoryPath);
+        }
     }
 }

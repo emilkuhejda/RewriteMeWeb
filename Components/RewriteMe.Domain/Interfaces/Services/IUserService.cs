@@ -7,7 +7,9 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<bool> UserAlreadyExistsAsync(Guid userId);
+        Task<bool> ExistsAsync(Guid userId);
+
+        Task<bool> ExistsAsync(Guid userId, string email);
 
         Task AddAsync(User user);
 
@@ -16,5 +18,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<User> GetAsync(Guid userId);
 
         Task<IEnumerable<User>> GetAllAsync();
+
+        Task<bool> DeleteAsync(Guid userId);
     }
 }

@@ -7,7 +7,9 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task<bool> UserAlreadyExistsAsync(Guid userId);
+        Task<bool> ExistsAsync(Guid userId);
+
+        Task<bool> ExistsAsync(Guid userId, string email);
 
         Task AddAsync(User user);
 
@@ -15,6 +17,10 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<User> GetAsync(Guid userId);
 
+        Task<User> GetWithFilesAsync(Guid userId);
+
         Task<IEnumerable<User>> GetAllAsync();
+
+        Task DeleteAsync(User user);
     }
 }

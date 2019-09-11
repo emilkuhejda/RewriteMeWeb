@@ -1,4 +1,5 @@
-﻿using RewriteMe.DataAccess.Entities;
+﻿using System.Linq;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.DataAccess.DataAdapters
@@ -13,7 +14,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Email = userEntity.Email,
                 GivenName = userEntity.GivenName,
                 FamilyName = userEntity.FamilyName,
-                DateRegistered = userEntity.DateRegistered
+                DateRegistered = userEntity.DateRegistered,
+                FileItems = userEntity.FileItems?.Select(x => x.ToFileItem())
             };
         }
 
@@ -25,7 +27,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Email = user.Email,
                 GivenName = user.GivenName,
                 FamilyName = user.FamilyName,
-                DateRegistered = user.DateRegistered
+                DateRegistered = user.DateRegistered,
+                FileItems = user.FileItems?.Select(x => x.ToFileItemEntity()).ToList()
             };
         }
     }
