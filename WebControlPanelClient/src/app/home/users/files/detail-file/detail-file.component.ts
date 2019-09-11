@@ -65,14 +65,8 @@ export class DetailFileComponent implements OnInit {
                 .add(() => dialogComponent.close());
         };
 
-        let data = {
-            title: `Change recognition state`,
-            message: `Do you really want to change recognition state?`,
-            onAccept: onAccept
-        };
-
         let modal = this.modal.openDialog(UpdateRecognitionStateDialogComponent, {
-            data: data,
+            data: onAccept,
             useStyles: 'none'
         });
 

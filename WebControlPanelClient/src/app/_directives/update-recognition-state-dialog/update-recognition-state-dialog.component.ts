@@ -8,18 +8,14 @@ import { GecoDialogRef, GECO_DIALOG_REF, GECO_DATA_DIALOG } from 'angular-dynami
 })
 export class UpdateRecognitionStateDialogComponent implements OnInit {
     private onAccept: Function;
-
-    title: string;
-    message: string;
+    
     fileName: string;
     loading: boolean;
-
+    
     constructor(
-        @Inject(GECO_DATA_DIALOG) public data: any,
+        @Inject(GECO_DATA_DIALOG) public onAcceptFunction: Function,
         @Inject(GECO_DIALOG_REF) public dialogRef: GecoDialogRef) {
-        this.title = data.title;
-        this.message = data.message;
-        this.onAccept = data.onAccept;
+            this.onAccept = onAcceptFunction;
     }
 
     ngOnInit() {
