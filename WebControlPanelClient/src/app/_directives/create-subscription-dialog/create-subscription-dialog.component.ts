@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GECO_DATA_DIALOG, GECO_DIALOG_REF, GecoDialogRef } from 'angular-dynamic-dialog';
+import { min } from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-subscription-dialog',
@@ -10,6 +11,9 @@ export class CreateSubscriptionDialogComponent implements OnInit {
     private onAccept: Function;
 
     selectedMinutes: number = 0;
+    totalSeconds: number = 0;
+    time: string;
+    isSelectBoxVisible: boolean;
     loading: boolean;
 
     constructor(
@@ -18,10 +22,36 @@ export class CreateSubscriptionDialogComponent implements OnInit {
         this.onAccept = onAcceptFunction;
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.checkVisibility();
+    }
+
+    onTimeChange() {
+        this.totalSeconds = 0;
+        this.checkVisibility();
+
+        var timeArr = this.time.split(":");
+        if (timeArr.length != 3) {
+            return;
+        }
+
+        let hours = Number(timeArr[0]);
+        let minutes = Number(timeArr[1]);
+        let seconds = Number(timeArr[2]);
+
+        if (hours === NaN || minutes === NaN || seconds === NaN) {
+            return;
+        }
+
+        this.totalSeconds = (hours * 60 * 60) + (minutes * 60) + (seconds);
+    }
+
+    onMinutesChange() {
+        this.totalSeconds = this.selectedMinutes * 60;
+    }
 
     accept() {
-        if (this.selectedMinutes === 0)
+        if (this.totalSeconds === 0)
             return;
 
         if (this.loading)
@@ -35,5 +65,13 @@ export class CreateSubscriptionDialogComponent implements OnInit {
     close() {
         this.loading = false;
         this.dialogRef.closeModal();
+    }
+
+    private checkVisibility(): void {
+        if (this.time === "" || this.time === undefined) {
+            this.isSelectBoxVisible = true;
+        } else {
+            this.isSelectBoxVisible = false;
+        }
     }
 }

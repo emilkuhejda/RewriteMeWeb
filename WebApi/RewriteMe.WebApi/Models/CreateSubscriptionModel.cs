@@ -8,6 +8,6 @@ namespace RewriteMe.WebApi.Models
 
         public Guid ApplicationId { get; set; }
 
-        public int Minutes { get; set; }
+        public int Seconds { get; set; }
     }
 }

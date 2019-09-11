@@ -2,10 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Settings;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
@@ -16,14 +14,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
-        private readonly AppSettings _appSettings;
 
-        public FileItemController(
-            IFileItemService fileItemService,
-            IOptions<AppSettings> options)
+        public FileItemController(IFileItemService fileItemService)
         {
             _fileItemService = fileItemService;
-            _appSettings = options.Value;
         }
 
         [HttpGet("/api/control-panel/files/{userId}")]
@@ -37,17 +31,26 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpGet("/api/control-panel/files/detail/{fileItemId}")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
-            var fileItems = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
 
-            return Ok(fileItems);
+            return Ok(fileItem);
         }
 
         [HttpPut("/api/control-panel/files/restore")]
-        public async Task<IActionResult> Restore(Guid userId, Guid fileItemId)
+        public async Task<IActionResult> Restore(Guid userId, Guid fileItemId, Guid applicationId)
         {
-            await _fileItemService.RestoreAllAsync(userId, new[] { fileItemId }, _appSettings.ApplicationId).ConfigureAwait(false);
+            await _fileItemService.RestoreAllAsync(userId, new[] { fileItemId }, applicationId).ConfigureAwait(false);
 
             return Ok();
+        }
+
+        [HttpPut("/api/control-panel/files/update-recognition-state")]
+        public async Task<IActionResult> UpdateRecognitionState(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
+        {
+            await _fileItemService.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
+            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+
+            return Ok(fileItem);
         }
     }
 }

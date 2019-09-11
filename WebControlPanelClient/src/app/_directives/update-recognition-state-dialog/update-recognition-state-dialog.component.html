@@ -1,24 +1,17 @@
 <div class="modal-header">
-    <h5 class="modal-title">Create subscription</h5>
+    <h5 class="modal-title">Change recognition state</h5>
     <button type="button" class="close" (click)="dialogRef.closeModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-body">
-    <p>Subscription time <span class="text-xs">&#123;hh:mm:ss&#125;</span></p>
-    <input type="text" class="form-control mb-2" [(ngModel)]="time" (ngModelChange)="onTimeChange()" />
-
-    <p *ngIf="isSelectBoxVisible">Subscription minutes</p>
-    <select *ngIf="isSelectBoxVisible" [(ngModel)]="selectedMinutes" (ngModelChange)="onMinutesChange()"
-        class="form-control mb-2">
-        <option value="0" selected>-Select-</option>
-        <option value="15">15</option>
-        <option value="30">30</option>
-        <option value="60">60</option>
-        <option value="120">120</option>
-    </select>
-
-    <p>Subscription seconds: {{totalSeconds}}</p>
+    <p>Do you really want to change recognition state?</p>
+    <div class="row">
+        <div class="col-3">File name</div>
+        <div class="col">
+            <input type="text" class="form-control" [(ngModel)]="fileName" />
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" [disabled]="loading" class="btn btn-primary" (click)="accept()">Accept</button>

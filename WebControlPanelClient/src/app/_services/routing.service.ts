@@ -47,6 +47,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/files/restore/";
     }
 
+    getUpdateRecognitionStateUri(): string {
+        return this.getApiUri() + "api/control-panel/files/update-recognition-state/";
+    }
+
     getAdministratorsUri(): string {
         return this.getApiUri() + "api/control-panel/administrators/";
     }
