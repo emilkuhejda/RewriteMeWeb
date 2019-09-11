@@ -87,6 +87,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/has-access/";
     }
 
+    getIsDeploymentSuccessfulUri(): string {
+        return this.getApiUri() + "api/control-panel/is-deployment-successful/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

@@ -8,6 +8,7 @@ using Google.Cloud.Speech.V1;
 using Grpc.Auth;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -17,17 +18,48 @@ namespace RewriteMe.Business.Services
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
         private readonly IFileAccessService _fileAccessService;
+        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public SpeechRecognitionService(
             IFileAccessService fileAccessService,
+            IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _fileAccessService = fileAccessService;
+            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
+        public async Task<bool> CanCreateSpeechClientAsync()
+        {
+            try
+            {
+                var speechClient = CreateSpeechClient();
+                return speechClient != null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"Unable create Speech client.{Environment.NewLine}{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return false;
+        }
+
         public async Task<IEnumerable<TranscribeItem>> Recognize(FileItem fileItem, IEnumerable<WavPartialFile> files)
+        {
+            var speechClient = CreateSpeechClient();
+
+            var task = new List<Task<TranscribeItem>>();
+            foreach (var file in files)
+            {
+                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file));
+            }
+
+            return await Task.WhenAll(task).ConfigureAwait(false);
+        }
+
+        private SpeechClient CreateSpeechClient()
         {
             var serializedCredentials = JsonConvert.SerializeObject(_appSettings.SpeechCredentials);
             var credentials = GoogleCredential.FromJson(serializedCredentials);
@@ -37,15 +69,7 @@ namespace RewriteMe.Business.Services
             }
 
             var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host, credentials.ToChannelCredentials());
-            var speechClient = SpeechClient.Create(channel);
-
-            var task = new List<Task<TranscribeItem>>();
-            foreach (var file in files)
-            {
-                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file));
-            }
-
-            return await Task.WhenAll(task).ConfigureAwait(false);
+            return SpeechClient.Create(channel);
         }
 
         private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile)
