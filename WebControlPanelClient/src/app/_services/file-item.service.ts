@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { FileItem } from '../_models/file-item';
 import { map } from 'rxjs/operators';
 import { FileItemMapper } from '../_mappers/file-item-mapper';
+import { RecognitionState } from '../_enums/recognition-state';
+import { CommonVariables } from '../_config/common-variables';
 
 @Injectable({
     providedIn: 'root'
@@ -26,7 +28,17 @@ export class FileItemService {
         let params = new HttpParams();
         params = params.append('userId', userId);
         params = params.append('fileItemId', fileItemId);
+        params = params.append('applicationId', CommonVariables.ApplicationId);
 
         return this.http.put(this.routingService.getRestoreFileItemUri(), null, { params: params });
+    }
+
+    updateRecognitionState(fileItemId: string, recognitionState: RecognitionState): Observable<FileItem> {
+        let params = new HttpParams();
+        params = params.append('fileItemId', fileItemId);
+        params = params.append('recognitionState', recognitionState.toString());
+        params = params.append('applicationId', CommonVariables.ApplicationId);
+
+        return this.http.put<FileItem>(this.routingService.getUpdateRecognitionStateUri(), null, { params: params }).pipe(map(FileItemMapper.convert));
     }
 }

@@ -30,9 +30,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
                 Id = Guid.NewGuid(),
                 UserId = createSubscriptionModel.UserId,
                 ApplicationId = createSubscriptionModel.ApplicationId,
-                Time = TimeSpan.FromMinutes(createSubscriptionModel.Minutes),
+                Time = TimeSpan.FromSeconds(createSubscriptionModel.Seconds),
                 DateCreated = DateTime.UtcNow
             };
+
             await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
 
             return Ok();
