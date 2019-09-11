@@ -97,9 +97,10 @@ namespace RewriteMe.Business.Managers
 
                 await _fileItemService.RemoveSourceFileNameAsync(fileItem).ConfigureAwait(false);
             }
-            catch
+            catch (Exception ex)
             {
                 await _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
                 throw;
             }
 
