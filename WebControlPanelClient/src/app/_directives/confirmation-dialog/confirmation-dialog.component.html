@@ -1,15 +1,15 @@
 <div class="modal-header">
-    <h5 class="modal-title">Change recognition state</h5>
+    <h5 class="modal-title">{{title}}</h5>
     <button type="button" class="close" (click)="dialogRef.closeModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-body">
-    <p>Do you really want to change recognition state?</p>
+    <p>{{message}}</p>
     <div class="row">
-        <div class="col-3">File name</div>
+        <div class="col-3">{{confirmationTitle}}</div>
         <div class="col">
-            <input type="text" class="form-control" [(ngModel)]="fileName" />
+            <input type="text" class="form-control" [(ngModel)]="confirmationValue" />
         </div>
     </div>
 </div>

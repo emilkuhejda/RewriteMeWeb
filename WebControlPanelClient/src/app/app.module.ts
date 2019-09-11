@@ -17,7 +17,7 @@ import { TruncatePipe } from './_pipes/truncate.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
-import { UpdateRecognitionStateDialogComponent } from './_directives/update-recognition-state-dialog/update-recognition-state-dialog.component';
+import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +25,7 @@ import { UpdateRecognitionStateDialogComponent } from './_directives/update-reco
         AlertComponent,
         DialogComponent,
         CreateSubscriptionDialogComponent,
-        UpdateRecognitionStateDialogComponent,
+        ConfirmationDialogComponent,
         SidebarComponent,
         TopbarComponent,
         TruncatePipe,
@@ -53,6 +53,6 @@ import { UpdateRecognitionStateDialogComponent } from './_directives/update-reco
         multi: true
     }],
     bootstrap: [AppComponent],
-    entryComponents: [DialogComponent, CreateSubscriptionDialogComponent, UpdateRecognitionStateDialogComponent]
+    entryComponents: [DialogComponent, CreateSubscriptionDialogComponent, ConfirmationDialogComponent]
 })
 export class AppModule { }

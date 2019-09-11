@@ -31,6 +31,10 @@ export class UsersComponent implements OnInit {
             });
     }
 
+    delete(user: User) {
+        console.log(user);
+    }
+
     ngAfterViewInit() {
         this.initDatatable();
     }

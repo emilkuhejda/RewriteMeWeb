@@ -7,8 +7,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { RecognitionState } from 'src/app/_enums/recognition-state';
 import { GecoDialog } from 'angular-dynamic-dialog';
-import { UpdateRecognitionStateDialogComponent } from 'src/app/_directives/update-recognition-state-dialog/update-recognition-state-dialog.component';
 import { CommonVariables } from 'src/app/_config/common-variables';
+import { ConfirmationDialogComponent } from 'src/app/_directives/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -44,8 +44,8 @@ export class DetailFileComponent implements OnInit {
 
     updateRecognitionState(recognitionState: RecognitionState) {
         this.alertService.clear();
-        let onAccept = (dialogComponent: UpdateRecognitionStateDialogComponent) => {
-            if (dialogComponent.fileName !== this.fileItem.fileName) {
+        let onAccept = (dialogComponent: ConfirmationDialogComponent) => {
+            if (dialogComponent.confirmationValue !== this.fileItem.fileName) {
                 this.alertService.error("File name must be correct.");
                 dialogComponent.close();
                 return;
@@ -53,7 +53,7 @@ export class DetailFileComponent implements OnInit {
 
             let data = {
                 fileItemId: this.fileItem.id,
-                fileName: dialogComponent.fileName,
+                fileName: dialogComponent.confirmationValue,
                 recognitionState: recognitionState.toString(),
                 applicationId: CommonVariables.ApplicationId
             };
@@ -77,8 +77,15 @@ export class DetailFileComponent implements OnInit {
                 .add(() => dialogComponent.close());
         };
 
-        let modal = this.modal.openDialog(UpdateRecognitionStateDialogComponent, {
-            data: onAccept,
+        let data = {
+            title: `Change recognition state`,
+            message: `Do you really want to change recognition state?`,
+            confirmationTitle: `File name`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(ConfirmationDialogComponent, {
+            data: data,
             useStyles: 'none'
         });
 

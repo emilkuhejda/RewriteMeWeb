@@ -44,6 +44,8 @@
                             <a [routerLink]="['/users/subscriptions', user.id]">Subscriptions</a>
                             <span> | </span>
                             <a [routerLink]="['/users/files', user.id]">Files</a>
+                            <span> | </span>
+                            <a href="" (click)="delete(user)">Delete</a>
                         </td>
                     </tr>
                 </tbody>
