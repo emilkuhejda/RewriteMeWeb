@@ -10,6 +10,16 @@
     </div>
 </div>
 
+<div class="col-xl-auto mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+            <span class="mr-2">Deployment:</span>
+            <i *ngIf="isDeploymentSuccessful" class="fas fa-check-circle text-success"></i>
+            <i *ngIf="!isDeploymentSuccessful" class="fas fa-exclamation-circle text-danger"></i>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">

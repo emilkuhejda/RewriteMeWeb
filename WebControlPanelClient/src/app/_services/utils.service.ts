@@ -18,4 +18,8 @@ export class UtilsService {
     hasAccess(): Observable<boolean> {
         return this.http.get<boolean>(this.routingService.getHasAccessUri());
     }
+
+    isDeploymentSuccessful(): Observable<any> {
+        return this.http.get<any>(this.routingService.getIsDeploymentSuccessfulUri());
+    }
 }
