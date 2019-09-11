@@ -6,6 +6,8 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { RecognitionState } from 'src/app/_enums/recognition-state';
+import { GecoDialog } from 'angular-dynamic-dialog';
+import { DialogComponent } from 'src/app/_directives/dialog/dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -19,7 +21,8 @@ export class DetailFileComponent implements OnInit {
         private location: Location,
         private route: ActivatedRoute,
         private fileItemService: FileItemService,
-        private alertService: AlertService) { }
+        private alertService: AlertService,
+        private modal: GecoDialog) { }
 
     ngOnInit() {
         this.route.paramMap.subscribe(paramMap => {
@@ -39,17 +42,34 @@ export class DetailFileComponent implements OnInit {
     }
 
     updateRecognitionState(recognitionState: RecognitionState) {
-        this.fileItemService.updateRecognitionState(this.fileItem.id, recognitionState).subscribe(
-            (fileItem: FileItem) => {
-                if (fileItem == null) {
-                    this.alertService.error("Recognition state was not changed.");
-                    return;
-                }
+        this.alertService.clear();
+        let onAccept = (dialogComponent: DialogComponent) => {
+            this.fileItemService.updateRecognitionState(this.fileItem.id, recognitionState).subscribe(
+                (fileItem: FileItem) => {
+                    if (fileItem == null) {
+                        this.alertService.error("Recognition state was not changed.");
+                        return;
+                    }
 
-                this.fileItem = fileItem;
-            },
-            (err: ErrorResponse) => {
-                this.alertService.error(err.message);
-            });
+                    this.fileItem = fileItem;
+                },
+                (err: ErrorResponse) => {
+                    this.alertService.error(err.message);
+                })
+                .add(() => dialogComponent.close());
+        };
+
+        let data = {
+            title: `Change recognition state`,
+            message: `Do you really want to change recognition state?`,
+            onAccept: onAccept
+        };
+
+        let modal = this.modal.openDialog(DialogComponent, {
+            data: data,
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 }
