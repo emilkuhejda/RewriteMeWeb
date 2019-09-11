@@ -39,7 +39,7 @@ namespace RewriteMe.WebApi.Controllers
             IFileItemSourceService fileItemSourceService,
             ISpeechRecognitionManager speechRecognitionManager,
             IUserService userService)
-        : base(userService)
+            : base(userService)
         {
             _fileItemService = fileItemService;
             _applicationLogService = applicationLogService;

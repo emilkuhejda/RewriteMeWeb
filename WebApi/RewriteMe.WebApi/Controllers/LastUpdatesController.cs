@@ -27,7 +27,7 @@ namespace RewriteMe.WebApi.Controllers
             IUserSubscriptionService userSubscriptionService,
             IInformationMessageService informationMessageService,
             IUserService userService)
-        : base(userService)
+            : base(userService)
         {
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
-using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,11 +17,14 @@ namespace RewriteMe.WebApi.Controllers
     [Produces("application/json")]
     [Authorize]
     [ApiController]
-    public class UtilsController : ControllerBase
+    public class UtilsController : RewriteMeControllerBase
     {
         private readonly AppSettings _appSettings;
 
-        public UtilsController(IOptions<AppSettings> options)
+        public UtilsController(
+            IOptions<AppSettings> options,
+            IUserService userService)
+            : base(userService)
         {
             _appSettings = options.Value;
         }
@@ -39,13 +43,15 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "RefreshToken")]
-        public IActionResult RefreshToken()
+        public async Task<IActionResult> RefreshToken()
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, Role.User.ToString())
             };
 

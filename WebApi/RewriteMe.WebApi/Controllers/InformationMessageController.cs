@@ -18,11 +18,14 @@ namespace RewriteMe.WebApi.Controllers
     [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
-    public class InformationMessageController : ControllerBase
+    public class InformationMessageController : RewriteMeControllerBase
     {
         private readonly IInformationMessageService _informationMessageService;
 
-        public InformationMessageController(IInformationMessageService informationMessageService)
+        public InformationMessageController(
+            IInformationMessageService informationMessageService,
+            IUserService userService)
+            : base(userService)
         {
             _informationMessageService = informationMessageService;
         }
@@ -33,8 +36,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetInformationMessages")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            var informationMessages = await _informationMessageService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
 
             return Ok(informationMessages.Select(x => x.ToDto()));
         }
@@ -45,6 +51,10 @@ namespace RewriteMe.WebApi.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Get(Guid informationMessageId)
         {
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
             return Ok(informationMessage.ToDto());
         }
@@ -56,9 +66,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "MarkMessageAsOpened")]
         public async Task<IActionResult> MarkAsOpened(Guid informationMessageId)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
 
-            var informationMessage = await _informationMessageService.MarkAsOpened(userId, informationMessageId).ConfigureAwait(false);
+            var informationMessage = await _informationMessageService.MarkAsOpened(user.Id, informationMessageId).ConfigureAwait(false);
             if (informationMessage == null)
                 return BadRequest();
 
@@ -71,9 +83,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "MarkMessagesAsOpened")]
         public async Task<IActionResult> MarkMessagesAsOpened(IEnumerable<Guid> ids)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
 
-            await _informationMessageService.MarkAsOpened(userId, ids).ConfigureAwait(false);
+            await _informationMessageService.MarkAsOpened(user.Id, ids).ConfigureAwait(false);
             return Ok(new OkDto());
         }
     }
