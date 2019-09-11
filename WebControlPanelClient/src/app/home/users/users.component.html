@@ -45,7 +45,7 @@
                             <span> | </span>
                             <a [routerLink]="['/users/files', user.id]">Files</a>
                             <span> | </span>
-                            <a href="" (click)="delete(user)">Delete</a>
+                            <a (click)="delete(user)" class="text-primary">Delete</a>
                         </td>
                     </tr>
                 </tbody>
