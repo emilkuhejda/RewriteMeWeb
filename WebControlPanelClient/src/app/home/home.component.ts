@@ -11,6 +11,8 @@ import { AuthenticationService } from '../_services/authentication.service';
     styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+    isDeploymentSuccessful: boolean;
+
     constructor(
         private utilsService: UtilsService,
         private routingService: RoutingService,
@@ -26,6 +28,14 @@ export class HomeComponent implements OnInit {
                 }
             }
         );
+
+        this.utilsService.isDeploymentSuccessful().subscribe(
+            () => {
+                this.isDeploymentSuccessful = true;
+            },
+            () => {
+                this.isDeploymentSuccessful = false;
+            });
     }
 
     generateHangfireAccess() {
