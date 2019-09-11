@@ -22,7 +22,7 @@ namespace RewriteMe.WebApi.Controllers
     [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
-    public class UserSubscriptionController : ControllerBase
+    public class UserSubscriptionController : RewriteMeControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
@@ -33,7 +33,9 @@ namespace RewriteMe.WebApi.Controllers
             IUserSubscriptionService userSubscriptionService,
             IRecognizedAudioSampleService recognizedAudioSampleService,
             IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            IUserService userService)
+            : base(userService)
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
@@ -47,8 +49,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            var userSubscriptions = await _userSubscriptionService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
             return Ok(userSubscriptions.Select(x => x.ToDto()));
         }
@@ -61,8 +66,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
         public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, Guid applicationId)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            if (userId != billingPurchase.UserId)
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            if (user.Id != billingPurchase.UserId)
                 return StatusCode(409);
 
             var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
@@ -78,17 +86,20 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
         public async Task<IActionResult> GetSpeechConfiguration()
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var recognizedAudioSample = new RecognizedAudioSample
             {
                 Id = Guid.NewGuid(),
-                UserId = userId,
+                UserId = user.Id,
                 DateCreated = DateTime.UtcNow
             };
 
             await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
 
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(user.Id).ConfigureAwait(false);
             var speechConfigurationDto = new SpeechConfigurationDto
             {
                 SubscriptionKey = _appSettings.AzureSubscriptionKey,
@@ -98,7 +109,7 @@ namespace RewriteMe.WebApi.Controllers
             };
 
             await _applicationLogService
-                .InfoAsync($"User with ID='{userId}' retrieved speech recognition configuration: {speechConfigurationDto}.", userId)
+                .InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id)
                 .ConfigureAwait(false);
 
             return Ok(speechConfigurationDto);
@@ -108,8 +119,11 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/subscriptions/remaining-time")]
         public async Task<IActionResult> GetSubscriptionRemainingTime()
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            var remainingTime = await _userSubscriptionService.GetRemainingTime(user.Id).ConfigureAwait(false);
 
             return Ok(remainingTime);
         }

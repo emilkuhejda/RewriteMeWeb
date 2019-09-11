@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GECO_DATA_DIALOG, GECO_DIALOG_REF, GecoDialogRef } from 'angular-dynamic-dialog';
-import { min } from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-subscription-dialog',

@@ -29,6 +29,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<bool> ExistsAsync(Guid fileItemId, string fileName)
+        {
+            return await _fileItemRepository.ExistsAsync(fileItemId, fileName).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
         {
             return await _fileItemRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);

@@ -11,6 +11,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task<bool> ExistsAsync(Guid userId, Guid fileItemId);
 
+        Task<bool> ExistsAsync(Guid fileItemId, string fileName);
+
         Task<IEnumerable<FileItem>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
 
         Task<IEnumerable<FileItem>> GetAllForUserAsync(Guid userId);

@@ -19,7 +19,7 @@ namespace RewriteMe.WebApi.Controllers
     [Authorize(Roles = nameof(Role.User))]
     [Authorize]
     [ApiController]
-    public class SpeechResultController : Controller
+    public class SpeechResultController : RewriteMeControllerBase
     {
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
         private readonly ISpeechResultService _speechResultService;
@@ -28,7 +28,9 @@ namespace RewriteMe.WebApi.Controllers
         public SpeechResultController(
             IRecognizedAudioSampleService recognizedAudioSampleService,
             ISpeechResultService speechResultService,
-            IApplicationLogService applicationLogService)
+            IApplicationLogService applicationLogService,
+            IUserService userService)
+            : base(userService)
         {
             _recognizedAudioSampleService = recognizedAudioSampleService;
             _speechResultService = speechResultService;
@@ -41,12 +43,15 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
         public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var speechResult = createSpeechResultModel.ToSpeechResult();
             await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
             await _applicationLogService
-                .InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId)
+                .InfoAsync($"User with ID='{user.Id}' inserted speech result: {speechResult}.", user.Id)
                 .ConfigureAwait(false);
 
             return Ok(new OkDto());
@@ -58,11 +63,14 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
         public async Task<IActionResult> Update(IEnumerable<SpeechResultModel> speechResultModels)
         {
-            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
             var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime });
             await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
 
-            await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
+            await _applicationLogService.InfoAsync("Update speech results total time.", user.Id).ConfigureAwait(false);
 
             return Ok(new OkDto());
         }
@@ -73,8 +81,11 @@ namespace RewriteMe.WebApi.Controllers
         [SwaggerOperation(OperationId = "GetRecognizedTime")]
         public async Task<IActionResult> GetRecognizedTime()
         {
-            var userId = HttpContext.User.GetNameIdentifier();
-            var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(userId).ConfigureAwait(false);
+            var user = await VerifyUserAsync().ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
+
+            var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(user.Id).ConfigureAwait(false);
             var recognizedTimeDto = new RecognizedTimeDto
             {
                 TotalTimeTicks = recognizedTime.Ticks

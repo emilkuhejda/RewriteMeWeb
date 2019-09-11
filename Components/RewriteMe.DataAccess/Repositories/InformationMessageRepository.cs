@@ -153,15 +153,17 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<DateTime> GetLastUpdateAsync()
+        public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
                 return await context.InformationMessages
-                    .OrderByDescending(x => x.DateUpdated)
-                    .Select(x => x.DateUpdated)
-                    .FirstOrDefaultAsync()
-                    .ConfigureAwait(false) ?? DateTime.MinValue;
+                           .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) &&
+                                       (x.DatePublished.HasValue || x.DateUpdated.HasValue))
+                           .OrderByDescending(x => x.DateUpdated)
+                           .Select(x => x.DateUpdated)
+                           .FirstOrDefaultAsync()
+                           .ConfigureAwait(false) ?? DateTime.MinValue;
             }
         }
     }

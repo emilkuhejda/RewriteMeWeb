@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.UserManagement
 {
@@ -13,5 +15,7 @@ namespace RewriteMe.Domain.UserManagement
         public string FamilyName { get; set; }
 
         public DateTime DateRegistered { get; set; }
+
+        public IEnumerable<FileItem> FileItems { get; set; }
     }
 }

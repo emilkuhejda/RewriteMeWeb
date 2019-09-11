@@ -18,11 +18,25 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<bool> UserAlreadyExistsAsync(Guid userId)
+        public async Task<bool> ExistsAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.Users.AnyAsync(x => x.Id == userId).ConfigureAwait(false);
+                return await context.Users
+                    .AsNoTracking()
+                    .AnyAsync(x => x.Id == userId)
+                    .ConfigureAwait(false);
+            }
+        }
+
+        public async Task<bool> ExistsAsync(Guid userId, string email)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.Users
+                    .AsNoTracking()
+                    .AnyAsync(x => x.Id == userId && x.Email == email)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -55,12 +69,36 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<User> GetWithFilesAsync(Guid userId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.Users
+                    .AsNoTracking()
+                    .Include(x => x.FileItems)
+                    .SingleOrDefaultAsync(x => x.Id == userId)
+                    .ConfigureAwait(false);
+
+                return entity?.ToUser();
+            }
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.Users.ToListAsync().ConfigureAwait(false);
                 return entities.Select(x => x.ToUser());
+            }
+        }
+
+        public async Task DeleteAsync(User user)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var userEntity = user.ToUserEntity();
+                context.Entry(userEntity).State = EntityState.Deleted;
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }
