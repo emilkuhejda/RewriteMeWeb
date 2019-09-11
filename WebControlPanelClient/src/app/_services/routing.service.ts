@@ -88,7 +88,7 @@ export class RoutingService {
     }
 
     getGenerateHangfireAccessUri(): string {
-        return this.getApiUri() + "api/generate-hangfire-access/";
+        return this.getApiUri() + "api/control-panel/generate-hangfire-access/";
     }
 
     getHasAccessUri(): string {

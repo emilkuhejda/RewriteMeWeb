@@ -58,31 +58,5 @@ namespace RewriteMe.WebApi.Controllers
             var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
             return Ok(token);
         }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet("/api/generate-hangfire-access")]
-        [Authorize(Roles = nameof(Role.Admin))]
-        public IActionResult GenerateHangfireAccess()
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Role, Role.Admin.ToString())
-            };
-            var expireTime = TimeSpan.FromMinutes(5);
-
-            var token = TokenHelper.Generate(_appSettings.HangfireSecretKey, claims, expireTime);
-
-            var cookieOptions = new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.Add(expireTime),
-                Path = "/",
-                HttpOnly = false,
-                IsEssential = true
-            };
-
-            Response.Cookies.Append(Constants.HangfireAccessToken, token, cookieOptions);
-
-            return Ok();
-        }
     }
 }
