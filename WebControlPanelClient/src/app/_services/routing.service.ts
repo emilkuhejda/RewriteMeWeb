@@ -20,7 +20,7 @@ export class RoutingService {
     }
 
     getDeleteUserUri(): string {
-        return this.getApiUri() + "/api/control-panel/users/delete/";
+        return this.getApiUri() + "api/control-panel/users/delete/";
     }
 
     getPurchasesUri(): string {

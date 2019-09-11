@@ -46,6 +46,7 @@ export class FileItemService {
         let params = new HttpParams();
         params = params.append('fileItemId', fileItemId);
         params = params.append('applicationId', CommonVariables.ApplicationId);
+
         return this.http.delete(this.routingService.getDeleteFileItemUri(), { params: params });
     }
 
