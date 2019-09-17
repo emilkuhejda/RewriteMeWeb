@@ -18,7 +18,6 @@ namespace RewriteMe.WebApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
-    [Authorize]
     [ApiController]
     public class TranscribeItemController : RewriteMeControllerBase
     {
