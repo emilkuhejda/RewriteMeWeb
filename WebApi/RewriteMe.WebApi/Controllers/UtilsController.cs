@@ -15,7 +15,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
-    [Authorize]
+    [Authorize(Roles = nameof(Role.User))]
     [ApiController]
     public class UtilsController : RewriteMeControllerBase
     {
@@ -39,7 +39,6 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [HttpGet("/api/refresh-token")]
-        [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [SwaggerOperation(OperationId = "RefreshToken")]
