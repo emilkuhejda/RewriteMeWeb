@@ -229,6 +229,19 @@ namespace RewriteMe.DataAccess.Migrations
                     b.ToTable("InformationMessage");
                 });
 
+            modelBuilder.Entity("RewriteMe.DataAccess.Entities.InternalValueEntity", b =>
+                {
+                    b.Property<string>("Key")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Key");
+
+                    b.ToTable("InternalValue");
+                });
+
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.LanguageVersionEntity", b =>
                 {
                     b.Property<Guid>("Id")
