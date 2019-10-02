@@ -40,6 +40,18 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "InternalValue",
+                columns: table => new
+                {
+                    Key = table.Column<string>(nullable: false),
+                    Value = table.Column<string>(maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InternalValue", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -410,6 +422,9 @@ namespace RewriteMe.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "FileItemSource");
+
+            migrationBuilder.DropTable(
+                name: "InternalValue");
 
             migrationBuilder.DropTable(
                 name: "LanguageVersion");
