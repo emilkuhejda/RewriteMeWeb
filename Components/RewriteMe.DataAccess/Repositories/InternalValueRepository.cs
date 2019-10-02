@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -15,7 +14,7 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<string> GetValue(string key)
+        public async Task<string> GetValueAsync(string key)
         {
             using (var context = _contextFactory.Create())
             {
@@ -24,7 +23,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateValue(string key, string value)
+        public async Task UpdateValueAsync(string key, string value)
         {
             using (var context = _contextFactory.Create())
             {

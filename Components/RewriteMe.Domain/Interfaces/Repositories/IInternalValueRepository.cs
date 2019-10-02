@@ -4,8 +4,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IInternalValueRepository
     {
-        Task<string> GetValue(string key);
+        Task<string> GetValueAsync(string key);
 
-        Task UpdateValue(string key, string value);
+        Task UpdateValueAsync(string key, string value);
     }
 }
