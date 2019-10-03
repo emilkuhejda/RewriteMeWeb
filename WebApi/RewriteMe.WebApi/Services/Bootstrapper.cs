@@ -43,6 +43,7 @@ namespace RewriteMe.WebApi.Services
             builder.RegisterType<LanguageVersionRepository>().As<ILanguageVersionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserDeviceRepository>().As<IUserDeviceRepository>().InstancePerLifetimeScope();
             builder.RegisterType<InternalValueRepository>().As<IInternalValueRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<CleanUpRepository>().As<ICleanUpRepository>().InstancePerLifetimeScope();
 
             builder.RegisterType<AdministratorService>().As<IAdministratorService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
