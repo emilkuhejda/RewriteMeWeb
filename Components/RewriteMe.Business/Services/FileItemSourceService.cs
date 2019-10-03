@@ -43,7 +43,7 @@ namespace RewriteMe.Business.Services
             {
                 Id = Guid.NewGuid(),
                 FileItemId = fileItem.Id,
-                Source = source,
+                OriginalSource = source,
                 DateCreated = DateTime.UtcNow
             };
 

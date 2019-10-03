@@ -11,7 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = entity.Id,
                 FileItemId = entity.FileItemId,
-                Source = entity.Source,
+                OriginalSource = entity.OriginalSource,
                 DateCreated = entity.DateCreated
             };
         }
@@ -22,7 +22,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = fileItemSource.Id,
                 FileItemId = fileItemSource.FileItemId,
-                Source = fileItemSource.Source,
+                OriginalSource = fileItemSource.OriginalSource,
                 DateCreated = fileItemSource.DateCreated
             };
         }
