@@ -44,36 +44,34 @@ namespace RewriteMe.Business.Managers
 
         public async Task RunConversionToWavAsync(FileItem fileItem, Guid userId)
         {
-            if (fileItem.RecognitionState != RecognitionState.None && !string.IsNullOrWhiteSpace(fileItem.SourceFileName))
-            {
-                var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
-                if (File.Exists(convertedFilePath))
-                    return;
-            }
-
-            string filePath;
             var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-            if (readSourceFromDatabase)
+            if (fileItem.RecognitionState != RecognitionState.None)
             {
-                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
-                if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
-                    return;
+                if (readSourceFromDatabase)
+                {
+                    var hasFileItemSource = await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
+                    if (hasFileItemSource)
+                        return;
+                }
 
-                filePath = GetTempFullPath();
-                await File.WriteAllBytesAsync(filePath, fileItemSource.OriginalSource).ConfigureAwait(false);
-            }
-            else
-            {
-                filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
-                if (!File.Exists(filePath))
-                    return;
+                if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
+                {
+                    var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
+                    if (File.Exists(convertedFilePath))
+                        return;
+                }
             }
 
+            var filePath = string.Empty;
             try
             {
                 await _applicationLogService
                     .InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId)
                     .ConfigureAwait(false);
+
+                filePath = await GetFilePathAsync(fileItem, readSourceFromDatabase).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(filePath))
+                    throw new InvalidOperationException(nameof(filePath));
 
                 await RunConversionToWavAsync(fileItem, filePath).ConfigureAwait(false);
 
@@ -89,11 +87,31 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
-                if (readSourceFromDatabase)
+                if (readSourceFromDatabase && !string.IsNullOrWhiteSpace(filePath))
                 {
                     File.Delete(filePath);
                 }
             }
+        }
+
+        private async Task<string> GetFilePathAsync(FileItem fileItem, bool readSourceFromDatabase)
+        {
+            if (readSourceFromDatabase)
+            {
+                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
+                if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
+                    return null;
+
+                var tempFilePath = GetTempFullPath();
+                await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
+                return tempFilePath;
+            }
+
+            var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
+            if (!File.Exists(filePath))
+                return null;
+
+            return filePath;
         }
 
         private string GetTempFullPath()

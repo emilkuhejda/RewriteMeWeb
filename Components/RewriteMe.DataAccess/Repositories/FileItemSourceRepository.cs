@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
@@ -22,6 +23,20 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entity = await context.FileItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
                 return entity?.ToFileItemSource();
+            }
+        }
+
+        public async Task<bool> HasFileItemSourceAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItemSources
+                    .Where(x => x.FileItemId == fileItemId && x.Source != null && x.Source.Any())
+                    .Select(x => new { x.Id })
+                    .SingleOrDefaultAsync()
+                    .ConfigureAwait(false);
+
+                return entity != null;
             }
         }
 
