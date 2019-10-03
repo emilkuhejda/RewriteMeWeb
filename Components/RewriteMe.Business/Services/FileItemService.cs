@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using NAudio.Wave;
+using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -13,15 +14,21 @@ namespace RewriteMe.Business.Services
 {
     public class FileItemService : IFileItemService
     {
-        private readonly IFileItemRepository _fileItemRepository;
+        private readonly IFileItemSourceService _fileItemSourceService;
+        private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
+        private readonly IFileItemRepository _fileItemRepository;
 
         public FileItemService(
-            IFileItemRepository fileItemRepository,
-            IFileAccessService fileAccessService)
+            IFileItemSourceService fileItemSourceService,
+            IInternalValueService internalValueService,
+            IFileAccessService fileAccessService,
+            IFileItemRepository fileItemRepository)
         {
-            _fileItemRepository = fileItemRepository;
+            _fileItemSourceService = fileItemSourceService;
+            _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
+            _fileItemRepository = fileItemRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -144,6 +151,13 @@ namespace RewriteMe.Business.Services
 
         public async Task<byte[]> GetAudioSource(Guid fileItemId)
         {
+            var storeDataInDatabase = await _internalValueService.GetValueAsync(InternalValues.StoreDataInDatabase).ConfigureAwait(false);
+            if (storeDataInDatabase)
+            {
+                var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+                return fileItemSource?.Source ?? Array.Empty<byte>();
+            }
+
             var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
