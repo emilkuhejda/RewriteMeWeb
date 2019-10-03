@@ -23,6 +23,11 @@ namespace RewriteMe.Business.Services
             _applicationLogService = applicationLogService;
         }
 
+        public async Task<FileItemSource> GetAsync(Guid fileItemId)
+        {
+            return await _fileItemSourceRepository.GetAsync(fileItemId).ConfigureAwait(false);
+        }
+
         public async Task AddFileItemSourceAsync(FileItem fileItem)
         {
             var fileItemPath = _fileAccessService.GetOriginalFileItemPath(fileItem);
