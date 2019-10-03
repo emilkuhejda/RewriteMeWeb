@@ -142,7 +142,7 @@ namespace RewriteMe.WebApi.Controllers
 
             var fileItemId = Guid.NewGuid();
             var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
-            var uploadedFile = await _fileItemService.UploadFileAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+            var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
 
             TimeSpan totalTime;
             try
