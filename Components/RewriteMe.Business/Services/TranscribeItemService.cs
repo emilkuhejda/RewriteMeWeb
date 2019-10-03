@@ -2,31 +2,30 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Business.Services
 {
     public class TranscribeItemService : ITranscribeItemService
     {
+        private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly ITranscribeItemSourceRepository _transcribeItemSourceRepository;
-        private readonly AppSettings _appSettings;
 
         public TranscribeItemService(
+            IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             ITranscribeItemRepository transcribeItemRepository,
-            ITranscribeItemSourceRepository transcribeItemSourceRepository,
-            IOptions<AppSettings> options)
+            ITranscribeItemSourceRepository transcribeItemSourceRepository)
         {
+            _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _transcribeItemRepository = transcribeItemRepository;
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
-            _appSettings = options.Value;
         }
 
         public async Task<byte[]> GetSourceAsync(Guid transcribeItemId)
@@ -35,7 +34,8 @@ namespace RewriteMe.Business.Services
             if (transcribeItem == null)
                 return null;
 
-            if (_appSettings.ReadSourceFromDisk)
+            var storeDataInDatabase = await _internalValueService.GetValueAsync(InternalValues.StoreDataInDatabase).ConfigureAwait(false);
+            if (!storeDataInDatabase)
             {
                 var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
                 if (File.Exists(sourcePath))
