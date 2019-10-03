@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 
@@ -26,6 +27,11 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => x.Id)
                     .ToListAsync()
                     .ConfigureAwait(false);
+
+                var dbSet = context.Set<FileItemSourceEntity>();
+                dbSet.RemoveRange(dbSet.Where(x => fileItemIds.Contains(x.Id)));
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
@@ -38,6 +44,11 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => x.Id)
                     .ToListAsync()
                     .ConfigureAwait(false);
+
+                var dbSet = context.Set<TranscribeItemSourceEntity>();
+                dbSet.RemoveRange(dbSet.Where(x => transcribeItemIds.Contains(x.Id)));
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }
