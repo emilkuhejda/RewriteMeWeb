@@ -151,8 +151,8 @@ namespace RewriteMe.Business.Services
 
         public async Task<byte[]> GetAudioSource(Guid fileItemId)
         {
-            var storeDataInDatabase = await _internalValueService.GetValueAsync(InternalValues.StoreDataInDatabase).ConfigureAwait(false);
-            if (storeDataInDatabase)
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            if (readSourceFromDatabase)
             {
                 var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
                 return fileItemSource?.Source ?? Array.Empty<byte>();

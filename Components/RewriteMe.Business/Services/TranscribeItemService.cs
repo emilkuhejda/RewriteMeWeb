@@ -34,18 +34,18 @@ namespace RewriteMe.Business.Services
             if (transcribeItem == null)
                 return null;
 
-            var storeDataInDatabase = await _internalValueService.GetValueAsync(InternalValues.StoreDataInDatabase).ConfigureAwait(false);
-            if (!storeDataInDatabase)
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            if (readSourceFromDatabase)
             {
-                var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
-                if (File.Exists(sourcePath))
-                    return await File.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
-
-                return null;
+                var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
+                return transcribeItemSource?.Source;
             }
 
-            var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
-            return transcribeItemSource?.Source;
+            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
+            if (File.Exists(sourcePath))
+                return await File.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
+
+            return null;
         }
 
         public async Task<TranscribeItem> GetAsync(Guid transcribeItemId)
