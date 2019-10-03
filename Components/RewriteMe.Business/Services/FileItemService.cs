@@ -152,7 +152,7 @@ namespace RewriteMe.Business.Services
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
 
-        public async Task<UploadedFile> UploadFileAsync(Guid fileItemId, byte[] uploadedFileSource)
+        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
         {
             var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
