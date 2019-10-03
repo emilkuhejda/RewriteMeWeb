@@ -155,7 +155,7 @@ namespace RewriteMe.Business.Services
             if (readSourceFromDatabase)
             {
                 var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
-                return fileItemSource?.OriginalSource ?? Array.Empty<byte>();
+                return fileItemSource?.Source ?? Array.Empty<byte>();
             }
 
             var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
