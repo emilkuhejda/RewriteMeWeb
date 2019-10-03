@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
@@ -12,6 +14,15 @@ namespace RewriteMe.DataAccess.Repositories
         public FileItemSourceRepository(IDbContextFactory contextFactory)
         {
             _contextFactory = contextFactory;
+        }
+
+        public async Task<FileItemSource> GetAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
+                return entity?.ToFileItemSource();
+            }
         }
 
         public async Task AddAsync(FileItemSource fileItemSource)
