@@ -9,5 +9,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<FileItemSource> GetAsync(Guid fileItemId);
 
         Task AddFileItemSourceAsync(FileItem fileItem);
+
+        Task UpdateSource(Guid fileItemId, byte[] source);
     }
 }
