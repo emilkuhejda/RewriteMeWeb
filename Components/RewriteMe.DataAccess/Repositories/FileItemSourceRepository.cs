@@ -53,7 +53,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.TranscribeItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
+                var entity = await context.FileItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
                 if (entity == null)
                     return;
 
