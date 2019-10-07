@@ -74,7 +74,7 @@ namespace RewriteMe.Business.Services
 
         public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
         {
-            return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetDeletedFileItemsTotalTimeAsync(userId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)

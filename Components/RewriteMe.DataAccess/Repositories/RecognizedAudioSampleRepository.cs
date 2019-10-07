@@ -26,7 +26,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<TimeSpan> GetRecognizedTime(Guid userId)
+        public async Task<TimeSpan> GetRecognizedTimeAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {

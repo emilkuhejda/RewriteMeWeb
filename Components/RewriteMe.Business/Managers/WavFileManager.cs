@@ -95,7 +95,7 @@ namespace RewriteMe.Business.Managers
             var recognitionState = RecognitionState.Prepared;
             var source = await File.ReadAllBytesAsync(sourceFile.outputFilePath).ConfigureAwait(false);
             await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);
-            await _fileItemSourceService.UpdateSource(fileItem.Id, source).ConfigureAwait(false);
+            await _fileItemSourceService.UpdateSourceAsync(fileItem.Id, source).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
 
             fileItem.RecognitionState = recognitionState;

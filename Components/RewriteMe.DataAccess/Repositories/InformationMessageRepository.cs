@@ -110,7 +110,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<InformationMessage> MarkAsOpened(Guid userId, Guid informationMessageId)
+        public async Task<InformationMessage> MarkAsOpenedAsync(Guid userId, Guid informationMessageId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -127,7 +127,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task MarkAsOpened(Guid userId, IEnumerable<Guid> ids)
+        public async Task MarkAsOpenedAsync(Guid userId, IEnumerable<Guid> ids)
         {
             using (var context = _contextFactory.Create())
             {

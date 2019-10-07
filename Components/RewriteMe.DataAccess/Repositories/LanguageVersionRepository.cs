@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task UpdateAndroidSendStatus(Guid languageVersionId, bool status)
+        public async Task UpdateAndroidSendStatusAsync(Guid languageVersionId, bool status)
         {
             using (var context = _contextFactory.Create())
             {
@@ -27,7 +27,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateOsxSendStatus(Guid languageVersionId, bool status)
+        public async Task UpdateOsxSendStatusAsync(Guid languageVersionId, bool status)
         {
             using (var context = _contextFactory.Create())
             {
