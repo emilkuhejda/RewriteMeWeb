@@ -8,6 +8,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task AddAsync(RecognizedAudioSample recognizedAudioSample);
 
-        Task<TimeSpan> GetRecognizedTime(Guid userId);
+        Task<TimeSpan> GetRecognizedTimeAsync(Guid userId);
     }
 }

@@ -16,7 +16,7 @@ namespace RewriteMe.Business.Services
             _administratorRepository = administratorRepository;
         }
 
-        public async Task<bool> AlreadyExists(Administrator administrator)
+        public async Task<bool> AlreadyExistsAsync(Administrator administrator)
         {
             return await _administratorRepository.AlreadyExists(administrator).ConfigureAwait(false);
         }

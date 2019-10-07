@@ -12,6 +12,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task AddAsync(FileItemSource fileItemSource);
 
-        Task UpdateSource(Guid fileItemId, byte[] source);
+        Task UpdateSourceAsync(Guid fileItemId, byte[] source);
     }
 }

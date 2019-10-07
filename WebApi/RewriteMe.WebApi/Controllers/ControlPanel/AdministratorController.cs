@@ -40,7 +40,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
             var administrator = createAdministratorModel.ToAdministrator();
-            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
             if (alreadyExists)
                 return StatusCode(409);
 
@@ -53,7 +53,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
         {
             var administrator = updateAdministrator.ToAdministrator();
-            var alreadyExists = await _administratorService.AlreadyExists(administrator).ConfigureAwait(false);
+            var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
             if (alreadyExists)
                 return StatusCode(409);
 

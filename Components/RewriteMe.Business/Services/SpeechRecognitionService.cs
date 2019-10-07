@@ -46,7 +46,7 @@ namespace RewriteMe.Business.Services
             return false;
         }
 
-        public async Task<IEnumerable<TranscribeItem>> Recognize(FileItem fileItem, IEnumerable<WavPartialFile> files)
+        public async Task<IEnumerable<TranscribeItem>> RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files)
         {
             var speechClient = CreateSpeechClient();
 

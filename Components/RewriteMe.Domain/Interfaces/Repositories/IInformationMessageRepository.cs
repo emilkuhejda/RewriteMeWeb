@@ -19,9 +19,9 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateDatePublishedAsync(Guid informationMessageId, DateTime datePublished);
 
-        Task<InformationMessage> MarkAsOpened(Guid userId, Guid informationMessageId);
+        Task<InformationMessage> MarkAsOpenedAsync(Guid userId, Guid informationMessageId);
 
-        Task MarkAsOpened(Guid userId, IEnumerable<Guid> ids);
+        Task MarkAsOpenedAsync(Guid userId, IEnumerable<Guid> ids);
 
         Task<bool> CanUpdateAsync(Guid informationMessageId);
 

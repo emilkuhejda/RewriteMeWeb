@@ -72,9 +72,9 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
         {
-            return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetDeletedFileItemsTotalTimeAsync(userId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
@@ -150,7 +150,7 @@ namespace RewriteMe.Business.Services
             File.Delete(filePath);
         }
 
-        public async Task<byte[]> GetAudioSource(Guid fileItemId)
+        public async Task<byte[]> GetAudioSourceAsync(Guid fileItemId)
         {
             var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
             if (readSourceFromDatabase)
@@ -211,11 +211,19 @@ namespace RewriteMe.Business.Services
             return false;
         }
 
-        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        public string CreateUploadDirectoryIfNeeded(Guid fileItemId)
         {
             var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
-            Directory.CreateDirectory(uploadDirectoryPath);
+            if (!Directory.Exists(uploadDirectoryPath))
+                Directory.CreateDirectory(uploadDirectoryPath);
+
+            return uploadDirectoryPath;
+        }
+
+        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        {
+            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
 
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
