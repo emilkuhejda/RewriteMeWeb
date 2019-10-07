@@ -55,9 +55,9 @@ namespace RewriteMe.Business.Services
             await _fileItemSourceRepository.AddAsync(fileItemSource).ConfigureAwait(false);
         }
 
-        public async Task UpdateSource(Guid fileItemId, byte[] source)
+        public async Task UpdateSourceAsync(Guid fileItemId, byte[] source)
         {
-            await _fileItemSourceRepository.UpdateSource(fileItemId, source).ConfigureAwait(false);
+            await _fileItemSourceRepository.UpdateSourceAsync(fileItemId, source).ConfigureAwait(false);
         }
     }
 }

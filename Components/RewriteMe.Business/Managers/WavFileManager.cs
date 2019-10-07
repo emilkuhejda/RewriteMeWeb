@@ -51,6 +51,7 @@ namespace RewriteMe.Business.Managers
                     .InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId)
                     .ConfigureAwait(false);
 
+                _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.Id);
                 filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new InvalidOperationException(nameof(filePath));
@@ -94,7 +95,7 @@ namespace RewriteMe.Business.Managers
             var recognitionState = RecognitionState.Prepared;
             var source = await File.ReadAllBytesAsync(sourceFile.outputFilePath).ConfigureAwait(false);
             await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);
-            await _fileItemSourceService.UpdateSource(fileItem.Id, source).ConfigureAwait(false);
+            await _fileItemSourceService.UpdateSourceAsync(fileItem.Id, source).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
 
             fileItem.RecognitionState = recognitionState;
@@ -103,7 +104,7 @@ namespace RewriteMe.Business.Managers
 
         public async Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(Guid fileItemId, TimeSpan remainingTime)
         {
-            var audioSource = await _fileItemService.GetAudioSource(fileItemId).ConfigureAwait(false);
+            var audioSource = await _fileItemService.GetAudioSourceAsync(fileItemId).ConfigureAwait(false);
             return await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
         }
     }

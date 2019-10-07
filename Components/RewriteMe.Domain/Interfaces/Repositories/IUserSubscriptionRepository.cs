@@ -15,6 +15,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task AddAsync(UserSubscription userSubscription);
 
-        Task<TimeSpan> GetTotalSubscriptionTime(Guid userId);
+        Task<TimeSpan> GetTotalSubscriptionTimeAsync(Guid userId);
     }
 }

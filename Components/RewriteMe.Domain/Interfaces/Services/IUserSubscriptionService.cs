@@ -16,7 +16,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task AddAsync(UserSubscription userSubscription);
 
-        Task<TimeSpan> GetRemainingTime(Guid userId);
+        Task<TimeSpan> GetRemainingTimeAsync(Guid userId);
 
         Task<UserSubscription> RegisterPurchaseAsync(BillingPurchase billingPurchase, Guid applicationId);
     }

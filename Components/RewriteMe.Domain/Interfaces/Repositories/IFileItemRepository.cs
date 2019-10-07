@@ -27,7 +27,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<FileItem> GetAsAdminAsync(Guid fileItemId);
 
-        Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId);
+        Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId);
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
@@ -55,6 +55,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
-        Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId);
+        Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);
     }
 }

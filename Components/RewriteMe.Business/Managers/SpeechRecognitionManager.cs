@@ -56,7 +56,7 @@ namespace RewriteMe.Business.Managers
 
         public async Task<bool> CanRunRecognition(Guid userId)
         {
-            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTime(userId).ConfigureAwait(false);
+            var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
             return subscriptionRemainingTime.TotalSeconds > 15;
         }
 
@@ -109,20 +109,20 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(fileItem.UserId).ConfigureAwait(false);
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
 
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
-            await _transcribeItemSourceService.AddWavFileSources(fileItem.Id, files).ConfigureAwait(false);
+            await _transcribeItemSourceService.AddWavFileSourcesAsync(fileItem.Id, files).ConfigureAwait(false);
 
             var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;
             await _fileItemService.UpdateTranscribedTimeAsync(fileItem.Id, transcribedTime).ConfigureAwait(false);
 
             try
             {
-                var transcribeItems = await _speechRecognitionService.Recognize(fileItem, files).ConfigureAwait(false);
+                var transcribeItems = await _speechRecognitionService.RecognizeAsync(fileItem, files).ConfigureAwait(false);
                 await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
 
                 await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);

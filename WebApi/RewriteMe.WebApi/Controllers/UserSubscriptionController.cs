@@ -98,7 +98,7 @@ namespace RewriteMe.WebApi.Controllers
 
             await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
 
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(user.Id).ConfigureAwait(false);
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
             var speechConfigurationDto = new SpeechConfigurationDto
             {
                 SubscriptionKey = _appSettings.AzureSubscriptionKey,
@@ -122,7 +122,7 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var remainingTime = await _userSubscriptionService.GetRemainingTime(user.Id).ConfigureAwait(false);
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
 
             return Ok(remainingTime);
         }

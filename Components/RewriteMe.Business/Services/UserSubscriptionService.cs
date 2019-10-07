@@ -48,11 +48,11 @@ namespace RewriteMe.Business.Services
             await _userSubscriptionRepository.AddAsync(userSubscription).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetRemainingTime(Guid userId)
+        public async Task<TimeSpan> GetRemainingTimeAsync(Guid userId)
         {
-            var totalSubscriptionTime = await _userSubscriptionRepository.GetTotalSubscriptionTime(userId).ConfigureAwait(false);
-            var transcribedTotalSeconds = await _fileItemRepository.GetTranscribedTotalSeconds(userId).ConfigureAwait(false);
-            var realTimeRecognizedTime = await _recognizedAudioSampleRepository.GetRecognizedTime(userId).ConfigureAwait(false);
+            var totalSubscriptionTime = await _userSubscriptionRepository.GetTotalSubscriptionTimeAsync(userId).ConfigureAwait(false);
+            var transcribedTotalSeconds = await _fileItemRepository.GetTranscribedTotalSecondsAsync(userId).ConfigureAwait(false);
+            var realTimeRecognizedTime = await _recognizedAudioSampleRepository.GetRecognizedTimeAsync(userId).ConfigureAwait(false);
 
             transcribedTotalSeconds = transcribedTotalSeconds.Add(realTimeRecognizedTime);
             return totalSubscriptionTime.Subtract(transcribedTotalSeconds);

@@ -7,6 +7,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ITranscribeItemSourceService
     {
-        Task AddWavFileSources(Guid fileItemId, IEnumerable<WavPartialFile> wavFiles);
+        Task AddWavFileSourcesAsync(Guid fileItemId, IEnumerable<WavPartialFile> wavFiles);
     }
 }

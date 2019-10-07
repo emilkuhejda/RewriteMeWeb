@@ -139,7 +139,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -386,7 +386,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<TimeSpan> GetTranscribedTotalSeconds(Guid userId)
+        public async Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {

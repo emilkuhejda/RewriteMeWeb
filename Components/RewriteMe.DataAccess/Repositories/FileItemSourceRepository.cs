@@ -49,7 +49,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateSource(Guid fileItemId, byte[] source)
+        public async Task UpdateSourceAsync(Guid fileItemId, byte[] source)
         {
             using (var context = _contextFactory.Create())
             {
