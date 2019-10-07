@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.WebApi.Models
 {
-    public class CreateAdministratorModel
+    public class CreateTokenModel
     {
         [Required]
         public string Username { get; set; }
@@ -12,9 +14,9 @@ namespace RewriteMe.WebApi.Models
         public string Password { get; set; }
 
         [Required]
-        public string FirstName { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
-        public string LastName { get; set; }
+        public Role Role { get; set; }
     }
 }

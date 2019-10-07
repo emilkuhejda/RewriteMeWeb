@@ -192,8 +192,10 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<Guid>("FileItemId");
 
-                    b.Property<byte[]>("Source")
+                    b.Property<byte[]>("OriginalSource")
                         .IsRequired();
+
+                    b.Property<byte[]>("Source");
 
                     b.HasKey("Id");
 

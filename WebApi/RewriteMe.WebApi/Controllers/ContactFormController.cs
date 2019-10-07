@@ -12,6 +12,7 @@ namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
     public class ContactFormController : ControllerBase
     {

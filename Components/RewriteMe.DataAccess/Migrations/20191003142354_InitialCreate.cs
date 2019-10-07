@@ -239,7 +239,8 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     FileItemId = table.Column<Guid>(nullable: false),
-                    Source = table.Column<byte[]>(nullable: false),
+                    OriginalSource = table.Column<byte[]>(nullable: false),
+                    Source = table.Column<byte[]>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
