@@ -72,7 +72,7 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
         {
             return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
         }
@@ -150,7 +150,7 @@ namespace RewriteMe.Business.Services
             File.Delete(filePath);
         }
 
-        public async Task<byte[]> GetAudioSource(Guid fileItemId)
+        public async Task<byte[]> GetAudioSourceAsync(Guid fileItemId)
         {
             var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
             if (readSourceFromDatabase)

@@ -27,7 +27,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
-        Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId);
+        Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId);
 
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
 
@@ -55,7 +55,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task RemoveSourceFileAsync(FileItem fileItem);
 
-        Task<byte[]> GetAudioSource(Guid fileItemId);
+        Task<byte[]> GetAudioSourceAsync(Guid fileItemId);
 
         Task<string> GetOriginalFileItemPathAsync(FileItem fileItem);
 
