@@ -51,6 +51,7 @@ namespace RewriteMe.Business.Managers
                     .InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId)
                     .ConfigureAwait(false);
 
+                _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.Id);
                 filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new InvalidOperationException(nameof(filePath));

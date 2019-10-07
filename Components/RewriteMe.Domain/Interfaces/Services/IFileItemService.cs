@@ -61,6 +61,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem);
 
+        string CreateUploadDirectoryIfNeeded(Guid fileItemId);
+
         Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource);
 
         TimeSpan GetAudioTotalTime(string filePath);

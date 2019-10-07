@@ -211,11 +211,19 @@ namespace RewriteMe.Business.Services
             return false;
         }
 
-        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        public string CreateUploadDirectoryIfNeeded(Guid fileItemId)
         {
             var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
-            Directory.CreateDirectory(uploadDirectoryPath);
+            if (!Directory.Exists(uploadDirectoryPath))
+                Directory.CreateDirectory(uploadDirectoryPath);
+
+            return uploadDirectoryPath;
+        }
+
+        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        {
+            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
 
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
