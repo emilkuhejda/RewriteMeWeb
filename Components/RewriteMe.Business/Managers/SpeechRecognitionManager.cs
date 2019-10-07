@@ -95,7 +95,7 @@ namespace RewriteMe.Business.Managers
                 await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
 
-                await _fileItemService.RemoveSourceFileNameAsync(fileItem).ConfigureAwait(false);
+                await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

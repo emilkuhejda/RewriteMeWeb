@@ -53,9 +53,13 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
-        Task RemoveSourceFileNameAsync(FileItem fileItem);
+        Task RemoveSourceFileAsync(FileItem fileItem);
 
         Task<byte[]> GetAudioSource(Guid fileItemId);
+
+        Task<string> GetOriginalFileItemPathAsync(FileItem fileItem);
+
+        Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem);
 
         Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource);
 

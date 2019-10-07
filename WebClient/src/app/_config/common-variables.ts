@@ -6,5 +6,5 @@ export class CommonVariables {
     public static B2CAccessErrorKey: string = "b2c.access.error";
     public static ApiUriDevelopment: string = "https://localhost:44357/";
     public static ApiUriProduction: string = "https://rewrite-me.com/";
-    public static LoginRedirectUri: string = "https://rewrite-me.com/home/register-user/";
+    public static LoginRedirectUri: string = "http://localhost:4200/home/register-user/";
 }
