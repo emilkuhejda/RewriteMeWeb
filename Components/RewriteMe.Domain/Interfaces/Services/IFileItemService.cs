@@ -57,6 +57,10 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<byte[]> GetAudioSource(Guid fileItemId);
 
+        Task<string> GetOriginalFileItemPathAsync(FileItem fileItem);
+
+        Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem);
+
         Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource);
 
         TimeSpan GetAudioTotalTime(string filePath);
