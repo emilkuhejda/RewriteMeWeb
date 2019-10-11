@@ -19,35 +19,31 @@ namespace RewriteMe.Business.Services
             _fileAccessService = fileAccessService;
         }
 
-        public string CopyWavAsync(FileItem fileItem)
+        public (string outputFilePath, string fileName) CopyWavAsync(FileItem fileItem, string inputFilePath)
         {
-            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
-
             var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
-            var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
+            var outputFilePath = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
 
-            File.Copy(inputFile, outputFile, true);
+            File.Copy(inputFilePath, outputFilePath, true);
 
-            return fileName;
+            return (outputFilePath, fileName);
         }
 
-        public async Task<string> ConvertToWavAsync(FileItem fileItem)
+        public async Task<(string outputFilePath, string fileName)> ConvertToWavAsync(FileItem fileItem, string inputFilePath)
         {
-            var inputFile = _fileAccessService.GetOriginalFileItemPath(fileItem);
-
             var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
-            var outputFile = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
+            var outputFilePath = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
             await Task.Run(() =>
             {
-                using (var reader = new MediaFoundationReader(inputFile))
+                using (var reader = new MediaFoundationReader(inputFilePath))
                 {
-                    WaveFileWriter.CreateWaveFile(outputFile, reader);
+                    WaveFileWriter.CreateWaveFile(outputFilePath, reader);
                 }
             }).ConfigureAwait(false);
 
-            return fileName;
+            return (outputFilePath, fileName);
         }
 
         public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime)
@@ -101,7 +97,7 @@ namespace RewriteMe.Business.Services
 
         private void TrimWavFile(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavPartialFile> files)
         {
-            var outputFileName = GetTempName();
+            var outputFileName = GetTempFullPath();
             var fileItem = TrimWavFile(reader, outputFileName, start, end);
             files.Add(fileItem);
         }
@@ -151,7 +147,7 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        private string GetTempName()
+        private string GetTempFullPath()
         {
             return Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.wav");
         }

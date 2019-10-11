@@ -17,7 +17,6 @@ namespace RewriteMe.WebApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
-    [Authorize]
     [ApiController]
     public class SpeechResultController : RewriteMeControllerBase
     {
@@ -85,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTime(user.Id).ConfigureAwait(false);
+            var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTimeAsync(user.Id).ConfigureAwait(false);
             var recognizedTimeDto = new RecognizedTimeDto
             {
                 TotalTimeTicks = recognizedTime.Ticks

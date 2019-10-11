@@ -11,28 +11,23 @@ using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
-using IOFile = System.IO.File;
 
 namespace RewriteMe.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
-    [Authorize]
     [ApiController]
     public class TranscribeItemController : RewriteMeControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
-        private readonly IFileAccessService _fileAccessService;
 
         public TranscribeItemController(
             ITranscribeItemService transcribeItemService,
-            IFileAccessService fileAccessService,
             IUserService userService)
             : base(userService)
         {
             _transcribeItemService = transcribeItemService;
-            _fileAccessService = fileAccessService;
         }
 
         [HttpGet("/api/transcribe-items/{fileItemId}")]
@@ -68,6 +63,7 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
@@ -75,14 +71,16 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
-            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
-            var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
+            var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
+            if (source == null)
+                return NotFound();
+
             return Ok(source);
         }
 
         [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
@@ -90,9 +88,10 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var transcribeItem = await _transcribeItemService.GetAsync(transcribeItemId).ConfigureAwait(false);
-            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
-            var source = await IOFile.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
+            var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
+            if (source == null)
+                return NotFound();
+
             return new FileContentResult(source, "audio/wav");
         }
 

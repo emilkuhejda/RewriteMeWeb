@@ -68,7 +68,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<TimeSpan> GetTotalSubscriptionTime(Guid userId)
+        public async Task<TimeSpan> GetTotalSubscriptionTimeAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {

@@ -24,7 +24,6 @@ namespace RewriteMe.WebApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
-    [Authorize]
     [ApiController]
     public class FileItemController : RewriteMeControllerBase
     {
@@ -100,7 +99,7 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(user.Id).ConfigureAwait(false);
+            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTimeAsync(user.Id).ConfigureAwait(false);
 
             var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
             return Ok(timeSpanWrapperDto);
@@ -231,7 +230,7 @@ namespace RewriteMe.WebApi.Controllers
                 return StatusCode(401);
 
             await _fileItemService.DeleteAsync(user.Id, fileItemId, applicationId).ConfigureAwait(false);
-            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTime(user.Id).ConfigureAwait(false);
+            var totalTime = await _fileItemService.GetDeletedFileItemsTotalTimeAsync(user.Id).ConfigureAwait(false);
 
             var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
             return Ok(timeSpanWrapperDto);

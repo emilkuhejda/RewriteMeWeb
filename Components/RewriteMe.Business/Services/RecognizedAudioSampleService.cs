@@ -20,9 +20,9 @@ namespace RewriteMe.Business.Services
             await _recognizedAudioSampleRepository.AddAsync(recognizedAudioSample).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetRecognizedTime(Guid userId)
+        public async Task<TimeSpan> GetRecognizedTimeAsync(Guid userId)
         {
-            return await _recognizedAudioSampleRepository.GetRecognizedTime(userId).ConfigureAwait(false);
+            return await _recognizedAudioSampleRepository.GetRecognizedTimeAsync(userId).ConfigureAwait(false);
         }
     }
 }

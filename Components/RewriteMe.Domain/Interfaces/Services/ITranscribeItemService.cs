@@ -7,6 +7,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ITranscribeItemService
     {
+        Task<byte[]> GetSourceAsync(Guid transcribeItemId);
+
         Task<TranscribeItem> GetAsync(Guid transcribeItemId);
 
         Task<IEnumerable<TranscribeItem>> GetAllAsync(Guid fileItemId);

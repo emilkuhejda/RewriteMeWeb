@@ -84,6 +84,7 @@ export class DetailFileComponent implements OnInit {
     }
 
     loadAudioFile(transcribeItem: TranscribeItemViewModel) {
+        this.alertService.clear();
         transcribeItem.isLoading = true;
 
         this.transcribeItemService.getAudio(transcribeItem.transcribeItemId).subscribe(
@@ -91,7 +92,11 @@ export class DetailFileComponent implements OnInit {
                 transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
             },
             (err: ErrorResponse) => {
-                this.alertService.error(err.message);
+                let error = err.message;
+                if (err.status === 404)
+                    error = "Audio was not found.";
+
+                this.alertService.error(error);
             }).add(() => {
                 transcribeItem.isLoading = false;
             });

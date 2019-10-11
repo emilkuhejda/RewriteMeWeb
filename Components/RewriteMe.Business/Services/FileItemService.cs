@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using NAudio.Wave;
 using RewriteMe.Business.Configuration;
@@ -71,9 +72,9 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTime(Guid userId)
+        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
         {
-            return await _fileItemRepository.GetDeletedFileItemsTotalTime(userId).ConfigureAwait(false);
+            return await _fileItemRepository.GetDeletedFileItemsTotalTimeAsync(userId).ConfigureAwait(false);
         }
 
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
@@ -141,7 +142,7 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateTranscribedTimeAsync(fileItemId, transcribedTime).ConfigureAwait(false);
         }
 
-        public async Task RemoveSourceFileNameAsync(FileItem fileItem)
+        public async Task RemoveSourceFileAsync(FileItem fileItem)
         {
             await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
 
@@ -149,10 +150,10 @@ namespace RewriteMe.Business.Services
             File.Delete(filePath);
         }
 
-        public async Task<byte[]> GetAudioSource(Guid fileItemId)
+        public async Task<byte[]> GetAudioSourceAsync(Guid fileItemId)
         {
-            var storeDataInDatabase = await _internalValueService.GetValueAsync(InternalValues.StoreDataInDatabase).ConfigureAwait(false);
-            if (storeDataInDatabase)
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            if (readSourceFromDatabase)
             {
                 var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
                 return fileItemSource?.Source ?? Array.Empty<byte>();
@@ -166,11 +167,63 @@ namespace RewriteMe.Business.Services
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
 
-        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        public async Task<string> GetOriginalFileItemPathAsync(FileItem fileItem)
+        {
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            if (readSourceFromDatabase)
+            {
+                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
+                if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
+                    return null;
+
+                var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.wav");
+                await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
+                return tempFilePath;
+            }
+
+            var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
+            if (!File.Exists(filePath))
+                return null;
+
+            return filePath;
+        }
+
+        public async Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem)
+        {
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            if (fileItem.RecognitionState != RecognitionState.None)
+            {
+                if (readSourceFromDatabase)
+                {
+                    var hasFileItemSource = await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
+                    if (hasFileItemSource)
+                        return true;
+                }
+
+                if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
+                {
+                    var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
+                    if (File.Exists(convertedFilePath))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public string CreateUploadDirectoryIfNeeded(Guid fileItemId)
         {
             var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
-            Directory.CreateDirectory(uploadDirectoryPath);
+            if (!Directory.Exists(uploadDirectoryPath))
+                Directory.CreateDirectory(uploadDirectoryPath);
+
+            return uploadDirectoryPath;
+        }
+
+        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        {
+            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
 
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);

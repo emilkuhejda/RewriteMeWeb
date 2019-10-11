@@ -18,7 +18,7 @@ namespace RewriteMe.Business.Services
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
         }
 
-        public async Task AddWavFileSources(Guid fileItemId, IEnumerable<WavPartialFile> wavFiles)
+        public async Task AddWavFileSourcesAsync(Guid fileItemId, IEnumerable<WavPartialFile> wavFiles)
         {
             var items = new List<TranscribeItemSource>();
             foreach (var wavFile in wavFiles)

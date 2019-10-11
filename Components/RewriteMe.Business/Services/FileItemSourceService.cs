@@ -28,6 +28,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemSourceRepository.GetAsync(fileItemId).ConfigureAwait(false);
         }
 
+        public async Task<bool> HasFileItemSourceAsync(Guid fileItemId)
+        {
+            return await _fileItemSourceRepository.HasFileItemSourceAsync(fileItemId).ConfigureAwait(false);
+        }
+
         public async Task AddFileItemSourceAsync(FileItem fileItem)
         {
             var fileItemPath = _fileAccessService.GetOriginalFileItemPath(fileItem);
@@ -43,11 +48,16 @@ namespace RewriteMe.Business.Services
             {
                 Id = Guid.NewGuid(),
                 FileItemId = fileItem.Id,
-                Source = source,
+                OriginalSource = source,
                 DateCreated = DateTime.UtcNow
             };
 
             await _fileItemSourceRepository.AddAsync(fileItemSource).ConfigureAwait(false);
+        }
+
+        public async Task UpdateSourceAsync(Guid fileItemId, byte[] source)
+        {
+            await _fileItemSourceRepository.UpdateSourceAsync(fileItemId, source).ConfigureAwait(false);
         }
     }
 }

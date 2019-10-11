@@ -8,6 +8,10 @@ namespace RewriteMe.Domain.Interfaces.Repositories
     {
         Task<FileItemSource> GetAsync(Guid fileItemId);
 
+        Task<bool> HasFileItemSourceAsync(Guid fileItemId);
+
         Task AddAsync(FileItemSource fileItemSource);
+
+        Task UpdateSourceAsync(Guid fileItemId, byte[] source);
     }
 }

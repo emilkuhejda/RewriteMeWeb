@@ -16,7 +16,6 @@ namespace RewriteMe.WebApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
-    [Authorize]
     [ApiController]
     public class InformationMessageController : RewriteMeControllerBase
     {
@@ -70,7 +69,7 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            var informationMessage = await _informationMessageService.MarkAsOpened(user.Id, informationMessageId).ConfigureAwait(false);
+            var informationMessage = await _informationMessageService.MarkAsOpenedAsync(user.Id, informationMessageId).ConfigureAwait(false);
             if (informationMessage == null)
                 return BadRequest();
 
@@ -87,7 +86,7 @@ namespace RewriteMe.WebApi.Controllers
             if (user == null)
                 return StatusCode(401);
 
-            await _informationMessageService.MarkAsOpened(user.Id, ids).ConfigureAwait(false);
+            await _informationMessageService.MarkAsOpenedAsync(user.Id, ids).ConfigureAwait(false);
             return Ok(new OkDto());
         }
     }
