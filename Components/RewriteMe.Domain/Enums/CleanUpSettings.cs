@@ -6,7 +6,7 @@ namespace RewriteMe.Domain.Enums
     public enum CleanUpSettings
     {
         None = 0,
-        Disk,
-        Database
+        Disk = 1,
+        Database = 2
     }
 }
