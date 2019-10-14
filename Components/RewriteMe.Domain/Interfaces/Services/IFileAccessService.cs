@@ -8,6 +8,8 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         string GetRootPath();
 
+        string GetFileItemDirectory(Guid fileItemId);
+
         string GetOriginalFileItemPath(FileItem fileItem);
 
         string GetFileItemPath(FileItem fileItem);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,20 @@ namespace RewriteMe.DataAccess.Repositories
         public CleanUpRepository(IDbContextFactory contextFactory)
         {
             _contextFactory = contextFactory;
+        }
+
+        public async Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems.Where(x =>
+                        x.RecognitionState == RecognitionState.Completed &&
+                        x.DateProcessed.HasValue &&
+                        x.DateProcessed < deleteBefore)
+                    .Select(x => x.Id)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
         }
 
         public async Task CleanFileItemSourcesAsync(DateTime deleteBefore)
