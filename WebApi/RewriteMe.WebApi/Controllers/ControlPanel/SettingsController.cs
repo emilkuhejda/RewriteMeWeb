@@ -8,9 +8,8 @@ using RewriteMe.Domain.Interfaces.Services;
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
     [Produces("application/json")]
-    //[ApiExplorerSettings(IgnoreApi = true)]
-    //[Authorize(Roles = nameof(Role.Admin))]
-    [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
     public class SettingsController : ControllerBase
     {
