@@ -387,7 +387,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateDateAsync(Guid fileItemId, Guid applicationId)
+        public async Task MarkAsCleanedAsync(Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -395,8 +395,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return;
 
-                entity.ApplicationId = applicationId;
-                entity.DateUpdated = DateTime.UtcNow;
+                entity.WasCleaned = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -422,7 +421,10 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.FileItems.Where(x => x.RecognitionState == RecognitionState.Completed && x.DateUpdated < deleteBefore)
+                return await context.FileItems
+                    .Where(x => !x.WasCleaned)
+                    .Where(x => x.RecognitionState == RecognitionState.Completed)
+                    .Where(x => x.DateProcessed.HasValue && x.DateProcessed < deleteBefore)
                     .Select(x => x.Id)
                     .ToListAsync()
                     .ConfigureAwait(false);
