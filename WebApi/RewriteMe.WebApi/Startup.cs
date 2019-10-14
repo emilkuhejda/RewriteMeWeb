@@ -140,7 +140,10 @@ namespace RewriteMe.WebApi
 
             app.Use(async (context, next) =>
             {
-                await next();
+                // Eliminates Cross-site Scripting (XSS) Attack
+                context.Response.Headers.Add("X-Xss-Protection", "1");
+
+                await next().ConfigureAwait(false);
 
                 if (context.Response.StatusCode == 404 &&
                     !Path.HasExtension(context.Request.Path.Value) &&
@@ -159,7 +162,7 @@ namespace RewriteMe.WebApi
                         context.Request.Path = "/home/index.html";
                     }
 
-                    await next();
+                    await next().ConfigureAwait(false);
                 }
             });
 
