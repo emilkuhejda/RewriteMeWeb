@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -25,10 +22,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpGet("/api/control-panel/settings/clean-up")]
-        public async Task<IActionResult> CleanUp()
+        public async Task<IActionResult> CleanUp(CleanUpSettings cleanUpSettings)
         {
             var deleteBefore = DateTime.UtcNow;
-            await _cleanUpService.CleanAsync(deleteBefore).ConfigureAwait(false);
+            await _cleanUpService.CleanAsync(deleteBefore, cleanUpSettings).ConfigureAwait(false);
 
             return Ok();
         }

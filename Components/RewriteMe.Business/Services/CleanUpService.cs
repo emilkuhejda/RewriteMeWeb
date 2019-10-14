@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 
@@ -19,10 +20,17 @@ namespace RewriteMe.Business.Services
             _fileAccessService = fileAccessService;
         }
 
-        public async Task CleanAsync(DateTime deleteBefore)
+        public async Task CleanAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
         {
-            await CleanDataFromDiskAsync(deleteBefore).ConfigureAwait(false);
-            await CleanDataFromDatabaseAsync(deleteBefore).ConfigureAwait(false);
+            if (cleanUpSettings.HasFlag(CleanUpSettings.Disk))
+            {
+                await CleanDataFromDiskAsync(deleteBefore).ConfigureAwait(false);
+            }
+
+            if (cleanUpSettings.HasFlag(CleanUpSettings.Database))
+            {
+                await CleanDataFromDatabaseAsync(deleteBefore).ConfigureAwait(false);
+            }
         }
 
         private async Task CleanDataFromDiskAsync(DateTime deleteBefore)
