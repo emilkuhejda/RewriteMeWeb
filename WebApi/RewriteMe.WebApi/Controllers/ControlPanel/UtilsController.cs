@@ -19,13 +19,16 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     public class UtilsController : ControllerBase
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
+        private readonly IDatabaseService _databaseService;
         private readonly AppSettings _appSettings;
 
         public UtilsController(
             ISpeechRecognitionService speechRecognitionService,
+            IDatabaseService databaseService,
             IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
+            _databaseService = databaseService;
             _appSettings = options.Value;
         }
 
@@ -64,6 +67,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             };
 
             Response.Cookies.Append(Constants.HangfireAccessToken, token, cookieOptions);
+
+            return Ok();
+        }
+
+        [HttpGet("/api/control-panel/reset-database")]
+        public async Task<IActionResult> ResetDatabase()
+        {
+            await _databaseService.ResetAsync().ConfigureAwait(false);
 
             return Ok();
         }
