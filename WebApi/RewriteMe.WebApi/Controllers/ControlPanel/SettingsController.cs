@@ -21,8 +21,6 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpGet("/api/control-panel/settings/clean-up")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        [AllowAnonymous]
         public async Task<IActionResult> CleanUp(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
         {
             await _cleanUpService.CleanAsync(deleteBefore.ToUniversalTime(), cleanUpSettings).ConfigureAwait(false);
