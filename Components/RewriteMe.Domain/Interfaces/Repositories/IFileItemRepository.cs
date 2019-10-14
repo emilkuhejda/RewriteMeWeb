@@ -55,6 +55,12 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
+        Task UpdateDateAsync(Guid fileItemId, Guid applicationId);
+
         Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);
+
+        Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore);
+
+        Task CleanSourceDataAsync(Guid fileItemId);
     }
 }

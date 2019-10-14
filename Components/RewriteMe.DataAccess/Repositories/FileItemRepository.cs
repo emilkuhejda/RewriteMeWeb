@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Settings;
@@ -386,6 +387,21 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateDateAsync(Guid fileItemId, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.ApplicationId = applicationId;
+                entity.DateUpdated = DateTime.UtcNow;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -399,6 +415,31 @@ namespace RewriteMe.DataAccess.Repositories
                     .ConfigureAwait(false);
 
                 return TimeSpan.FromTicks(totalTicks);
+            }
+        }
+
+        public async Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.FileItems.Where(x => x.RecognitionState == RecognitionState.Completed && x.DateUpdated < deleteBefore)
+                    .Select(x => x.Id)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
+        public async Task CleanSourceDataAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItemDbSet = context.Set<FileItemSourceEntity>();
+                fileItemDbSet.RemoveRange(fileItemDbSet.Where(x => x.FileItemId == fileItemId));
+
+                var transcribeItemDbSet = context.Set<TranscribeItemSourceEntity>();
+                transcribeItemDbSet.RemoveRange(transcribeItemDbSet.Where(x => x.FileItemId == fileItemId));
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }
