@@ -37,14 +37,15 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var fileItemIds = await context.FileItems
-                    .Where(x => x.RecognitionState == RecognitionState.Completed && x.DateProcessed.HasValue &&
+                    .Where(x => x.RecognitionState == RecognitionState.Completed &&
+                                x.DateProcessed.HasValue &&
                                 x.DateProcessed.Value < deleteBefore)
                     .Select(x => x.Id)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
                 var dbSet = context.Set<FileItemSourceEntity>();
-                dbSet.RemoveRange(dbSet.Where(x => fileItemIds.Contains(x.Id)));
+                dbSet.RemoveRange(dbSet.Where(x => fileItemIds.Contains(x.FileItemId)));
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
