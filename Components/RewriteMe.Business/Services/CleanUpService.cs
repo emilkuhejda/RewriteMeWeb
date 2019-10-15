@@ -25,14 +25,14 @@ namespace RewriteMe.Business.Services
             _fileItemRepository = fileItemRepository;
         }
 
-        public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
+        public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
             try
             {
-                var message = $"Start cleaning file item sources at '{DateTime.UtcNow}' with settings: border datetime='{deleteBefore}', settings='{cleanUpSettings.ToString()}'.";
+                var message = $"Start cleaning file item sources at '{DateTime.UtcNow}' with settings: border datetime='{deleteBefore}', settings='{cleanUpSettings.ToString()}', force cleanup = '{forceCleanup}'.";
                 await _applicationLogService.InfoAsync(message).ConfigureAwait(false);
 
-                var count = await CleanUpInternalAsync(deleteBefore, cleanUpSettings).ConfigureAwait(false);
+                var count = await CleanUpInternalAsync(deleteBefore, cleanUpSettings, forceCleanup).ConfigureAwait(false);
 
                 await _applicationLogService.InfoAsync($"Clean up was successfully finished. {count} file items was processed.").ConfigureAwait(false);
             }
@@ -43,9 +43,9 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        private async Task<int> CleanUpInternalAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
+        private async Task<int> CleanUpInternalAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
-            var fileItemIdsEnumerable = await _fileItemRepository.GetFileItemIdsForCleaningAsync(deleteBefore).ConfigureAwait(false);
+            var fileItemIdsEnumerable = await _fileItemRepository.GetFileItemIdsForCleaningAsync(deleteBefore, forceCleanup).ConfigureAwait(false);
             var fileItemIds = fileItemIdsEnumerable.ToList();
             foreach (var fileItemId in fileItemIds)
             {

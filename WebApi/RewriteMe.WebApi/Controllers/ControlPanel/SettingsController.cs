@@ -21,9 +21,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpGet("/api/control-panel/settings/clean-up")]
-        public async Task<IActionResult> CleanUp(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
+        public async Task<IActionResult> CleanUp(int deleteBeforeInDays, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
-            await _cleanUpService.CleanAsync(deleteBefore.ToUniversalTime(), cleanUpSettings).ConfigureAwait(false);
+            var deleteBefore = DateTime.UtcNow.AddDays(-deleteBeforeInDays);
+            await _cleanUpService.CleanUpAsync(deleteBefore, cleanUpSettings, forceCleanup).ConfigureAwait(false);
 
             return Ok();
         }
