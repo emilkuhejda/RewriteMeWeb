@@ -40,6 +40,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public bool IsPermanentlyDeleted { get; set; }
 
+        public bool WasCleaned { get; set; }
+
         public virtual UserEntity User { get; set; }
 
         public virtual FileItemSourceEntity FileItemSource { get; set; }

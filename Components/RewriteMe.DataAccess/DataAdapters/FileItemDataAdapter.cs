@@ -25,7 +25,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateProcessed = fileItemEntity.DateProcessed,
                 DateUpdated = fileItemEntity.DateUpdated,
                 IsDeleted = fileItemEntity.IsDeleted,
-                IsPermanentlyDeleted = fileItemEntity.IsPermanentlyDeleted
+                IsPermanentlyDeleted = fileItemEntity.IsPermanentlyDeleted,
+                WasCleaned = fileItemEntity.WasCleaned
             };
         }
 
@@ -49,7 +50,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateProcessed = fileItem.DateProcessed,
                 DateUpdated = fileItem.DateUpdated,
                 IsDeleted = fileItem.IsDeleted,
-                IsPermanentlyDeleted = fileItem.IsPermanentlyDeleted
+                IsPermanentlyDeleted = fileItem.IsPermanentlyDeleted,
+                WasCleaned = fileItem.WasCleaned
             };
         }
     }

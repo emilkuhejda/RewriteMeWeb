@@ -27,6 +27,11 @@ namespace RewriteMe.WebApi.Services
             return rootDirectoryPath;
         }
 
+        public string GetFileItemDirectory(Guid fileItemId)
+        {
+            return Path.Combine(GetRootPath(), fileItemId.ToString());
+        }
+
         public string GetOriginalFileItemPath(FileItem fileItem)
         {
             var rootDirectory = GetRootPath();
