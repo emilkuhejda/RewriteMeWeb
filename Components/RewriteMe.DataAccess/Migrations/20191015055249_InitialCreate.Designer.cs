@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191003142354_InitialCreate")]
+    [Migration("20191015055249_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,6 +177,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<TimeSpan>("TranscribedTime");
 
                     b.Property<Guid>("UserId");
+
+                    b.Property<bool>("WasCleaned");
 
                     b.HasKey("Id");
 
