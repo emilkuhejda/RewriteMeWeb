@@ -27,6 +27,9 @@ namespace RewriteMe.Business.Services
 
         public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
+            if (cleanUpSettings == CleanUpSettings.None)
+                return;
+
             try
             {
                 var message = $"Start cleaning file item sources at '{DateTime.UtcNow}' with settings: border datetime='{deleteBefore}', settings='{cleanUpSettings.ToString()}', force cleanup = '{forceCleanup}'.";
