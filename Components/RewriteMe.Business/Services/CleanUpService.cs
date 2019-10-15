@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -9,20 +11,42 @@ namespace RewriteMe.Business.Services
 {
     public class CleanUpService : ICleanUpService
     {
-        private readonly IFileItemRepository _fileItemRepository;
         private readonly IFileAccessService _fileAccessService;
+        private readonly IApplicationLogService _applicationLogService;
+        private readonly IFileItemRepository _fileItemRepository;
 
         public CleanUpService(
-            IFileItemRepository fileItemRepository,
-            IFileAccessService fileAccessService)
+            IFileAccessService fileAccessService,
+            IApplicationLogService applicationLogService,
+            IFileItemRepository fileItemRepository)
         {
-            _fileItemRepository = fileItemRepository;
             _fileAccessService = fileAccessService;
+            _applicationLogService = applicationLogService;
+            _fileItemRepository = fileItemRepository;
         }
 
-        public async Task CleanAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
+        public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
         {
-            var fileItemIds = await _fileItemRepository.GetFileItemIdsForCleaningAsync(deleteBefore).ConfigureAwait(false);
+            try
+            {
+                var message = $"Start cleaning file item sources at '{DateTime.UtcNow}' with settings: border datetime='{deleteBefore}', settings='{cleanUpSettings.ToString()}'.";
+                await _applicationLogService.InfoAsync(message).ConfigureAwait(false);
+
+                var count = await CleanUpInternalAsync(deleteBefore, cleanUpSettings).ConfigureAwait(false);
+
+                await _applicationLogService.InfoAsync($"Clean up was successfully finished. {count} file items was processed.").ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"During cleanup error occurred.{Environment.NewLine}{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+                throw;
+            }
+        }
+
+        private async Task<int> CleanUpInternalAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings)
+        {
+            var fileItemIdsEnumerable = await _fileItemRepository.GetFileItemIdsForCleaningAsync(deleteBefore).ConfigureAwait(false);
+            var fileItemIds = fileItemIdsEnumerable.ToList();
             foreach (var fileItemId in fileItemIds)
             {
                 if (cleanUpSettings.HasFlag(CleanUpSettings.Disk))
@@ -37,6 +61,8 @@ namespace RewriteMe.Business.Services
 
                 await _fileItemRepository.MarkAsCleanedAsync(fileItemId).ConfigureAwait(false);
             }
+
+            return fileItemIds.Count;
         }
 
         private void CleanDataFromDiskAsync(Guid fileItemId)
