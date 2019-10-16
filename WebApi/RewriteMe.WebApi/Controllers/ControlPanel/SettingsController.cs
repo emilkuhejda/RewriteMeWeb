@@ -25,7 +25,17 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _cleanUpService = cleanUpService;
         }
 
-        [HttpGet("/api/control-panel/settings/change-storage")]
+        [HttpGet("/api/control-panel/settings/storage-setting")]
+        public async Task<IActionResult> GetStorageSetting()
+        {
+            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
+            var storageSetting = readSourceFromDatabase ? StorageSetting.Database : StorageSetting.Disk;
+
+            return Ok(storageSetting);
+        }
+
+        [HttpPut("/api/control-panel/settings/change-storage")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {
             await _internalValueService.UpdateValueAsync(InternalValues.ReadSourceFromDatabase, storageSetting == StorageSetting.Database).ConfigureAwait(false);
@@ -34,6 +44,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/settings/clean-up")]
+        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<IActionResult> CleanUp(int deleteBeforeInDays, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
             var deleteBefore = DateTime.UtcNow.AddDays(-deleteBeforeInDays);
