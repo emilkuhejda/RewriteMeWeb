@@ -33,7 +33,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpGet("/api/control-panel/settings/clean-up")]
+        [HttpPut("/api/control-panel/settings/clean-up")]
         public async Task<IActionResult> CleanUp(int deleteBeforeInDays, CleanUpSettings cleanUpSettings, bool forceCleanup)
         {
             var deleteBefore = DateTime.UtcNow.AddDays(-deleteBeforeInDays);

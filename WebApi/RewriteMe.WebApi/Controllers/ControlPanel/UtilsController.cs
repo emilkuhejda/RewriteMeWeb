@@ -71,7 +71,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpGet("/api/control-panel/reset-database")]
+        [HttpPut("/api/control-panel/reset-database")]
         public async Task<IActionResult> ResetDatabase()
         {
             await _databaseService.ResetAsync().ConfigureAwait(false);

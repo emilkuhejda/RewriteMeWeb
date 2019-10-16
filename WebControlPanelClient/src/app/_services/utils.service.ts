@@ -22,4 +22,8 @@ export class UtilsService {
     isDeploymentSuccessful(): Observable<any> {
         return this.http.get<any>(this.routingService.getIsDeploymentSuccessfulUri());
     }
+
+    resetDatabase(): Observable<any> {
+        return this.http.put<any>(this.routingService.getResetDatabaseUri(), {});
+    }
 }
