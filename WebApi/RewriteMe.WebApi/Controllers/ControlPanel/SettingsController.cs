@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
 {
@@ -35,7 +36,6 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/settings/change-storage")]
-        [ApiExplorerSettings(IgnoreApi = false)]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {
             await _internalValueService.UpdateValueAsync(InternalValues.ReadSourceFromDatabase, storageSetting == StorageSetting.Database).ConfigureAwait(false);
@@ -44,11 +44,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/settings/clean-up")]
-        [ApiExplorerSettings(IgnoreApi = false)]
-        public async Task<IActionResult> CleanUp(int deleteBeforeInDays, CleanUpSettings cleanUpSettings, bool forceCleanup)
+        public async Task<IActionResult> CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
         {
-            var deleteBefore = DateTime.UtcNow.AddDays(-deleteBeforeInDays);
-            await _cleanUpService.CleanUpAsync(deleteBefore, cleanUpSettings, forceCleanup).ConfigureAwait(false);
+            if (cleanUpSettingsModel.Password != "123456")
+                return BadRequest();
+
+            var deleteBefore = DateTime.UtcNow.AddDays(-cleanUpSettingsModel.DeleteBeforeInDays);
+            await _cleanUpService.CleanUpAsync(deleteBefore, cleanUpSettingsModel.CleanUpSettings, cleanUpSettingsModel.ForceCleanUp).ConfigureAwait(false);
 
             return Ok();
         }

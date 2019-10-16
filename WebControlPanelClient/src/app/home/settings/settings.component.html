@@ -19,19 +19,75 @@
 
                     <mat-button-toggle-group #group="matButtonToggleGroup" name="fontStyle" aria-label="Font Style"
                         [value]="selectedStorage" (change)="onValueChange(group.value)"
-                        [disabled]="isLoadingStorageSettings" class="mr-3">
+                        [disabled]="loadingStorageSettings" class="mr-3">
                         <mat-button-toggle value="0">Disk</mat-button-toggle>
                         <mat-button-toggle value="1">Database</mat-button-toggle>
                     </mat-button-toggle-group>
 
-                    <img *ngIf="isLoadingStorageSettings"
+                    <img *ngIf="loadingStorageSettings"
                         src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
                 </div>
             </mat-tab>
 
             <mat-tab label="Clean up">
                 <div class="p-3">
-                    <button class="btn btn-warning" (click)="cleanUp()">Clean up</button>
+                    <form [formGroup]="cleanUpForm" (ngSubmit)="onCleanUpFormSubmit()" novalidate>
+                        <div class="form-group">
+                            <label for="deleteBeforeInDays">Delete before in days</label>
+                            <select formControlName="deleteBeforeInDays" class="form-control"
+                                [ngClass]="{ 'is-invalid': cleanUpFormSubmitted && cleanUpControls.deleteBeforeInDays.errors }">
+                                <option value="">--Select--</option>
+                                <option [value]="30">30</option>
+                                <option [value]="60">60</option>
+                                <option [value]="180">180</option>
+                                <option [value]="360">360</option>
+                            </select>
+                            <div *ngIf="cleanUpFormSubmitted && cleanUpControls.deleteBeforeInDays.errors"
+                                class="invalid-feedback">
+                                <div *ngIf="cleanUpControls.deleteBeforeInDays.errors.required">
+                                    This field is required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cleanUpSettings">Clean up settings</label>
+                            <select formControlName="cleanUpSettings" class="form-control"
+                                [ngClass]="{ 'is-invalid': cleanUpFormSubmitted && cleanUpControls.cleanUpSettings.errors }">
+                                <option value="">--Select--</option>
+                                <option [value]="1">Disk</option>
+                                <option [value]="2">Database</option>
+                                <option [value]="3">All</option>
+                            </select>
+                            <div *ngIf="cleanUpFormSubmitted && cleanUpControls.cleanUpSettings.errors"
+                                class="invalid-feedback">
+                                <div *ngIf="cleanUpControls.cleanUpSettings.errors.required">Clean up settings is
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="forceCleanUp"
+                                formControlName="forceCleanUp">
+                            <label class="form-check-label" for="forceCleanUp">Forcr clean up</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" formControlName="password" class="form-control"
+                                [ngClass]="{ 'is-invalid': cleanUpFormSubmitted && cleanUpControls.password.errors }" />
+                            <div *ngIf="cleanUpFormSubmitted && cleanUpControls.password.errors"
+                                class="invalid-feedback">
+                                <div *ngIf="cleanUpControls.password.errors.required">Password is required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary mr-3" [disabled]="loadingCleanUpForm">Clean up</button>
+                            <img *ngIf="loadingCleanUpForm"
+                                src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        </div>
+                    </form>
                 </div>
             </mat-tab>
 

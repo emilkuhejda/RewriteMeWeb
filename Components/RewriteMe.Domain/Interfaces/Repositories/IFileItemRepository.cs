@@ -59,7 +59,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);
 
-        Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore, bool forceCleanup);
+        Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp);
 
         Task CleanSourceDataAsync(Guid fileItemId);
     }

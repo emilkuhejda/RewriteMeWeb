@@ -22,7 +22,7 @@ export class SettingsService {
         return this.http.put(this.routingService.getChangeStorageUri(), null, { params: params });
     }
 
-    cleanUp(): Observable<any> {
-        return this.http.put<any>(this.routingService.getCleanUpUri(), {});
+    cleanUp(data: any): Observable<any> {
+        return this.http.put<any>(this.routingService.getCleanUpUri(), data);
     }
 }
