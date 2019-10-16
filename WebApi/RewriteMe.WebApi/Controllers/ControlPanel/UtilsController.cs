@@ -20,15 +20,18 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IDatabaseService _databaseService;
+        private readonly IAuthenticationService _authenticationService;
         private readonly AppSettings _appSettings;
 
         public UtilsController(
             ISpeechRecognitionService speechRecognitionService,
             IDatabaseService databaseService,
+            IAuthenticationService authenticationService,
             IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
             _databaseService = databaseService;
+            _authenticationService = authenticationService;
             _appSettings = options.Value;
         }
 
@@ -72,8 +75,12 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/reset-database")]
-        public async Task<IActionResult> ResetDatabase()
+        public async Task<IActionResult> ResetDatabase([FromBody]string password)
         {
+            var passwordHash = _authenticationService.GenerateHash(password);
+            if (passwordHash != _appSettings.SecurityPasswordHash)
+                return BadRequest();
+
             await _databaseService.ResetAsync().ConfigureAwait(false);
 
             return Ok();
