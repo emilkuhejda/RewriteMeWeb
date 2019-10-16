@@ -86,8 +86,10 @@ export class SettingsComponent implements OnInit {
                 this.cleanUpControls.cleanUpSettings.setValue('');
                 this.cleanUpControls.forceCleanUp.setValue(false);
                 this.cleanUpControls.password.setValue('');
-
+                
                 this.cleanUpFormSubmitted = false;
+                
+                this.alertService.success("Clean up has been successfully started.");
             },
             (err: ErrorResponse) => {
                 let error = err.message;

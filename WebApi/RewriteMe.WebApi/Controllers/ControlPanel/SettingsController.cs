@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
@@ -18,13 +20,19 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     {
         private readonly IInternalValueService _internalValueService;
         private readonly ICleanUpService _cleanUpService;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly AppSettings _appSettings;
 
         public SettingsController(
             IInternalValueService internalValueService,
-            ICleanUpService cleanUpService)
+            ICleanUpService cleanUpService,
+            IAuthenticationService authenticationService,
+            IOptions<AppSettings> options)
         {
             _internalValueService = internalValueService;
             _cleanUpService = cleanUpService;
+            _authenticationService = authenticationService;
+            _appSettings = options.Value;
         }
 
         [HttpGet("/api/control-panel/settings/storage-setting")]
@@ -47,7 +55,8 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpPut("/api/control-panel/settings/clean-up")]
         public IActionResult CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
         {
-            if (cleanUpSettingsModel.Password != "123456")
+            var passwordHash = _authenticationService.GenerateHash(cleanUpSettingsModel.Password);
+            if (passwordHash != _appSettings.SecurityPasswordHash)
                 return BadRequest();
 
             var deleteBefore = DateTime.UtcNow.AddDays(-cleanUpSettingsModel.DeleteBeforeInDays);
