@@ -28,7 +28,7 @@ export class SettingsComponent implements OnInit {
         this.cleanUpForm = this.formBuilder.group({
             deleteBeforeInDays: ['', [Validators.required]],
             cleanUpSettings: ['', [Validators.required]],
-            forceCleanUp: [],
+            forceCleanUp: [false],
             password: ['', [Validators.required]]
         });
 

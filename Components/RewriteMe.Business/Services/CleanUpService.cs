@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -23,6 +24,11 @@ namespace RewriteMe.Business.Services
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _fileItemRepository = fileItemRepository;
+        }
+
+        public void CleanUp(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)
+        {
+            AsyncHelper.RunSync(() => CleanUpAsync(deleteBefore, cleanUpSettings, forceCleanUp));
         }
 
         public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)
