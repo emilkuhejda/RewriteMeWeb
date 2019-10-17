@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
@@ -75,9 +76,9 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         }
 
         [HttpPut("/api/control-panel/reset-database")]
-        public async Task<IActionResult> ResetDatabase([FromBody]string password)
+        public async Task<IActionResult> ResetDatabase([FromBody]ResetDatabaseModel resetDatabaseModel)
         {
-            var passwordHash = _authenticationService.GenerateHash(password);
+            var passwordHash = _authenticationService.GenerateHash(resetDatabaseModel.Password);
             if (passwordHash != _appSettings.SecurityPasswordHash)
                 return BadRequest();
 

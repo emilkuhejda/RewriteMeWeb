@@ -12,11 +12,13 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class SettingsComponent implements OnInit {
     cleanUpForm: FormGroup;
+    resetForm: FormGroup;
     cleanUpFormSubmitted: boolean;
-
-    selectedStorage: string;
-    loadingStorageSettings: boolean;
+    resetFormSubmitted: boolean;
     loadingCleanUpForm: boolean;
+    loadingResetForm: boolean;
+    loadingStorageSettings: boolean;
+    selectedStorage: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -29,6 +31,10 @@ export class SettingsComponent implements OnInit {
             deleteBeforeInDays: ['', [Validators.required]],
             cleanUpSettings: ['', [Validators.required]],
             forceCleanUp: [false],
+            password: ['', [Validators.required]]
+        });
+
+        this.resetForm = this.formBuilder.group({
             password: ['', [Validators.required]]
         });
 
@@ -86,9 +92,9 @@ export class SettingsComponent implements OnInit {
                 this.cleanUpControls.cleanUpSettings.setValue('');
                 this.cleanUpControls.forceCleanUp.setValue(false);
                 this.cleanUpControls.password.setValue('');
-                
+
                 this.cleanUpFormSubmitted = false;
-                
+
                 this.alertService.success("Clean up has been successfully started.");
             },
             (err: ErrorResponse) => {
@@ -101,6 +107,42 @@ export class SettingsComponent implements OnInit {
             })
             .add(() => {
                 this.loadingCleanUpForm = false;
+            });
+    }
+
+    get resetControls() {
+        return this.resetForm.controls;
+    }
+
+    resetFormSubmit() {
+        this.alertService.clear();
+        this.resetFormSubmitted = true;
+
+        if (this.resetForm.invalid)
+            return;
+
+        this.loadingResetForm = true;
+
+        let formData = {
+            password: this.resetControls.password.value
+        };
+
+        this.utilsService.resetDatabase(formData).subscribe(
+            () => {
+                this.resetControls.password.setValue('');
+                this.resetFormSubmitted = false;
+                this.alertService.success('Database was successfully reseted.');
+            },
+            (err: ErrorResponse) => {
+                let error = err.message;
+
+                if (err.status === 400)
+                    error = "Password is not correct!";
+
+                this.alertService.error(error);
+            })
+            .add(() => {
+                this.loadingResetForm = false;
             });
     }
 }
