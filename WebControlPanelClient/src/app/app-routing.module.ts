@@ -19,6 +19,7 @@ import { CreateInformationMessageComponent } from './home/information-messages/c
 import { DetailInformationMessageComponent } from './home/information-messages/detail-information-message/detail-information-message.component';
 import { FilesComponent } from './home/users/files/files.component';
 import { DetailFileComponent } from './home/users/files/detail-file/detail-file.component';
+import { SettingsComponent } from './home/settings/settings.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -38,6 +39,7 @@ const routes: Routes = [
     { path: 'information-messages', component: InformationMessagesComponent, canActivate: [AuthGuard] },
     { path: 'information-messages/create', component: CreateInformationMessageComponent, canActivate: [AuthGuard] },
     { path: 'information-messages/detail/:informationMessageId', component: DetailInformationMessageComponent, canActivate: [AuthGuard] },
+    { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
     { path: '404', component: NotFoundComponent },
     { path: '**', redirectTo: '404' }
 ];
@@ -65,5 +67,6 @@ export const routingComponents = [
     InformationMessagesComponent,
     CreateInformationMessageComponent,
     DetailInformationMessageComponent,
+    SettingsComponent,
     NotFoundComponent
 ];

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactForm } from 'src/app/_models/contact-form';
 import { ContactFormService } from 'src/app/_services/contact-form.service';
-import { ActivatedRoute } from '@angular/router';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import * as $ from 'jquery';
@@ -18,7 +17,6 @@ export class ContactFormsComponent implements OnInit {
     contactForms: ContactForm[];
 
     constructor(
-        private route: ActivatedRoute,
         private contactFormService: ContactFormService,
         private alertService: AlertService) { }
 

@@ -417,7 +417,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore, bool forceCleanup)
+        public async Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp)
         {
             using (var context = _contextFactory.Create())
             {
@@ -425,7 +425,7 @@ namespace RewriteMe.DataAccess.Repositories
                     .Where(x => x.RecognitionState == RecognitionState.Completed)
                     .Where(x => x.DateProcessed.HasValue && x.DateProcessed < deleteBefore);
 
-                if (forceCleanup)
+                if (forceCleanUp)
                 {
                     query = query.Where(x => !x.WasCleaned);
                 }
