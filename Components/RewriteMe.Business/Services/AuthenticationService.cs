@@ -57,5 +57,14 @@ namespace RewriteMe.Business.Services
 
             return true;
         }
+
+        public string GenerateHash(string password)
+        {
+            using (var sha256Managed = new SHA256Managed())
+            {
+                var computedHash = sha256Managed.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(computedHash).Replace("-", string.Empty, StringComparison.InvariantCulture);
+            }
+        }
     }
 }

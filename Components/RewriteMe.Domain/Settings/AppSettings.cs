@@ -13,6 +13,8 @@ namespace RewriteMe.Domain.Settings
 
         public string ConnectionString { get; set; }
 
+        public string SecurityPasswordHash { get; set; }
+
         public NotificationSettings NotificationSettings { get; set; }
 
         public Authentication Authentication { get; set; }

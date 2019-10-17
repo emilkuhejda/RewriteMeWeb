@@ -99,6 +99,22 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/is-deployment-successful/";
     }
 
+    getResetDatabaseUri(): string {
+        return this.getApiUri() + "api/control-panel/reset-database/";
+    }
+
+    getStorageSettingUri(): string {
+        return this.getApiUri() + "api/control-panel/settings/storage-setting/";
+    }
+
+    getChangeStorageUri(): string {
+        return this.getApiUri() + "api/control-panel/settings/change-storage/";
+    }
+
+    getCleanUpUri(): string {
+        return this.getApiUri() + "api/control-panel/settings/clean-up/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

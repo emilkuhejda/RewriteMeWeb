@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel
@@ -20,15 +21,18 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     {
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IDatabaseService _databaseService;
+        private readonly IAuthenticationService _authenticationService;
         private readonly AppSettings _appSettings;
 
         public UtilsController(
             ISpeechRecognitionService speechRecognitionService,
             IDatabaseService databaseService,
+            IAuthenticationService authenticationService,
             IOptions<AppSettings> options)
         {
             _speechRecognitionService = speechRecognitionService;
             _databaseService = databaseService;
+            _authenticationService = authenticationService;
             _appSettings = options.Value;
         }
 
@@ -71,9 +75,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
-        [HttpGet("/api/control-panel/reset-database")]
-        public async Task<IActionResult> ResetDatabase()
+        [HttpPut("/api/control-panel/reset-database")]
+        public async Task<IActionResult> ResetDatabase([FromBody]ResetDatabaseModel resetDatabaseModel)
         {
+            var passwordHash = _authenticationService.GenerateHash(resetDatabaseModel.Password);
+            if (passwordHash != _appSettings.SecurityPasswordHash)
+                return BadRequest();
+
             await _databaseService.ResetAsync().ConfigureAwait(false);
 
             return Ok();

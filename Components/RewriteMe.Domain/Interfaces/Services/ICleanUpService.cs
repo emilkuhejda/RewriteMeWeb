@@ -6,6 +6,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ICleanUpService
     {
-        Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanup);
+        void CleanUp(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp);
+
+        Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp);
     }
 }

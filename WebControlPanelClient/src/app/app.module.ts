@@ -15,6 +15,7 @@ import { ErrorInterceptorService } from './_services/error-interceptor.service';
 import { CreateSubscriptionDialogComponent } from './_directives/create-subscription-dialog/create-subscription-dialog.component';
 import { TruncatePipe } from './_pipes/truncate.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/confirmation-dialog.component';
@@ -40,7 +41,8 @@ import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/c
         FormsModule,
         GecoDialogModule,
         BrowserAnimationsModule,
-        MatTabsModule
+        MatTabsModule,
+        MatButtonToggleModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,
