@@ -27,7 +27,7 @@ namespace RewriteMe.WebApi.Dtos
         public long TranscribedTimeTicks { get; set; }
 
         [Required]
-        public DateTime DateCreatedUtc { get; set; }
+        public DateTime DateCreated { get; set; }
 
         public DateTime? DateProcessedUtc { get; set; }
 

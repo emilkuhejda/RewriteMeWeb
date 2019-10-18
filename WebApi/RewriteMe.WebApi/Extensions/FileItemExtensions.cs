@@ -16,7 +16,7 @@ namespace RewriteMe.WebApi.Extensions
                 RecognitionStateString = fileItem.RecognitionState.ToString(),
                 TotalTimeTicks = fileItem.TotalTime.Ticks,
                 TranscribedTimeTicks = fileItem.TranscribedTime.Ticks,
-                DateCreatedUtc = fileItem.DateCreated,
+                DateCreated = fileItem.DateCreated,
                 DateProcessedUtc = fileItem.DateProcessed,
                 DateUpdatedUtc = fileItem.DateUpdated,
                 IsDeleted = fileItem.IsDeleted
