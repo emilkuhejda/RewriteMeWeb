@@ -27,12 +27,12 @@ namespace RewriteMe.WebApi.Dtos
         public long TranscribedTimeTicks { get; set; }
 
         [Required]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
-        public DateTime? DateProcessed { get; set; }
+        public DateTime? DateProcessedUtc { get; set; }
 
         [Required]
-        public DateTime DateUpdated { get; set; }
+        public DateTime DateUpdatedUtc { get; set; }
 
         [Required]
         public bool IsDeleted { get; set; }

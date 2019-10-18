@@ -16,10 +16,10 @@ namespace RewriteMe.WebApi.Dtos
         public bool WasOpened { get; set; }
 
         [Required]
-        public DateTime? DateUpdated { get; set; }
+        public DateTime? DateUpdatedUtc { get; set; }
 
         [Required]
-        public DateTime DatePublished { get; set; }
+        public DateTime DatePublishedUtc { get; set; }
 
         public IEnumerable<LanguageVersionDto> LanguageVersions { get; set; }
     }

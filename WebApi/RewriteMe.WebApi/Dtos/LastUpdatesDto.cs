@@ -6,18 +6,18 @@ namespace RewriteMe.WebApi.Dtos
     public class LastUpdatesDto
     {
         [Required]
-        public DateTime FileItem { get; set; }
+        public DateTime FileItemUtc { get; set; }
 
         [Required]
-        public DateTime DeletedFileItem { get; set; }
+        public DateTime DeletedFileItemUtc { get; set; }
 
         [Required]
-        public DateTime TranscribeItem { get; set; }
+        public DateTime TranscribeItemUtc { get; set; }
 
         [Required]
-        public DateTime UserSubscription { get; set; }
+        public DateTime UserSubscriptionUtc { get; set; }
 
         [Required]
-        public DateTime InformationMessage { get; set; }
+        public DateTime InformationMessageUtc { get; set; }
     }
 }
