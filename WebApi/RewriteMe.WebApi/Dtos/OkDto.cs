@@ -10,12 +10,12 @@ namespace RewriteMe.WebApi.Dtos
         {
         }
 
-        public OkDto(DateTime dateTime)
+        public OkDto(DateTime dateTimeUtc)
         {
-            DateTime = dateTime;
+            DateTimeUtc = dateTimeUtc;
         }
 
         [Required]
-        public DateTime DateTime { get; }
+        public DateTime DateTimeUtc { get; }
     }
 }

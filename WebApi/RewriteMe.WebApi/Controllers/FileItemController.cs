@@ -128,7 +128,7 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Upload(string name, string language, string fileName, Guid applicationId, [FromForm]IFormFile file)
+        public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, [FromForm]IFormFile file)
         {
             var user = await VerifyUserAsync().ConfigureAwait(false);
             if (user == null)
@@ -156,7 +156,7 @@ namespace RewriteMe.WebApi.Controllers
                 return StatusCode(415);
             }
 
-            var dateCreated = DateTime.UtcNow;
+            var dateUpdated = DateTime.UtcNow;
             var fileItem = new FileItem
             {
                 Id = fileItemId,
@@ -169,7 +169,7 @@ namespace RewriteMe.WebApi.Controllers
                 OriginalContentType = file.ContentType,
                 TotalTime = totalTime,
                 DateCreated = dateCreated,
-                DateUpdated = dateCreated
+                DateUpdated = dateUpdated
             };
 
             try

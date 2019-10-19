@@ -69,6 +69,7 @@ export class CreateFileComponent implements OnInit {
         params = params.append("name", this.controls.name.value);
         params = params.append("language", this.controls.language.value);
         params = params.append("fileName", file.name);
+        params = params.append("dateCreated", new Date().toISOString());
         params = params.append("applicationId", CommonVariables.ApplicationId);
 
         let formData = new FormData();

@@ -17,8 +17,8 @@ namespace RewriteMe.WebApi.Extensions
                 TotalTimeTicks = fileItem.TotalTime.Ticks,
                 TranscribedTimeTicks = fileItem.TranscribedTime.Ticks,
                 DateCreated = fileItem.DateCreated,
-                DateProcessed = fileItem.DateProcessed,
-                DateUpdated = fileItem.DateUpdated,
+                DateProcessedUtc = fileItem.DateProcessed,
+                DateUpdatedUtc = fileItem.DateUpdated,
                 IsDeleted = fileItem.IsDeleted
             };
         }

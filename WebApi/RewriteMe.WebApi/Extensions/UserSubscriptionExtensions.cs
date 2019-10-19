@@ -12,7 +12,7 @@ namespace RewriteMe.WebApi.Extensions
                 Id = userSubscription.Id,
                 UserId = userSubscription.UserId,
                 TimeTicks = userSubscription.Time.Ticks,
-                DateCreated = userSubscription.DateCreated
+                DateCreatedUtc = userSubscription.DateCreated
             };
         }
     }
