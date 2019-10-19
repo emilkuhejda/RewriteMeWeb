@@ -13,8 +13,8 @@ namespace RewriteMe.WebApi.Extensions
                 Id = informationMessage.Id,
                 IsUserSpecific = informationMessage.UserId.HasValue,
                 WasOpened = informationMessage.WasOpened,
-                DateUpdated = informationMessage.DateUpdated,
-                DatePublished = informationMessage.DatePublished.GetValueOrDefault(),
+                DateUpdatedUtc = informationMessage.DateUpdated,
+                DatePublishedUtc = informationMessage.DatePublished.GetValueOrDefault(),
                 LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToDto())
             };
         }

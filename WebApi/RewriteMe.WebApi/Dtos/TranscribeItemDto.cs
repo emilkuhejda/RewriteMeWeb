@@ -29,9 +29,9 @@ namespace RewriteMe.WebApi.Dtos
         public long TotalTimeTicks { get; set; }
 
         [Required]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
         [Required]
-        public DateTime DateUpdated { get; set; }
+        public DateTime DateUpdatedUtc { get; set; }
     }
 }

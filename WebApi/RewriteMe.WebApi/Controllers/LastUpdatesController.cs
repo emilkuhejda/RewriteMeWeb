@@ -52,11 +52,11 @@ namespace RewriteMe.WebApi.Controllers
 
             return Ok(new LastUpdatesDto
             {
-                FileItem = fileItemLastUpdate,
-                DeletedFileItem = deletedFileItemLastUpdate,
-                TranscribeItem = transcribeItemLastUpdate,
-                UserSubscription = userSubscriptionUpdate,
-                InformationMessage = informationMessageUpdate
+                FileItemUtc = fileItemLastUpdate,
+                DeletedFileItemUtc = deletedFileItemLastUpdate,
+                TranscribeItemUtc = transcribeItemLastUpdate,
+                UserSubscriptionUtc = userSubscriptionUpdate,
+                InformationMessageUtc = informationMessageUpdate
             });
         }
     }
