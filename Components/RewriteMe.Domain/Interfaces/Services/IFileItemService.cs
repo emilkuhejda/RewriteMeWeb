@@ -31,6 +31,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
 
+        Task<bool> IsInPreparedStateAsync(Guid fileItemId);
+
         Task AddAsync(FileItem fileItem);
 
         Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId);
