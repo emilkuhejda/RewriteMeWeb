@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -184,6 +185,27 @@ namespace RewriteMe.DataAccess.Repositories
                     .Select(x => x.DateUpdated)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
+            }
+        }
+
+        public async Task<bool> IsInPreparedStateAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var fileItem = await context.FileItems
+                    .Where(x => x.Id == fileItemId)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.RecognitionState
+                    })
+                    .FirstOrDefaultAsync()
+                    .ConfigureAwait(false);
+
+                if (fileItem == null)
+                    throw new FileItemNotExistsException();
+
+                return fileItem.RecognitionState == RecognitionState.Prepared;
             }
         }
 
