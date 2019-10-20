@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
@@ -19,6 +20,8 @@ namespace RewriteMe.Business.Managers
 {
     public class SpeechRecognitionManager : ISpeechRecognitionManager
     {
+        private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
@@ -68,6 +71,13 @@ namespace RewriteMe.Business.Managers
         private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+            if (fileItem.RecognitionState > RecognitionState.Prepared)
+            {
+                var message = $"File with ID: '{fileItem.Id}' is already recognized.";
+                await _applicationLogService.ErrorAsync(message, userId).ConfigureAwait(false);
+                return;
+            }
+
             await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
@@ -97,6 +107,16 @@ namespace RewriteMe.Business.Managers
 
                 await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
             }
+            catch (FileItemNotExistsException)
+            {
+                await _applicationLogService.WarningAsync($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not found.", userId).ConfigureAwait(false);
+                return;
+            }
+            catch (FileItemIsNotInPreparedStateException)
+            {
+                await _applicationLogService.WarningAsync($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not in PREPARED state.", userId).ConfigureAwait(false);
+                return;
+            }
             catch (Exception ex)
             {
                 await _applicationLogService.InfoAsync($"Speech recognition is not successful for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
@@ -109,9 +129,21 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
-            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(false);
+            await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
+            try
+            {
+                var isInPreparedState = await _fileItemService.IsInPreparedStateAsync(fileItem.Id).ConfigureAwait(true);
+                if (!isInPreparedState)
+                    throw new FileItemIsNotInPreparedStateException();
 
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(true);
+            }
+            finally
+            {
+                SemaphoreSlim.Release();
+            }
+
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 

@@ -87,6 +87,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
+        public async Task<bool> IsInPreparedStateAsync(Guid fileItemId)
+        {
+            return await _fileItemRepository.IsInPreparedStateAsync(fileItemId).ConfigureAwait(false);
+        }
+
         public async Task AddAsync(FileItem fileItem)
         {
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);

@@ -83,6 +83,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
                 await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
+                informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
                 return Ok(informationMessage);
             }
             catch (SerializationException ex)
