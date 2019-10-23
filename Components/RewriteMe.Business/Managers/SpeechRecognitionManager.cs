@@ -186,7 +186,6 @@ namespace RewriteMe.Business.Managers
                 {
                     _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.English),
                     _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak),
-                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak),
                     _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.English),
                     _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.Slovak)
                 };
