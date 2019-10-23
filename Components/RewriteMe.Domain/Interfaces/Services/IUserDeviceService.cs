@@ -12,6 +12,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdateLanguageAsync(Guid userId, Guid installationId, Language language);
 
-        Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language);
+        Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language, Guid? userId);
     }
 }

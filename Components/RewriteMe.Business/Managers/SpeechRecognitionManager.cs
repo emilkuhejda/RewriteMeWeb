@@ -184,10 +184,10 @@ namespace RewriteMe.Business.Managers
             {
                 var tasks = new[]
                 {
-                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.English),
-                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak),
-                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.English),
-                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.Slovak)
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.English, userId),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Android, Language.Slovak, userId),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.English, userId),
+                    _pushNotificationsService.SendAsync(informationMessage, RuntimePlatform.Osx, Language.Slovak, userId)
                 };
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
