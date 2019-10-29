@@ -12,11 +12,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class SettingsComponent implements OnInit {
     cleanUpForm: FormGroup;
-    resetForm: FormGroup;
+    databaseForm: FormGroup;
     cleanUpFormSubmitted: boolean;
-    resetFormSubmitted: boolean;
+    databaseFormSubmitted: boolean;
     loadingCleanUpForm: boolean;
-    loadingResetForm: boolean;
+    loadingDatabaseForm: boolean;
     loadingStorageSettings: boolean;
     loadingNotificationsSettings: boolean;
     selectedStorage: string;
@@ -36,7 +36,7 @@ export class SettingsComponent implements OnInit {
             password: ['', [Validators.required]]
         });
 
-        this.resetForm = this.formBuilder.group({
+        this.databaseForm = this.formBuilder.group({
             password: ['', [Validators.required]]
         });
 
@@ -138,27 +138,27 @@ export class SettingsComponent implements OnInit {
             });
     }
 
-    get resetControls() {
-        return this.resetForm.controls;
+    get databaseFormControls() {
+        return this.databaseForm.controls;
     }
 
-    resetFormSubmit() {
+    resetSubmit() {
         this.alertService.clear();
-        this.resetFormSubmitted = true;
+        this.databaseFormSubmitted = true;
 
-        if (this.resetForm.invalid)
+        if (this.databaseForm.invalid)
             return;
 
-        this.loadingResetForm = true;
+        this.loadingDatabaseForm = true;
 
         let formData = {
-            password: this.resetControls.password.value
+            password: this.databaseFormControls.password.value
         };
 
         this.utilsService.resetDatabase(formData).subscribe(
             () => {
-                this.resetControls.password.setValue('');
-                this.resetFormSubmitted = false;
+                this.databaseFormControls.password.setValue('');
+                this.databaseFormSubmitted = false;
                 this.alertService.success('Database was successfully reseted.');
             },
             (err: ErrorResponse) => {
@@ -170,7 +170,39 @@ export class SettingsComponent implements OnInit {
                 this.alertService.error(error);
             })
             .add(() => {
-                this.loadingResetForm = false;
+                this.loadingDatabaseForm = false;
+            });
+    }
+
+    deleteSubmit() {
+        this.alertService.clear();
+        this.databaseFormSubmitted = true;
+
+        if (this.databaseForm.invalid)
+            return;
+
+        this.loadingDatabaseForm = true;
+
+        let formData = {
+            password: this.databaseFormControls.password.value
+        };
+
+        this.utilsService.deleteDatabase(formData).subscribe(
+            () => {
+                this.databaseFormControls.password.setValue('');
+                this.databaseFormSubmitted = false;
+                this.alertService.success('Database was successfully deleted.');
+            },
+            (err: ErrorResponse) => {
+                let error = err.message;
+
+                if (err.status === 400)
+                    error = "Password is not correct!";
+
+                this.alertService.error(error);
+            })
+            .add(() => {
+                this.loadingDatabaseForm = false;
             });
     }
 }

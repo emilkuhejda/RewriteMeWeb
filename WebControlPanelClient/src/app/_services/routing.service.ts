@@ -103,6 +103,10 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/reset-database/";
     }
 
+    getDeleteDatabaseUri(): string {
+        return this.getApiUri() + "api/control-panel/delete-database/";
+    }
+
     getStorageSettingUri(): string {
         return this.getApiUri() + "api/control-panel/settings/storage-setting/";
     }

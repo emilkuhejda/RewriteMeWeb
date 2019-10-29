@@ -17,5 +17,10 @@ namespace RewriteMe.Business.Services
         {
             await _databaseRepository.ResetAsync().ConfigureAwait(false);
         }
+
+        public async Task DeleteDatabaseAsync()
+        {
+            await _databaseRepository.DeleteDatabaseAsync().ConfigureAwait(false);
+        }
     }
 }
