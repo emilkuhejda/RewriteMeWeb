@@ -27,9 +27,9 @@ namespace RewriteMe.Business.Services
             await _userDeviceRepository.UpdateLanguageAsync(userId, installationId, language).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language)
+        public async Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language, Guid? userId)
         {
-            return await _userDeviceRepository.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
+            return await _userDeviceRepository.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language, userId).ConfigureAwait(false);
         }
     }
 }

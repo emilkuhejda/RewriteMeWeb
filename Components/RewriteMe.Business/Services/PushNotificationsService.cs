@@ -40,7 +40,7 @@ namespace RewriteMe.Business.Services
             _appSettings = options.Value;
         }
 
-        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language)
+        public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language, Guid? userId = null)
         {
             var languageVersion = informationMessage.LanguageVersions.FirstOrDefault(x => x.Language == language);
             if (languageVersion == null)
@@ -53,7 +53,7 @@ namespace RewriteMe.Business.Services
                 throw new PushNotificationWasSentException();
 
             NotificationResult notificationResult = null;
-            var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language).ConfigureAwait(false);
+            var installationIds = await _userDeviceService.GetPlatformSpecificInstallationIdsAsync(runtimePlatform, language, userId).ConfigureAwait(false);
             var devices = installationIds.ToList();
             if (devices.Any())
             {

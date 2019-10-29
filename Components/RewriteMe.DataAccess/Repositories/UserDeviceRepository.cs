@@ -61,16 +61,18 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language)
+        public async Task<IEnumerable<Guid>> GetPlatformSpecificInstallationIdsAsync(RuntimePlatform runtimePlatform, Language language, Guid? userId)
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.UserDevices
+                var query = context.UserDevices
                     .AsNoTracking()
-                    .Where(x => x.RuntimePlatform == runtimePlatform && x.Language == language)
-                    .Select(x => x.InstallationId)
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .Where(x => x.RuntimePlatform == runtimePlatform && x.Language == language);
+
+                if (userId.HasValue)
+                    query = query.Where(x => x.UserId == userId);
+
+                return await query.Select(x => x.InstallationId).ToListAsync().ConfigureAwait(false);
             }
         }
     }
