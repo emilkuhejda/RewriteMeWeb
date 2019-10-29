@@ -52,6 +52,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok();
         }
 
+        [HttpPut("/api/control-panel/settings/change-notifications-setting")]
+        public async Task<IActionResult> ChangeNotificationsSettings(bool isEnabled)
+        {
+            await _internalValueService.UpdateValueAsync(InternalValues.IsProgressNotificationsEnabled, isEnabled).ConfigureAwait(false);
+
+            return Ok();
+        }
+
         [HttpPut("/api/control-panel/settings/clean-up")]
         public IActionResult CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
         {

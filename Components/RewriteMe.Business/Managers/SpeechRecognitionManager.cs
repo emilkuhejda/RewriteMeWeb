@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
+using RewriteMe.Business.Configuration;
 using RewriteMe.Business.InformationMessages;
 using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
@@ -28,6 +29,7 @@ namespace RewriteMe.Business.Managers
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ITranscribeItemSourceService _transcribeItemSourceService;
         private readonly IInformationMessageService _informationMessageService;
+        private readonly IInternalValueService _internalValueService;
         private readonly IPushNotificationsService _pushNotificationsService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IWavFileManager _wavFileManager;
@@ -40,6 +42,7 @@ namespace RewriteMe.Business.Managers
             IUserSubscriptionService userSubscriptionService,
             ITranscribeItemSourceService transcribeItemSourceService,
             IInformationMessageService informationMessageService,
+            IInternalValueService internalValueService,
             IPushNotificationsService pushNotificationsService,
             IApplicationLogService applicationLogService,
             IWavFileManager wavFileManager,
@@ -51,6 +54,7 @@ namespace RewriteMe.Business.Managers
             _userSubscriptionService = userSubscriptionService;
             _transcribeItemSourceService = transcribeItemSourceService;
             _informationMessageService = informationMessageService;
+            _internalValueService = internalValueService;
             _pushNotificationsService = pushNotificationsService;
             _applicationLogService = applicationLogService;
             _wavFileManager = wavFileManager;
@@ -177,6 +181,10 @@ namespace RewriteMe.Business.Managers
 
         private async Task SendNotificationsAsync(Guid userId, Guid fileItemId)
         {
+            var isProgressNotificationsEnabled = await _internalValueService.GetValueAsync(InternalValues.IsProgressNotificationsEnabled).ConfigureAwait(false);
+            if (!isProgressNotificationsEnabled)
+                return;
+
             var informationMessage = GenericNotifications.GetTranscriptionSuccess(userId, fileItemId);
 
             await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
