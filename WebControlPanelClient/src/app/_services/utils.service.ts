@@ -26,4 +26,8 @@ export class UtilsService {
     resetDatabase(data: any): Observable<any> {
         return this.http.put<any>(this.routingService.getResetDatabaseUri(), data);
     }
+
+    deleteDatabase(data: any): Observable<any> {
+        return this.http.put<any>(this.routingService.getDeleteDatabaseUri(), data);
+    }
 }
