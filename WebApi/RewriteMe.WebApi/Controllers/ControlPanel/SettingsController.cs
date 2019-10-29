@@ -44,6 +44,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return Ok(storageSetting);
         }
 
+        [HttpGet("/api/control-panel/settings/notifications-setting")]
+        public async Task<IActionResult> GetNotificationsSetting()
+        {
+            var isProgressNotificationsEnabled = await _internalValueService.GetValueAsync(InternalValues.IsProgressNotificationsEnabled).ConfigureAwait(false);
+
+            return Ok(isProgressNotificationsEnabled);
+        }
+
         [HttpPut("/api/control-panel/settings/change-storage")]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {

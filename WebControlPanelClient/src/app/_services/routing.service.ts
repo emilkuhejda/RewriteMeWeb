@@ -111,6 +111,14 @@ export class RoutingService {
         return this.getApiUri() + "api/control-panel/settings/change-storage/";
     }
 
+    getNotificationsSettingUri(): string {
+        return this.getApiUri() + "api/control-panel/settings/notifications-setting/";
+    }
+
+    getChangeNotificationsSettingUri(): string {
+        return this.getApiUri() + "api/control-panel/settings/change-notifications-setting/";
+    }
+
     getCleanUpUri(): string {
         return this.getApiUri() + "api/control-panel/settings/clean-up/";
     }
