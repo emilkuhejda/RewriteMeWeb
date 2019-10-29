@@ -41,7 +41,7 @@ export class SettingsComponent implements OnInit {
         });
 
         this.initializeStorageSetting();
-        this.initializeNotificationsSettings();
+        this.initializeNotificationsSetting();
     }
 
     private initializeStorageSetting() {
@@ -59,7 +59,7 @@ export class SettingsComponent implements OnInit {
             });
     }
 
-    private initializeNotificationsSettings() {
+    private initializeNotificationsSetting() {
         this.loadingNotificationsSettings = true;
 
         this.settingsService.getNotificationsSetting().subscribe(
@@ -87,7 +87,7 @@ export class SettingsComponent implements OnInit {
     public onNotificationsSettingValueChange(value: boolean) {
         this.settingsService.changeNotificationsSetting(value).subscribe(
             () => {
-                this.initializeNotificationsSettings();
+                this.initializeNotificationsSetting();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
