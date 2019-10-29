@@ -86,5 +86,17 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
 
             return Ok();
         }
+
+        [HttpPut("/api/control-panel/delete-database")]
+        public async Task<IActionResult> DeleteDatabase([FromBody]ResetDatabaseModel resetDatabaseModel)
+        {
+            var passwordHash = _authenticationService.GenerateHash(resetDatabaseModel.Password);
+            if (passwordHash != _appSettings.SecurityPasswordHash)
+                return BadRequest();
+
+            await _databaseService.DeleteDatabaseAsync().ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }

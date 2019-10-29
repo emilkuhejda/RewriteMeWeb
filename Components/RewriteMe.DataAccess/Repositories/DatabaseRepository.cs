@@ -24,5 +24,13 @@ namespace RewriteMe.DataAccess.Repositories
                 DbSeed.Seed(context);
             }
         }
+
+        public async Task DeleteDatabaseAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                await context.Database.EnsureDeletedAsync().ConfigureAwait(false);
+            }
+        }
     }
 }
