@@ -18,7 +18,7 @@
                     <p>Reading data from source</p>
 
                     <mat-button-toggle-group #storageSettings="matButtonToggleGroup" name="fontStyle" aria-label="Font Style"
-                        [value]="selectedStorage" (change)="onValueChange(storageSettings.value)"
+                        [value]="selectedStorage" (change)="onStorageSettingValueChange(storageSettings.value)"
                         [disabled]="loadingStorageSettings" class="mr-3">
                         <mat-button-toggle value="0">Disk</mat-button-toggle>
                         <mat-button-toggle value="1">Database</mat-button-toggle>

@@ -74,7 +74,7 @@ export class SettingsComponent implements OnInit {
             });
     }
 
-    public onValueChange(value: string) {
+    public onStorageSettingValueChange(value: string) {
         this.settingsService.changeStorage(value).subscribe(
             () => {
                 this.initializeStorageSetting();
