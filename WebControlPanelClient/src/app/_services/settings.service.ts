@@ -15,11 +15,22 @@ export class SettingsService {
         return this.http.get<string>(this.routingService.getStorageSettingUri());
     }
 
+    getNotificationsSetting(): Observable<boolean> {
+        return this.http.get<boolean>(this.routingService.getNotificationsSettingUri());
+    }
+
     changeStorage(storageSetting: string): Observable<any> {
         let params = new HttpParams();
         params = params.append('storageSetting', storageSetting);
 
         return this.http.put(this.routingService.getChangeStorageUri(), null, { params: params });
+    }
+
+    changeNotificationsSetting(isEnabled: boolean): Observable<any> {
+        let params = new HttpParams();
+        params = params.append('isEnabled', String(isEnabled));
+
+        return this.http.put(this.routingService.getChangeNotificationsSettingUri(), null, { params: params });
     }
 
     cleanUp(data: any): Observable<any> {

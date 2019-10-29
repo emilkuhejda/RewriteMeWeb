@@ -18,7 +18,9 @@ export class SettingsComponent implements OnInit {
     loadingCleanUpForm: boolean;
     loadingResetForm: boolean;
     loadingStorageSettings: boolean;
+    loadingNotificationsSettings: boolean;
     selectedStorage: string;
+    isEnabledNotifications: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -39,6 +41,7 @@ export class SettingsComponent implements OnInit {
         });
 
         this.initializeStorageSetting();
+        this.initializeNotificationsSetting();
     }
 
     private initializeStorageSetting() {
@@ -56,10 +59,35 @@ export class SettingsComponent implements OnInit {
             });
     }
 
-    public onValueChange(value: string) {
+    private initializeNotificationsSetting() {
+        this.loadingNotificationsSettings = true;
+
+        this.settingsService.getNotificationsSetting().subscribe(
+            isEnabled => {
+                this.isEnabledNotifications = String(isEnabled);
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            })
+            .add(() => {
+                this.loadingNotificationsSettings = false;
+            });
+    }
+
+    public onStorageSettingValueChange(value: string) {
         this.settingsService.changeStorage(value).subscribe(
             () => {
                 this.initializeStorageSetting();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            });
+    }
+
+    public onNotificationsSettingValueChange(value: boolean) {
+        this.settingsService.changeNotificationsSetting(value).subscribe(
+            () => {
+                this.initializeNotificationsSetting();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
