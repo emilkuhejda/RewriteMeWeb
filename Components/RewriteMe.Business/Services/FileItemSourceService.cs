@@ -49,7 +49,7 @@ namespace RewriteMe.Business.Services
                 Id = Guid.NewGuid(),
                 FileItemId = fileItem.Id,
                 OriginalSource = source,
-                DateCreated = DateTime.UtcNow
+                DateCreatedUtc = DateTime.UtcNow
             };
 
             await _fileItemSourceRepository.AddAsync(fileItemSource).ConfigureAwait(false);

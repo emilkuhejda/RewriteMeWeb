@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.Email).IsRequired().HasMaxLength(100);
             builder.Property(x => x.GivenName).IsRequired().HasMaxLength(100);
             builder.Property(x => x.FamilyName).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.DateRegistered).IsRequired();
+            builder.Property(x => x.DateRegisteredUtc).IsRequired();
 
             builder.HasMany(x => x.FileItems).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.RecognizedAudioSamples).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);

@@ -14,7 +14,7 @@ namespace RewriteMe.Domain.UserManagement
 
         public string FamilyName { get; set; }
 
-        public DateTime DateRegistered { get; set; }
+        public DateTime DateRegisteredUtc { get; set; }
 
         public IEnumerable<FileItem> FileItems { get; set; }
     }

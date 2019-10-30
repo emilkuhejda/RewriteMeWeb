@@ -19,7 +19,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Id = informationMessageId,
                 CampaignName = model.CampaignName,
-                DateCreated = DateTime.UtcNow,
+                DateCreatedUtc = DateTime.UtcNow,
                 LanguageVersions = languageVersions
             };
         }

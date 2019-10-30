@@ -32,7 +32,7 @@ namespace RewriteMe.Business.Services
                     Id = wavFile.Id,
                     FileItemId = fileItemId,
                     Source = source,
-                    DateCreated = DateTime.UtcNow
+                    DateCreatedUtc = DateTime.UtcNow
                 };
 
                 items.Add(transcribeItemSource);

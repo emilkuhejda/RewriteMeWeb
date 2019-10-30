@@ -9,7 +9,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public Guid UserId { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
         public virtual UserEntity User { get; set; }
 

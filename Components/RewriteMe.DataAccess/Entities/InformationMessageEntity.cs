@@ -13,11 +13,11 @@ namespace RewriteMe.DataAccess.Entities
 
         public bool WasOpened { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
-        public DateTime? DateUpdated { get; set; }
+        public DateTime? DateUpdatedUtc { get; set; }
 
-        public DateTime? DatePublished { get; set; }
+        public DateTime? DatePublishedUtc { get; set; }
 
         public virtual UserEntity User { get; set; }
 

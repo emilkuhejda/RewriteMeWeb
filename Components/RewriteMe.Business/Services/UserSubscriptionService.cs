@@ -71,7 +71,7 @@ namespace RewriteMe.Business.Services
                 UserId = billingPurchase.UserId,
                 ApplicationId = applicationId,
                 Time = subscriptionProduct.Time,
-                DateCreated = DateTime.UtcNow
+                DateCreatedUtc = DateTime.UtcNow
             };
 
             await _userSubscriptionRepository.AddAsync(userSubscription).ConfigureAwait(false);

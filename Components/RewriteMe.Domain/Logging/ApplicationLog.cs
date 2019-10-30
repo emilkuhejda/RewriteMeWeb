@@ -13,6 +13,6 @@ namespace RewriteMe.Domain.Logging
 
         public string Message { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
     }
 }

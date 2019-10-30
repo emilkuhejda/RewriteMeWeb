@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.ApplicationId).IsRequired();
             builder.Property(x => x.Time).IsRequired();
-            builder.Property(x => x.DateCreated).IsRequired();
+            builder.Property(x => x.DateCreatedUtc).IsRequired();
         }
     }
 }

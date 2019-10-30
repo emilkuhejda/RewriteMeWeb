@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.LogLevel).IsRequired();
             builder.Property(x => x.Message).IsRequired();
-            builder.Property(x => x.DateCreated).IsRequired();
+            builder.Property(x => x.DateCreatedUtc).IsRequired();
         }
     }
 }
