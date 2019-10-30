@@ -32,7 +32,7 @@ namespace RewriteMe.DataAccess.Migrations
                     Name = table.Column<string>(maxLength: 150, nullable: false),
                     Email = table.Column<string>(maxLength: 150, nullable: false),
                     Message = table.Column<string>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,7 +59,7 @@ namespace RewriteMe.DataAccess.Migrations
                     Email = table.Column<string>(maxLength: 100, nullable: false),
                     GivenName = table.Column<string>(maxLength: 100, nullable: false),
                     FamilyName = table.Column<string>(maxLength: 100, nullable: false),
-                    DateRegistered = table.Column<DateTime>(nullable: false)
+                    DateRegisteredUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,7 +75,7 @@ namespace RewriteMe.DataAccess.Migrations
                     UserId = table.Column<Guid>(nullable: true),
                     LogLevel = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,8 +131,8 @@ namespace RewriteMe.DataAccess.Migrations
                     TotalTime = table.Column<TimeSpan>(nullable: false),
                     TranscribedTime = table.Column<TimeSpan>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
-                    DateProcessed = table.Column<DateTime>(nullable: true),
-                    DateUpdated = table.Column<DateTime>(nullable: false),
+                    DateProcessedUtc = table.Column<DateTime>(nullable: true),
+                    DateUpdatedUtc = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     IsPermanentlyDeleted = table.Column<bool>(nullable: false),
                     WasCleaned = table.Column<bool>(nullable: false)
@@ -156,9 +156,9 @@ namespace RewriteMe.DataAccess.Migrations
                     UserId = table.Column<Guid>(nullable: true),
                     CampaignName = table.Column<string>(maxLength: 150, nullable: false),
                     WasOpened = table.Column<bool>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    DateUpdated = table.Column<DateTime>(nullable: true),
-                    DatePublished = table.Column<DateTime>(nullable: true)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false),
+                    DateUpdatedUtc = table.Column<DateTime>(nullable: true),
+                    DatePublishedUtc = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -177,7 +177,7 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,7 +200,7 @@ namespace RewriteMe.DataAccess.Migrations
                     RuntimePlatform = table.Column<int>(nullable: false),
                     InstalledVersionNumber = table.Column<string>(maxLength: 20, nullable: false),
                     Language = table.Column<int>(nullable: false),
-                    DateRegistered = table.Column<DateTime>(nullable: false)
+                    DateRegisteredUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -221,7 +221,7 @@ namespace RewriteMe.DataAccess.Migrations
                     UserId = table.Column<Guid>(nullable: false),
                     ApplicationId = table.Column<Guid>(nullable: false),
                     Time = table.Column<TimeSpan>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -242,7 +242,7 @@ namespace RewriteMe.DataAccess.Migrations
                     FileItemId = table.Column<Guid>(nullable: false),
                     OriginalSource = table.Column<byte[]>(nullable: false),
                     Source = table.Column<byte[]>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -268,8 +268,8 @@ namespace RewriteMe.DataAccess.Migrations
                     StartTime = table.Column<TimeSpan>(nullable: false),
                     EndTime = table.Column<TimeSpan>(nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    DateUpdated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false),
+                    DateUpdatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -289,7 +289,7 @@ namespace RewriteMe.DataAccess.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     FileItemId = table.Column<Guid>(nullable: false),
                     Source = table.Column<byte[]>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false)
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

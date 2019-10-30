@@ -49,7 +49,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var fileItems = await context.FileItems
                     .Where(x => !x.IsDeleted)
-                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
+                    .Where(x => x.UserId == userId && x.DateUpdatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -92,7 +92,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 return await context.FileItems
                     .Where(x => x.IsDeleted)
-                    .Where(x => x.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
+                    .Where(x => x.UserId == userId && x.DateUpdatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .Select(x => x.Id)
                     .ToListAsync()
@@ -165,9 +165,9 @@ namespace RewriteMe.DataAccess.Repositories
                 return await context.FileItems
                     .Where(x => !x.IsDeleted)
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.DateUpdated)
+                    .OrderByDescending(x => x.DateUpdatedUtc)
                     .AsNoTracking()
-                    .Select(x => x.DateUpdated)
+                    .Select(x => x.DateUpdatedUtc)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
@@ -180,9 +180,9 @@ namespace RewriteMe.DataAccess.Repositories
                 return await context.FileItems
                     .Where(x => x.IsDeleted)
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.DateUpdated)
+                    .OrderByDescending(x => x.DateUpdatedUtc)
                     .AsNoTracking()
-                    .Select(x => x.DateUpdated)
+                    .Select(x => x.DateUpdatedUtc)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
@@ -227,7 +227,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.ApplicationId = applicationId;
-                entity.DateUpdated = DateTime.UtcNow;
+                entity.DateUpdatedUtc = DateTime.UtcNow;
                 entity.IsDeleted = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
@@ -252,11 +252,11 @@ namespace RewriteMe.DataAccess.Repositories
                 foreach (var entity in entities)
                 {
                     var deletedFileItem = deletedFileItems.Single(x => x.Id == entity.Id);
-                    if (deletedFileItem.DeletedDate < entity.DateUpdated)
+                    if (deletedFileItem.DeletedDate < entity.DateUpdatedUtc)
                         continue;
 
                     entity.ApplicationId = applicationId;
-                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.DateUpdatedUtc = DateTime.UtcNow;
                     entity.IsDeleted = true;
                 }
 
@@ -279,7 +279,7 @@ namespace RewriteMe.DataAccess.Repositories
                 foreach (var entity in entities)
                 {
                     entity.ApplicationId = applicationId;
-                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.DateUpdatedUtc = DateTime.UtcNow;
                     entity.IsDeleted = true;
                     entity.IsPermanentlyDeleted = true;
                 }
@@ -303,7 +303,7 @@ namespace RewriteMe.DataAccess.Repositories
                 foreach (var entity in entities)
                 {
                     entity.ApplicationId = applicationId;
-                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.DateUpdatedUtc = DateTime.UtcNow;
                     entity.IsDeleted = false;
                     entity.IsPermanentlyDeleted = false;
                 }
@@ -322,7 +322,7 @@ namespace RewriteMe.DataAccess.Repositories
 
                 entity.ApplicationId = applicationId;
                 entity.Language = language;
-                entity.DateUpdated = DateTime.UtcNow;
+                entity.DateUpdatedUtc = DateTime.UtcNow;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -339,7 +339,7 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.ApplicationId = fileItem.ApplicationId;
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
-                entity.DateUpdated = fileItem.DateUpdated;
+                entity.DateUpdatedUtc = fileItem.DateUpdatedUtc;
 
                 if (!string.IsNullOrEmpty(fileItem.FileName))
                 {
@@ -374,7 +374,7 @@ namespace RewriteMe.DataAccess.Repositories
 
                 fileItemEntity.ApplicationId = applicationId;
                 fileItemEntity.RecognitionState = recognitionState;
-                fileItemEntity.DateUpdated = DateTime.UtcNow;
+                fileItemEntity.DateUpdatedUtc = DateTime.UtcNow;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -389,8 +389,8 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 fileItemEntity.ApplicationId = applicationId;
-                fileItemEntity.DateProcessed = DateTime.UtcNow;
-                fileItemEntity.DateUpdated = DateTime.UtcNow;
+                fileItemEntity.DateProcessedUtc = DateTime.UtcNow;
+                fileItemEntity.DateUpdatedUtc = DateTime.UtcNow;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -445,7 +445,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var query = context.FileItems
                     .Where(x => x.RecognitionState == RecognitionState.Completed)
-                    .Where(x => x.DateProcessed.HasValue && x.DateProcessed < deleteBefore);
+                    .Where(x => x.DateProcessedUtc.HasValue && x.DateProcessedUtc < deleteBefore);
 
                 if (forceCleanUp)
                 {

@@ -93,7 +93,7 @@ namespace RewriteMe.WebApi.Controllers
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
-                DateCreated = DateTime.UtcNow
+                DateCreatedUtc = DateTime.UtcNow
             };
 
             await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);

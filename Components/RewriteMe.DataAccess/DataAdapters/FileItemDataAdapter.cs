@@ -22,8 +22,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 TotalTime = fileItemEntity.TotalTime,
                 TranscribedTime = fileItemEntity.TranscribedTime,
                 DateCreated = fileItemEntity.DateCreated,
-                DateProcessed = fileItemEntity.DateProcessed,
-                DateUpdated = fileItemEntity.DateUpdated,
+                DateProcessedUtc = fileItemEntity.DateProcessedUtc,
+                DateUpdatedUtc = fileItemEntity.DateUpdatedUtc,
                 IsDeleted = fileItemEntity.IsDeleted,
                 IsPermanentlyDeleted = fileItemEntity.IsPermanentlyDeleted,
                 WasCleaned = fileItemEntity.WasCleaned
@@ -47,8 +47,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 TotalTime = fileItem.TotalTime,
                 TranscribedTime = fileItem.TranscribedTime,
                 DateCreated = fileItem.DateCreated,
-                DateProcessed = fileItem.DateProcessed,
-                DateUpdated = fileItem.DateUpdated,
+                DateProcessedUtc = fileItem.DateProcessedUtc,
+                DateUpdatedUtc = fileItem.DateUpdatedUtc,
                 IsDeleted = fileItem.IsDeleted,
                 IsPermanentlyDeleted = fileItem.IsPermanentlyDeleted,
                 WasCleaned = fileItem.WasCleaned

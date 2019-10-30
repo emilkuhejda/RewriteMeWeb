@@ -32,9 +32,9 @@ namespace RewriteMe.DataAccess.Entities
 
         public DateTime DateCreated { get; set; }
 
-        public DateTime? DateProcessed { get; set; }
+        public DateTime? DateProcessedUtc { get; set; }
 
-        public DateTime DateUpdated { get; set; }
+        public DateTime DateUpdatedUtc { get; set; }
 
         public bool IsDeleted { get; set; }
 

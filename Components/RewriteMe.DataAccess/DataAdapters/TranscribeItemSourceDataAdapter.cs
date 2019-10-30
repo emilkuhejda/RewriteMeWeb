@@ -12,7 +12,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = entity.Id,
                 FileItemId = entity.FileItemId,
                 Source = entity.Source,
-                DateCreated = entity.DateCreated
+                DateCreatedUtc = entity.DateCreatedUtc
             };
         }
 
@@ -23,7 +23,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Id = transcribeItemSource.Id,
                 FileItemId = transcribeItemSource.FileItemId,
                 Source = transcribeItemSource.Source,
-                DateCreated = transcribeItemSource.DateCreated
+                DateCreatedUtc = transcribeItemSource.DateCreatedUtc
             };
         }
     }

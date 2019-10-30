@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.Name).HasMaxLength(150).IsRequired();
             builder.Property(x => x.Email).HasMaxLength(150).IsRequired();
             builder.Property(x => x.Message).IsRequired();
-            builder.Property(x => x.DateCreated).IsRequired();
+            builder.Property(x => x.DateCreatedUtc).IsRequired();
         }
     }
 }

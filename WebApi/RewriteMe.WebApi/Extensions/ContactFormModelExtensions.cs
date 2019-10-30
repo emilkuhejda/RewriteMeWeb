@@ -14,7 +14,7 @@ namespace RewriteMe.WebApi.Extensions
                 Name = contactFormModel.Name,
                 Email = contactFormModel.Email,
                 Message = contactFormModel.Message,
-                DateCreated = DateTime.UtcNow
+                DateCreatedUtc = DateTime.UtcNow
             };
         }
     }

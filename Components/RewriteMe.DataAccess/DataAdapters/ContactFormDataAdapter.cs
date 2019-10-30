@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Name = entity.Name,
                 Email = entity.Email,
                 Message = entity.Message,
-                DateCreated = entity.DateCreated
+                DateCreatedUtc = entity.DateCreatedUtc
             };
         }
 
@@ -25,7 +25,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Name = contactForm.Name,
                 Email = contactForm.Email,
                 Message = contactForm.Message,
-                DateCreated = contactForm.DateCreated
+                DateCreatedUtc = contactForm.DateCreatedUtc
             };
         }
     }

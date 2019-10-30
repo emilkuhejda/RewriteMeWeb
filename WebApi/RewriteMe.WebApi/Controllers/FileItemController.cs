@@ -169,7 +169,7 @@ namespace RewriteMe.WebApi.Controllers
                 OriginalContentType = file.ContentType,
                 TotalTime = totalTime,
                 DateCreated = dateCreated,
-                DateUpdated = dateUpdated
+                DateUpdatedUtc = dateUpdated
             };
 
             try
@@ -211,7 +211,7 @@ namespace RewriteMe.WebApi.Controllers
                 ApplicationId = updateFileItemModel.ApplicationId,
                 Name = updateFileItemModel.Name,
                 Language = updateFileItemModel.Language,
-                DateUpdated = DateTime.UtcNow
+                DateUpdatedUtc = DateTime.UtcNow
             };
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);

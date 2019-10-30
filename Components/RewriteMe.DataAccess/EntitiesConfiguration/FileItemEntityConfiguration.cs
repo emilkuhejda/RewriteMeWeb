@@ -23,7 +23,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.TotalTime).IsRequired();
             builder.Property(x => x.TranscribedTime).IsRequired();
             builder.Property(x => x.DateCreated).IsRequired();
-            builder.Property(x => x.DateUpdated).IsRequired();
+            builder.Property(x => x.DateUpdatedUtc).IsRequired();
             builder.Property(x => x.IsDeleted).IsRequired();
             builder.Property(x => x.IsPermanentlyDeleted).IsRequired();
             builder.Property(x => x.WasCleaned).IsRequired();

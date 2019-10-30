@@ -18,8 +18,8 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.StartTime).IsRequired();
             builder.Property(x => x.EndTime).IsRequired();
             builder.Property(x => x.TotalTime).IsRequired();
-            builder.Property(x => x.DateCreated).IsRequired();
-            builder.Property(x => x.DateUpdated).IsRequired();
+            builder.Property(x => x.DateCreatedUtc).IsRequired();
+            builder.Property(x => x.DateUpdatedUtc).IsRequired();
         }
     }
 }

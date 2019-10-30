@@ -17,6 +17,6 @@ namespace RewriteMe.Domain.Notifications
 
         public Language Language { get; set; }
 
-        public DateTime DateRegistered { get; set; }
+        public DateTime DateRegisteredUtc { get; set; }
     }
 }

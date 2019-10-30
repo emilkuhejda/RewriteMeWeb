@@ -17,7 +17,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public Language Language { get; set; }
 
-        public DateTime DateRegistered { get; set; }
+        public DateTime DateRegisteredUtc { get; set; }
 
         public virtual UserEntity User { get; set; }
     }

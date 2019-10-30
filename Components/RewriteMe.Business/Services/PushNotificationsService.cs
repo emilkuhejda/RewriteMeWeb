@@ -79,7 +79,7 @@ namespace RewriteMe.Business.Services
             }
 
             await _languageVersionService.UpdateSendStatusAsync(languageVersion, runtimePlatform, true).ConfigureAwait(false);
-            if (!informationMessage.DatePublished.HasValue)
+            if (!informationMessage.DatePublishedUtc.HasValue)
             {
                 await _informationMessageService.UpdateDatePublishedAsync(informationMessage.Id, DateTime.UtcNow).ConfigureAwait(false);
             }

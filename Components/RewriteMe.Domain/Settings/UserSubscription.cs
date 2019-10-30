@@ -12,6 +12,6 @@ namespace RewriteMe.Domain.Settings
 
         public TimeSpan Time { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
     }
 }

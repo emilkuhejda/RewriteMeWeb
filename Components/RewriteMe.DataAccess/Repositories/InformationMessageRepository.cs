@@ -49,10 +49,10 @@ namespace RewriteMe.DataAccess.Repositories
                 var entities = await context.InformationMessages
                     .Include(x => x.LanguageVersions)
                     .AsNoTracking()
-                    .OrderByDescending(x => x.DateUpdated)
+                    .OrderByDescending(x => x.DateUpdatedUtc)
                     .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) &&
-                                ((x.DatePublished.HasValue && x.DatePublished >= updatedAfter) ||
-                                 (x.DateUpdated.HasValue && x.DateUpdated >= updatedAfter)))
+                                ((x.DatePublishedUtc.HasValue && x.DatePublishedUtc >= updatedAfter) ||
+                                 (x.DateUpdatedUtc.HasValue && x.DateUpdatedUtc >= updatedAfter)))
                     .ToListAsync()
                     .ConfigureAwait(false);
 
@@ -87,7 +87,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.CampaignName = informationMessage.CampaignName;
-                entity.DateUpdated = DateTime.UtcNow;
+                entity.DateUpdatedUtc = DateTime.UtcNow;
                 entity.LanguageVersions = informationMessage.LanguageVersions.Select(x => x.ToLanguageVersionEntity()).ToList();
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -101,11 +101,11 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return;
 
-                if (entity.DatePublished.HasValue)
+                if (entity.DatePublishedUtc.HasValue)
                     return;
 
-                entity.DatePublished = datePublished;
-                entity.DateUpdated = datePublished;
+                entity.DatePublishedUtc = datePublished;
+                entity.DateUpdatedUtc = datePublished;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -118,7 +118,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (entity == null)
                     return null;
 
-                entity.DateUpdated = DateTime.UtcNow;
+                entity.DateUpdatedUtc = DateTime.UtcNow;
                 entity.WasOpened = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
@@ -137,7 +137,7 @@ namespace RewriteMe.DataAccess.Repositories
                     if (entity == null)
                         continue;
 
-                    entity.DateUpdated = DateTime.UtcNow;
+                    entity.DateUpdatedUtc = DateTime.UtcNow;
                     entity.WasOpened = true;
                 }
 
@@ -159,9 +159,9 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 return await context.InformationMessages
                            .Where(x => (!x.UserId.HasValue || x.UserId.Value == userId) &&
-                                       (x.DatePublished.HasValue || x.DateUpdated.HasValue))
-                           .OrderByDescending(x => x.DateUpdated)
-                           .Select(x => x.DateUpdated)
+                                       (x.DatePublishedUtc.HasValue || x.DateUpdatedUtc.HasValue))
+                           .OrderByDescending(x => x.DateUpdatedUtc)
+                           .Select(x => x.DateUpdatedUtc)
                            .FirstOrDefaultAsync()
                            .ConfigureAwait(false) ?? DateTime.MinValue;
             }
