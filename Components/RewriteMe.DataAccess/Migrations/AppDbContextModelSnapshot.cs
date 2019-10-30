@@ -50,7 +50,7 @@ namespace RewriteMe.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<int>("LogLevel");
 
@@ -111,7 +111,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -138,9 +138,9 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime?>("DateProcessed");
+                    b.Property<DateTime?>("DateProcessedUtc");
 
-                    b.Property<DateTime>("DateUpdated");
+                    b.Property<DateTime>("DateUpdatedUtc");
 
                     b.Property<string>("FileName")
                         .IsRequired()
@@ -190,7 +190,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<Guid>("FileItemId");
 
@@ -216,11 +216,11 @@ namespace RewriteMe.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(150);
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
-                    b.Property<DateTime?>("DatePublished");
+                    b.Property<DateTime?>("DatePublishedUtc");
 
-                    b.Property<DateTime?>("DateUpdated");
+                    b.Property<DateTime?>("DateUpdatedUtc");
 
                     b.Property<Guid?>("UserId");
 
@@ -282,7 +282,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<Guid>("UserId");
 
@@ -321,9 +321,9 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<Guid>("ApplicationId");
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
-                    b.Property<DateTime>("DateUpdated");
+                    b.Property<DateTime>("DateUpdatedUtc");
 
                     b.Property<TimeSpan>("EndTime");
 
@@ -351,7 +351,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<Guid>("FileItemId");
 
@@ -370,7 +370,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateRegistered");
+                    b.Property<DateTime>("DateRegisteredUtc");
 
                     b.Property<Guid>("InstallationId");
 
@@ -396,7 +396,7 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("DateRegistered");
+                    b.Property<DateTime>("DateRegisteredUtc");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -422,7 +422,7 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<Guid>("ApplicationId");
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreatedUtc");
 
                     b.Property<TimeSpan>("Time");
 
