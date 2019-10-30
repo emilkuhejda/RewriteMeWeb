@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.FileItemId).IsRequired();
             builder.Property(x => x.OriginalSource).IsRequired();
-            builder.Property(x => x.DateCreated).IsRequired();
+            builder.Property(x => x.DateCreatedUtc).IsRequired();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace RewriteMe.WebApi.Extensions
                 RuntimePlatform = GetRuntimePlatform(model.RuntimePlatform),
                 InstalledVersionNumber = model.InstalledVersionNumber,
                 Language = GetLanguage(model.Language),
-                DateRegistered = DateTime.UtcNow
+                DateRegisteredUtc = DateTime.UtcNow
             };
         }
 

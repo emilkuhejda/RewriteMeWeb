@@ -20,8 +20,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 StartTime = transcribeItemEntity.StartTime,
                 EndTime = transcribeItemEntity.EndTime,
                 TotalTime = transcribeItemEntity.TotalTime,
-                DateCreated = transcribeItemEntity.DateCreated,
-                DateUpdated = transcribeItemEntity.DateUpdated
+                DateCreatedUtc = transcribeItemEntity.DateCreatedUtc,
+                DateUpdatedUtc = transcribeItemEntity.DateUpdatedUtc
             };
         }
 
@@ -38,8 +38,8 @@ namespace RewriteMe.DataAccess.DataAdapters
                 StartTime = transcribeItem.StartTime,
                 EndTime = transcribeItem.EndTime,
                 TotalTime = transcribeItem.TotalTime,
-                DateCreated = transcribeItem.DateCreated,
-                DateUpdated = transcribeItem.DateUpdated
+                DateCreatedUtc = transcribeItem.DateCreatedUtc,
+                DateUpdatedUtc = transcribeItem.DateUpdatedUtc
             };
         }
     }

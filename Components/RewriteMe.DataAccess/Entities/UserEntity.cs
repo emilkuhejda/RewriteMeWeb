@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public string FamilyName { get; set; }
 
-        public DateTime DateRegistered { get; set; }
+        public DateTime DateRegisteredUtc { get; set; }
 
         public virtual IList<FileItemEntity> FileItems { get; set; }
 

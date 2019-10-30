@@ -82,7 +82,7 @@ namespace RewriteMe.WebApi.Controllers
                     UserId = user.Id,
                     ApplicationId = registrationUserModel.ApplicationId,
                     Time = TimeSpan.FromMinutes(5),
-                    DateCreated = DateTime.UtcNow
+                    DateCreatedUtc = DateTime.UtcNow
                 };
 
                 await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);

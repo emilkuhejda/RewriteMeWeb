@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = entity.UserId,
                 LogLevel = entity.LogLevel,
                 Message = entity.Message,
-                DateCreated = entity.DateCreated
+                DateCreatedUtc = entity.DateCreatedUtc
             };
         }
 
@@ -25,7 +25,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = applicationLog.UserId,
                 LogLevel = applicationLog.LogLevel,
                 Message = applicationLog.Message,
-                DateCreated = applicationLog.DateCreated
+                DateCreatedUtc = applicationLog.DateCreatedUtc
             };
         }
     }

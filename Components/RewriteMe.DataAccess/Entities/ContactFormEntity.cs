@@ -12,6 +12,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public string Message { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
     }
 }

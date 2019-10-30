@@ -9,7 +9,7 @@ namespace RewriteMe.Domain.Recording
 
         public Guid UserId { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
         public IEnumerable<SpeechResult> SpeechResults { get; set; }
     }

@@ -14,7 +14,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Email = userEntity.Email,
                 GivenName = userEntity.GivenName,
                 FamilyName = userEntity.FamilyName,
-                DateRegistered = userEntity.DateRegistered,
+                DateRegisteredUtc = userEntity.DateRegisteredUtc,
                 FileItems = userEntity.FileItems?.Select(x => x.ToFileItem())
             };
         }
@@ -27,7 +27,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 Email = user.Email,
                 GivenName = user.GivenName,
                 FamilyName = user.FamilyName,
-                DateRegistered = user.DateRegistered,
+                DateRegisteredUtc = user.DateRegisteredUtc,
                 FileItems = user.FileItems?.Select(x => x.ToFileItemEntity()).ToList()
             };
         }

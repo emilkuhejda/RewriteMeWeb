@@ -14,9 +14,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = entity.UserId,
                 CampaignName = entity.CampaignName,
                 WasOpened = entity.WasOpened,
-                DateCreated = entity.DateCreated,
-                DateUpdated = entity.DateUpdated,
-                DatePublished = entity.DatePublished,
+                DateCreatedUtc = entity.DateCreatedUtc,
+                DateUpdatedUtc = entity.DateUpdatedUtc,
+                DatePublishedUtc = entity.DatePublishedUtc,
                 LanguageVersions = entity.LanguageVersions?.Select(x => x.ToLanguageVersion()).ToList()
             };
         }
@@ -29,9 +29,9 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = informationMessage.UserId,
                 CampaignName = informationMessage.CampaignName,
                 WasOpened = informationMessage.WasOpened,
-                DateCreated = informationMessage.DateCreated,
-                DateUpdated = informationMessage.DateUpdated,
-                DatePublished = informationMessage.DatePublished,
+                DateCreatedUtc = informationMessage.DateCreatedUtc,
+                DateUpdatedUtc = informationMessage.DateUpdatedUtc,
+                DatePublishedUtc = informationMessage.DatePublishedUtc,
                 LanguageVersions = informationMessage.LanguageVersions?.Select(x => x.ToLanguageVersionEntity()).ToList()
             };
         }

@@ -12,7 +12,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = entity.Id,
                 UserId = entity.UserId,
-                DateCreated = entity.DateCreated,
+                DateCreatedUtc = entity.DateCreatedUtc,
                 SpeechResults = entity.SpeechResults?.Select(x => x.ToSpeechResult())
             };
         }
@@ -23,7 +23,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = recognizedAudioSample.Id,
                 UserId = recognizedAudioSample.UserId,
-                DateCreated = recognizedAudioSample.DateCreated,
+                DateCreatedUtc = recognizedAudioSample.DateCreatedUtc,
                 SpeechResults = recognizedAudioSample.SpeechResults?.Select(x => x.ToSpeechResultEntity()).ToList()
             };
         }

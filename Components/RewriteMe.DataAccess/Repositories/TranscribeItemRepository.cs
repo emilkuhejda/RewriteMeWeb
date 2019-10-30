@@ -48,8 +48,8 @@ namespace RewriteMe.DataAccess.Repositories
                         x.StartTime,
                         x.EndTime,
                         x.TotalTime,
-                        x.DateCreated,
-                        x.DateUpdated
+                        DateCreated = x.DateCreatedUtc,
+                        DateUpdated = x.DateUpdatedUtc
                     })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
@@ -64,8 +64,8 @@ namespace RewriteMe.DataAccess.Repositories
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
                     TotalTime = x.TotalTime,
-                    DateCreated = x.DateCreated,
-                    DateUpdated = x.DateUpdated
+                    DateCreatedUtc = x.DateCreated,
+                    DateUpdatedUtc = x.DateUpdated
                 });
             }
         }
@@ -75,7 +75,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var transcribeItemEntities = await context.TranscribeItems
-                    .Where(x => x.FileItem.UserId == userId && x.DateUpdated >= updatedAfter && x.ApplicationId != applicationId)
+                    .Where(x => x.FileItem.UserId == userId && x.DateUpdatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .Select(x => new
                     {
@@ -86,8 +86,8 @@ namespace RewriteMe.DataAccess.Repositories
                         x.StartTime,
                         x.EndTime,
                         x.TotalTime,
-                        x.DateCreated,
-                        x.DateUpdated
+                        DateCreated = x.DateCreatedUtc,
+                        DateUpdated = x.DateUpdatedUtc
                     })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
@@ -102,8 +102,8 @@ namespace RewriteMe.DataAccess.Repositories
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
                     TotalTime = x.TotalTime,
-                    DateCreated = x.DateCreated,
-                    DateUpdated = x.DateUpdated
+                    DateCreatedUtc = x.DateCreated,
+                    DateUpdatedUtc = x.DateUpdated
                 });
             }
         }
@@ -114,8 +114,8 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 return await context.TranscribeItems
                     .Where(x => x.FileItem.UserId == userId)
-                    .OrderByDescending(x => x.DateUpdated)
-                    .Select(x => x.DateUpdated)
+                    .OrderByDescending(x => x.DateUpdatedUtc)
+                    .Select(x => x.DateUpdatedUtc)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
@@ -140,7 +140,7 @@ namespace RewriteMe.DataAccess.Repositories
 
                 transcribeItemEntity.ApplicationId = applicationId;
                 transcribeItemEntity.UserTranscript = transcript;
-                transcribeItemEntity.DateUpdated = dateUpdated;
+                transcribeItemEntity.DateUpdatedUtc = dateUpdated;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

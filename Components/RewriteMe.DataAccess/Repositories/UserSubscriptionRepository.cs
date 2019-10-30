@@ -37,7 +37,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var userSubscriptions = await context.UserSubscriptions
-                    .Where(x => x.UserId == userId && x.DateCreated >= updatedAfter && x.ApplicationId != applicationId)
+                    .Where(x => x.UserId == userId && x.DateCreatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -52,8 +52,8 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 return await context.UserSubscriptions
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.DateCreated)
-                    .Select(x => x.DateCreated)
+                    .OrderByDescending(x => x.DateCreatedUtc)
+                    .Select(x => x.DateCreatedUtc)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }

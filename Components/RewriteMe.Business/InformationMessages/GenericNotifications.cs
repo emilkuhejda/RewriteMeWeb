@@ -16,7 +16,7 @@ namespace RewriteMe.Business.InformationMessages
                 Id = informationMessageId,
                 UserId = userId,
                 CampaignName = $"File transcription: {fileItemId}",
-                DateCreated = DateTime.UtcNow,
+                DateCreatedUtc = DateTime.UtcNow,
                 LanguageVersions = new List<LanguageVersion>
                 {
                     new LanguageVersion

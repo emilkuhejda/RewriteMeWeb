@@ -12,7 +12,7 @@ namespace RewriteMe.DataAccess.Entities
 
         public byte[] Source { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
 
         public virtual FileItemEntity FileItem { get; set; }
     }

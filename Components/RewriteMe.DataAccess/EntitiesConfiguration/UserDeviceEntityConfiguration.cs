@@ -16,7 +16,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.RuntimePlatform).IsRequired();
             builder.Property(x => x.InstalledVersionNumber).IsRequired().HasMaxLength(20);
             builder.Property(x => x.Language).IsRequired();
-            builder.Property(x => x.DateRegistered).IsRequired();
+            builder.Property(x => x.DateRegisteredUtc).IsRequired();
         }
     }
 }

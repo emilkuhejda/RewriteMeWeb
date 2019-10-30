@@ -13,7 +13,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = entity.UserId,
                 ApplicationId = entity.ApplicationId,
                 Time = entity.Time,
-                DateCreated = entity.DateCreated
+                DateCreatedUtc = entity.DateCreatedUtc
             };
         }
 
@@ -25,7 +25,7 @@ namespace RewriteMe.DataAccess.DataAdapters
                 UserId = userSubscription.UserId,
                 ApplicationId = userSubscription.ApplicationId,
                 Time = userSubscription.Time,
-                DateCreated = userSubscription.DateCreated
+                DateCreatedUtc = userSubscription.DateCreatedUtc
             };
         }
     }

@@ -70,7 +70,7 @@ namespace RewriteMe.Business.Services
                 UserId = userId,
                 LogLevel = logLevel,
                 Message = message,
-                DateCreated = DateTime.UtcNow
+                DateCreatedUtc = DateTime.UtcNow
             };
         }
     }
