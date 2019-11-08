@@ -40,14 +40,12 @@ namespace RewriteMe.WebApi.Controllers
         [HttpPost("/api/authenticate")]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status502BadGateway)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
         {
             try
             {
-                var administrator = await _authenticationService
-                    .AuthenticateAsync(authenticationModel.Username, authenticationModel.Password)
-                    .ConfigureAwait(false);
+                var administrator = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
                 if (administrator == null)
                     return NotFound();
 
@@ -66,7 +64,7 @@ namespace RewriteMe.WebApi.Controllers
                 await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
             }
 
-            return StatusCode((int)HttpStatusCode.BadGateway);
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }
