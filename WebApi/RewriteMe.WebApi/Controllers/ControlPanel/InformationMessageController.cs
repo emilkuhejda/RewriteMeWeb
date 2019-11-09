@@ -117,40 +117,37 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
                 if (informationMessage == null)
                     return BadRequest();
 
-                try
-                {
-                    await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
-                    await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
+                await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
-                    informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
-                    return Ok(informationMessage);
-                }
-                catch (SerializationException ex)
-                {
-                    await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.Message}'").ConfigureAwait(false);
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
+                informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+                return Ok(informationMessage);
+            }
+            catch (SerializationException ex)
+            {
+                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.Message}'").ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
 
-                    return StatusCode(500);
-                }
-                catch (NotificationErrorException ex)
-                {
-                    await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.NotificationError.Message}'").ConfigureAwait(false);
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
+                return StatusCode(500);
+            }
+            catch (NotificationErrorException ex)
+            {
+                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.NotificationError.Message}'").ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
 
-                    return StatusCode((int)ex.NotificationError.Code);
-                }
-                catch (LanguageVersionNotExistsException)
-                {
-                    await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                return StatusCode((int)ex.NotificationError.Code);
+            }
+            catch (LanguageVersionNotExistsException)
+            {
+                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
 
-                    return NotFound();
-                }
-                catch (PushNotificationWasSentException)
-                {
-                    await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                return NotFound();
+            }
+            catch (PushNotificationWasSentException)
+            {
+                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
 
-                    return StatusCode(409);
-                }
+                return StatusCode(409);
             }
             catch (Exception ex)
             {
