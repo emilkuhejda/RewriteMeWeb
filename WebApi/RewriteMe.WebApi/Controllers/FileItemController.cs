@@ -197,12 +197,8 @@ namespace RewriteMe.WebApi.Controllers
                 var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
                 var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
 
-                TimeSpan totalTime;
-                try
-                {
-                    totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
-                }
-                catch (Exception)
+                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
+                if (!totalTime.HasValue)
                 {
                     Directory.Delete(uploadedFile.DirectoryPath, true);
 
@@ -220,7 +216,7 @@ namespace RewriteMe.WebApi.Controllers
                     Language = language,
                     OriginalSourceFileName = uploadedFile.FileName,
                     OriginalContentType = file.ContentType,
-                    TotalTime = totalTime,
+                    TotalTime = totalTime.Value,
                     DateCreated = dateCreated,
                     DateUpdatedUtc = dateUpdated
                 };
