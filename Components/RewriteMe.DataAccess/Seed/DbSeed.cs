@@ -12,7 +12,7 @@ namespace RewriteMe.DataAccess.Seed
             if (context.Administrators.Any())
                 return;
 
-            var password = PasswordHelper.CreateHash("RewriteMePass12!");
+            var password = PasswordHelper.CreateHash("VoicipherPass12!");
             var administrator = new AdministratorEntity
             {
                 Id = Guid.NewGuid(),
