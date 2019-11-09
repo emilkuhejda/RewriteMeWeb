@@ -25,17 +25,12 @@ namespace RewriteMe.WebApi
 {
     public class Startup
     {
-        public Startup()
+        public Startup(IHostingEnvironment environment)
         {
-#if DEBUG
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("AppSettings.Debug.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("AppSettings.json", optional: false)
+                .AddJsonFile($"AppSettings.{environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
-#else
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-#endif
 
             Configuration = builder.Build();
         }
