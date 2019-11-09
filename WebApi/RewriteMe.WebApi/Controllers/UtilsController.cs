@@ -62,9 +62,9 @@ namespace RewriteMe.WebApi.Controllers
 
                 var claims = new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, Role.User.ToString())
-            };
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, Role.User.ToString())
+                };
 
                 var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
                 return Ok(token);
