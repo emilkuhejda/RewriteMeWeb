@@ -23,7 +23,7 @@ namespace RewriteMe.Business.InformationMessages
                     {
                         Id = Guid.NewGuid(),
                         InformationMessageId = informationMessageId,
-                        Title = "RewriteMe finished task",
+                        Title = "Voicipher finished task",
                         Message = "Your file was transcripted",
                         Description = "Thanks God, your file was transcripted.",
                         Language = Language.English
@@ -32,7 +32,7 @@ namespace RewriteMe.Business.InformationMessages
                     {
                         Id = Guid.NewGuid(),
                         InformationMessageId = informationMessageId,
-                        Title = "RewriteMe finished task",
+                        Title = "Voicipher finished task",
                         Message = "Your file was transcripted",
                         Description = "Thanks God, your file was transcripted.",
                         Language = Language.Slovak

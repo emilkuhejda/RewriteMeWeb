@@ -19,16 +19,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.Common", "Compone
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_global", "_global", "{F12EB7E1-8834-4174-8616-CCC9A642FB64}"
 	ProjectSection(SolutionItems) = preProject
-		Global\RewriteMe.CodeAnalysis.ruleset = Global\RewriteMe.CodeAnalysis.ruleset
+		Global\Voicipher.CodeAnalysis.ruleset = Global\Voicipher.CodeAnalysis.ruleset
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4A7D5E22-98A0-4846-BC18-D88325A9D227}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.Business.Tests", "Tests\RewriteMe.Business.Tests\RewriteMe.Business.Tests.csproj", "{C60591F8-25CC-4475-AF11-C94EA93F2C7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.Business.Tests", "Tests\RewriteMe.Business.Tests\RewriteMe.Business.Tests.csproj", "{C60591F8-25CC-4475-AF11-C94EA93F2C7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.DataAccess.Tests", "Tests\RewriteMe.DataAccess.Tests\RewriteMe.DataAccess.Tests.csproj", "{EDBB338E-94AD-4AC1-8563-BBE4C827F13F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.DataAccess.Tests", "Tests\RewriteMe.DataAccess.Tests\RewriteMe.DataAccess.Tests.csproj", "{EDBB338E-94AD-4AC1-8563-BBE4C827F13F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteMe.WebApi.Tests", "Tests\RewriteMe.WebApi.Tests\RewriteMe.WebApi.Tests.csproj", "{F7E53085-8596-4499-B116-A31DDEF8CD3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewriteMe.WebApi.Tests", "Tests\RewriteMe.WebApi.Tests\RewriteMe.WebApi.Tests.csproj", "{F7E53085-8596-4499-B116-A31DDEF8CD3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

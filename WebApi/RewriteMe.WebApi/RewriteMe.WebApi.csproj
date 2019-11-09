@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>..\..\Global\RewriteMe.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\Global\Voicipher.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <UserSecretsId>82fcad35-acc2-4511-b88f-732f1175abc1</UserSecretsId>
   </PropertyGroup>
 
