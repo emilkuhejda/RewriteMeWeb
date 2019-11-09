@@ -243,11 +243,18 @@ namespace RewriteMe.Business.Services
             };
         }
 
-        public TimeSpan GetAudioTotalTime(string filePath)
+        public TimeSpan? GetAudioTotalTime(string filePath)
         {
-            using (var reader = new MediaFoundationReader(filePath))
+            try
             {
-                return reader.TotalTime;
+                using (var reader = new MediaFoundationReader(filePath))
+                {
+                    return reader.TotalTime;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

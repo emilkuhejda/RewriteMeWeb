@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
@@ -45,16 +47,26 @@ namespace RewriteMe.WebApi.Controllers
         [HttpGet("/api/subscriptions")]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetUserSubscriptions")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
 
-            var userSubscriptions = await _userSubscriptionService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+                var userSubscriptions = await _userSubscriptionService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
-            return Ok(userSubscriptions.Select(x => x.ToDto()));
+                return Ok(userSubscriptions.Select(x => x.ToDto()));
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPost("/api/subscriptions/create")]
@@ -62,69 +74,96 @@ namespace RewriteMe.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
         public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, Guid applicationId)
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
 
-            if (user.Id != billingPurchase.UserId)
-                return StatusCode(409);
+                if (user.Id != billingPurchase.UserId)
+                    return StatusCode(409);
 
-            var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
-            if (userSubscription == null)
-                return StatusCode(406);
+                var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
+                if (userSubscription == null)
+                    return StatusCode(406);
 
-            return Ok(userSubscription.ToDto());
+                return Ok(userSubscription.ToDto());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("/api/subscriptions/speech-configuration")]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
         public async Task<IActionResult> GetSpeechConfiguration()
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
-
-            var recognizedAudioSample = new RecognizedAudioSample
+            try
             {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                DateCreatedUtc = DateTime.UtcNow
-            };
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
 
-            await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
+                var recognizedAudioSample = new RecognizedAudioSample
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    DateCreatedUtc = DateTime.UtcNow
+                };
 
-            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
-            var speechConfigurationDto = new SpeechConfigurationDto
+                await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
+
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var speechConfigurationDto = new SpeechConfigurationDto
+                {
+                    SubscriptionKey = _appSettings.AzureSubscriptionKey,
+                    SpeechRegion = _appSettings.AzureSpeechRegion,
+                    AudioSampleId = recognizedAudioSample.Id,
+                    SubscriptionRemainingTimeTicks = remainingTime.Ticks
+                };
+
+                await _applicationLogService.InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id).ConfigureAwait(false);
+
+                return Ok(speechConfigurationDto);
+            }
+            catch (Exception ex)
             {
-                SubscriptionKey = _appSettings.AzureSubscriptionKey,
-                SpeechRegion = _appSettings.AzureSpeechRegion,
-                AudioSampleId = recognizedAudioSample.Id,
-                SubscriptionRemainingTimeTicks = remainingTime.Ticks
-            };
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
 
-            await _applicationLogService
-                .InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id)
-                .ConfigureAwait(false);
-
-            return Ok(speechConfigurationDto);
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("/api/subscriptions/remaining-time")]
         public async Task<IActionResult> GetSubscriptionRemainingTime()
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
 
-            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
 
-            return Ok(remainingTime);
+                return Ok(remainingTime);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }
