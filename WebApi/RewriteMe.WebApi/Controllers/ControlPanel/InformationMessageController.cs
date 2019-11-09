@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,51 +36,87 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
         [HttpGet("/api/control-panel/information-messages/{informationMessageId}")]
         public async Task<IActionResult> Get(Guid informationMessageId)
         {
-            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
-            return Ok(informationMessage);
+            try
+            {
+                var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+                return Ok(informationMessage);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("/api/control-panel/information-messages")]
         public async Task<IActionResult> GetAll()
         {
-            var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
-            return Ok(informationMessages);
+            try
+            {
+                var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
+                return Ok(informationMessages);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPost("/api/control-panel/information-messages/create")]
         public async Task<IActionResult> Create([FromForm]InformationMessageModel informationMessageModel)
         {
-            var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
-            await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
+            try
+            {
+                var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
+                await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
 
-            return Ok(informationMessage.Id);
+                return Ok(informationMessage.Id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPut("/api/control-panel/information-messages/{informationMessageId}")]
         public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
         {
-            var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
-            var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
-            if (!canUpdate)
-                return BadRequest();
+            try
+            {
+                var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
+                var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
+                if (!canUpdate)
+                    return BadRequest();
 
-            await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
+                await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
 
-            return Ok(informationMessage);
+                return Ok(informationMessage);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPut("/api/control-panel/information-messages/send")]
         public async Task<IActionResult> SendNotification([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
         {
-            if (language == Language.Undefined)
-                return StatusCode(406);
-
-            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
-            if (informationMessage == null)
-                return BadRequest();
-
             try
             {
+                if (language == Language.Undefined)
+                    return StatusCode(406);
+
+                var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+                if (informationMessage == null)
+                    return BadRequest();
+
                 await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
                 await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
@@ -102,16 +139,22 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             }
             catch (LanguageVersionNotExistsException)
             {
-                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
 
                 return NotFound();
             }
             catch (PushNotificationWasSentException)
             {
-                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.").ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
 
                 return StatusCode(409);
             }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }
