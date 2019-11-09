@@ -132,9 +132,7 @@ namespace RewriteMe.WebApi.Controllers
                     SubscriptionRemainingTimeTicks = remainingTime.Ticks
                 };
 
-                await _applicationLogService
-                    .InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id)
-                    .ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id).ConfigureAwait(false);
 
                 return Ok(speechConfigurationDto);
             }

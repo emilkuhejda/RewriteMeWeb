@@ -154,9 +154,7 @@ namespace RewriteMe.WebApi.Controllers
                     return StatusCode(401);
 
                 var dateUpdated = DateTime.UtcNow;
-                await _transcribeItemService
-                    .UpdateUserTranscriptAsync(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated, updateTranscribeItem.ApplicationId)
-                    .ConfigureAwait(false);
+                await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated, updateTranscribeItem.ApplicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto(dateUpdated));
             }
