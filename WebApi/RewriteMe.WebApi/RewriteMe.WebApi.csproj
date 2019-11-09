@@ -25,11 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\Components\RewriteMe.Common\AppSettings.Debug.json" Link="AppSettings.Debug.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\..\Components\RewriteMe.Common\AppSettings.json" Link="AppSettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -551,6 +548,15 @@
     <None Include="wwwroot\profile\polyfills.0fe533ee82f2c1e93238.js" />
     <None Include="wwwroot\profile\runtime.26209474bfa8dc87a77c.js" />
     <None Include="wwwroot\profile\scripts.c8591825e2bf3630b3b3.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="AppSettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="AppSettings.Production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
