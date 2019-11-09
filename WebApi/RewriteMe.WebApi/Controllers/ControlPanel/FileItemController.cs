@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Models;
@@ -15,47 +17,87 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
+        private readonly IApplicationLogService _applicationLogService;
 
-        public FileItemController(IFileItemService fileItemService)
+        public FileItemController(
+            IFileItemService fileItemService,
+            IApplicationLogService applicationLogService)
         {
             _fileItemService = fileItemService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpGet("/api/control-panel/files/{userId}")]
         public async Task<IActionResult> GetAll(Guid userId)
         {
-            var fileItems = await _fileItemService.GetAllForUserAsync(userId).ConfigureAwait(false);
+            try
+            {
+                var fileItems = await _fileItemService.GetAllForUserAsync(userId).ConfigureAwait(false);
 
-            return Ok(fileItems);
+                return Ok(fileItems);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("/api/control-panel/files/detail/{fileItemId}")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
-            var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
+            try
+            {
+                var fileItem = await _fileItemService.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
 
-            return Ok(fileItem);
+                return Ok(fileItem);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPut("/api/control-panel/files/restore")]
         public async Task<IActionResult> Restore(Guid userId, Guid fileItemId, Guid applicationId)
         {
-            await _fileItemService.RestoreAllAsync(userId, new[] { fileItemId }, applicationId).ConfigureAwait(false);
+            try
+            {
+                await _fileItemService.RestoreAllAsync(userId, new[] { fileItemId }, applicationId).ConfigureAwait(false);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPut("/api/control-panel/files/update-recognition-state")]
         public async Task<IActionResult> UpdateRecognitionState(UpdateRecognitionStateModel updateModel)
         {
-            var fileItemExists = await _fileItemService.ExistsAsync(updateModel.FileItemId, updateModel.FileName).ConfigureAwait(false);
-            if (!fileItemExists)
-                return BadRequest();
+            try
+            {
+                var fileItemExists = await _fileItemService.ExistsAsync(updateModel.FileItemId, updateModel.FileName).ConfigureAwait(false);
+                if (!fileItemExists)
+                    return BadRequest();
 
-            await _fileItemService.UpdateRecognitionStateAsync(updateModel.FileItemId, updateModel.RecognitionState, updateModel.ApplicationId).ConfigureAwait(false);
-            var fileItem = await _fileItemService.GetAsAdminAsync(updateModel.FileItemId).ConfigureAwait(false);
+                await _fileItemService.UpdateRecognitionStateAsync(updateModel.FileItemId, updateModel.RecognitionState, updateModel.ApplicationId).ConfigureAwait(false);
+                var fileItem = await _fileItemService.GetAsAdminAsync(updateModel.FileItemId).ConfigureAwait(false);
 
-            return Ok(fileItem);
+                return Ok(fileItem);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }

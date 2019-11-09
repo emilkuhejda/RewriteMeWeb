@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
@@ -19,12 +22,14 @@ namespace RewriteMe.WebApi.Controllers
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IInformationMessageService _informationMessageService;
+        private readonly IApplicationLogService _applicationLogService;
 
         public LastUpdatesController(
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
             IInformationMessageService informationMessageService,
+            IApplicationLogService applicationLogService,
             IUserService userService)
             : base(userService)
         {
@@ -32,32 +37,43 @@ namespace RewriteMe.WebApi.Controllers
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _informationMessageService = informationMessageService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpGet("/api/last-updates")]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
-
-            var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-            var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(user.Id).ConfigureAwait(false);
-            var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-            var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-            var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-
-            return Ok(new LastUpdatesDto
+            try
             {
-                FileItemUtc = fileItemLastUpdate,
-                DeletedFileItemUtc = deletedFileItemLastUpdate,
-                TranscribeItemUtc = transcribeItemLastUpdate,
-                UserSubscriptionUtc = userSubscriptionUpdate,
-                InformationMessageUtc = informationMessageUpdate
-            });
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
+
+                var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
+                var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(user.Id).ConfigureAwait(false);
+                var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
+                var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
+                var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
+
+                return Ok(new LastUpdatesDto
+                {
+                    FileItemUtc = fileItemLastUpdate,
+                    DeletedFileItemUtc = deletedFileItemLastUpdate,
+                    TranscribeItemUtc = transcribeItemLastUpdate,
+                    UserSubscriptionUtc = userSubscriptionUpdate,
+                    InformationMessageUtc = informationMessageUpdate
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }

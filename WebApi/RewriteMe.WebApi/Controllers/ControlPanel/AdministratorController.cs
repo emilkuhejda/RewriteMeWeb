@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
@@ -16,58 +18,107 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
     public class AdministratorController : ControllerBase
     {
         private readonly IAdministratorService _administratorService;
+        private readonly IApplicationLogService _applicationLogService;
 
-        public AdministratorController(IAdministratorService administratorService)
+        public AdministratorController(
+            IAdministratorService administratorService,
+            IApplicationLogService applicationLogService)
         {
             _administratorService = administratorService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpGet("/api/control-panel/administrators/{administratorId}")]
         public async Task<IActionResult> Get(Guid administratorId)
         {
-            var administrators = await _administratorService.GetAsync(administratorId).ConfigureAwait(false);
-            return Ok(administrators);
+            try
+            {
+                var administrators = await _administratorService.GetAsync(administratorId).ConfigureAwait(false);
+                return Ok(administrators);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet("/api/control-panel/administrators")]
         public async Task<IActionResult> GetAll()
         {
-            var administrators = await _administratorService.GetAllAsync().ConfigureAwait(false);
-            return Ok(administrators);
+            try
+            {
+                var administrators = await _administratorService.GetAllAsync().ConfigureAwait(false);
+                return Ok(administrators);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPost("/api/control-panel/administrators/create")]
         public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
-            var administrator = createAdministratorModel.ToAdministrator();
-            var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
-            if (alreadyExists)
-                return StatusCode(409);
+            try
+            {
+                var administrator = createAdministratorModel.ToAdministrator();
+                var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
+                if (alreadyExists)
+                    return StatusCode(409);
 
-            await _administratorService.AddAsync(administrator).ConfigureAwait(false);
+                await _administratorService.AddAsync(administrator).ConfigureAwait(false);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPut("/api/control-panel/administrators/update")]
         public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
         {
-            var administrator = updateAdministrator.ToAdministrator();
-            var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
-            if (alreadyExists)
-                return StatusCode(409);
+            try
+            {
+                var administrator = updateAdministrator.ToAdministrator();
+                var alreadyExists = await _administratorService.AlreadyExistsAsync(administrator).ConfigureAwait(false);
+                if (alreadyExists)
+                    return StatusCode(409);
 
-            await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
+                await _administratorService.UpdateAsync(administrator).ConfigureAwait(false);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpDelete("/api/control-panel/administrators/delete")]
         public async Task<IActionResult> Delete(Guid administratorId)
         {
-            await _administratorService.DeleteAsync(administratorId).ConfigureAwait(false);
+            try
+            {
+                await _administratorService.DeleteAsync(administratorId).ConfigureAwait(false);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }
