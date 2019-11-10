@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ContactFormService } from '../_services/contact-form.service';
+import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.service';
 
 @Component({
     selector: 'app-home',
@@ -16,7 +17,8 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private contactFormService: ContactFormService) { }
+        private contactFormService: ContactFormService,
+        private dynamicScriptLoaderService: DynamicScriptLoaderService) { }
 
     ngOnInit() {
         this.contactForm = this.formBuilder.group({
@@ -24,6 +26,14 @@ export class HomeComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             message: ['', Validators.required]
         });
+
+        this.loadScripts();
+    }
+
+    private loadScripts() {
+        this.dynamicScriptLoaderService.load('script')
+            .then(data => { })
+            .catch(error => console.log(error));
     }
 
     get controls() {
