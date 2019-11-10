@@ -13,6 +13,8 @@ export class TermsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loadScripts();
+
+        window.scrollTo(0, 0);
     }
 
     ngOnDestroy(): void {

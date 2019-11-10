@@ -295,3 +295,7 @@
     clip: rect(0, 900px, 0, 0);
     animation: noise-anim-2 3s infinite linear alternate-reverse;
 }
+
+.page-title {
+    padding: 70px 0 70px 0;
+}
