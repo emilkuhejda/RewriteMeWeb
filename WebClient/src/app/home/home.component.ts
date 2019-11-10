@@ -36,16 +36,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.unloadScripts();
     }
 
-    get controls() {
-        return this.contactForm.controls;
-    }
-
     private loadScripts() {
         this.dynamicScriptLoaderService.load(this.scriptKey);
     }
 
     private unloadScripts() {
         this.dynamicScriptLoaderService.remove(this.scriptKey);
+    }
+
+    get controls() {
+        return this.contactForm.controls;
     }
 
     onSubmit() {

@@ -3,9 +3,9 @@
 </div>
 
 <!-- nav part start -->
-<div class="naviagtion naviagtion-white fixed-top transition">
+<div class="naviagtion fixed-top transition" ng-class="isHomeComponent ? 'naviagtion-white' : ''">
     <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light p-0">
+        <nav class="navbar navbar-expand-lg p-0" ng-class="isHomeComponent ? 'navbar-light' : 'navbar-dark'">
             <a class="navbar-brand p-0" href="index.html"><img src="assets/images/logo/logo-dark.png" alt="Agico"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
                 aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,9 +16,6 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link text-dark text-capitalize" [routerLink]="['/']">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark text-capitalize" [routerLink]="['/terms']">Terms</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark text-capitalize" href="about.html">about</a>
@@ -50,28 +47,6 @@
 <!-- nav part end -->
 
 <router-outlet (activate)='onActivate($event)'></router-outlet>
-
-<!-- subscription -->
-<section class="subscription bg-white">
-    <div class="container">
-        <div class="subscription-wrapper">
-            <div
-                class="d-flex position-relative mx-5 justify-content-between align-items-center flex-column flex-md-row text-center text-md-left">
-                <h3 class="flex-fill">Subscribe <br> to our newsletter</h3>
-                <form action="#" class="row flex-fill">
-                    <div class="col-lg-7 my-md-2 my-2">
-                        <input type="email" class="form-control px-4 border-0 w-100 text-center text-md-left" id="email"
-                            placeholder="Your Email" name="email">
-                    </div>
-                    <div class="col-lg-5 my-md-2 my-2">
-                        <button type="submit" class="btn btn-primary btn-lg border-0 w-100">Subscribe Now</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- subscription -->
 
 <!-- footer part start -->
 <footer class="bg-secondary pt-5">
