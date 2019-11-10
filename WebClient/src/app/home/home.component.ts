@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ContactFormService } from '../_services/contact-form.service';
 import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.service';
@@ -8,7 +8,9 @@ import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.s
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+    private scriptKey: string = "script";
+
     contactForm: FormGroup;
     submitted: boolean;
     loading: boolean;
@@ -30,14 +32,20 @@ export class HomeComponent implements OnInit {
         this.loadScripts();
     }
 
-    private loadScripts() {
-        this.dynamicScriptLoaderService.load('script')
-            .then(data => { })
-            .catch(error => console.log(error));
+    ngOnDestroy(): void {
+        this.unloadScripts();
     }
 
     get controls() {
         return this.contactForm.controls;
+    }
+
+    private loadScripts() {
+        this.dynamicScriptLoaderService.load(this.scriptKey);
+    }
+
+    private unloadScripts() {
+        this.dynamicScriptLoaderService.remove(this.scriptKey);
     }
 
     onSubmit() {

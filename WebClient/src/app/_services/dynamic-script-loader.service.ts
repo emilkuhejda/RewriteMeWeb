@@ -6,11 +6,6 @@ interface Scripts {
 }
 
 export const ScriptStore: Scripts[] = [
-    { name: 'jquery', src: 'assets/plugins/jQuery/jquery.min.js' },
-    { name: 'bootstrap', src: 'assets/plugins/bootstrap/bootstrap.min.js' },
-    { name: 'slick', src: 'assets/plugins/slick/slick.min.js' },
-    { name: 'venobox', src: 'assets/plugins/venobox/venobox.min.js' },
-    { name: 'aos', src: 'assets/plugins/aos/aos.js' },
     { name: 'script', src: 'assets/js/script.js' }
 ];
 
@@ -44,6 +39,7 @@ export class DynamicScriptLoaderService {
                 let script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = this.scripts[name].src;
+                script.id = "script-" + name;
                 if (script.readyState) {  //IE
                     script.onreadystatechange = () => {
                         if (script.readyState === "loaded" || script.readyState === "complete") {
@@ -62,6 +58,28 @@ export class DynamicScriptLoaderService {
                 document.getElementsByTagName('head')[0].appendChild(script);
             } else {
                 resolve({ script: name, loaded: true, status: 'Already Loaded' });
+            }
+        });
+    }
+
+    remove(...scripts: string[]) {
+        const promises: any[] = [];
+        scripts.forEach((script) => promises.push(this.removeScript(script)));
+        return Promise.all(promises);
+    }
+
+    private removeScript(name: string) {
+        return new Promise((resolve, reject) => {
+            if (this.scripts[name].loaded) {
+                this.scripts[name].loaded = false;
+                let element = document.getElementById("script-" + name);
+                if (element === null) {
+                    resolve({ script: name, loaded: false, status: 'Script not found' });
+                } else {
+                    element.parentNode.removeChild(element);
+
+                    resolve({ script: name, loaded: false, status: 'Loaded' });
+                }
             }
         });
     }
