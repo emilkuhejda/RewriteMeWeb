@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Controllers.v1;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.v2

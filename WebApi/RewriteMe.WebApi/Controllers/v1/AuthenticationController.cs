@@ -15,7 +15,7 @@ using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]

@@ -4,7 +4,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.UserManagement;
 using RewriteMe.WebApi.Extensions;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.v1
 {
     public class RewriteMeControllerBase : ControllerBase
     {

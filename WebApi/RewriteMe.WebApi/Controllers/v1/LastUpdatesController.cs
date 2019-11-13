@@ -10,7 +10,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
