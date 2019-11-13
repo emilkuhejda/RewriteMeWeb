@@ -12,7 +12,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]

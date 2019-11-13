@@ -7,7 +7,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
