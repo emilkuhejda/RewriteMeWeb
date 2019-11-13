@@ -9,6 +9,8 @@ using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/purchases")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -26,7 +28,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/purchases/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetAll(Guid userId)
         {
             try
@@ -43,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/purchases/detail/{purchaseId}")]
+        [HttpGet("detail/{purchaseId}")]
         public async Task<IActionResult> Get(Guid purchaseId)
         {
             try

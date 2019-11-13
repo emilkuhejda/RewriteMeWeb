@@ -10,6 +10,8 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/files")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -27,7 +29,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/files/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetAll(Guid userId)
         {
             try
@@ -44,7 +46,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/files/detail/{fileItemId}")]
+        [HttpGet("detail/{fileItemId}")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
             try
@@ -61,7 +63,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/files/restore")]
+        [HttpPut("restore")]
         public async Task<IActionResult> Restore(Guid userId, Guid fileItemId, Guid applicationId)
         {
             try
@@ -78,7 +80,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/files/update-recognition-state")]
+        [HttpPut("update-recognition-state")]
         public async Task<IActionResult> UpdateRecognitionState(UpdateRecognitionStateModel updateModel)
         {
             try

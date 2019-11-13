@@ -15,6 +15,8 @@ using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/utils")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -41,13 +43,13 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _appSettings = options.Value;
         }
 
-        [HttpGet("/api/control-panel/has-access")]
+        [HttpGet("has-access")]
         public IActionResult HasAccess()
         {
             return Ok(true);
         }
 
-        [HttpGet("/api/control-panel/is-deployment-successful")]
+        [HttpGet("is-deployment-successful")]
         public async Task<IActionResult> IsDeploymentSuccessful()
         {
             try
@@ -66,7 +68,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/generate-hangfire-access")]
+        [HttpGet("generate-hangfire-access")]
         public async Task<IActionResult> GenerateHangfireAccess()
         {
             try
@@ -98,7 +100,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/reset-database")]
+        [HttpPut("reset-database")]
         public async Task<IActionResult> ResetDatabase([FromBody]ResetDatabaseModel resetDatabaseModel)
         {
             try
@@ -119,7 +121,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/delete-database")]
+        [HttpPut("delete-database")]
         public async Task<IActionResult> DeleteDatabase([FromBody]ResetDatabaseModel resetDatabaseModel)
         {
             try

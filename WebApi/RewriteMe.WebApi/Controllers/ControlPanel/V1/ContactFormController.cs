@@ -9,6 +9,8 @@ using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/contact-forms")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -26,7 +28,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/contact-forms")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -43,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/contact-forms/{contactFormId}")]
+        [HttpGet("{contactFormId}")]
         public async Task<IActionResult> Get(Guid contactFormId)
         {
             try

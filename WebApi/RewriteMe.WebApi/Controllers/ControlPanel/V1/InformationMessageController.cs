@@ -13,6 +13,8 @@ using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/information-messages")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -33,7 +35,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/information-messages/{informationMessageId}")]
+        [HttpGet("{informationMessageId}")]
         public async Task<IActionResult> Get(Guid informationMessageId)
         {
             try
@@ -49,7 +51,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/information-messages")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -65,7 +67,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPost("/api/control-panel/information-messages/create")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm]InformationMessageModel informationMessageModel)
         {
             try
@@ -83,7 +85,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/information-messages/{informationMessageId}")]
+        [HttpPut("{informationMessageId}")]
         public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
         {
             try
@@ -105,7 +107,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/information-messages/send")]
+        [HttpPut("send")]
         public async Task<IActionResult> SendNotification([FromForm]Guid informationMessageId, [FromForm]RuntimePlatform runtimePlatform, [FromForm]Language language)
         {
             try
