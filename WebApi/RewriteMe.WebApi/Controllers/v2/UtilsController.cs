@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Controllers.v1;
+using RewriteMe.WebApi.Controllers.V1;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers.v2
+namespace RewriteMe.WebApi.Controllers.V2
 {
     [ApiVersion("2")]
     [Route("api/v{version:apiVersion}/[controller]")]
