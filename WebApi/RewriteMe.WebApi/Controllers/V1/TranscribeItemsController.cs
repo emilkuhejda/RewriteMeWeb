@@ -36,6 +36,31 @@ namespace RewriteMe.WebApi.Controllers.V1
             _applicationLogService = applicationLogService;
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
+        public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
+        {
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
+
+                var transcribeItems = await _transcribeItemService.GetAllForUserAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+
+                return Ok(transcribeItems.Select(x => x.ToDto()));
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
         [HttpGet("{fileItemId}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -50,31 +75,6 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(401);
 
                 var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
-
-                return Ok(transcribeItems.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-
-        [HttpGet("/api/{version:apiVersion}/transcribe-items-all")]
-        [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
-        public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
-        {
-            try
-            {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var transcribeItems = await _transcribeItemService.GetAllForUserAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
                 return Ok(transcribeItems.Select(x => x.ToDto()));
             }
