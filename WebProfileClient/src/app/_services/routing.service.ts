@@ -12,63 +12,63 @@ export class RoutingService {
     }
 
     getFileItemsUri(): string {
-        return this.getApiUri() + "api/files/";
+        return this.getApiUri() + "api/v1/files/";
     }
 
     getTemporaryDeletedFileItemsUri(): string {
-        return this.getApiUri() + "api/files/temporary-deleted/";
+        return this.getApiUri() + "api/v1/files/temporary-deleted/";
     }
 
     getPermanentDeleteAll(): string {
-        return this.getApiUri() + "api/files/permanent-delete-all/";
+        return this.getApiUri() + "api/v1/files/permanent-delete-all/";
     }
 
     getRestoreAllUri(): string {
-        return this.getApiUri() + "api/files/restore-all/";
+        return this.getApiUri() + "api/v1/files/restore-all/";
     }
 
     getTranscribeItemsUri(): string {
-        return this.getApiUri() + "api/transcribe-items/";
+        return this.getApiUri() + "api/v1/transcribe-items/";
     }
 
     getUpdateTranscriptUri(): string {
-        return this.getApiUri() + "api/transcribe-items/update-transcript/";
+        return this.getApiUri() + "api/v1/transcribe-items/update-transcript/";
     }
 
     getTranscribeAudioUri(): string {
-        return this.getApiUri() + "api/transcribe-items/audio-stream/";
+        return this.getApiUri() + "api/v1/transcribe-items/audio-stream/";
     }
 
     getUploadFileItemUri(): string {
-        return this.getApiUri() + "api/files/upload/";
+        return this.getApiUri() + "api/v1/files/upload/";
     }
 
     getUpdateFileItemUri(): string {
-        return this.getApiUri() + "api/files/update/";
+        return this.getApiUri() + "api/v1/files/update/";
     }
 
     getDeleteFileItemUri(): string {
-        return this.getApiUri() + "api/files/delete/";
+        return this.getApiUri() + "api/v1/files/delete/";
     }
 
     getTranscribeFileItemUri(): string {
-        return this.getApiUri() + "api/files/transcribe/";
+        return this.getApiUri() + "api/v1/files/transcribe/";
     }
 
     getUpdateUserUri(): string {
-        return this.getApiUri() + "api/users/update/";
+        return this.getApiUri() + "api/v1/users/update/";
     }
 
     getSubscriptionRemainingTimeUri(): string {
-        return this.getApiUri() + "api/subscriptions/remaining-time/";
+        return this.getApiUri() + "api/v1/subscriptions/remaining-time/";
     }
 
     getInformationMessagesUri(): string {
-        return this.getApiUri() + "api/information-messages/";
+        return this.getApiUri() + "api/v1/information-messages/";
     }
 
     getMarkMessageAsOpenedUri(): string {
-        return this.getApiUri() + "api/information-messages/mark-as-opened/";
+        return this.getApiUri() + "api/v1/information-messages/mark-as-opened/";
     }
 
     private getApiUri(): string {
