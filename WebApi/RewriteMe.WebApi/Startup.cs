@@ -56,12 +56,6 @@ namespace RewriteMe.WebApi
                     Version = "v1"
                 });
 
-                configuration.SwaggerDoc("v2", new Info
-                {
-                    Title = "Voicipher API",
-                    Version = "v2"
-                });
-
                 configuration.EnableAnnotations();
                 configuration.OperationFilter<FormFileSwaggerFilter>();
                 configuration.CustomSchemaIds(type =>
@@ -180,11 +174,7 @@ namespace RewriteMe.WebApi
             app.UseCookiePolicy();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1");
-                c.SwaggerEndpoint("/swagger/v2/swagger.json", "Voicipher API v2");
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();
