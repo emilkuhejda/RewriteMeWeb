@@ -13,7 +13,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/contact-form")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
@@ -31,7 +32,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [AllowAnonymous]
-        [HttpPost("/api/contact-form/create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateContactForm")]

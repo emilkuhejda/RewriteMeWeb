@@ -16,16 +16,17 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/transcribe-items")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class TranscribeItemController : RewriteMeControllerBase
+    public class TranscribeItemsController : RewriteMeControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IApplicationLogService _applicationLogService;
 
-        public TranscribeItemController(
+        public TranscribeItemsController(
             ITranscribeItemService transcribeItemService,
             IApplicationLogService applicationLogService,
             IUserService userService)
@@ -35,7 +36,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/transcribe-items/{fileItemId}")]
+        [HttpGet("{fileItemId}")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -60,7 +61,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/transcribe-items-all")]
+        [HttpGet("/api/{version:apiVersion}/transcribe-items-all")]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -85,7 +86,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
+        [HttpGet("audio/{transcribeItemId}")]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -113,7 +114,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
+        [HttpGet("audio-stream/{transcribeItemId}")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,7 +141,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/transcribe-items/update-transcript")]
+        [HttpPut("update-transcript")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

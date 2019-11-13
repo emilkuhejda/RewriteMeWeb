@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace RewriteMe.WebApi.Controllers.V2
 {
     [ApiVersion("2")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/utils")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]

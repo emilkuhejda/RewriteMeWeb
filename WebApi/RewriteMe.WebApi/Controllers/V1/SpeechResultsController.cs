@@ -17,17 +17,18 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/speech-results")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class SpeechResultController : RewriteMeControllerBase
+    public class SpeechResultsController : RewriteMeControllerBase
     {
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
         private readonly ISpeechResultService _speechResultService;
         private readonly IApplicationLogService _applicationLogService;
 
-        public SpeechResultController(
+        public SpeechResultsController(
             IRecognizedAudioSampleService recognizedAudioSampleService,
             ISpeechResultService speechResultService,
             IApplicationLogService applicationLogService,
@@ -39,7 +40,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             _applicationLogService = applicationLogService;
         }
 
-        [HttpPost("/api/speech-results/create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -67,7 +68,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/speech-results/update")]
+        [HttpPut("update")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -95,7 +96,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/speech-results/recognized-time")]
+        [HttpGet("recognized-time")]
         [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
