@@ -1,97 +1,124 @@
-<!-- Navigation -->
-<nav *ngIf="isHomeComponent" class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
-    <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
-        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button"
-            data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
-            aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#rewriteme">RewriteMe</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                        (click)="navigateToProfile()">Portal</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" (click)="logout()">Logout</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="!isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" (click)="login()">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div class="preloader">
+    <img src="assets/images/preloader.gif" alt="preloader">
+</div>
 
-<!-- Navigation -->
-<nav *ngIf="!isHomeComponent" class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+<!-- nav part start -->
+<div class="naviagtion fixed-top transition" ng-class="isHomeComponent ? 'naviagtion-white' : ''">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" [routerLink]="['/']">Start Bootstrap</a>
-        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button"
-            data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
-            aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" [routerLink]="['/']">Home</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                        (click)="navigateToProfile()">Portal</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" (click)="logout()">Logout</a>
-                </li>
-                <li class="nav-item mx-0 mx-lg-1" *ngIf="!isUserLoggedIn()">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" (click)="login()">Login</a>
-                </li>
-            </ul>
-        </div>
+        <nav class="navbar navbar-expand-lg p-0" ng-class="isHomeComponent ? 'navbar-light' : 'navbar-dark'">
+            <a class="navbar-brand p-0" href="index.html"><img src="assets/images/logo/logo-dark.png" alt="Agico"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
+                aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse text-center" id="navigation">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark text-capitalize" [routerLink]="['/']">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark text-capitalize" href="about.html">about</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark text-capitalize" href="services.html">services</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-dark text-capitalize dropdown-toggle" href="#" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">pages</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item text-color" href="team.html">Our Team</a>
+                            <a class="dropdown-item text-color" href="pricing.html">Our Pricing</a>
+                            <a class="dropdown-item text-color" href="career.html">Our Career</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark text-capitalize" href="blog.html">blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark text-capitalize" href="contact.html">contact</a>
+                    </li>
+                </ul>
+                <a href="#" class="btn btn-outline-primary text-white ml-3">sign up</a>
+            </div>
+        </nav>
     </div>
-</nav>
+</div>
+<!-- nav part end -->
 
 <router-outlet (activate)='onActivate($event)'></router-outlet>
 
-<!-- Footer -->
-<footer class="footer text-center">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 mb-5 mb-lg-0">
-                <h4 class="text-uppercase mb-4">Location</h4>
-                <p class="lead mb-0">
-                    Mierová 29
-                    <br>Bratislava 821 05
-                    <br>Slovakia
-                </p>
-            </div>
-            <!-- <div class="col-md-4"></div> -->
-            <div class="col-md-6">
-                <h4 class="text-uppercase mb-4">Useful links</h4>
-                <ul class="list-unstyled">
-                    <li><a [routerLink]="['/privacy']">Privacy policy</a></li>
-                    <li><a [routerLink]="['/terms']">Terms of service</a></li>
-                </ul>
+<!-- footer part start -->
+<footer class="bg-secondary pt-5">
+    <section class="section border-bottom border-color">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <img src="assets/images/logo/logo.png" class="mb-4" alt="agico">
+                    <p class="text-light mb-4">Lorem ipsum dolor amet consectetur adipisicing elit sed eiusm tempor
+                        incididunt ut
+                        labore dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamaboris nisi
+                        ut
+                        aliquip.exea
+                        commodo consequat. Duis aute irure dolor in reprehenderit.</p>
+                    <ul class="list-inline social-icons">
+                        <li class="list-inline-item"><a href="http://facebook.com/themefisher" target="_blank"><i
+                                    class="fa fa-facebook"></i></a></li>
+                        <li class="list-inline-item"><a href="http://twitter.com/themefisher" target="_blank"><i
+                                    class="fa fa-twitter"></i></a></li>
+                        <li class="list-inline-item"><a
+                                href="https://www.youtube.com/channel/UCx9qVW8VF0LmTi4OF2F8YdA/featured"
+                                target="_blank"><i class="fa fa-youtube"></i></a></li>
+                        <li class="list-inline-item"><a href="http://github.com/themefisher" target="_blank"><i
+                                    class="fa fa-github"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <h4 class="text-white mb-4">Services</h4>
+                    <ul class="list-styled list-hover-underline">
+                        <li class="mb-3 text-light"><a href="about.html" class="text-light">Company History</a></li>
+                        <li class="mb-3 text-light"><a href="about.html" class="text-light">About us</a></li>
+                        <li class="mb-3 text-light"><a href="contact.html" class="text-light">Contact us</a></li>
+                        <li class="mb-3 text-light"><a href="services.html" class="text-light">Services</a></li>
+                        <li class="mb-3 text-light"><a href="#" class="text-light">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <h4 class="text-white mb-4">Contact Info</h4>
+                    <p class="text-light">9567 Turner Trace Apt. 466 North Willie, BC C3G8A4</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3"><a class="text-light" href="tel:+211234565523">+21 123 456 5523</a></li>
+                        <li class="mb-3"><a class="text-light" href="mailto:info@agico.com">info@agico.com</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </section>
+    <!-- footer part end -->
 
-<div class="copyright py-4 text-center text-white">
-    <div class="container">
-        <small>Copyright &copy; RewriteMe 2019</small>
-    </div>
-</div>
+    <!-- copyright part start -->
+    <section class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
+                    <p class="mb-0 text-light">Copyright &copy;
+                        <script>
+                            var CurrentYear = new Date().getFullYear()
+                            document.write(CurrentYear)
+                        </script>
+                        a theme by <a href="https://themefisher.com">themefisher.com</a></p>
+                </div>
+                <div class="col-md-6 text-md-right text-center">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a [routerLink]="['/terms']" class="text-light">Terms of
+                                Service</a>
+                        </li>
+                        <li class="list-inline-item">| &nbsp;<a [routerLink]="['/privacy']" class="text-light">Privacy
+                                Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- copyright part end -->
+</footer>

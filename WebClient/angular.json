@@ -24,20 +24,19 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.css",
-                            "src/assets/vendor/bootstrap/css/bootstrap.min.css",
-                            "src/assets/vendor/fontawesome-free/css/all.min.css",
-                            "src/assets/vendor/magnific-popup/magnific-popup.css",
-                            "src/assets/css/freelancer.min.css"
+                            "src/assets/plugins/font-awesome/font-awesome.min.css",
+                            "src/assets/plugins/bootstrap/bootstrap.min.css",
+                            "src/assets/plugins/venobox/venobox.css",
+                            "src/assets/plugins/slick/slick.css",
+                            "src/assets/plugins/aos/aos.css",
+                            "src/assets/css/style.css"
                         ],
                         "scripts": [
-                            "src/assets/vendor/jquery/jquery.min.js",
-                            "src/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
-                            "src/assets/vendor/jquery-easing/jquery.easing.min.js",
-                            "src/assets/vendor/magnific-popup/jquery.magnific-popup.min.js",
-                            "src/assets/js/jqBootstrapValidation.js",
-                            "src/assets/js/contact_me.js",
-                            "src/assets/js/freelancer.js"
+                            "src/assets/plugins/jQuery/jquery.min.js",
+                            "src/assets/plugins/bootstrap/bootstrap.min.js",
+                            "src/assets/plugins/slick/slick.min.js",
+                            "src/assets/plugins/venobox/venobox.min.js",
+                            "src/assets/plugins/aos/aos.js"
                         ],
                         "es5BrowserSupport": true
                     },

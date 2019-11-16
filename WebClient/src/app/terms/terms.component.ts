@@ -1,12 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.service';
 
 @Component({
     selector: 'app-terms',
     templateUrl: './terms.component.html',
     styleUrls: ['./terms.component.css']
 })
-export class TermsComponent implements OnInit {
-    constructor() { }
+export class TermsComponent implements OnInit, OnDestroy {
+    private scriptKey: string = "script";
 
-    ngOnInit() { }
+    constructor(private dynamicScriptLoaderService: DynamicScriptLoaderService) { }
+
+    ngOnInit() {
+        this.loadScripts();
+
+        window.scrollTo(0, 0);
+    }
+
+    ngOnDestroy(): void {
+        this.unloadScripts();
+    }
+
+    private loadScripts() {
+        this.dynamicScriptLoaderService.load(this.scriptKey);
+    }
+
+    private unloadScripts() {
+        this.dynamicScriptLoaderService.remove(this.scriptKey);
+    }
 }
