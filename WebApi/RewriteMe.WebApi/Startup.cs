@@ -41,11 +41,13 @@ namespace RewriteMe.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention())).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
 
+            services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddApiVersioning();
             services.AddSwaggerGen(configuration =>
             {
                 configuration.SwaggerDoc("v1", new Info
@@ -171,12 +173,12 @@ namespace RewriteMe.WebApi
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
+
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"); });
 
             app.UseHangfireServer();
             app.UseHangfireDashboard("/hangfire", new DashboardOptions

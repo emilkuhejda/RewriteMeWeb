@@ -8,11 +8,11 @@ export class RoutingService {
     constructor() { }
 
     getRegisterUserUri(): string {
-        return this.getApiUri() + "api/b2c/users/register/";
+        return this.getApiUri() + "api/b2c/v1/users/register/";
     }
 
     getCreateContactFormUri(): string {
-        return this.getApiUri() + "api/contact-form/create/";
+        return this.getApiUri() + "api/v1/contact-form/create/";
     }
 
     getProfileUri(): string {

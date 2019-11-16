@@ -17,20 +17,21 @@ using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/subscriptions")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class UserSubscriptionController : RewriteMeControllerBase
+    public class UserSubscriptionsController : RewriteMeControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
-        public UserSubscriptionController(
+        public UserSubscriptionsController(
             IUserSubscriptionService userSubscriptionService,
             IRecognizedAudioSampleService recognizedAudioSampleService,
             IApplicationLogService applicationLogService,
@@ -44,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
-        [HttpGet("/api/subscriptions")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserSubscriptionDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -69,7 +70,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPost("/api/subscriptions/create")]
+        [HttpPost("create")]
         [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
@@ -101,7 +102,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/subscriptions/speech-configuration")]
+        [HttpGet("speech-configuration")]
         [ProducesResponseType(typeof(SpeechConfigurationDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -145,7 +146,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet("/api/subscriptions/remaining-time")]
+        [HttpGet("remaining-time")]
         public async Task<IActionResult> GetSubscriptionRemainingTime()
         {
             try

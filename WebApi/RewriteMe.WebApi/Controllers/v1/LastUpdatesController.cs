@@ -10,9 +10,10 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/last-updates")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
@@ -40,7 +41,7 @@ namespace RewriteMe.WebApi.Controllers
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/last-updates")]
+        [HttpGet]
         [ProducesResponseType(typeof(LastUpdatesDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

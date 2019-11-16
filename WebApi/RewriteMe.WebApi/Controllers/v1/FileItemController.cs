@@ -20,9 +20,10 @@ using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/files")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
@@ -47,7 +48,7 @@ namespace RewriteMe.WebApi.Controllers
             _speechRecognitionManager = speechRecognitionManager;
         }
 
-        [HttpGet("/api/files")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FileItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -72,7 +73,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/files/deleted")]
+        [HttpGet("deleted")]
         [ProducesResponseType(typeof(IEnumerable<Guid>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -97,7 +98,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/files/temporary-deleted")]
+        [HttpGet("temporary-deleted")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> GetTemporaryDeletedFileItems()
         {
@@ -119,7 +120,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/files/deleted-total-time")]
+        [HttpGet("deleted-total-time")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -145,7 +146,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/files/{fileItemId}")]
+        [HttpGet("{fileItemId}")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -170,7 +171,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPost("/api/files/upload")]
+        [HttpPost("upload")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -245,7 +246,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/files/update")]
+        [HttpPut("update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
@@ -285,7 +286,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpDelete("/api/files/delete")]
+        [HttpDelete("delete")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -312,7 +313,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpDelete("/api/files/delete-all")]
+        [HttpDelete("delete-all")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -337,7 +338,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/files/permanent-delete-all")]
+        [HttpPut("permanent-delete-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
@@ -359,7 +360,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/files/restore-all")]
+        [HttpPut("restore-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
@@ -381,7 +382,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/files/transcribe")]
+        [HttpPut("transcribe")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

@@ -12,8 +12,10 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/settings")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -40,7 +42,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _appSettings = options.Value;
         }
 
-        [HttpGet("/api/control-panel/settings/storage-setting")]
+        [HttpGet("storage-setting")]
         public async Task<IActionResult> GetStorageSetting()
         {
             try
@@ -58,7 +60,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/settings/notifications-setting")]
+        [HttpGet("notifications-setting")]
         public async Task<IActionResult> GetNotificationsSetting()
         {
             try
@@ -75,7 +77,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/settings/change-storage")]
+        [HttpPut("change-storage")]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {
             try
@@ -92,7 +94,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/settings/change-notifications-setting")]
+        [HttpPut("change-notifications-setting")]
         public async Task<IActionResult> ChangeNotificationsSettings(bool isEnabled)
         {
             try
@@ -109,7 +111,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/settings/clean-up")]
+        [HttpPut("clean-up")]
         public async Task<IActionResult> CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
         {
             try

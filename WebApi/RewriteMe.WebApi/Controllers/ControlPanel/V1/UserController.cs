@@ -7,33 +7,35 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/users")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
-    public class ContactFormController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IContactFormService _contactFormService;
+        private readonly IUserService _userService;
         private readonly IApplicationLogService _applicationLogService;
 
-        public ContactFormController(
-            IContactFormService contactFormService,
+        public UserController(
+            IUserService userService,
             IApplicationLogService applicationLogService)
         {
-            _contactFormService = contactFormService;
+            _userService = userService;
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/contact-forms")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
             try
             {
-                var contactForms = await _contactFormService.GetAllAsync().ConfigureAwait(false);
+                var users = await _userService.GetAllAsync().ConfigureAwait(false);
 
-                return Ok(contactForms);
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -43,14 +45,20 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/contact-forms/{contactFormId}")]
-        public async Task<IActionResult> Get(Guid contactFormId)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteUser(Guid userId, string email)
         {
             try
             {
-                var contactForm = await _contactFormService.GetAsync(contactFormId).ConfigureAwait(false);
+                var userExists = await _userService.ExistsAsync(userId, email).ConfigureAwait(false);
+                if (!userExists)
+                    return BadRequest();
 
-                return Ok(contactForm);
+                var isSuccess = await _userService.DeleteAsync(userId).ConfigureAwait(false);
+                if (!isSuccess)
+                    return NotFound();
+
+                return Ok();
             }
             catch (Exception ex)
             {

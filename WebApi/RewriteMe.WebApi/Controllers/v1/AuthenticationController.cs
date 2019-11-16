@@ -15,8 +15,9 @@ using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
+    [ApiVersion("1")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [ApiController]
@@ -37,7 +38,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/api/authenticate")]
+        [HttpPost("/api/v{version:apiVersion}/authenticate")]
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

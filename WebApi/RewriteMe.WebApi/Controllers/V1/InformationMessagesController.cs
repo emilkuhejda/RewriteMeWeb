@@ -13,18 +13,19 @@ using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/information-messages")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class InformationMessageController : RewriteMeControllerBase
+    public class InformationMessagesController : RewriteMeControllerBase
     {
         private readonly IInformationMessageService _informationMessageService;
         private readonly IApplicationLogService _applicationLogService;
 
-        public InformationMessageController(
+        public InformationMessagesController(
             IInformationMessageService informationMessageService,
             IApplicationLogService applicationLogService,
             IUserService userService)
@@ -34,7 +35,7 @@ namespace RewriteMe.WebApi.Controllers
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/information-messages")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<InformationMessageDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -59,7 +60,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/information-messages/{informationMessageId}")]
+        [HttpGet("{informationMessageId}")]
         [ProducesResponseType(typeof(InformationMessageDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -83,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/information-messages/mark-as-opened")]
+        [HttpPut("mark-as-opened")]
         [ProducesResponseType(typeof(InformationMessageDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -111,7 +112,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/information-messages/mark-messages-as-opened")]
+        [HttpPut("mark-messages-as-opened")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

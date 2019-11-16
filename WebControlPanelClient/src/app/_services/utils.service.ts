@@ -11,16 +11,16 @@ export class UtilsService {
         private routingService: RoutingService,
         private http: HttpClient) { }
 
-    generateHangfireAccess(): Observable<any> {
-        return this.http.get(this.routingService.getGenerateHangfireAccessUri());
-    }
-
     hasAccess(): Observable<boolean> {
         return this.http.get<boolean>(this.routingService.getHasAccessUri());
     }
 
     isDeploymentSuccessful(): Observable<any> {
         return this.http.get<any>(this.routingService.getIsDeploymentSuccessfulUri());
+    }
+
+    generateHangfireAccess(): Observable<any> {
+        return this.http.get(this.routingService.getGenerateHangfireAccessUri());
     }
 
     resetDatabase(data: any): Observable<any> {
