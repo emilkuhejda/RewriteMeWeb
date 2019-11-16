@@ -130,7 +130,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     Token = token,
                     Identity = user.ToIdentityDto(),
-                    RemainingTime = new RemainingTimeDto { TimeTicks = remainingTime.Ticks }
+                    RemainingTime = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks }
                 };
 
                 return Ok(registrationModelDto);

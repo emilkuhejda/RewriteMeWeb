@@ -13,7 +13,6 @@ using RewriteMe.Domain.Recording;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
-using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -45,7 +44,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpPost("create")]
-        [ProducesResponseType(typeof(RemainingTimeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -67,12 +66,9 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(406);
 
                 var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
-                var remainingTimeDto = new RemainingTimeDto
-                {
-                    TimeTicks = remainingTime.Ticks
-                };
+                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
-                return Ok(remainingTimeDto);
+                return Ok(timeSpanWrapperDto);
             }
             catch (Exception ex)
             {
@@ -130,7 +126,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpGet("remaining-time")]
-        [ProducesResponseType(typeof(RemainingTimeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetSubscriptionRemainingTime")]
@@ -143,12 +139,9 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(401);
 
                 var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
-                var remainingTimeDto = new RemainingTimeDto
-                {
-                    TimeTicks = remainingTime.Ticks
-                };
+                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
-                return Ok(remainingTimeDto);
+                return Ok(timeSpanWrapperDto);
             }
             catch (Exception ex)
             {
