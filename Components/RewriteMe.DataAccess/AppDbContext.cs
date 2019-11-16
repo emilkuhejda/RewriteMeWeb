@@ -30,6 +30,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<SpeechResultEntity> SpeechResults { get; set; }
 
+        public DbSet<CurrentUserSubscriptionEntity> CurrentUserSubscription { get; set; }
+
         public DbSet<UserSubscriptionEntity> UserSubscriptions { get; set; }
 
         public DbSet<BillingPurchaseEntity> BillingPurchases { get; set; }
@@ -64,6 +66,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new TranscribeItemSourceEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RecognizedAudioSampleEntityConfiguration());
             modelBuilder.ApplyConfiguration(new SpeechResultEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new CurrentUserSubscriptionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserSubscriptionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BillingPurchaseEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
