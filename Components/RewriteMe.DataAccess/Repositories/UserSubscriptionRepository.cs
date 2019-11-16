@@ -52,10 +52,10 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                return await context.UserSubscriptions
+                return await context.CurrentUserSubscription
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.DateCreatedUtc)
-                    .Select(x => x.DateCreatedUtc)
+                    .OrderByDescending(x => x.DateUpdatedUtc)
+                    .Select(x => x.DateUpdatedUtc)
                     .FirstOrDefaultAsync()
                     .ConfigureAwait(false);
             }
