@@ -80,6 +80,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [AllowAnonymous]
         [HttpPost("generate-token")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> CreateToken([FromForm]CreateTokenModel createTokenModel)
         {
             try
