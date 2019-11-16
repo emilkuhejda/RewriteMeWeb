@@ -41,6 +41,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
                     UserId = createSubscriptionModel.UserId,
                     ApplicationId = createSubscriptionModel.ApplicationId,
                     Time = TimeSpan.FromSeconds(createSubscriptionModel.Seconds),
+                    Operation = createSubscriptionModel.Operation,
                     DateCreatedUtc = DateTime.UtcNow
                 };
 

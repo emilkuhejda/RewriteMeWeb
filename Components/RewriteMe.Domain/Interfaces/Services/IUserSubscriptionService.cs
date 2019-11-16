@@ -18,6 +18,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<TimeSpan> GetRemainingTimeAsync(Guid userId);
 
+        Task<TimeSpan> GetCalculatedRemainingTimeAsync(Guid userId);
+
         Task<UserSubscription> RegisterPurchaseAsync(BillingPurchase billingPurchase, Guid applicationId);
     }
 }

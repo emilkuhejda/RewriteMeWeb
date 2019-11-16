@@ -98,6 +98,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                         UserId = user.Id,
                         ApplicationId = registrationUserModel.ApplicationId,
                         Time = TimeSpan.FromMinutes(5),
+                        Operation = SubscriptionOperation.Add,
                         DateCreatedUtc = DateTime.UtcNow
                     };
 

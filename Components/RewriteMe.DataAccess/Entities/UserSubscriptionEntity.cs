@@ -1,4 +1,5 @@
 ﻿using System;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.DataAccess.Entities
 {
@@ -11,6 +12,8 @@ namespace RewriteMe.DataAccess.Entities
         public Guid ApplicationId { get; set; }
 
         public TimeSpan Time { get; set; }
+
+        public SubscriptionOperation Operation { get; set; }
 
         public DateTime DateCreatedUtc { get; set; }
 

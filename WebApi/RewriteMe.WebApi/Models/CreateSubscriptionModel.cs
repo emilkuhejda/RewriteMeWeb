@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.WebApi.Models
 {
@@ -10,6 +11,9 @@ namespace RewriteMe.WebApi.Models
 
         [Required]
         public Guid ApplicationId { get; set; }
+
+        [Required]
+        public SubscriptionOperation Operation { get; set; }
 
         [Required]
         public int Seconds { get; set; }
