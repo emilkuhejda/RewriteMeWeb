@@ -9,6 +9,6 @@ namespace RewriteMe.WebApi.Dtos
 
         public IdentityDto Identity { get; set; }
 
-        public UserSubscriptionDto UserSubscription { get; set; }
+        public RemainingTimeDto RemainingTime { get; set; }
     }
 }

@@ -84,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             {
                 await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{registrationUserModel.Id}'.").ConfigureAwait(false);
 
-                UserSubscriptionDto userSubscriptionDto;
+                TimeSpan remainingTime;
                 var user = await UserService.GetAsync(registrationUserModel.Id).ConfigureAwait(false);
                 if (user == null)
                 {
@@ -105,11 +105,11 @@ namespace RewriteMe.WebApi.Controllers.V1
                     await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
                     await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
 
-                    userSubscriptionDto = userSubscription.ToDto();
+                    remainingTime = userSubscription.Time;
                 }
                 else
                 {
-                    userSubscriptionDto = new UserSubscriptionDto { Id = Guid.Empty };
+                    remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
                 }
 
                 if (registrationUserModel.Device != null)
@@ -130,7 +130,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     Token = token,
                     Identity = user.ToIdentityDto(),
-                    UserSubscription = userSubscriptionDto
+                    RemainingTime = new RemainingTimeDto { TimeTicks = remainingTime.Ticks }
                 };
 
                 return Ok(registrationModelDto);

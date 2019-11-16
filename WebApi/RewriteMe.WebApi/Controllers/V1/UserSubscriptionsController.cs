@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpPost("create")]
-        [ProducesResponseType(typeof(UserSubscriptionDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RemainingTimeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -66,7 +66,13 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (userSubscription == null)
                     return StatusCode(406);
 
-                return Ok(userSubscription.ToDto());
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var remainingTimeDto = new RemainingTimeDto
+                {
+                    TimeTicks = remainingTime.Ticks
+                };
+
+                return Ok(remainingTimeDto);
             }
             catch (Exception ex)
             {
