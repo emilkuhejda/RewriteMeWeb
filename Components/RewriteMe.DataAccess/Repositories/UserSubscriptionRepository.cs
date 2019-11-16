@@ -61,7 +61,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task AddAsync(UserSubscription userSubscription)
+        public async Task AddAndRecalculateUserSubscriptionAsync(UserSubscription userSubscription)
         {
             using (var context = _contextFactory.Create())
             {

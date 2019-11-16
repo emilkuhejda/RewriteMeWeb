@@ -16,6 +16,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task AddAsync(UserSubscription userSubscription);
 
+        Task SubtractTimeAsync(Guid userId, TimeSpan time);
+
         Task<TimeSpan> GetRemainingTimeAsync(Guid userId);
 
         Task<TimeSpan> GetCalculatedRemainingTimeAsync(Guid userId);
