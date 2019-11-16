@@ -66,7 +66,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
-        public async Task<ActionResult> GetAll(Guid fileItemId)
+        public async Task<ActionResult> GetAllByFileItemId(Guid fileItemId)
         {
             try
             {
