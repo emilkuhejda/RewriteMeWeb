@@ -14,18 +14,19 @@ using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/transcribe-items")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class TranscribeItemController : RewriteMeControllerBase
+    public class TranscribeItemsController : RewriteMeControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IApplicationLogService _applicationLogService;
 
-        public TranscribeItemController(
+        public TranscribeItemsController(
             ITranscribeItemService transcribeItemService,
             IApplicationLogService applicationLogService,
             IUserService userService)
@@ -35,32 +36,7 @@ namespace RewriteMe.WebApi.Controllers
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/transcribe-items/{fileItemId}")]
-        [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerOperation(OperationId = "GetTranscribeItems")]
-        public async Task<ActionResult> GetAll(Guid fileItemId)
-        {
-            try
-            {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
-
-                return Ok(transcribeItems.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-
-        [HttpGet("/api/transcribe-items-all")]
+        [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -85,7 +61,32 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/transcribe-items/audio/{transcribeItemId}")]
+        [HttpGet("{fileItemId}")]
+        [ProducesResponseType(typeof(IEnumerable<TranscribeItemDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetTranscribeItems")]
+        public async Task<ActionResult> GetAllByFileItemId(Guid fileItemId)
+        {
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
+
+                var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
+
+                return Ok(transcribeItems.Select(x => x.ToDto()));
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpGet("audio/{transcribeItemId}")]
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -113,7 +114,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/transcribe-items/audio-stream/{transcribeItemId}")]
+        [HttpGet("audio-stream/{transcribeItemId}")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -140,7 +141,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/transcribe-items/update-transcript")]
+        [HttpPut("update-transcript")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

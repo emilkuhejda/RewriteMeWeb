@@ -14,9 +14,10 @@ using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/utils")]
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
@@ -39,7 +40,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("/api/is-alive")]
+        [HttpGet("is-alive")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [SwaggerOperation(OperationId = "IsAlive")]
         public IActionResult IsAlive()
@@ -47,7 +48,7 @@ namespace RewriteMe.WebApi.Controllers
             return Ok(true);
         }
 
-        [HttpGet("/api/refresh-token")]
+        [HttpGet("refresh-token")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,7 +79,7 @@ namespace RewriteMe.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/api/generate-token")]
+        [HttpPost("generate-token")]
         public async Task<IActionResult> CreateToken([FromForm]CreateTokenModel createTokenModel)
         {
             try

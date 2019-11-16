@@ -16,20 +16,21 @@ using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/users")]
     [Produces("application/json")]
     [Authorize]
     [ApiController]
-    public class UserController : RewriteMeControllerBase
+    public class UsersController : RewriteMeControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IUserDeviceService _userDeviceService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
-        public UserController(
+        public UsersController(
             IUserSubscriptionService userSubscriptionService,
             IUserDeviceService userDeviceService,
             IApplicationLogService applicationLogService,
@@ -43,7 +44,7 @@ namespace RewriteMe.WebApi.Controllers
             _appSettings = options.Value;
         }
 
-        [HttpPut("/api/users/update")]
+        [HttpPut("update")]
         [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(IdentityDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,7 +73,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPost("/api/b2c/users/register")]
+        [HttpPost("/api/b2c/v{version:apiVersion}/users/register")]
         [ProducesResponseType(typeof(UserRegistrationDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -141,7 +142,7 @@ namespace RewriteMe.WebApi.Controllers
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/users/update-language")]
+        [HttpPut("update-language")]
         [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

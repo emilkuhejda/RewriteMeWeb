@@ -12,119 +12,119 @@ export class RoutingService {
     }
 
     getAuthenticateUri(): string {
-        return this.getApiUri() + "api/authenticate/";
+        return this.getApiUri() + "api/v1/authenticate/";
     }
 
     getUsersUri(): string {
-        return this.getApiUri() + "api/control-panel/users/";
+        return this.getApiUri() + "api/v1/control-panel/users/";
     }
 
     getDeleteUserUri(): string {
-        return this.getApiUri() + "api/control-panel/users/delete/";
+        return this.getApiUri() + "api/v1/control-panel/users/delete/";
     }
 
     getPurchasesUri(): string {
-        return this.getApiUri() + "api/control-panel/purchases/";
+        return this.getApiUri() + "api/v1/control-panel/purchases/";
     }
 
     getPurchaseUri(): string {
-        return this.getApiUri() + "api/control-panel/purchases/detail/";
+        return this.getApiUri() + "api/v1/control-panel/purchases/detail/";
     }
 
     getSubscriptionsUri(): string {
-        return this.getApiUri() + "api/control-panel/subscriptions/";
+        return this.getApiUri() + "api/v1/control-panel/subscriptions/";
     }
 
     getCreateSubscriptionUri(): string {
-        return this.getApiUri() + "api/control-panel/subscriptions/create/";
+        return this.getApiUri() + "api/v1/control-panel/subscriptions/create/";
     }
 
     getFileItemsUri(): string {
-        return this.getApiUri() + "api/control-panel/files/";
+        return this.getApiUri() + "api/v1/control-panel/files/";
     }
 
     getDetailFileItemsUri(): string {
-        return this.getApiUri() + "api/control-panel/files/detail/";
+        return this.getApiUri() + "api/v1/control-panel/files/detail/";
     }
 
     getRestoreFileItemUri(): string {
-        return this.getApiUri() + "api/control-panel/files/restore/";
+        return this.getApiUri() + "api/v1/control-panel/files/restore/";
     }
 
     getUpdateRecognitionStateUri(): string {
-        return this.getApiUri() + "api/control-panel/files/update-recognition-state/";
+        return this.getApiUri() + "api/v1/control-panel/files/update-recognition-state/";
     }
 
     getAdministratorsUri(): string {
-        return this.getApiUri() + "api/control-panel/administrators/";
+        return this.getApiUri() + "api/v1/control-panel/administrators/";
     }
 
     getCreateAdministratorUri(): string {
-        return this.getApiUri() + "api/control-panel/administrators/create/";
+        return this.getApiUri() + "api/v1/control-panel/administrators/create/";
     }
 
     getUpdateAdministratorUri(): string {
-        return this.getApiUri() + "api/control-panel/administrators/update/";
+        return this.getApiUri() + "api/v1/control-panel/administrators/update/";
     }
 
     getDeleteAdministratorUri(): string {
-        return this.getApiUri() + "api/control-panel/administrators/delete/";
+        return this.getApiUri() + "api/v1/control-panel/administrators/delete/";
     }
 
     getContactFormsUri(): string {
-        return this.getApiUri() + "api/control-panel/contact-forms/";
+        return this.getApiUri() + "api/v1/control-panel/contact-forms/";
     }
 
     getInformationMessagesUri(): string {
-        return this.getApiUri() + "api/control-panel/information-messages/";
+        return this.getApiUri() + "api/v1/control-panel/information-messages/";
     }
 
     getCreateInformationMessageUri(): string {
-        return this.getApiUri() + "api/control-panel/information-messages/create/";
+        return this.getApiUri() + "api/v1/control-panel/information-messages/create/";
     }
 
     getSendNotificationUri(): string {
-        return this.getApiUri() + "api/control-panel/information-messages/send/";
-    }
-
-    getGenerateHangfireAccessUri(): string {
-        return this.getApiUri() + "api/control-panel/generate-hangfire-access/";
+        return this.getApiUri() + "api/v1/control-panel/information-messages/send/";
     }
 
     getHasAccessUri(): string {
-        return this.getApiUri() + "api/control-panel/has-access/";
+        return this.getApiUri() + "api/v1/control-panel/utils/has-access/";
     }
 
     getIsDeploymentSuccessfulUri(): string {
-        return this.getApiUri() + "api/control-panel/is-deployment-successful/";
+        return this.getApiUri() + "api/v1/control-panel/utils/is-deployment-successful/";
+    }
+
+    getGenerateHangfireAccessUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/utils/generate-hangfire-access/";
     }
 
     getResetDatabaseUri(): string {
-        return this.getApiUri() + "api/control-panel/reset-database/";
+        return this.getApiUri() + "api/v1/control-panel/utils/reset-database/";
     }
 
     getDeleteDatabaseUri(): string {
-        return this.getApiUri() + "api/control-panel/delete-database/";
+        return this.getApiUri() + "api/v1/control-panel/utils/delete-database/";
     }
 
     getStorageSettingUri(): string {
-        return this.getApiUri() + "api/control-panel/settings/storage-setting/";
+        return this.getApiUri() + "api/v1/control-panel/settings/storage-setting/";
     }
 
     getChangeStorageUri(): string {
-        return this.getApiUri() + "api/control-panel/settings/change-storage/";
+        return this.getApiUri() + "api/v1/control-panel/settings/change-storage/";
     }
 
     getNotificationsSettingUri(): string {
-        return this.getApiUri() + "api/control-panel/settings/notifications-setting/";
+        return this.getApiUri() + "api/v1/control-panel/settings/notifications-setting/";
     }
 
     getChangeNotificationsSettingUri(): string {
-        return this.getApiUri() + "api/control-panel/settings/change-notifications-setting/";
+        return this.getApiUri() + "api/v1/control-panel/settings/change-notifications-setting/";
     }
 
     getCleanUpUri(): string {
-        return this.getApiUri() + "api/control-panel/settings/clean-up/";
+        return this.getApiUri() + "api/v1/control-panel/settings/clean-up/";
     }
 
     private getApiUri(): string {

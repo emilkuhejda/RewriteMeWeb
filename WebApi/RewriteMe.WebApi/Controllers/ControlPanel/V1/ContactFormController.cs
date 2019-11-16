@@ -2,20 +2,18 @@
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Dtos;
-using RewriteMe.WebApi.Extensions;
-using RewriteMe.WebApi.Models;
-using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/contact-forms")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
     public class ContactFormController : ControllerBase
     {
@@ -30,20 +28,31 @@ namespace RewriteMe.WebApi.Controllers
             _applicationLogService = applicationLogService;
         }
 
-        [AllowAnonymous]
-        [HttpPost("/api/contact-form/create")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerOperation(OperationId = "CreateContactForm")]
-        public async Task<IActionResult> Create([FromBody] ContactFormModel contactFormModel)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var contactForm = contactFormModel.ToContactForm();
+                var contactForms = await _contactFormService.GetAllAsync().ConfigureAwait(false);
 
-                await _contactFormService.AddAsync(contactForm).ConfigureAwait(false);
+                return Ok(contactForms);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
 
-                return Ok(new OkDto());
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpGet("{contactFormId}")]
+        public async Task<IActionResult> Get(Guid contactFormId)
+        {
+            try
+            {
+                var contactForm = await _contactFormService.GetAsync(contactFormId).ConfigureAwait(false);
+
+                return Ok(contactForm);
             }
             catch (Exception ex)
             {

@@ -9,8 +9,10 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/subscriptions")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -28,7 +30,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _applicationLogService = applicationLogService;
         }
 
-        [HttpPost("/api/control-panel/subscriptions/create")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm]CreateSubscriptionModel createSubscriptionModel)
         {
             try
@@ -54,7 +56,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/subscriptions/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetSubscriptions(Guid userId)
         {
             try

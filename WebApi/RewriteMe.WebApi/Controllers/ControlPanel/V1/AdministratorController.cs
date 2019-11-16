@@ -9,8 +9,10 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers.ControlPanel
+namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/control-panel/administrators")]
     [Produces("application/json")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
@@ -28,7 +30,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             _applicationLogService = applicationLogService;
         }
 
-        [HttpGet("/api/control-panel/administrators/{administratorId}")]
+        [HttpGet("{administratorId}")]
         public async Task<IActionResult> Get(Guid administratorId)
         {
             try
@@ -44,7 +46,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("/api/control-panel/administrators")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -60,7 +62,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPost("/api/control-panel/administrators/create")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(CreateAdministratorModel createAdministratorModel)
         {
             try
@@ -82,7 +84,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpPut("/api/control-panel/administrators/update")]
+        [HttpPut("update")]
         public async Task<IActionResult> Update(UpdateAdministratorModel updateAdministrator)
         {
             try
@@ -104,7 +106,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpDelete("/api/control-panel/administrators/delete")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> Delete(Guid administratorId)
         {
             try
