@@ -1,4 +1,5 @@
 import { UserSubscription } from '../_models/user-subscription';
+import { SubscriptionOperation } from '../_enums/subscription-operation';
 
 export class UserSubscriptionMapper {
     public static convertAll(data): UserSubscription[] {
@@ -20,7 +21,8 @@ export class UserSubscriptionMapper {
         userSubscription.userId = data.userId;
         userSubscription.applicationId = data.applicationId;
         userSubscription.time = data.time;
-        userSubscription.dateCreated = data.dateCreated;
+        userSubscription.operation = <SubscriptionOperation>data.operation;
+        userSubscription.dateCreated = new Date(data.dateCreatedUtc);
 
         return userSubscription;
     }

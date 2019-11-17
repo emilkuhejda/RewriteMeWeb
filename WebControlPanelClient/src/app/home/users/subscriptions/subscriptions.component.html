@@ -27,6 +27,7 @@
                         <th class="table-header">Id</th>
                         <th class="table-header">Application Id</th>
                         <td class="table-header">Time</td>
+                        <td class="table-header">Operation</td>
                         <th class="table-header">Date created</th>
                     </tr>
                 </thead>
@@ -35,6 +36,7 @@
                         <th>Id</th>
                         <th>Application Id</th>
                         <th>Time</th>
+                        <td class="table-header">Operation</td>
                         <th>Date created</th>
                     </tr>
                 </tfoot>
@@ -43,6 +45,7 @@
                         <td>{{userSubscription.id}}</td>
                         <td>{{userSubscription.applicationId}}</td>
                         <td>{{userSubscription.time}}</td>
+                        <td>{{userSubscription.operation|subscriptionOperation}}</td>
                         <td>{{userSubscription.dateCreated|date:'dd.MM.yyy HH:mm:ss'}}</td>
                     </tr>
                 </tbody>

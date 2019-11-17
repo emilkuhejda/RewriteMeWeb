@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.DataAccess.Entities;
 using RewriteMe.DataAccess.Extensions;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Settings;
 
@@ -26,20 +27,6 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var userSubscriptions = await context.UserSubscriptions
                     .Where(x => x.UserId == userId)
-                    .AsNoTracking()
-                    .ToListAsync()
-                    .ConfigureAwait(false);
-
-                return userSubscriptions.Select(x => x.ToUserSubscription());
-            }
-        }
-
-        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var userSubscriptions = await context.UserSubscriptions
-                    .Where(x => x.UserId == userId && x.DateCreatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);

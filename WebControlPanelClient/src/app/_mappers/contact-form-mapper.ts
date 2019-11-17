@@ -20,7 +20,7 @@ export class ContactFormMapper {
         contactForm.name = data.name;
         contactForm.email = data.email;
         contactForm.message = data.message;
-        contactForm.dateCreated = data.dateCreated;
+        contactForm.dateCreated = new Date(data.dateCreatedUtc);
 
         return contactForm;
     }
