@@ -20,7 +20,7 @@ export class TranscribeItemMapper {
         if (data === null || data === undefined)
             return null;
 
-        let alternatives = RecognitionAlternativeMapper.convert(data.alternatives);
+        let alternatives = RecognitionAlternativeMapper.convertAll(data.alternatives);
         let transcript = alternatives.length > 0 ? alternatives[0].transcript : null;
         let userTranscript = data.userTranscript === null ? transcript : data.userTranscript;
 
@@ -33,8 +33,8 @@ export class TranscribeItemMapper {
         transcribeItem.startTimeString = new TimeSpanWrapper(data.startTimeTicks).getTime();
         transcribeItem.endTimeString = new TimeSpanWrapper(data.endTimeTicks).getTime();
         transcribeItem.totalTimeString = new TimeSpanWrapper(data.totalTimeTicks).getTime();
-        transcribeItem.dateCreated = data.dateCreatedUtc;
-        transcribeItem.dateUpdated = data.dateUpdatedUtc;
+        transcribeItem.dateCreated = new Date(data.dateCreatedUtc);
+        transcribeItem.dateUpdated = new Date(data.dateUpdatedUtc);
 
         return transcribeItem;
     }

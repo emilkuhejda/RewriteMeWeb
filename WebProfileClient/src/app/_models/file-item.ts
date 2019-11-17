@@ -7,9 +7,10 @@ export class FileItem {
     public language: string;
     public recognitionState: RecognitionState;
     public totalTime: string;
-    public dateCreated: string;
-    public dateProcessed: string;
-    public dateUpdated: string;
+    public transcribedTime: string;
+    public dateCreated: Date;
+    public dateProcessed: Date;
+    public dateUpdated: Date;
     public isDeleted: boolean;
 
     get CanTranscribe() {
