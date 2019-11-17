@@ -120,32 +120,6 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet("deleted-total-time")]
-        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerOperation(OperationId = "GetDeletedFileItemsTotalTime")]
-        public async Task<IActionResult> GetDeletedTotalTime()
-        {
-            try
-            {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var totalTime = await _fileItemService.GetDeletedFileItemsTotalTimeAsync(user.Id).ConfigureAwait(false);
-
-                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
-                return Ok(timeSpanWrapperDto);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-
         [HttpGet("{fileItemId}")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -287,7 +261,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpDelete("delete")]
-        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
@@ -300,10 +274,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(401);
 
                 await _fileItemService.DeleteAsync(user.Id, fileItemId, applicationId).ConfigureAwait(false);
-                var totalTime = await _fileItemService.GetDeletedFileItemsTotalTimeAsync(user.Id).ConfigureAwait(false);
 
-                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = totalTime.Ticks };
-                return Ok(timeSpanWrapperDto);
+                return Ok(new OkDto());
             }
             catch (Exception ex)
             {

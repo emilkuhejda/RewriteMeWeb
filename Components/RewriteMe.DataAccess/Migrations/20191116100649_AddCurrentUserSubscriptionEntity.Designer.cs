@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RewriteMe.DataAccess;
 
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191116100649_AddCurrentUserSubscriptionEntity")]
+    partial class AddCurrentUserSubscriptionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -442,8 +444,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.Property<Guid>("ApplicationId");
 
                     b.Property<DateTime>("DateCreatedUtc");
-
-                    b.Property<int>("Operation");
 
                     b.Property<TimeSpan>("Time");
 

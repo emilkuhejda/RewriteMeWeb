@@ -14,7 +14,7 @@ export class TranscribeItemService {
         private http: HttpClient) { }
 
     getAll(fileItemId: string) {
-        return this.http.get<TranscribeItem[]>(this.routingService.getTranscribeItemsUri() + fileItemId).pipe(map(TranscribeItemMapper.convert));
+        return this.http.get<TranscribeItem[]>(this.routingService.getTranscribeItemsUri() + fileItemId).pipe(map(TranscribeItemMapper.convertAll));
     }
 
     getAudio(transcribeItemId: string) {

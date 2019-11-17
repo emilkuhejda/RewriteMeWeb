@@ -106,7 +106,7 @@ namespace RewriteMe.Business.Managers
             try
             {
                 await _applicationLogService.InfoAsync($"Speech recognition is started for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
-                await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
+                await RunRecognitionInternalAsync(userId, fileItem).ConfigureAwait(false);
                 await _applicationLogService.InfoAsync($"Speech recognition is completed for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
 
                 await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
@@ -131,7 +131,7 @@ namespace RewriteMe.Business.Managers
             await SendNotificationsAsync(userId, fileItemId).ConfigureAwait(false);
         }
 
-        private async Task RunRecognitionInternalAsync(FileItem fileItem)
+        private async Task RunRecognitionInternalAsync(Guid userId, FileItem fileItem)
         {
             await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
             try
@@ -160,6 +160,10 @@ namespace RewriteMe.Business.Managers
             {
                 var transcribeItems = await _speechRecognitionService.RecognizeAsync(fileItem, files).ConfigureAwait(false);
                 await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
+
+                var transcriptionTimeTicks = files.Sum(x => x.TotalTime.Ticks);
+                var transcriptionTime = TimeSpan.FromTicks(transcriptionTimeTicks);
+                await _userSubscriptionService.SubtractTimeAsync(userId, transcriptionTime).ConfigureAwait(false);
 
                 await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);

@@ -24,19 +24,19 @@ namespace RewriteMe.WebApi.Controllers.V1
     [ApiController]
     public class SpeechResultsController : RewriteMeControllerBase
     {
-        private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
         private readonly ISpeechResultService _speechResultService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
 
         public SpeechResultsController(
-            IRecognizedAudioSampleService recognizedAudioSampleService,
             ISpeechResultService speechResultService,
+            IUserSubscriptionService userSubscriptionService,
             IApplicationLogService applicationLogService,
             IUserService userService)
             : base(userService)
         {
-            _recognizedAudioSampleService = recognizedAudioSampleService;
             _speechResultService = speechResultService;
+            _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
         }
 
@@ -69,7 +69,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpPut("update")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
@@ -81,41 +81,19 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (user == null)
                     return StatusCode(401);
 
-                var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime });
+                var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime }).ToList();
                 await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
+
+                var totalTimeTicks = speechResults.Sum(x => x.TotalTime.Ticks);
+                var totalTime = TimeSpan.FromTicks(totalTimeTicks);
+                await _userSubscriptionService.SubtractTimeAsync(user.Id, totalTime).ConfigureAwait(false);
 
                 await _applicationLogService.InfoAsync("Update speech results total time.", user.Id).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-
-        [HttpGet("recognized-time")]
-        [ProducesResponseType(typeof(RecognizedTimeDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [SwaggerOperation(OperationId = "GetRecognizedTime")]
-        public async Task<IActionResult> GetRecognizedTime()
-        {
-            try
-            {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var recognizedTime = await _recognizedAudioSampleService.GetRecognizedTimeAsync(user.Id).ConfigureAwait(false);
-                var recognizedTimeDto = new RecognizedTimeDto
-                {
-                    TotalTimeTicks = recognizedTime.Ticks
-                };
-
-                return Ok(recognizedTimeDto);
+                return Ok(timeSpanWrapperDto);
             }
             catch (Exception ex)
             {
