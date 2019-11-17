@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -99,10 +98,6 @@ namespace RewriteMe.WebApi.Controllers.V1
                 };
 
                 await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
-
-                var transcriptionTimeTicks = recognizedAudioSample.SpeechResults.Sum(x => x.TotalTime.Ticks);
-                var transcriptionTime = TimeSpan.FromTicks(transcriptionTimeTicks);
-                await _userSubscriptionService.SubtractTimeAsync(user.Id, transcriptionTime).ConfigureAwait(false);
 
                 var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
                 var speechConfigurationDto = new SpeechConfigurationDto
