@@ -6,6 +6,8 @@ import { MsalService } from '../_services/msal.service';
 import { ErrorResponse } from '../_models/error-response';
 import { ActivatedRoute } from '@angular/router';
 import { Identity } from '../_models/identity';
+import { getLocaleDateTimeFormat } from '@angular/common';
+import { TimeSpanWrapper } from '../_models/time-span-wrapper';
 
 @Component({
     selector: 'app-account',
@@ -28,9 +30,9 @@ export class AccountComponent implements OnInit {
             if (response !== null)
                 return;
 
-            this.userSubscriptionService.getSubscriptionRemainingTimeUri().subscribe(
-                (remainingTime) => {
-                    this.remainingTime = remainingTime;
+            this.userSubscriptionService.getSubscriptionRemainingTime().subscribe(
+                (timeSpanWrapper: TimeSpanWrapper) => {
+                    this.remainingTime = timeSpanWrapper.getTime();
                 }
             );
 

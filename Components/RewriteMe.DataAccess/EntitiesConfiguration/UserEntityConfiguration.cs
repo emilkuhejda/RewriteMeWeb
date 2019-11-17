@@ -16,9 +16,10 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
             builder.Property(x => x.FamilyName).IsRequired().HasMaxLength(100);
             builder.Property(x => x.DateRegisteredUtc).IsRequired();
 
+            builder.HasOne(x => x.CurrentUserSubscription).WithOne(x => x.User).HasForeignKey<CurrentUserSubscriptionEntity>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.UserSubscriptions).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.FileItems).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.RecognizedAudioSamples).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(x => x.UserSubscriptions).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.BillingPurchases).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.ApplicationLogs).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.InformationMessages).WithOne(x => x.User).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);

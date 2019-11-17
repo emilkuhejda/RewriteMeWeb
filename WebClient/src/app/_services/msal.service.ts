@@ -11,12 +11,12 @@ export class MsalService {
     public static undefinedError: string = "0";
 
     private tenantConfig = {
-        tenant: "rewriteme.onmicrosoft.com",
-        clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
-        signUpSignIn: "B2C_1_RewriteMe_SignUp_SignIn",
-        passwordReset: "B2C_1_RewriteMe_Password_Reset",
+        tenant: "voicipher.onmicrosoft.com",
+        clientID: '3f16cd47-52fe-44e6-96b3-131e1e57b09c',
+        signUpSignIn: "B2C_1_Voicipher_SignUp_SignIn",
+        passwordReset: "B2C_1_Voicipher_Password_Reset",
         authorityBase: "https://login.microsoftonline.com/tfp/",
-        b2cScopes: ["https://rewriteme.onmicrosoft.com/access-api/user_impersonation"]
+        b2cScopes: ["https://voicipher.onmicrosoft.com/access-api/user_impersonation"]
     };
 
     private authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;

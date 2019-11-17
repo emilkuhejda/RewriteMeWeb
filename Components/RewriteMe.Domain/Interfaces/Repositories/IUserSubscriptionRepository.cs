@@ -13,8 +13,10 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
-        Task AddAsync(UserSubscription userSubscription);
+        Task AddAndRecalculateUserSubscriptionAsync(UserSubscription userSubscription);
 
         Task<TimeSpan> GetTotalSubscriptionTimeAsync(Guid userId);
+
+        Task<TimeSpan> GetRemainingTimeAsync(Guid userId);
     }
 }
