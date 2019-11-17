@@ -9,8 +9,8 @@ export class TranscribeItem {
     public startTimeString: string;
     public endTimeString: string;
     public totalTimeString: string;
-    public dateCreated: string;
-    public dateUpdated: string;
+    public dateCreated: Date;
+    public dateUpdated: Date;
 
     isUserTranscriptChanged(): boolean {
         return this.transcript !== this.userTranscript;

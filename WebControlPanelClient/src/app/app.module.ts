@@ -19,6 +19,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/confirmation-dialog.component';
+import { SubscriptionOperationPipe } from './_pipes/subscription-operation.pipe';
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/c
         TopbarComponent,
         TruncatePipe,
         routingComponents,
-        RecognitionStatePipe
+        RecognitionStatePipe,
+        SubscriptionOperationPipe
     ],
     imports: [
         BrowserModule,

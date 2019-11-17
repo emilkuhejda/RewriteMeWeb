@@ -38,11 +38,6 @@ namespace RewriteMe.Business.Services
             return await _userSubscriptionRepository.GetAllAsync(userId).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId)
-        {
-            return await _userSubscriptionRepository.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             return await _userSubscriptionRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);

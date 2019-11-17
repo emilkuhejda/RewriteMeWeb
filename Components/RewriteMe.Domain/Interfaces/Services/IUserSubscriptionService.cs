@@ -10,8 +10,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId);
 
-        Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId, DateTime updatedAfter, Guid applicationId);
-
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task AddAsync(UserSubscription userSubscription);

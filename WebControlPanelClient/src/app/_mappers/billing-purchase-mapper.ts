@@ -25,7 +25,7 @@ export class BillingPurchaseMapper {
         billingPurchase.purchaseState = data.purchaseState;
         billingPurchase.consumptionState = data.consumptionState;
         billingPurchase.platform = data.platform;
-        billingPurchase.transactionDateUtc = data.transactionDateUtc;
+        billingPurchase.transactionDateUtc = new Date(data.transactionDateUtc);
 
         return billingPurchase;
     }

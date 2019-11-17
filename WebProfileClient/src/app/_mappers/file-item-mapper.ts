@@ -1,5 +1,8 @@
 import { FileItem } from '../_models/file-item';
 import { RecognitionState } from '../_enums/recognition-state';
+import { TimeSpanWrapper } from '../_models/time-span-wrapper';
+import { TimeoutError } from 'rxjs';
+import { TimeSpanWrapperMapper } from './time-span-wrapper-mapper';
 
 export class FileItemMapper {
     public static convertAll(data): FileItem[] {
@@ -23,10 +26,11 @@ export class FileItemMapper {
         fileItem.fileName = data.fileName;
         fileItem.language = data.language;
         fileItem.recognitionState = <RecognitionState>RecognitionState[<string>data.recognitionStateString];
-        fileItem.totalTime = data.totalTimeString;
-        fileItem.dateCreated = data.dateCreated;
-        fileItem.dateProcessed = data.dateProcessed;
-        fileItem.dateUpdated = data.dateUpdated;
+        fileItem.totalTime = new TimeSpanWrapper(data.totalTimeTicks).getTime();
+        fileItem.transcribedTime = new TimeSpanWrapper(data.transcribedTimeTicks).getTime();
+        fileItem.dateCreated = new Date(data.dateCreated);
+        fileItem.dateProcessed = new Date(data.dateProcessedUtc);
+        fileItem.dateUpdated = new Date(data.dateUpdatedUtc);
         fileItem.isDeleted = data.isDeleted;
 
         return fileItem;

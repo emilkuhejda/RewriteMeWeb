@@ -20,4 +20,5 @@ export class FileItem {
     public dateUpdated: Date;
     public isDeleted: boolean;
     public isPermanentlyDeleted: boolean;
+    public wasCleaned: boolean;
 }
