@@ -115,6 +115,26 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CurrentUserSubscription",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Time = table.Column<TimeSpan>(nullable: false),
+                    DateUpdatedUtc = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CurrentUserSubscription", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CurrentUserSubscription_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FileItem",
                 columns: table => new
                 {
@@ -221,6 +241,7 @@ namespace RewriteMe.DataAccess.Migrations
                     UserId = table.Column<Guid>(nullable: false),
                     ApplicationId = table.Column<Guid>(nullable: false),
                     Time = table.Column<TimeSpan>(nullable: false),
+                    Operation = table.Column<int>(nullable: false),
                     DateCreatedUtc = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
@@ -357,6 +378,12 @@ namespace RewriteMe.DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CurrentUserSubscription_UserId",
+                table: "CurrentUserSubscription",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FileItem_UserId",
                 table: "FileItem",
                 column: "UserId");
@@ -421,6 +448,9 @@ namespace RewriteMe.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "ContactForm");
+
+            migrationBuilder.DropTable(
+                name: "CurrentUserSubscription");
 
             migrationBuilder.DropTable(
                 name: "FileItemSource");
