@@ -8,5 +8,5 @@ export class BillingPurchase {
     purchaseState: string;
     consumptionState: string;
     platform: string;
-    transactionDateUtc: string;
+    transactionDateUtc: Date;
 }

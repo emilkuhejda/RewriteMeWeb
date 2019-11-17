@@ -20,8 +20,7 @@ export class UserMapper {
         user.email = data.email;
         user.givenName = data.givenName;
         user.familyName = data.familyName;
-        user.applicationId = data.applicationId;
-        user.dateRegistered = data.dateRegistered;
+        user.dateRegistered = new Date(data.dateRegisteredUtc);
 
         return user;
     }

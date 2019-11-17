@@ -1,19 +1,27 @@
 import { RecognitionAlternative } from '../_models/recognition-alternative';
 
 export class RecognitionAlternativeMapper {
-    public static convert(recognitionAlternatives): RecognitionAlternative[] {
-        if (recognitionAlternatives === null || recognitionAlternatives === undefined)
+    public static convertAll(data): RecognitionAlternative[] {
+        if (data === null || data === undefined)
             return [];
 
-        let data = [];
-        for (let alternative of recognitionAlternatives) {
-            let recognitionAlternative = new RecognitionAlternative();
-            recognitionAlternative.transcript = alternative.transcript;
-            recognitionAlternative.confidence = alternative.confidence;
-
-            data.push(recognitionAlternative);
+        let recognitionAlternatives = [];
+        for (let alternative of data) {
+            let recognitionAlternative = RecognitionAlternativeMapper.convert(alternative)
+            recognitionAlternatives.push(recognitionAlternative);
         }
 
-        return data;
+        return recognitionAlternatives;
+    }
+
+    public static convert(alternative): RecognitionAlternative {
+        if (alternative === null || alternative === undefined)
+            return null;
+
+        let recognitionAlternative = new RecognitionAlternative();
+        recognitionAlternative.transcript = alternative.transcript;
+        recognitionAlternative.confidence = alternative.confidence;
+
+        return recognitionAlternative;
     }
 }

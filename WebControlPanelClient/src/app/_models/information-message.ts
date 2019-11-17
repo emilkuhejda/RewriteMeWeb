@@ -5,8 +5,8 @@ export class InformationMessage {
     userId: string;
     campaignName: string;
     wasOpened: boolean;
-    dateCreated: string;
-    dateUpdated: string;
-    datePublished: string;
+    dateCreated: Date;
+    dateUpdated: Date;
+    datePublished: Date;
     languageVersions: LanguageVersion[];
 }

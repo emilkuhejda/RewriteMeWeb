@@ -32,11 +32,12 @@ export class FileItemMapper {
         fileItem.originalContentType = data.originalContentType;
         fileItem.totalTime = data.totalTime;
         fileItem.transcribedTime = data.transcribedTime;
-        fileItem.dateCreated = data.dateCreated;
-        fileItem.dateProcessed = data.dateProcessed;
-        fileItem.dateUpdated = data.dateUpdated;
+        fileItem.dateCreated = new Date(data.dateCreated);
+        fileItem.dateProcessed = new Date(data.dateProcessedUtc);
+        fileItem.dateUpdated = new Date(data.dateUpdatedUtc);
         fileItem.isDeleted = data.isDeleted;
         fileItem.isPermanentlyDeleted = data.isPermanentlyDeleted;
+        fileItem.wasCleaned = data.wasCleaned;
 
         return fileItem;
     }
