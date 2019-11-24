@@ -16,14 +16,22 @@ export class BaseComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.unloadScripts();
-    }
-    
-    protected loadDefaultScript() {
-        this.dynamicScriptLoaderService.load(this.scriptKey);
+        this.unloadDefaultScript();
     }
 
-    protected unloadScripts() {
-        this.dynamicScriptLoaderService.remove(this.scriptKey);
+    protected loadScript(...scripts: string[]) {
+        this.dynamicScriptLoaderService.load(scripts);
+    }
+
+    protected loadDefaultScript() {
+        this.dynamicScriptLoaderService.load([this.scriptKey]);
+    }
+
+    protected unloadScript(...scripts: string[]) {
+        this.dynamicScriptLoaderService.remove(scripts);
+    }
+
+    protected unloadDefaultScript() {
+        this.dynamicScriptLoaderService.remove([this.scriptKey]);
     }
 }
