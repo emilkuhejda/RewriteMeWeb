@@ -6,10 +6,12 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TokenInterceptorService } from './_services/token-interceptor.service';
+import { BaseComponent } from './base/base.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        BaseComponent,
         routingComponents
     ],
     imports: [

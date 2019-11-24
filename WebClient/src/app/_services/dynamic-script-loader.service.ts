@@ -26,7 +26,7 @@ export class DynamicScriptLoaderService {
         });
     }
 
-    load(...scripts: string[]) {
+    load(scripts: string[]) {
         const promises: any[] = [];
         scripts.forEach((script) => promises.push(this.loadScript(script)));
         return Promise.all(promises);
@@ -62,7 +62,7 @@ export class DynamicScriptLoaderService {
         });
     }
 
-    remove(...scripts: string[]) {
+    remove(scripts: string[]) {
         const promises: any[] = [];
         scripts.forEach((script) => promises.push(this.removeScript(script)));
         return Promise.all(promises);
