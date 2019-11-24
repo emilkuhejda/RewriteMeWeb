@@ -12,7 +12,6 @@ export class BaseComponent implements OnInit, OnDestroy {
     constructor(protected dynamicScriptLoaderService: DynamicScriptLoaderService) { }
 
     ngOnInit() {
-        console.log("base on init");
         this.loadScripts();
     }
 

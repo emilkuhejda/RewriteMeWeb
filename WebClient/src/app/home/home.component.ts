@@ -1,16 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ContactFormService } from '../_services/contact-form.service';
 import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.service';
+import { BaseComponent } from '../base/base.component';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy {
-    private scriptKey: string = "script";
-
+export class HomeComponent extends BaseComponent {
     contactForm: FormGroup;
     submitted: boolean;
     loading: boolean;
@@ -20,7 +19,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     constructor(
         private formBuilder: FormBuilder,
         private contactFormService: ContactFormService,
-        private dynamicScriptLoaderService: DynamicScriptLoaderService) { }
+        protected dynamicScriptLoaderService: DynamicScriptLoaderService) {
+        super(dynamicScriptLoaderService);
+    }
 
     ngOnInit() {
         this.contactForm = this.formBuilder.group({
@@ -30,18 +31,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         this.loadScripts();
-    }
-
-    ngOnDestroy(): void {
-        this.unloadScripts();
-    }
-
-    private loadScripts() {
-        this.dynamicScriptLoaderService.load(this.scriptKey);
-    }
-
-    private unloadScripts() {
-        this.dynamicScriptLoaderService.remove(this.scriptKey);
     }
 
     get controls() {
