@@ -31,7 +31,7 @@ export class RegisterUserComponent extends BaseComponent {
             this.register();
         }
 
-        this.loadScripts();
+        this.loadDefaultScript();
     }
 
     private register(): void {

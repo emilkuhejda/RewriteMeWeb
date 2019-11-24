@@ -13,7 +13,7 @@ export class PrivacyComponent extends BaseComponent {
     }
 
     ngOnInit() {
-        this.loadScripts();
+        this.loadDefaultScript();
 
         window.scrollTo(0, 0);
     }

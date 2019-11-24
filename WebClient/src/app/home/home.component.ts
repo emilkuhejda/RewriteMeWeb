@@ -30,7 +30,7 @@ export class HomeComponent extends BaseComponent {
             message: ['', Validators.required]
         });
 
-        this.loadScripts();
+        this.loadDefaultScript();
     }
 
     get controls() {

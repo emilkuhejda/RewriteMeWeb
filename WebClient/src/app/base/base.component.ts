@@ -7,19 +7,19 @@ import { DynamicScriptLoaderService } from '../_services/dynamic-script-loader.s
     styleUrls: ['./base.component.css']
 })
 export class BaseComponent implements OnInit, OnDestroy {
-    private scriptKey: string = "script";
+    protected scriptKey: string = "script";
 
     constructor(protected dynamicScriptLoaderService: DynamicScriptLoaderService) { }
 
     ngOnInit() {
-        this.loadScripts();
+        this.loadDefaultScript();
     }
 
     ngOnDestroy() {
         this.unloadScripts();
     }
-
-    protected loadScripts() {
+    
+    protected loadDefaultScript() {
         this.dynamicScriptLoaderService.load(this.scriptKey);
     }
 
