@@ -74,7 +74,6 @@ namespace RewriteMe.WebApi
                 });
 
                 configuration.EnableAnnotations();
-                //configuration.OperationFilter<FormFileSwaggerFilter>();
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
