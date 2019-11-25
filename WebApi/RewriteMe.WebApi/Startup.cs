@@ -88,27 +88,27 @@ namespace RewriteMe.WebApi
 
             services.AddRewriteMeAuthorization(appSettings);
             services.AddAzureAdAuthorization(appSettings);
-            services.AddMvc().AddFilterProvider(serviceProvider =>
-            {
-                var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
-                var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
+            //services.AddMvc().AddFilterProvider(serviceProvider =>
+            //{
+            //    var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
+            //    var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
 
-                var filterProviderOptions = new[]
-                {
-                    new FilterProviderOption
-                    {
-                        RoutePrefix = "api/b2c",
-                        Filter = azureAdAuthorizeFilter
-                    },
-                    new FilterProviderOption
-                    {
-                        RoutePrefix = "api",
-                        Filter = rewriteMeAuthorizeFilter
-                    }
-                };
+            //    var filterProviderOptions = new[]
+            //    {
+            //        new FilterProviderOption
+            //        {
+            //            RoutePrefix = "api/b2c",
+            //            Filter = azureAdAuthorizeFilter
+            //        },
+            //        new FilterProviderOption
+            //        {
+            //            RoutePrefix = "api",
+            //            Filter = rewriteMeAuthorizeFilter
+            //        }
+            //    };
 
-                return new AuthenticationFilterProvider(filterProviderOptions);
-            });
+            //    return new AuthenticationFilterProvider(filterProviderOptions);
+            //});
 
             services.Configure<CookiePolicyOptions>(options =>
             {
