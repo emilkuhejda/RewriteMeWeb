@@ -1,6 +1,7 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using RewriteMe.Business.Managers;
 using RewriteMe.Business.Services;
 using RewriteMe.DataAccess;
@@ -8,23 +9,20 @@ using RewriteMe.DataAccess.Repositories;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Managers;
+using Module = Autofac.Module;
 
 namespace RewriteMe.WebApi.Services
 {
-    public class Bootstrapper
+    public class ApplicationModule : Module
     {
-        public static AutofacServiceProvider BootstrapRuntime(IServiceCollection services)
+        protected override void Load(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
+            base.Load(builder);
 
-            BindCommon(builder);
-            var container = builder.Build();
-
-            return new AutofacServiceProvider(container);
+            RegisterServices(builder);
         }
 
-        private static void BindCommon(ContainerBuilder builder)
+        public static void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<DbContextFactory>().As<IDbContextFactory>().InstancePerLifetimeScope();
             builder.RegisterType<AdministratorRepository>().As<IAdministratorRepository>().InstancePerLifetimeScope();

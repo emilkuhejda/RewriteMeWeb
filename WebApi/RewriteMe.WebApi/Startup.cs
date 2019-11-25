@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,9 +38,11 @@ namespace RewriteMe.WebApi
 
         public IConfiguration Configuration { get; }
 
+        public ILifetimeScope AutofacContainer { get; private set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention()));
 
@@ -97,8 +100,8 @@ namespace RewriteMe.WebApi
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
 
-            services.AddRewriteMeAuthorization(appSettings);
-            services.AddAzureAdAuthorization(appSettings);
+            //services.AddRewriteMeAuthorization(appSettings);
+            //services.AddAzureAdAuthorization(appSettings);
             services.AddMvc().AddFilterProvider(serviceProvider =>
             {
                 var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
@@ -127,12 +130,19 @@ namespace RewriteMe.WebApi
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            return Bootstrapper.BootstrapRuntime(services);
+            services.AddOptions();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new ApplicationModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
 
@@ -183,7 +193,7 @@ namespace RewriteMe.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
