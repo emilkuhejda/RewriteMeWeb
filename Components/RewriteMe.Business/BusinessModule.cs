@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using RewriteMe.Business.Managers;
 using RewriteMe.Business.Services;
+using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Managers;
 
 namespace RewriteMe.Business
 {
