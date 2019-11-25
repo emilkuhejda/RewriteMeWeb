@@ -228,7 +228,20 @@ namespace RewriteMe.Business.Services
 
         public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
         {
-            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
+            string uploadDirectoryPath;
+
+            var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+            if (storageSetting == StorageSetting.Database)
+            {
+                var directoryPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                Directory.CreateDirectory(directoryPath);
+
+                uploadDirectoryPath = directoryPath;
+            }
+            else
+            {
+                uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
+            }
 
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
@@ -241,6 +254,11 @@ namespace RewriteMe.Business.Services
                 FilePath = uploadedFilePath,
                 DirectoryPath = uploadDirectoryPath
             };
+        }
+
+        public void CleanUploadedData(UploadedFile uploadedFile)
+        {
+            Directory.Delete(uploadedFile.DirectoryPath, true);
         }
 
         public TimeSpan? GetAudioTotalTime(string filePath)

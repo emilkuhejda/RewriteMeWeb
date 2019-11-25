@@ -29,6 +29,11 @@ namespace RewriteMe.Business.Services
         {
             try
             {
+                if (typeof(T).IsEnum)
+                {
+                    return (T)Enum.Parse(typeof(T), value);
+                }
+
                 var result = (T)Convert.ChangeType(value, typeof(T));
                 return result;
             }
