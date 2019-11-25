@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Hangfire;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
@@ -20,7 +20,6 @@ using RewriteMe.WebApi.Security;
 using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
 using RewriteMe.WebApi.Utils;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace RewriteMe.WebApi
 {
@@ -68,14 +67,14 @@ namespace RewriteMe.WebApi
             services.AddApiVersioning();
             services.AddSwaggerGen(configuration =>
             {
-                configuration.SwaggerDoc("v1", new Info
+                configuration.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Voicipher API",
                     Version = "v1"
                 });
 
                 configuration.EnableAnnotations();
-                configuration.OperationFilter<FormFileSwaggerFilter>();
+                //configuration.OperationFilter<FormFileSwaggerFilter>();
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
@@ -85,15 +84,28 @@ namespace RewriteMe.WebApi
                     return returnedValue;
                 });
 
-                configuration.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                configuration.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = "header",
+                    In = ParameterLocation.Header,
                     Description = "Please enter into field the word 'Bearer' following by space and JWT",
                     Name = "Authorization",
-                    Type = "apiKey"
+                    Type = SecuritySchemeType.ApiKey
                 });
 
-                configuration.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
+                configuration.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.AddHangfire(configuration =>
@@ -194,8 +206,8 @@ namespace RewriteMe.WebApi
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
             app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();
