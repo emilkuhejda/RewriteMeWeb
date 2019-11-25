@@ -41,7 +41,18 @@ namespace RewriteMe.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention())).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention()));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    Constants.CorsPolicy,
+                    builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
 
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -163,11 +174,7 @@ namespace RewriteMe.WebApi
                 }
             });
 
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors(Constants.CorsPolicy);
 
             app.MigrateDatabase();
             app.ConfigureExceptionMiddleware();
