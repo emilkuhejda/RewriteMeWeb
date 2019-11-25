@@ -44,7 +44,11 @@ namespace RewriteMe.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention()));
+            services.AddMvc(c =>
+            {
+                c.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
+                c.EnableEndpointRouting = false;
+            });
 
             services.AddCors(options =>
             {
@@ -100,8 +104,8 @@ namespace RewriteMe.WebApi
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
 
-            //services.AddRewriteMeAuthorization(appSettings);
-            //services.AddAzureAdAuthorization(appSettings);
+            services.AddRewriteMeAuthorization(appSettings);
+            services.AddAzureAdAuthorization(appSettings);
             services.AddMvc().AddFilterProvider(serviceProvider =>
             {
                 var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
@@ -190,10 +194,10 @@ namespace RewriteMe.WebApi
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
-            app.UseRouting();
+            app.UseMvcWithDefaultRoute();
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
