@@ -12,29 +12,20 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        private readonly IFileAccessService _fileAccessService;
-
-        public WavFileService(IFileAccessService fileAccessService)
+        public (string outputFilePath, string fileName) CopyWavAsync(string directoryPath, string inputFilePath)
         {
-            _fileAccessService = fileAccessService;
-        }
-
-        public (string outputFilePath, string fileName) CopyWavAsync(FileItem fileItem, string inputFilePath)
-        {
-            var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
-            var outputFilePath = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
+            var outputFilePath = Path.Combine(directoryPath, fileName);
 
             File.Copy(inputFilePath, outputFilePath, true);
 
             return (outputFilePath, fileName);
         }
 
-        public async Task<(string outputFilePath, string fileName)> ConvertToWavAsync(FileItem fileItem, string inputFilePath)
+        public async Task<(string outputFilePath, string fileName)> ConvertToWavAsync(string directoryPath, string inputFilePath)
         {
-            var rootDirectoryPath = _fileAccessService.GetRootPath();
             var fileName = Guid.NewGuid().ToString();
-            var outputFilePath = Path.Combine(rootDirectoryPath, fileItem.Id.ToString(), fileName);
+            var outputFilePath = Path.Combine(directoryPath, fileName);
             await Task.Run(() =>
             {
                 using (var reader = new MediaFoundationReader(inputFilePath))

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using RewriteMe.Business.Configuration;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
@@ -17,7 +17,6 @@ namespace RewriteMe.Business.Managers
     {
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
-        private readonly IInternalValueService _internalValueService;
         private readonly IWavFileService _wavFileService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
@@ -25,14 +24,12 @@ namespace RewriteMe.Business.Managers
         public WavFileManager(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
-            IInternalValueService internalValueService,
             IWavFileService wavFileService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
-            _internalValueService = internalValueService;
             _wavFileService = wavFileService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
@@ -44,19 +41,13 @@ namespace RewriteMe.Business.Managers
             if (convertedFileItemSourceExists)
                 return;
 
-            var filePath = string.Empty;
             try
             {
                 await _applicationLogService
                     .InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId)
                     .ConfigureAwait(false);
 
-                _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.Id);
-                filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem).ConfigureAwait(false);
-                if (string.IsNullOrWhiteSpace(filePath))
-                    throw new InvalidOperationException(nameof(filePath));
-
-                await RunConversionToWavAsync(fileItem, filePath).ConfigureAwait(false);
+                await RunConversionToWavAsync(fileItem).ConfigureAwait(false);
 
                 await _applicationLogService
                     .InfoAsync($"File WAV conversion is completed for file ID: {fileItem.Id}.", userId)
@@ -68,43 +59,56 @@ namespace RewriteMe.Business.Managers
                 await _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {fileItem.Id}.", userId).ConfigureAwait(false);
                 throw;
             }
+        }
+
+        private async Task RunConversionToWavAsync(FileItem fileItem)
+        {
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
+
+            var directoryPath = string.Empty;
+            try
+            {
+                directoryPath = _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.Id, fileItem.Storage == StorageSetting.Database);
+                var filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem, directoryPath).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(filePath))
+                    throw new InvalidOperationException(nameof(filePath));
+
+                (string outputFilePath, string fileName) sourceFile;
+                if (!fileItem.IsOriginalWav())
+                {
+                    sourceFile = await _wavFileService.ConvertToWavAsync(directoryPath, filePath).ConfigureAwait(false);
+                }
+                else
+                {
+                    sourceFile = _wavFileService.CopyWavAsync(directoryPath, filePath);
+                }
+
+                var recognitionState = RecognitionState.Prepared;
+                var source = await File.ReadAllBytesAsync(sourceFile.outputFilePath).ConfigureAwait(false);
+                await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);
+                await _fileItemSourceService.UpdateSourceAsync(fileItem.Id, source).ConfigureAwait(false);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
+
+                fileItem.RecognitionState = recognitionState;
+                fileItem.SourceFileName = sourceFile.fileName;
+            }
+            catch (Exception ex)
+            {
+                var message = $"Exception occurred during conversion for file ID = '{fileItem.Id}'.{Environment.NewLine}{ExceptionFormatter.FormatException(ex)}";
+                await _applicationLogService.ErrorAsync(message).ConfigureAwait(false);
+            }
             finally
             {
-                var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-                if (readSourceFromDatabase && !string.IsNullOrWhiteSpace(filePath))
+                if (fileItem.Storage == StorageSetting.Database)
                 {
-                    File.Delete(filePath);
+                    _fileItemService.CleanUploadedData(directoryPath);
                 }
             }
         }
 
-        private async Task RunConversionToWavAsync(FileItem fileItem, string inputFilePath)
+        public async Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(FileItem fileItem, TimeSpan remainingTime)
         {
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
-
-            (string outputFilePath, string fileName) sourceFile;
-            if (!fileItem.IsOriginalWav())
-            {
-                sourceFile = await _wavFileService.ConvertToWavAsync(fileItem, inputFilePath).ConfigureAwait(false);
-            }
-            else
-            {
-                sourceFile = _wavFileService.CopyWavAsync(fileItem, inputFilePath);
-            }
-
-            var recognitionState = RecognitionState.Prepared;
-            var source = await File.ReadAllBytesAsync(sourceFile.outputFilePath).ConfigureAwait(false);
-            await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);
-            await _fileItemSourceService.UpdateSourceAsync(fileItem.Id, source).ConfigureAwait(false);
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
-
-            fileItem.RecognitionState = recognitionState;
-            fileItem.SourceFileName = sourceFile.fileName;
-        }
-
-        public async Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(Guid fileItemId, TimeSpan remainingTime)
-        {
-            var audioSource = await _fileItemService.GetAudioSourceAsync(fileItemId).ConfigureAwait(false);
+            var audioSource = await _fileItemService.GetAudioSourceAsync(fileItem).ConfigureAwait(false);
             return await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
         }
     }

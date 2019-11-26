@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.Domain.Transcription
 {
@@ -16,6 +17,8 @@ namespace RewriteMe.Domain.Transcription
         public string UserTranscript { get; set; }
 
         public string SourceFileName { get; set; }
+
+        public StorageSetting Storage { get; set; }
 
         public TimeSpan StartTime { get; set; }
 

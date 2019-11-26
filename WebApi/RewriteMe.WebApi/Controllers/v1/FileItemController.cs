@@ -178,7 +178,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)
                 {
-                    _fileItemService.CleanUploadedData(uploadedFile);
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
                     return StatusCode(415);
                 }
@@ -195,7 +195,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     Language = language,
                     OriginalSourceFileName = uploadedFile.FileName,
                     OriginalContentType = file.ContentType,
-                    Storage = StorageSetting.Database,
+                    Storage = storageSetting,
                     TotalTime = totalTime.Value,
                     DateCreated = dateCreated,
                     DateUpdatedUtc = dateUpdated
@@ -205,15 +205,16 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
 
+                    // TODO Kuem
                     if (storageSetting == StorageSetting.Database)
                     {
-                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem).ConfigureAwait(false);
-                        _fileItemService.CleanUploadedData(uploadedFile);
+                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
+                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
                     }
                 }
                 catch (DbUpdateException ex)
                 {
-                    _fileItemService.CleanUploadedData(uploadedFile);
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 

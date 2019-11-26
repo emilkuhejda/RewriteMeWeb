@@ -148,10 +148,14 @@ namespace RewriteMe.Business.Managers
             }
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
-            var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem.Id, remainingTime).ConfigureAwait(false);
+            var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
-            await _transcribeItemSourceService.AddWavFileSourcesAsync(fileItem.Id, files).ConfigureAwait(false);
+            // TODO Kuem
+            if (fileItem.Storage == StorageSetting.Database)
+            {
+                await _transcribeItemSourceService.AddWavFileSourcesAsync(fileItem.Id, files).ConfigureAwait(false);
+            }
 
             var transcribedTime = files.OrderByDescending(x => x.EndTime).FirstOrDefault()?.EndTime ?? TimeSpan.Zero;
             await _fileItemService.UpdateTranscribedTimeAsync(fileItem.Id, transcribedTime).ConfigureAwait(false);

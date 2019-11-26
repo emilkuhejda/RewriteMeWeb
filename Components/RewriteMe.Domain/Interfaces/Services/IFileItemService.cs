@@ -57,17 +57,17 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task RemoveSourceFileAsync(FileItem fileItem);
 
-        Task<byte[]> GetAudioSourceAsync(Guid fileItemId);
+        Task<byte[]> GetAudioSourceAsync(FileItem fileItem);
 
-        Task<string> GetOriginalFileItemPathAsync(FileItem fileItem);
+        Task<string> GetOriginalFileItemPathAsync(FileItem fileItem, string directoryPath);
 
         Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem);
 
-        string CreateUploadDirectoryIfNeeded(Guid fileItemId);
+        string CreateUploadDirectoryIfNeeded(Guid fileItemId, bool isTemporaryStorage);
 
         Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource);
 
-        void CleanUploadedData(UploadedFile uploadedFile);
+        void CleanUploadedData(string directoryPath);
 
         TimeSpan? GetAudioTotalTime(string filePath);
     }

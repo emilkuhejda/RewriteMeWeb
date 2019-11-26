@@ -1,4 +1,5 @@
 ﻿using System;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.DataAccess.Entities
 {
@@ -15,6 +16,8 @@ namespace RewriteMe.DataAccess.Entities
         public string UserTranscript { get; set; }
 
         public string SourceFileName { get; set; }
+
+        public StorageSetting Storage { get; set; }
 
         public TimeSpan StartTime { get; set; }
 

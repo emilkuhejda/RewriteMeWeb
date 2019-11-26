@@ -151,20 +151,25 @@ namespace RewriteMe.Business.Services
         {
             await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
 
-            var filePath = _fileAccessService.GetFileItemPath(fileItem);
-            File.Delete(filePath);
+            if (fileItem.Storage == StorageSetting.Disk)
+            {
+                var filePath = _fileAccessService.GetFileItemPath(fileItem);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
         }
 
-        public async Task<byte[]> GetAudioSourceAsync(Guid fileItemId)
+        public async Task<byte[]> GetAudioSourceAsync(FileItem fileItem)
         {
-            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-            if (readSourceFromDatabase)
+            // TODO Kuem
+            if (fileItem.Storage == StorageSetting.Database)
             {
-                var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
                 return fileItemSource?.Source ?? Array.Empty<byte>();
             }
 
-            var fileItem = await _fileItemRepository.GetAsync(fileItemId).ConfigureAwait(false);
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
                 return Array.Empty<byte>();
@@ -172,16 +177,16 @@ namespace RewriteMe.Business.Services
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
 
-        public async Task<string> GetOriginalFileItemPathAsync(FileItem fileItem)
+        public async Task<string> GetOriginalFileItemPathAsync(FileItem fileItem, string directoryPath)
         {
-            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-            if (readSourceFromDatabase)
+            // TODO Kuem
+            if (fileItem.Storage == StorageSetting.Database)
             {
                 var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
                 if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
                     return null;
 
-                var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.wav");
+                var tempFilePath = Path.Combine(directoryPath, $"{Guid.NewGuid()}.wav");
                 await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
                 return tempFilePath;
             }
@@ -195,29 +200,37 @@ namespace RewriteMe.Business.Services
 
         public async Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem)
         {
-            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-            if (fileItem.RecognitionState != RecognitionState.None)
-            {
-                if (readSourceFromDatabase)
-                {
-                    var hasFileItemSource = await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
-                    if (hasFileItemSource)
-                        return true;
-                }
+            // TODO Kuem
+            if (fileItem.RecognitionState == RecognitionState.None)
+                return false;
 
-                if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
-                {
-                    var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
-                    if (File.Exists(convertedFilePath))
-                        return true;
-                }
+            if (fileItem.Storage == StorageSetting.Database)
+            {
+                var hasFileItemSource = await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
+                if (hasFileItemSource)
+                    return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
+            {
+                var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
+                if (File.Exists(convertedFilePath))
+                    return true;
             }
 
             return false;
         }
 
-        public string CreateUploadDirectoryIfNeeded(Guid fileItemId)
+        public string CreateUploadDirectoryIfNeeded(Guid fileItemId, bool isTemporaryStorage)
         {
+            if (isTemporaryStorage)
+            {
+                var tempDirectoryPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                Directory.CreateDirectory(tempDirectoryPath);
+
+                return tempDirectoryPath;
+            }
+
             var directoryPath = _fileAccessService.GetRootPath();
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
             if (!Directory.Exists(uploadDirectoryPath))
@@ -228,21 +241,9 @@ namespace RewriteMe.Business.Services
 
         public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
         {
-            string uploadDirectoryPath;
-
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-            if (storageSetting == StorageSetting.Database)
-            {
-                var directoryPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                Directory.CreateDirectory(directoryPath);
 
-                uploadDirectoryPath = directoryPath;
-            }
-            else
-            {
-                uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId);
-            }
-
+            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId, storageSetting == StorageSetting.Database);
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
 
@@ -256,9 +257,9 @@ namespace RewriteMe.Business.Services
             };
         }
 
-        public void CleanUploadedData(UploadedFile uploadedFile)
+        public void CleanUploadedData(string directoryPath)
         {
-            Directory.Delete(uploadedFile.DirectoryPath, true);
+            Directory.Delete(directoryPath, true);
         }
 
         public TimeSpan? GetAudioTotalTime(string filePath)

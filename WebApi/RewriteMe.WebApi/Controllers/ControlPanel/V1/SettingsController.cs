@@ -47,8 +47,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             try
             {
-                var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-                var storageSetting = readSourceFromDatabase ? StorageSetting.Database : StorageSetting.Disk;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
                 return Ok(storageSetting);
             }
@@ -82,7 +81,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             try
             {
-                await _internalValueService.UpdateValueAsync(InternalValues.ReadSourceFromDatabase, storageSetting == StorageSetting.Database).ConfigureAwait(false);
+                await _internalValueService.UpdateValueAsync(InternalValues.StorageSetting, storageSetting).ConfigureAwait(false);
 
                 return Ok();
             }
