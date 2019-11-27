@@ -31,18 +31,20 @@ namespace RewriteMe.Business.Services
             if (transcribeItem == null)
                 return null;
 
-            // TODO Kuem
             if (transcribeItem.Storage == StorageSetting.Database)
-            {
-                var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
-                return transcribeItemSource?.Source;
-            }
+                return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
 
             var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
             if (File.Exists(sourcePath))
                 return await File.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
 
-            return null;
+            return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
+        }
+
+        private async Task<byte[]> GetTranscribeItemSourceAsync(Guid transcribeItemId)
+        {
+            var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
+            return transcribeItemSource?.Source;
         }
 
         public async Task<TranscribeItem> GetAsync(Guid transcribeItemId)
