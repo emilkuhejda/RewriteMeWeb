@@ -59,6 +59,23 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
+        [HttpGet("database-backup")]
+        public async Task<IActionResult> GetDatabaseBackupSetting()
+        {
+            try
+            {
+                var isDatabaseBackupEnabled = await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false);
+
+                return Ok(isDatabaseBackupEnabled);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
         [HttpGet("notifications-setting")]
         public async Task<IActionResult> GetNotificationsSetting()
         {
@@ -82,6 +99,23 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             try
             {
                 await _internalValueService.UpdateValueAsync(InternalValues.StorageSetting, storageSetting).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPut("change-database-backup")]
+        public async Task<IActionResult> ChangeDatabaseBackupSettings(bool isEnabled)
+        {
+            try
+            {
+                await _internalValueService.UpdateValueAsync(InternalValues.IsDatabaseBackupEnabled, isEnabled).ConfigureAwait(false);
 
                 return Ok();
             }
