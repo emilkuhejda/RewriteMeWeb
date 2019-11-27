@@ -151,8 +151,8 @@ namespace RewriteMe.Business.Managers
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
-            // TODO Kuem
-            if (fileItem.Storage == StorageSetting.Database)
+            if (fileItem.Storage == StorageSetting.Database ||
+                await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
             {
                 await _transcribeItemSourceService.AddWavFileSourcesAsync(fileItem.Id, files).ConfigureAwait(false);
             }
