@@ -205,8 +205,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
 
-                    // TODO Kuem
-                    if (storageSetting == StorageSetting.Database)
+                    if (storageSetting == StorageSetting.Database ||
+                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
                     {
                         await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
                         _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);

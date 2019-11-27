@@ -163,59 +163,60 @@ namespace RewriteMe.Business.Services
 
         public async Task<byte[]> GetAudioSourceAsync(FileItem fileItem)
         {
-            // TODO Kuem
             if (fileItem.Storage == StorageSetting.Database)
-            {
-                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
-                return fileItemSource?.Source ?? Array.Empty<byte>();
-            }
+                return await GetAudioSourceFromDatabaseAsync(fileItem.Id).ConfigureAwait(false);
 
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
-                return Array.Empty<byte>();
+                return await GetAudioSourceFromDatabaseAsync(fileItem.Id).ConfigureAwait(false);
 
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
 
+        private async Task<byte[]> GetAudioSourceFromDatabaseAsync(Guid fileItemId)
+        {
+            var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+            return fileItemSource?.Source ?? Array.Empty<byte>();
+        }
+
         public async Task<string> GetOriginalFileItemPathAsync(FileItem fileItem, string directoryPath)
         {
-            // TODO Kuem
             if (fileItem.Storage == StorageSetting.Database)
-            {
-                var fileItemSource = await _fileItemSourceService.GetAsync(fileItem.Id).ConfigureAwait(false);
-                if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
-                    return null;
-
-                var tempFilePath = Path.Combine(directoryPath, $"{Guid.NewGuid()}.wav");
-                await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
-                return tempFilePath;
-            }
+                return await GetMaterializedFileItemPathAsync(fileItem.Id, directoryPath).ConfigureAwait(false);
 
             var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
             if (!File.Exists(filePath))
-                return null;
+                return await GetMaterializedFileItemPathAsync(fileItem.Id, directoryPath).ConfigureAwait(false);
 
             return filePath;
         }
 
+        private async Task<string> GetMaterializedFileItemPathAsync(Guid fileItemId, string directoryPath)
+        {
+            var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+            if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
+                return null;
+
+            var tempFilePath = Path.Combine(directoryPath, $"{Guid.NewGuid()}.wav");
+            await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
+            return tempFilePath;
+        }
+
         public async Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem)
         {
-            // TODO Kuem
             if (fileItem.RecognitionState == RecognitionState.None)
                 return false;
 
             if (fileItem.Storage == StorageSetting.Database)
-            {
-                var hasFileItemSource = await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
-                if (hasFileItemSource)
-                    return true;
-            }
+                return await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
             {
                 var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
                 if (File.Exists(convertedFilePath))
                     return true;
+
+                return await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
             }
 
             return false;
