@@ -12,8 +12,8 @@ using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
@@ -149,6 +149,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         }
 
         [HttpPost("upload")]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -157,7 +158,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, [FromForm]IFormFile file)
+        public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
             try
             {

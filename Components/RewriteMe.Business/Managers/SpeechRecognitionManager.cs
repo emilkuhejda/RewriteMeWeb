@@ -12,8 +12,8 @@ using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
+using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 

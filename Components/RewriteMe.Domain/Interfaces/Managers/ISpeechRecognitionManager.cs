@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace RewriteMe.Domain.Managers
+namespace RewriteMe.Domain.Interfaces.Managers
 {
     public interface ISpeechRecognitionManager
     {
