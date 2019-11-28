@@ -148,9 +148,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateLanguage")]
-        public async Task<IActionResult> UpdateLanguage(Guid installationId, Language language)
+        public async Task<IActionResult> UpdateLanguage(Guid installationId, int language)
         {
             try
             {
@@ -158,7 +159,10 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (user == null)
                     return StatusCode(401);
 
-                await _userDeviceService.UpdateLanguageAsync(user.Id, installationId, language).ConfigureAwait(false);
+                if (!Enum.IsDefined(typeof(Language), language))
+                    return StatusCode(405);
+
+                await _userDeviceService.UpdateLanguageAsync(user.Id, installationId, (Language)language).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
