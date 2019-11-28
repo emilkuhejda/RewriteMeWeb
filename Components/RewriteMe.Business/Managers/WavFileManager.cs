@@ -6,8 +6,8 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
+using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Managers;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 

@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
@@ -19,13 +21,12 @@ using RewriteMe.WebApi.Security;
 using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
 using RewriteMe.WebApi.Utils;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace RewriteMe.WebApi
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment environment)
+        public Startup(IWebHostEnvironment environment)
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("AppSettings.json", optional: false)
@@ -37,11 +38,28 @@ namespace RewriteMe.WebApi
 
         public IConfiguration Configuration { get; }
 
+        public ILifetimeScope AutofacContainer { get; private set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c => c.Conventions.Add(new ApiExplorerGroupPerVersionConvention())).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(c =>
+            {
+                c.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
+                c.EnableEndpointRouting = false;
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    Constants.CorsPolicy,
+                    builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
 
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -50,14 +68,13 @@ namespace RewriteMe.WebApi
             services.AddApiVersioning();
             services.AddSwaggerGen(configuration =>
             {
-                configuration.SwaggerDoc("v1", new Info
+                configuration.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Voicipher API",
                     Version = "v1"
                 });
 
                 configuration.EnableAnnotations();
-                configuration.OperationFilter<FormFileSwaggerFilter>();
                 configuration.CustomSchemaIds(type =>
                 {
                     var returnedValue = type.Name;
@@ -67,15 +84,28 @@ namespace RewriteMe.WebApi
                     return returnedValue;
                 });
 
-                configuration.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                configuration.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = "header",
+                    In = ParameterLocation.Header,
                     Description = "Please enter into field the word 'Bearer' following by space and JWT",
                     Name = "Authorization",
-                    Type = "apiKey"
+                    Type = SecuritySchemeType.ApiKey
                 });
 
-                configuration.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> { { "Bearer", Enumerable.Empty<string>() } });
+                configuration.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.AddHangfire(configuration =>
@@ -116,12 +146,19 @@ namespace RewriteMe.WebApi
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            return Bootstrapper.BootstrapRuntime(services);
+            services.AddOptions();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new ApplicationModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
             var appSettings = appSettingsSection.Get<AppSettings>();
 
@@ -163,17 +200,13 @@ namespace RewriteMe.WebApi
                 }
             });
 
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors(Constants.CorsPolicy);
 
             app.MigrateDatabase();
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
-            app.UseSwagger();
+            app.UseSwagger(c => c.SerializeAsV2 = true);
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
             app.UseMvcWithDefaultRoute();

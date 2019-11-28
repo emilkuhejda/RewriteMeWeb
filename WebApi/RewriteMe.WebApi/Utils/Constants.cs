@@ -9,5 +9,7 @@
         public static string AzureAdPolicy { get; } = "AzureAdPolicy";
 
         public static string HangfireAccessToken { get; } = "HangfireAccessToken";
+
+        public static string CorsPolicy { get; } = "CorsPolicy";
     }
 }

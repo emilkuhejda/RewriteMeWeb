@@ -11,16 +11,16 @@ namespace RewriteMe.WebApi.Services
         private const string UploadedFilesDirectory = "uploaded";
         private const string TranscriptionsDirectory = "transcriptions";
 
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FileAccessService(IHostingEnvironment hostingEnvironment)
+        public FileAccessService(IWebHostEnvironment webHostEnvironment)
         {
-            _hostingEnvironment = hostingEnvironment;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public string GetRootPath()
         {
-            var rootDirectoryPath = Path.Combine(_hostingEnvironment.WebRootPath, UploadedFilesDirectory);
+            var rootDirectoryPath = Path.Combine(_webHostEnvironment.WebRootPath, UploadedFilesDirectory);
             if (!Directory.Exists(rootDirectoryPath))
                 Directory.CreateDirectory(rootDirectoryPath);
 

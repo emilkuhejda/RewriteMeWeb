@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace RewriteMe.WebApi.Security
 {
-    public class AuthenticationFilterProvider : DefaultFilterProvider
+    internal class AuthenticationFilterProvider : DefaultFilterProvider
     {
         private readonly FilterProviderOption[] _options;
 
