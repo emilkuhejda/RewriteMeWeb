@@ -7,6 +7,6 @@ export class CommonVariables {
     public static AccessTokenKey: string = "access.token";
     public static B2CSuccessCallbackToken: string = "b2c.success.callback.token"
     public static ApiUriDevelopment: string = "https://localhost:44357/";
-    public static ApiUriProduction: string = "https://rewrite-me.com/";
+    public static ApiUriProduction: string = "https://voicipher.com/";
     public static DefaultLanguage: Language = 1;
 }
