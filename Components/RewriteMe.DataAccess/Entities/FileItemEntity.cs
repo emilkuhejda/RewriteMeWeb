@@ -26,6 +26,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public string OriginalContentType { get; set; }
 
+        public StorageSetting Storage { get; set; }
+
         public TimeSpan TotalTime { get; set; }
 
         public TimeSpan TranscribedTime { get; set; }

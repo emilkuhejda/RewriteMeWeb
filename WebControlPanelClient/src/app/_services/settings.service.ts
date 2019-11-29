@@ -15,6 +15,10 @@ export class SettingsService {
         return this.http.get<string>(this.routingService.getStorageSettingUri());
     }
 
+    getDatabaseBackupSetting(): Observable<boolean> {
+        return this.http.get<boolean>(this.routingService.getDatabaseBackupSettingUri());
+    }
+
     getNotificationsSetting(): Observable<boolean> {
         return this.http.get<boolean>(this.routingService.getNotificationsSettingUri());
     }
@@ -24,6 +28,13 @@ export class SettingsService {
         params = params.append('storageSetting', storageSetting);
 
         return this.http.put(this.routingService.getChangeStorageUri(), null, { params: params });
+    }
+
+    changeDatabaseBackupSettings(isEnabled: boolean): Observable<any> {
+        let params = new HttpParams();
+        params = params.append('isEnabled', String(isEnabled));
+
+        return this.http.put(this.routingService.getChangeDatabaseBackupSettingsUri(), null, { params: params });
     }
 
     changeNotificationsSetting(isEnabled: boolean): Observable<any> {

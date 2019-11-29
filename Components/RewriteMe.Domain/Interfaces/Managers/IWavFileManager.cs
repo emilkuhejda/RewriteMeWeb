@@ -9,6 +9,6 @@ namespace RewriteMe.Domain.Interfaces.Managers
     {
         Task RunConversionToWavAsync(FileItem fileItem, Guid userId);
 
-        Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(Guid fileItemId, TimeSpan remainingTime);
+        Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(FileItem fileItem, TimeSpan remainingTime);
     }
 }

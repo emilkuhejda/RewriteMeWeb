@@ -15,29 +15,35 @@ namespace RewriteMe.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "3.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.AdministratorEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("PasswordHash")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Username")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -48,16 +54,21 @@ namespace RewriteMe.DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("LogLevel");
+                    b.Property<int>("LogLevel")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -69,35 +80,45 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.BillingPurchaseEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AutoRenewing");
+                    b.Property<bool>("AutoRenewing")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ConsumptionState")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("Platform")
                         .IsRequired()
+                        .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
                     b.Property<string>("ProductId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("PurchaseId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PurchaseState")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("PurchaseToken")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("TransactionDateUtc");
+                    b.Property<DateTime>("TransactionDateUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -109,19 +130,24 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.ContactFormEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
                     b.Property<string>("Message")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
                     b.HasKey("Id");
@@ -132,13 +158,17 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.CurrentUserSubscriptionEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateUpdatedUtc");
+                    b.Property<DateTime>("DateUpdatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan>("Time");
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -151,51 +181,72 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ApplicationId");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreated");
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateProcessedUtc");
+                    b.Property<DateTime?>("DateProcessedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateUpdatedUtc");
+                    b.Property<DateTime>("DateUpdatedUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
-                    b.Property<bool>("IsDeleted");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsPermanentlyDeleted");
+                    b.Property<bool>("IsPermanentlyDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Language")
+                        .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
                     b.Property<string>("OriginalContentType")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("OriginalSourceFileName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
-                    b.Property<int>("RecognitionState");
+                    b.Property<int>("RecognitionState")
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceFileName")
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
-                    b.Property<TimeSpan>("TotalTime");
+                    b.Property<int>("Storage")
+                        .HasColumnType("int");
 
-                    b.Property<TimeSpan>("TranscribedTime");
+                    b.Property<TimeSpan>("TotalTime")
+                        .HasColumnType("time");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<TimeSpan>("TranscribedTime")
+                        .HasColumnType("time");
 
-                    b.Property<bool>("WasCleaned");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("WasCleaned")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -207,16 +258,21 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemSourceEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FileItemId");
+                    b.Property<Guid>("FileItemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("OriginalSource")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<byte[]>("Source");
+                    b.Property<byte[]>("Source")
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
@@ -229,21 +285,28 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.InformationMessageEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CampaignName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DatePublishedUtc");
+                    b.Property<DateTime?>("DatePublishedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateUpdatedUtc");
+                    b.Property<DateTime?>("DateUpdatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("UserId");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("WasOpened");
+                    b.Property<bool>("WasOpened")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -255,9 +318,10 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.InternalValueEntity", b =>
                 {
                     b.Property<string>("Key")
-                        .ValueGeneratedOnAdd();
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.HasKey("Key");
@@ -268,25 +332,33 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.LanguageVersionEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("InformationMessageId");
+                    b.Property<Guid>("InformationMessageId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Language");
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .IsRequired()
+                        .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);
 
-                    b.Property<bool>("SentOnAndroid");
+                    b.Property<bool>("SentOnAndroid")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("SentOnOsx");
+                    b.Property<bool>("SentOnOsx")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
                     b.HasKey("Id");
@@ -299,11 +371,14 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -315,13 +390,17 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.SpeechResultEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DisplayText");
+                    b.Property<string>("DisplayText")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RecognizedAudioSampleId");
+                    b.Property<Guid>("RecognizedAudioSampleId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<TimeSpan>("TotalTime");
+                    b.Property<TimeSpan>("TotalTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -333,30 +412,43 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Alternatives")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ApplicationId");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateUpdatedUtc");
+                    b.Property<DateTime>("DateUpdatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan>("EndTime");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
-                    b.Property<Guid>("FileItemId");
+                    b.Property<Guid>("FileItemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SourceFileName")
-                        .IsRequired()
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
-                    b.Property<TimeSpan>("StartTime");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
-                    b.Property<TimeSpan>("TotalTime");
+                    b.Property<int>("Storage")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserTranscript");
+                    b.Property<TimeSpan>("TotalTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("UserTranscript")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -368,14 +460,18 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemSourceEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FileItemId");
+                    b.Property<Guid>("FileItemId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Source")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
@@ -387,21 +483,28 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserDeviceEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateRegisteredUtc");
+                    b.Property<DateTime>("DateRegisteredUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<Guid>("InstallationId");
+                    b.Property<Guid>("InstallationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InstalledVersionNumber")
                         .IsRequired()
+                        .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
-                    b.Property<int>("Language");
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
 
-                    b.Property<int>("RuntimePlatform");
+                    b.Property<int>("RuntimePlatform")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -413,20 +516,25 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateRegisteredUtc");
+                    b.Property<DateTime>("DateRegisteredUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("FamilyName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("GivenName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.HasKey("Id");
@@ -437,17 +545,23 @@ namespace RewriteMe.DataAccess.Migrations
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserSubscriptionEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ApplicationId");
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreatedUtc");
+                    b.Property<DateTime>("DateCreatedUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("Operation");
+                    b.Property<int>("Operation")
+                        .HasColumnType("int");
 
-                    b.Property<TimeSpan>("Time");
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("time");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -469,7 +583,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("BillingPurchases")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.CurrentUserSubscriptionEntity", b =>
@@ -477,7 +592,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithOne("CurrentUserSubscription")
                         .HasForeignKey("RewriteMe.DataAccess.Entities.CurrentUserSubscriptionEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemEntity", b =>
@@ -485,7 +601,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("FileItems")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.FileItemSourceEntity", b =>
@@ -493,7 +610,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithOne("FileItemSource")
                         .HasForeignKey("RewriteMe.DataAccess.Entities.FileItemSourceEntity", "FileItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.InformationMessageEntity", b =>
@@ -509,7 +627,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.InformationMessageEntity", "InformationMessage")
                         .WithMany("LanguageVersions")
                         .HasForeignKey("InformationMessageId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", b =>
@@ -517,7 +636,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("RecognizedAudioSamples")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.SpeechResultEntity", b =>
@@ -525,7 +645,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.RecognizedAudioSampleEntity", "RecognizedAudioSample")
                         .WithMany("SpeechResults")
                         .HasForeignKey("RecognizedAudioSampleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemEntity", b =>
@@ -533,7 +654,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithMany("TranscribeItems")
                         .HasForeignKey("FileItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.TranscribeItemSourceEntity", b =>
@@ -541,7 +663,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.FileItemEntity", "FileItem")
                         .WithMany("TranscribeItemSources")
                         .HasForeignKey("FileItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserDeviceEntity", b =>
@@ -549,7 +672,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("UserDevices")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.UserSubscriptionEntity", b =>
@@ -557,7 +681,8 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
                         .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

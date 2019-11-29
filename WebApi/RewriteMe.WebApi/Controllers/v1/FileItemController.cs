@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Enums;
@@ -31,12 +31,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     {
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
+        private readonly IInternalValueService _internalValueService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
 
         public FileItemController(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
+            IInternalValueService internalValueService,
             IApplicationLogService applicationLogService,
             ISpeechRecognitionManager speechRecognitionManager,
             IUserService userService)
@@ -44,6 +46,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
+            _internalValueService = internalValueService;
             _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
         }
@@ -176,12 +179,13 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)
                 {
-                    Directory.Delete(uploadedFile.DirectoryPath, true);
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
                     return StatusCode(415);
                 }
 
                 var dateUpdated = DateTime.UtcNow;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
                 var fileItem = new FileItem
                 {
                     Id = fileItemId,
@@ -192,6 +196,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     Language = language,
                     OriginalSourceFileName = uploadedFile.FileName,
                     OriginalContentType = file.ContentType,
+                    Storage = storageSetting,
                     TotalTime = totalTime.Value,
                     DateCreated = dateCreated,
                     DateUpdatedUtc = dateUpdated
@@ -200,11 +205,21 @@ namespace RewriteMe.WebApi.Controllers.V1
                 try
                 {
                     await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-                    await _fileItemSourceService.AddFileItemSourceAsync(fileItem).ConfigureAwait(false);
+
+                    if (storageSetting == StorageSetting.Database ||
+                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
+                    {
+                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
+                    }
+
+                    if (storageSetting == StorageSetting.Database)
+                    {
+                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+                    }
                 }
                 catch (DbUpdateException ex)
                 {
-                    Directory.Delete(uploadedFile.DirectoryPath, true);
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 

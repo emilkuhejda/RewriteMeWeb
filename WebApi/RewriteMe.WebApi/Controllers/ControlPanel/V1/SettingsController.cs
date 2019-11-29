@@ -47,10 +47,26 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             try
             {
-                var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-                var storageSetting = readSourceFromDatabase ? StorageSetting.Database : StorageSetting.Disk;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
                 return Ok(storageSetting);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpGet("database-backup")]
+        public async Task<IActionResult> GetDatabaseBackupSetting()
+        {
+            try
+            {
+                var isDatabaseBackupEnabled = await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false);
+
+                return Ok(isDatabaseBackupEnabled);
             }
             catch (Exception ex)
             {
@@ -82,7 +98,24 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             try
             {
-                await _internalValueService.UpdateValueAsync(InternalValues.ReadSourceFromDatabase, storageSetting == StorageSetting.Database).ConfigureAwait(false);
+                await _internalValueService.UpdateValueAsync(InternalValues.StorageSetting, storageSetting).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPut("change-database-backup")]
+        public async Task<IActionResult> ChangeDatabaseBackupSettings(bool isEnabled)
+        {
+            try
+            {
+                await _internalValueService.UpdateValueAsync(InternalValues.IsDatabaseBackupEnabled, isEnabled).ConfigureAwait(false);
 
                 return Ok();
             }
