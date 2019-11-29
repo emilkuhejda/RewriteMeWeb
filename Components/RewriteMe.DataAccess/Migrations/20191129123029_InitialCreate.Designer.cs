@@ -10,8 +10,8 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191129122241_UpdateDatabaseModel")]
-    partial class UpdateDatabaseModel
+    [Migration("20191129123029_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
