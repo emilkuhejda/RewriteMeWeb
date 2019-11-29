@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RewriteMe.DataAccess.Migrations
@@ -71,7 +70,7 @@ namespace RewriteMe.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<Guid>(nullable: true),
                     LogLevel = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: false),
@@ -148,6 +147,7 @@ namespace RewriteMe.DataAccess.Migrations
                     OriginalSourceFileName = table.Column<string>(maxLength: 100, nullable: false),
                     SourceFileName = table.Column<string>(maxLength: 100, nullable: true),
                     OriginalContentType = table.Column<string>(maxLength: 100, nullable: false),
+                    Storage = table.Column<int>(nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),
                     TranscribedTime = table.Column<TimeSpan>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
@@ -285,7 +285,8 @@ namespace RewriteMe.DataAccess.Migrations
                     ApplicationId = table.Column<Guid>(nullable: false),
                     Alternatives = table.Column<string>(nullable: false),
                     UserTranscript = table.Column<string>(nullable: true),
-                    SourceFileName = table.Column<string>(maxLength: 100, nullable: false),
+                    SourceFileName = table.Column<string>(maxLength: 255, nullable: true),
+                    Storage = table.Column<int>(nullable: false),
                     StartTime = table.Column<TimeSpan>(nullable: false),
                     EndTime = table.Column<TimeSpan>(nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),

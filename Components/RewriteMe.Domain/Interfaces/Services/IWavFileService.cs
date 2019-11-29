@@ -7,9 +7,9 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IWavFileService
     {
-        (string outputFilePath, string fileName) CopyWavAsync(FileItem fileItem, string inputFilePath);
+        (string outputFilePath, string fileName) CopyWavAsync(string directoryPath, string inputFilePath);
 
-        Task<(string outputFilePath, string fileName)> ConvertToWavAsync(FileItem fileItem, string inputFilePath);
+        Task<(string outputFilePath, string fileName)> ConvertToWavAsync(string directoryPath, string inputFilePath);
 
         Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime);
     }

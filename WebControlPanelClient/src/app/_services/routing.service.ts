@@ -115,6 +115,14 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/settings/change-storage/";
     }
 
+    getDatabaseBackupSettingUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/database-backup/";
+    }
+
+    getChangeDatabaseBackupSettingsUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/change-database-backup/";
+    }
+
     getNotificationsSettingUri(): string {
         return this.getApiUri() + "api/v1/control-panel/settings/notifications-setting/";
     }

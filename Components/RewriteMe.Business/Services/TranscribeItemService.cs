@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using RewriteMe.Business.Configuration;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
@@ -11,18 +11,15 @@ namespace RewriteMe.Business.Services
 {
     public class TranscribeItemService : ITranscribeItemService
     {
-        private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly ITranscribeItemSourceRepository _transcribeItemSourceRepository;
 
         public TranscribeItemService(
-            IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             ITranscribeItemRepository transcribeItemRepository,
             ITranscribeItemSourceRepository transcribeItemSourceRepository)
         {
-            _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _transcribeItemRepository = transcribeItemRepository;
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
@@ -34,18 +31,20 @@ namespace RewriteMe.Business.Services
             if (transcribeItem == null)
                 return null;
 
-            var readSourceFromDatabase = await _internalValueService.GetValueAsync(InternalValues.ReadSourceFromDatabase).ConfigureAwait(false);
-            if (readSourceFromDatabase)
-            {
-                var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
-                return transcribeItemSource?.Source;
-            }
+            if (transcribeItem.Storage == StorageSetting.Database)
+                return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
 
             var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
             if (File.Exists(sourcePath))
                 return await File.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
 
-            return null;
+            return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
+        }
+
+        private async Task<byte[]> GetTranscribeItemSourceAsync(Guid transcribeItemId)
+        {
+            var transcribeItemSource = await _transcribeItemSourceRepository.GetAsync(transcribeItemId).ConfigureAwait(false);
+            return transcribeItemSource?.Source;
         }
 
         public async Task<TranscribeItem> GetAsync(Guid transcribeItemId)

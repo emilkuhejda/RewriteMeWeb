@@ -8,7 +8,9 @@ using Google.Cloud.Speech.V1;
 using Grpc.Auth;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
@@ -17,15 +19,18 @@ namespace RewriteMe.Business.Services
 {
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
+        private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public SpeechRecognitionService(
+            IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
+            _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
@@ -49,11 +54,12 @@ namespace RewriteMe.Business.Services
         public async Task<IEnumerable<TranscribeItem>> RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files)
         {
             var speechClient = CreateSpeechClient();
+            var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
             var task = new List<Task<TranscribeItem>>();
             foreach (var file in files)
             {
-                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file));
+                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file, storageSetting));
             }
 
             return await Task.WhenAll(task).ConfigureAwait(false);
@@ -72,7 +78,7 @@ namespace RewriteMe.Business.Services
             return SpeechClient.Create(channel);
         }
 
-        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile)
+        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
         {
             return await Task.Run(() =>
             {
@@ -89,10 +95,11 @@ namespace RewriteMe.Business.Services
                     .SelectMany(x => x.Alternatives)
                     .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
 
-                var sourceFileName = Guid.NewGuid().ToString();
-                var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItemId);
-                var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
-                File.Copy(wavPartialFile.Path, sourceFilePath);
+                string sourceFileName = null;
+                if (storageSetting == StorageSetting.Disk)
+                {
+                    sourceFileName = SaveFileToDisk(wavPartialFile, fileItemId);
+                }
 
                 var dateCreated = DateTime.UtcNow;
                 var transcribeItem = new TranscribeItem
@@ -102,6 +109,7 @@ namespace RewriteMe.Business.Services
                     ApplicationId = _appSettings.ApplicationId,
                     Alternatives = alternatives,
                     SourceFileName = sourceFileName,
+                    Storage = storageSetting,
                     StartTime = wavPartialFile.StartTime,
                     EndTime = wavPartialFile.EndTime,
                     TotalTime = wavPartialFile.TotalTime,
@@ -111,6 +119,16 @@ namespace RewriteMe.Business.Services
 
                 return transcribeItem;
             }).ConfigureAwait(false);
+        }
+
+        private string SaveFileToDisk(WavPartialFile wavPartialFile, Guid fileItemId)
+        {
+            var sourceFileName = Guid.NewGuid().ToString();
+            var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItemId);
+            var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
+            File.Copy(wavPartialFile.Path, sourceFilePath);
+
+            return sourceFilePath;
         }
     }
 }

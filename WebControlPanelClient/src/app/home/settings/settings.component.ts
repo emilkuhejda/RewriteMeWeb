@@ -18,9 +18,11 @@ export class SettingsComponent implements OnInit {
     loadingCleanUpForm: boolean;
     loadingDatabaseForm: boolean;
     loadingStorageSettings: boolean;
+    loadingDatabaseBackupSettings: boolean;
     loadingNotificationsSettings: boolean;
     selectedStorage: string;
     isEnabledNotifications: string;
+    isEnabledDatabaseBackup: string;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -41,6 +43,7 @@ export class SettingsComponent implements OnInit {
         });
 
         this.initializeStorageSetting();
+        this.initializeDatabaseBackupSetting();
         this.initializeNotificationsSetting();
     }
 
@@ -56,6 +59,21 @@ export class SettingsComponent implements OnInit {
             })
             .add(() => {
                 this.loadingStorageSettings = false;
+            });
+    }
+
+    private initializeDatabaseBackupSetting() {
+        this.loadingDatabaseBackupSettings = true;
+
+        this.settingsService.getDatabaseBackupSetting().subscribe(
+            isEnabled => {
+                this.isEnabledDatabaseBackup = String(isEnabled);
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            })
+            .add(() => {
+                this.loadingDatabaseBackupSettings = false;
             });
     }
 
@@ -78,6 +96,16 @@ export class SettingsComponent implements OnInit {
         this.settingsService.changeStorage(value).subscribe(
             () => {
                 this.initializeStorageSetting();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            });
+    }
+
+    public onDatabaseBackupSettingValueChange(value: boolean) {
+        this.settingsService.changeDatabaseBackupSettings(value).subscribe(
+            () => {
+                this.initializeDatabaseBackupSetting();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);

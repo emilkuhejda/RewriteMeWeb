@@ -9,16 +9,13 @@ namespace RewriteMe.Business.Services
 {
     public class FileItemSourceService : IFileItemSourceService
     {
-        private readonly IFileAccessService _fileAccessService;
         private readonly IFileItemSourceRepository _fileItemSourceRepository;
         private readonly IApplicationLogService _applicationLogService;
 
         public FileItemSourceService(
-            IFileAccessService fileAccessService,
             IFileItemSourceRepository fileItemSourceRepository,
             IApplicationLogService applicationLogService)
         {
-            _fileAccessService = fileAccessService;
             _fileItemSourceRepository = fileItemSourceRepository;
             _applicationLogService = applicationLogService;
         }
@@ -33,9 +30,8 @@ namespace RewriteMe.Business.Services
             return await _fileItemSourceRepository.HasFileItemSourceAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task AddFileItemSourceAsync(FileItem fileItem)
+        public async Task AddFileItemSourceAsync(FileItem fileItem, string fileItemPath)
         {
-            var fileItemPath = _fileAccessService.GetOriginalFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
             {
                 await _applicationLogService.ErrorAsync($"File '{fileItemPath}' was not found.").ConfigureAwait(false);
