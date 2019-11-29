@@ -210,6 +210,10 @@ namespace RewriteMe.WebApi.Controllers.V1
                         await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
                     {
                         await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
+                    }
+
+                    if (storageSetting == StorageSetting.Database)
+                    {
                         _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
                     }
                 }
