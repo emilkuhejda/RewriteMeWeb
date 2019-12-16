@@ -339,13 +339,11 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.ApplicationId = fileItem.ApplicationId;
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
+                entity.OriginalSourceFileName = fileItem.OriginalSourceFileName;
+                entity.OriginalContentType = fileItem.OriginalContentType;
+                entity.Storage = fileItem.Storage;
+                entity.TotalTime = fileItem.TotalTime;
                 entity.DateUpdatedUtc = fileItem.DateUpdatedUtc;
-
-                if (!string.IsNullOrEmpty(fileItem.FileName))
-                {
-                    entity.FileName = fileItem.FileName;
-                    entity.RecognitionState = RecognitionState.None;
-                }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
