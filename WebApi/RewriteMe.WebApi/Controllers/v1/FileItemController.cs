@@ -283,7 +283,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPost("{fileItemId}/upload")]
         [Consumes("multipart/form-data")]
-        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -339,6 +339,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
                 }
+
+                return Ok(new OkDto());
             }
             catch (DbUpdateException ex)
             {
@@ -347,6 +349,10 @@ namespace RewriteMe.WebApi.Controllers.V1
                 await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 
                 return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError);
