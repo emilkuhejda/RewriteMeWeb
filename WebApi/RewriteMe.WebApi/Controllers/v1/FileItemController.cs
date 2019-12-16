@@ -293,62 +293,65 @@ namespace RewriteMe.WebApi.Controllers.V1
         [DisableRequestSizeLimit]
         public async Task<IActionResult> UploadSourceFile(Guid fileItemId, Guid applicationId, IFormFile file)
         {
-            var user = await VerifyUserAsync().ConfigureAwait(false);
-            if (user == null)
-                return StatusCode(401);
-
-            if (file == null)
-                return BadRequest();
-
-            var fileItem = await _fileItemService.GetAsync(user.Id, fileItemId).ConfigureAwait(false);
-            if (fileItem == null)
-                return NotFound();
-
-            var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
-            var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
-
-            var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
-            if (!totalTime.HasValue)
-            {
-                _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                return StatusCode(415);
-            }
-
-            var dateUpdated = DateTime.UtcNow;
-            var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-
-            fileItem.ApplicationId = applicationId;
-            fileItem.OriginalSourceFileName = uploadedFile.FileName;
-            fileItem.OriginalContentType = file.ContentType;
-            fileItem.Storage = storageSetting;
-            fileItem.TotalTime = totalTime.Value;
-            fileItem.DateUpdatedUtc = dateUpdated;
-
             try
             {
-                await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
 
-                if (storageSetting == StorageSetting.Database ||
-                    await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
-                {
-                    await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
-                }
+                if (file == null)
+                    return BadRequest();
 
-                if (storageSetting == StorageSetting.Database)
+                var fileItem = await _fileItemService.GetAsync(user.Id, fileItemId).ConfigureAwait(false);
+                if (fileItem == null)
+                    return NotFound();
+
+                var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+
+                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
+                if (!totalTime.HasValue)
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+
+                    return StatusCode(415);
+                }
+
+                var dateUpdated = DateTime.UtcNow;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+
+                fileItem.ApplicationId = applicationId;
+                fileItem.OriginalSourceFileName = uploadedFile.FileName;
+                fileItem.OriginalContentType = file.ContentType;
+                fileItem.Storage = storageSetting;
+                fileItem.TotalTime = totalTime.Value;
+                fileItem.DateUpdatedUtc = dateUpdated;
+
+                try
+                {
+                    await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
+
+                    if (storageSetting == StorageSetting.Database ||
+                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
+                    {
+                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
+                    }
+
+                    if (storageSetting == StorageSetting.Database)
+                    {
+                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+
+                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
+
+                    return BadRequest();
                 }
 
                 return Ok(new OkDto());
-            }
-            catch (DbUpdateException ex)
-            {
-                _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
-
-                return BadRequest();
             }
             catch (Exception ex)
             {
