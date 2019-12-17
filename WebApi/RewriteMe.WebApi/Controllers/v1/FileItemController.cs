@@ -199,6 +199,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
@@ -268,7 +269,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 
-                    return BadRequest();
+                    return Conflict();
                 }
 
                 return Ok(fileItem.ToDto());
@@ -287,6 +288,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadSourceFile")]
@@ -348,7 +350,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 
-                    return BadRequest();
+                    return Conflict();
                 }
 
                 return Ok(new OkDto());
