@@ -146,7 +146,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
-        public async Task<ActionResult> UpdateUserTranscript([FromForm] UpdateTranscribeItem updateTranscribeItem)
+        public async Task<ActionResult> UpdateUserTranscript(UpdateTranscribeItemModel updateTranscribeItemModel)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(401);
 
                 var dateUpdated = DateTime.UtcNow;
-                await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItem.TranscribeItemId, updateTranscribeItem.Transcript, dateUpdated, updateTranscribeItem.ApplicationId).ConfigureAwait(false);
+                await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItemModel.TranscribeItemId, updateTranscribeItemModel.Transcript, dateUpdated, updateTranscribeItemModel.ApplicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto(dateUpdated));
             }
