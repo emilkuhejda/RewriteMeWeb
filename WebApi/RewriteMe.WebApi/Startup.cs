@@ -206,7 +206,7 @@ namespace RewriteMe.WebApi
             app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
-            app.UseSwagger(c => c.SerializeAsV2 = true);
+            app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Voicipher API v1"));
 
             app.UseMvcWithDefaultRoute();
