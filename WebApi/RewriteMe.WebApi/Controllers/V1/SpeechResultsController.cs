@@ -45,7 +45,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
-        public async Task<IActionResult> Create([FromForm] CreateSpeechResultModel createSpeechResultModel)
+        public async Task<IActionResult> Create(CreateSpeechResultModel createSpeechResultModel)
         {
             try
             {

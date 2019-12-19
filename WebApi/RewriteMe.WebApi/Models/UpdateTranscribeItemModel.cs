@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RewriteMe.WebApi.Models
 {
-    public class UpdateTranscribeItem
+    public class UpdateTranscribeItemModel
     {
         [Required]
         public Guid TranscribeItemId { get; set; }

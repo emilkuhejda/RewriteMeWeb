@@ -148,12 +148,58 @@ namespace RewriteMe.WebApi.Controllers.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
+        [HttpPost("create")]
+        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "CreateFileItem")]
+        public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
+        {
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
+
+                if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
+                    return StatusCode(406);
+
+                var fileItemId = Guid.NewGuid();
+                var dateUpdated = DateTime.UtcNow;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+                var fileItem = new FileItem
+                {
+                    Id = fileItemId,
+                    UserId = user.Id,
+                    ApplicationId = applicationId,
+                    Name = name,
+                    FileName = fileName,
+                    Language = language,
+                    Storage = storageSetting,
+                    DateCreated = dateCreated,
+                    DateUpdatedUtc = dateUpdated
+                };
+
+                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+
+                return Ok(fileItem.ToDto());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
@@ -223,10 +269,91 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
 
-                    return BadRequest();
+                    return Conflict();
                 }
 
                 return Ok(fileItem.ToDto());
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPost("{fileItemId}/upload")]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "UploadSourceFile")]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadSourceFile(Guid fileItemId, Guid applicationId, IFormFile file)
+        {
+            try
+            {
+                var user = await VerifyUserAsync().ConfigureAwait(false);
+                if (user == null)
+                    return StatusCode(401);
+
+                if (file == null)
+                    return BadRequest();
+
+                var fileItem = await _fileItemService.GetAsync(user.Id, fileItemId).ConfigureAwait(false);
+                if (fileItem == null)
+                    return NotFound();
+
+                var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+
+                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
+                if (!totalTime.HasValue)
+                {
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+
+                    return StatusCode(415);
+                }
+
+                var dateUpdated = DateTime.UtcNow;
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+
+                fileItem.ApplicationId = applicationId;
+                fileItem.OriginalSourceFileName = uploadedFile.FileName;
+                fileItem.OriginalContentType = file.ContentType;
+                fileItem.Storage = storageSetting;
+                fileItem.TotalTime = totalTime.Value;
+                fileItem.DateUpdatedUtc = dateUpdated;
+
+                try
+                {
+                    await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
+
+                    if (storageSetting == StorageSetting.Database ||
+                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
+                    {
+                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
+                    }
+
+                    if (storageSetting == StorageSetting.Database)
+                    {
+                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+
+                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
+
+                    return Conflict();
+                }
+
+                return Ok(new OkDto());
             }
             catch (Exception ex)
             {
