@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20191129123029_InitialCreate")]
+    [Migration("20191219184758_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,12 +219,10 @@ namespace RewriteMe.DataAccess.Migrations
                         .HasMaxLength(150);
 
                     b.Property<string>("OriginalContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("OriginalSourceFileName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
