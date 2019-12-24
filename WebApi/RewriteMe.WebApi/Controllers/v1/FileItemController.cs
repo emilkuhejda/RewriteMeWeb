@@ -501,8 +501,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
@@ -522,7 +522,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                 var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(user.Id).ConfigureAwait(false);
                 if (!canRunRecognition)
-                    return StatusCode(409);
+                    return StatusCode(405);
 
                 await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
 
