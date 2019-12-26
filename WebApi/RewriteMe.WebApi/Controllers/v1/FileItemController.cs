@@ -284,7 +284,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPost("{fileItemId}/upload")]
         [Consumes("multipart/form-data")]
-        [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -353,7 +353,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return Conflict();
                 }
 
-                return Ok(new OkDto());
+                return Ok(fileItem.ToDto());
             }
             catch (Exception ex)
             {
