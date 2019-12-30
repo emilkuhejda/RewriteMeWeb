@@ -10,13 +10,13 @@ export class MsalService {
     identityChanged: EventEmitter<Identity> = new EventEmitter();
 
     private tenantConfig = {
-        tenant: "rewriteme.onmicrosoft.com",
+        tenant: "voicipher.onmicrosoft.com",
         clientID: '94983a85-6f54-4940-849e-55eaeb1d89dd',
-        signUpSignIn: "B2C_1_RewriteMe_SignUp_SignIn",
-        editProfile: "B2C_1_RewriteMe_Edit",
-        passwordReset: "B2C_1_RewriteMe_Password_Reset",
+        signUpSignIn: "B2C_1_Voicipher_SignUp_SignIn",
+        editProfile: "B2C_1_Voicipher_Edit",
+        passwordReset: "B2C_1_Voicipher_Password_Reset",
         authorityBase: "https://login.microsoftonline.com/tfp/",
-        b2cScopes: ["https://rewriteme.onmicrosoft.com/access-api/user_impersonation"]
+        b2cScopes: ["https://voicipher.onmicrosoft.com/access-api/user_impersonation"]
     };
 
     private authority = this.tenantConfig.authorityBase + this.tenantConfig.tenant + "/" + this.tenantConfig.signUpSignIn;
