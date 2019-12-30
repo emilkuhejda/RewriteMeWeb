@@ -21,7 +21,7 @@ export class TranscribeItemService {
         return this.http.get(this.routingService.getTranscribeAudioUri() + transcribeItemId, { responseType: 'blob' });
     }
 
-    updateTranscript(formData) {
-        return this.http.put(this.routingService.getUpdateTranscriptUri(), formData);
+    updateTranscript(data: any) {
+        return this.http.put(this.routingService.getUpdateTranscriptUri(), data);
     }
 }

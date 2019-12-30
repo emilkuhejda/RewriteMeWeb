@@ -13,7 +13,7 @@ export class FileItem {
     public sourceFileName: string;
     public sourcePath: string;
     public originalContentType: string;
-    public totalTime: string;
+    public totalTime: any;
     public transcribedTime: string;
     public dateCreated: Date;
     public dateProcessed: Date;

@@ -67,12 +67,13 @@ export class DetailFileComponent implements OnInit {
     update(transcribeItem: TranscribeItemViewModel) {
         transcribeItem.isLoading = true;
 
-        let formData = new FormData();
-        formData.append("transcribeItemId", transcribeItem.transcribeItemId);
-        formData.append("applicationId", CommonVariables.ApplicationId);
-        formData.append("transcript", transcribeItem.userTranscript);
+        let data = {
+            transcribeItemId: transcribeItem.transcribeItemId,
+            applicationId: CommonVariables.ApplicationId,
+            transcript: transcribeItem.userTranscript
+        };
 
-        this.transcribeItemService.updateTranscript(formData).subscribe(
+        this.transcribeItemService.updateTranscript(data).subscribe(
             () => { },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);

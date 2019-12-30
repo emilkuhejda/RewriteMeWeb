@@ -4,7 +4,7 @@ export class UserSubscription {
     id: string;
     userId: string;
     applicationId: string;
-    time: string;
+    time: any;
     operation: SubscriptionOperation;
     dateCreated: Date;
 }
