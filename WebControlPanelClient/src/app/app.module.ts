@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/confirmation-dialog.component';
 import { SubscriptionOperationPipe } from './_pipes/subscription-operation.pipe';
+import { ToTimeStringPipe } from './_pipes/to-time-string.pipe';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { SubscriptionOperationPipe } from './_pipes/subscription-operation.pipe'
         TruncatePipe,
         routingComponents,
         RecognitionStatePipe,
-        SubscriptionOperationPipe
+        SubscriptionOperationPipe,
+        ToTimeStringPipe
     ],
     imports: [
         BrowserModule,

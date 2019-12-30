@@ -44,7 +44,7 @@
                     <tr *ngFor="let userSubscription of userSubscriptions">
                         <td>{{userSubscription.id}}</td>
                         <td>{{userSubscription.applicationId}}</td>
-                        <td>{{userSubscription.time}}</td>
+                        <td>{{userSubscription.time|toTimeString}}</td>
                         <td>{{userSubscription.operation|subscriptionOperation}}</td>
                         <td>{{userSubscription.dateCreated|date:'dd.MM.yyy HH:mm:ss'}}</td>
                     </tr>
