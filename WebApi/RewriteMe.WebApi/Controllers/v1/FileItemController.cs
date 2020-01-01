@@ -251,12 +251,15 @@ namespace RewriteMe.WebApi.Controllers.V1
                 try
                 {
                     await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
 
                     if (storageSetting == StorageSetting.Database ||
                         await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
                     {
                         await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
                     }
+
+                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, applicationId).ConfigureAwait(false);
 
                     if (storageSetting == StorageSetting.Database)
                     {
@@ -319,6 +322,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode(415);
                 }
 
+                await _fileItemService.UpdateUploadStatus(fileItemId, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
+
                 var dateUpdated = DateTime.UtcNow;
                 var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
@@ -338,6 +343,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                     {
                         await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
                     }
+
+                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, applicationId).ConfigureAwait(false);
 
                     if (storageSetting == StorageSetting.Database)
                     {
