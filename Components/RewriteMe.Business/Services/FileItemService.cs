@@ -147,6 +147,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateTranscribedTimeAsync(fileItemId, transcribedTime).ConfigureAwait(false);
         }
 
+        public async Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
+        {
+            await _fileItemRepository.UpdateUploadStatus(fileItemId, uploadStatus, applicationId).ConfigureAwait(false);
+        }
+
         public async Task RemoveSourceFileAsync(FileItem fileItem)
         {
             await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
