@@ -44,6 +44,16 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
+                var entities = await context.FileItemSources
+                    .Where(x => x.FileItemId == fileItemSource.FileItemId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (entities.Any())
+                {
+                    context.FileItemSources.RemoveRange(entities);
+                }
+
                 await context.FileItemSources.AddAsync(fileItemSource.ToFileItemSourceEntity()).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
