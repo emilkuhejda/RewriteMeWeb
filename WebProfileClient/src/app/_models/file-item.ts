@@ -1,4 +1,5 @@
 import { RecognitionState } from '../_enums/recognition-state';
+import { UploadStatus } from '../_enums/upload-status';
 
 export class FileItem {
     public id: string;
@@ -6,6 +7,7 @@ export class FileItem {
     public fileName: string;
     public language: string;
     public recognitionState: RecognitionState;
+    public uploadStatus: UploadStatus;
     public totalTime: string;
     public transcribedTime: string;
     public dateCreated: Date;
