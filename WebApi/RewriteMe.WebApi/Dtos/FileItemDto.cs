@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.WebApi.Dtos
 {
@@ -19,6 +20,9 @@ namespace RewriteMe.WebApi.Dtos
 
         [Required]
         public string RecognitionStateString { get; set; }
+
+        [Required]
+        public UploadStatus UploadStatus { get; set; }
 
         [Required]
         public long TotalTimeTicks { get; set; }

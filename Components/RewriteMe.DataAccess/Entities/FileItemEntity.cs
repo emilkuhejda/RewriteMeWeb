@@ -28,6 +28,8 @@ namespace RewriteMe.DataAccess.Entities
 
         public StorageSetting Storage { get; set; }
 
+        public UploadStatus UploadStatus { get; set; }
+
         public TimeSpan TotalTime { get; set; }
 
         public TimeSpan TranscribedTime { get; set; }

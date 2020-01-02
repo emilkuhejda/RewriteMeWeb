@@ -148,6 +148,7 @@ namespace RewriteMe.DataAccess.Migrations
                     SourceFileName = table.Column<string>(maxLength: 100, nullable: true),
                     OriginalContentType = table.Column<string>(maxLength: 100, nullable: true),
                     Storage = table.Column<int>(nullable: false),
+                    UploadStatus = table.Column<int>(nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),
                     TranscribedTime = table.Column<TimeSpan>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),

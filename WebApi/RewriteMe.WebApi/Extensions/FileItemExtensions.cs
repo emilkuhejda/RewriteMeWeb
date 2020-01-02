@@ -14,6 +14,7 @@ namespace RewriteMe.WebApi.Extensions
                 FileName = fileItem.FileName,
                 Language = fileItem.Language,
                 RecognitionStateString = fileItem.RecognitionState.ToString(),
+                UploadStatus = fileItem.UploadStatus,
                 TotalTimeTicks = fileItem.TotalTime.Ticks,
                 TranscribedTimeTicks = fileItem.TranscribedTime.Ticks,
                 DateCreated = fileItem.DateCreated,

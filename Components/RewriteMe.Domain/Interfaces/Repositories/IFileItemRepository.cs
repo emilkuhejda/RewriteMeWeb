@@ -57,6 +57,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
+        Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId);
+
         Task MarkAsCleanedAsync(Guid fileItemId);
 
         Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);

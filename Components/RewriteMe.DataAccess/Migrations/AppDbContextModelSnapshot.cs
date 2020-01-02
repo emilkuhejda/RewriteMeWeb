@@ -15,7 +15,7 @@ namespace RewriteMe.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.1")
+                .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -239,6 +239,9 @@ namespace RewriteMe.DataAccess.Migrations
 
                     b.Property<TimeSpan>("TranscribedTime")
                         .HasColumnType("time");
+
+                    b.Property<int>("UploadStatus")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
