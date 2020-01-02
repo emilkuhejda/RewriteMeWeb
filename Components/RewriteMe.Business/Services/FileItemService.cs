@@ -253,6 +253,8 @@ namespace RewriteMe.Business.Services
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
 
+            CleanDirectory(uploadDirectoryPath);
+
             await File.WriteAllBytesAsync(uploadedFilePath, uploadedFileSource).ConfigureAwait(false);
 
             return new UploadedFile
@@ -261,6 +263,12 @@ namespace RewriteMe.Business.Services
                 FilePath = uploadedFilePath,
                 DirectoryPath = uploadDirectoryPath
             };
+        }
+
+        private void CleanDirectory(string path)
+        {
+            Directory.Delete(path, true);
+            Directory.CreateDirectory(path);
         }
 
         public void CleanUploadedData(string directoryPath)
