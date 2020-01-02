@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RewriteMe.Business.Utils;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -92,16 +93,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     await UserService.AddAsync(user).ConfigureAwait(false);
                     await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
 
-                    var userSubscription = new UserSubscription
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = user.Id,
-                        ApplicationId = registrationUserModel.ApplicationId,
-                        Time = TimeSpan.FromMinutes(5),
-                        Operation = SubscriptionOperation.Add,
-                        DateCreatedUtc = DateTime.UtcNow
-                    };
-
+                    var userSubscription = SubscriptionHelper.CreateFreeSubscription(user.Id, registrationUserModel.ApplicationId);
                     await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
                     await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
 
