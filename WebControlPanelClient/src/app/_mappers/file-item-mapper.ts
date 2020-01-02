@@ -1,5 +1,7 @@
 import { FileItem } from '../_models/file-item';
 import { RecognitionState } from '../_enums/recognition-state';
+import { StorageSetting } from '../_enums/storage-setting';
+import { UploadStatus } from '../_enums/upload-status';
 
 export class FileItemMapper {
     public static convertAll(data): FileItem[] {
@@ -30,6 +32,8 @@ export class FileItemMapper {
         fileItem.sourceFileName = data.sourceFileName;
         fileItem.sourcePath = data.sourcePath;
         fileItem.originalContentType = data.originalContentType;
+        fileItem.storage = <StorageSetting>data.storage;
+        fileItem.uploadStatus = <UploadStatus>data.uploadStatus;
         fileItem.totalTime = data.totalTime;
         fileItem.transcribedTime = data.transcribedTime;
         fileItem.dateCreated = new Date(data.dateCreated);

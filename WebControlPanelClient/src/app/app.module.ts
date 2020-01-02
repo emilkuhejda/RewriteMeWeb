@@ -21,6 +21,8 @@ import { RecognitionStatePipe } from './_pipes/recognition-state.pipe';
 import { ConfirmationDialogComponent } from './_directives/confirmation-dialog/confirmation-dialog.component';
 import { SubscriptionOperationPipe } from './_pipes/subscription-operation.pipe';
 import { ToTimeStringPipe } from './_pipes/to-time-string.pipe';
+import { StorageSettingPipe } from './_pipes/storage-setting.pipe';
+import { UploadStatusPipe } from './_pipes/upload-status.pipe';
 
 @NgModule({
     declarations: [
@@ -35,7 +37,9 @@ import { ToTimeStringPipe } from './_pipes/to-time-string.pipe';
         routingComponents,
         RecognitionStatePipe,
         SubscriptionOperationPipe,
-        ToTimeStringPipe
+        ToTimeStringPipe,
+        StorageSettingPipe,
+        UploadStatusPipe
     ],
     imports: [
         BrowserModule,
