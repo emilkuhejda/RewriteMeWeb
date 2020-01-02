@@ -3,7 +3,7 @@
     public enum UploadStatus
     {
         None = 0,
-        InProgress,
-        Completed
+        InProgress = 1,
+        Completed = 2
     }
 }
