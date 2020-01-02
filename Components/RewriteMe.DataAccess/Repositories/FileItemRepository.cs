@@ -407,6 +407,22 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.ApplicationId = applicationId;
+                entity.UploadStatus = uploadStatus;
+                entity.DateUpdatedUtc = DateTime.UtcNow;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task MarkAsCleanedAsync(Guid fileItemId)
         {
             using (var context = _contextFactory.Create())

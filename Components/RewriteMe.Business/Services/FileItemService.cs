@@ -147,6 +147,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateTranscribedTimeAsync(fileItemId, transcribedTime).ConfigureAwait(false);
         }
 
+        public async Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
+        {
+            await _fileItemRepository.UpdateUploadStatus(fileItemId, uploadStatus, applicationId).ConfigureAwait(false);
+        }
+
         public async Task RemoveSourceFileAsync(FileItem fileItem)
         {
             await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
@@ -248,6 +253,8 @@ namespace RewriteMe.Business.Services
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
 
+            CleanDirectory(uploadDirectoryPath);
+
             await File.WriteAllBytesAsync(uploadedFilePath, uploadedFileSource).ConfigureAwait(false);
 
             return new UploadedFile
@@ -256,6 +263,12 @@ namespace RewriteMe.Business.Services
                 FilePath = uploadedFilePath,
                 DirectoryPath = uploadDirectoryPath
             };
+        }
+
+        private void CleanDirectory(string path)
+        {
+            Directory.Delete(path, true);
+            Directory.CreateDirectory(path);
         }
 
         public void CleanUploadedData(string directoryPath)
