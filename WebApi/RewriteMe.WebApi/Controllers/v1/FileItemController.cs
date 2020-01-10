@@ -203,7 +203,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
-        [DisableRequestSizeLimit]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        [RequestSizeLimit(int.MaxValue)]
         public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
             try
@@ -295,7 +296,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadSourceFile")]
-        [DisableRequestSizeLimit]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        [RequestSizeLimit(int.MaxValue)]
         public async Task<IActionResult> UploadSourceFile(Guid fileItemId, Guid applicationId, IFormFile file)
         {
             try
@@ -376,7 +378,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
-        [DisableRequestSizeLimit]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
             try
