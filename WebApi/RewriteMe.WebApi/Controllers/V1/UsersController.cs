@@ -95,7 +95,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     var userSubscription = SubscriptionHelper.CreateFreeSubscription(user.Id, registrationUserModel.ApplicationId);
                     await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
-                    await _applicationLogService.InfoAsync($"Basic 5 minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
+                    await _applicationLogService.InfoAsync($"Basic {userSubscription.Time.TotalMinutes} minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
 
                     remainingTime = userSubscription.Time;
                 }
