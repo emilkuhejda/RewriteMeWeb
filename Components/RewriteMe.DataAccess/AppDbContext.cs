@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess
 
         public DbSet<FileItemSourceEntity> FileItemSources { get; set; }
 
-        public DbSet<UploadedChunkEntity> UploadedChunk { get; set; }
+        public DbSet<UploadedChunkEntity> UploadedChunks { get; set; }
 
         public DbSet<TranscribeItemSourceEntity> TranscribeItemSources { get; set; }
 
