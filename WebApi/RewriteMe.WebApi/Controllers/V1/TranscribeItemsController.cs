@@ -21,16 +21,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class TranscribeItemsController : RewriteMeControllerBase
+    public class TranscribeItemsController : ControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IApplicationLogService _applicationLogService;
 
         public TranscribeItemsController(
             ITranscribeItemService transcribeItemService,
-            IApplicationLogService applicationLogService,
-            IUserService userService)
-            : base(userService)
+            IApplicationLogService applicationLogService)
         {
             _transcribeItemService = transcribeItemService;
             _applicationLogService = applicationLogService;
@@ -45,11 +43,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var transcribeItems = await _transcribeItemService.GetAllForUserAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
                 return Ok(transcribeItems.Select(x => x.ToDto()));
             }
@@ -70,10 +65,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
 
                 return Ok(transcribeItems.Select(x => x.ToDto()));
@@ -96,10 +87,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
                 if (source == null)
                     return NotFound();
@@ -123,10 +110,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
                 if (source == null)
                     return NotFound();
@@ -150,10 +133,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 var dateUpdated = DateTime.UtcNow;
                 await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItemModel.TranscribeItemId, updateTranscribeItemModel.Transcript, dateUpdated, updateTranscribeItemModel.ApplicationId).ConfigureAwait(false);
 
