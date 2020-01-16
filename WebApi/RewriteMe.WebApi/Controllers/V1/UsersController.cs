@@ -24,21 +24,22 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize]
     [ApiController]
-    public class UsersController : RewriteMeControllerBase
+    public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IUserDeviceService _userDeviceService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public UsersController(
+            IUserService userService,
             IUserSubscriptionService userSubscriptionService,
             IUserDeviceService userDeviceService,
             IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options,
-            IUserService userService)
-            : base(userService)
+            IOptions<AppSettings> options)
         {
+            _userService = userService;
             _userSubscriptionService = userSubscriptionService;
             _userDeviceService = userDeviceService;
             _applicationLogService = applicationLogService;
@@ -56,13 +57,14 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var user = await _userService.GetAsync(userId).ConfigureAwait(false);
                 if (user == null)
                     return StatusCode(401);
 
                 user.GivenName = updateUserModel.GivenName;
                 user.FamilyName = updateUserModel.FamilyName;
-                await UserService.UpdateAsync(user).ConfigureAwait(false);
+                await _userService.UpdateAsync(user).ConfigureAwait(false);
 
                 return Ok(user.ToIdentityDto());
             }
@@ -86,11 +88,11 @@ namespace RewriteMe.WebApi.Controllers.V1
                 await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{registrationUserModel.Id}'.").ConfigureAwait(false);
 
                 TimeSpan remainingTime;
-                var user = await UserService.GetAsync(registrationUserModel.Id).ConfigureAwait(false);
+                var user = await _userService.GetAsync(registrationUserModel.Id).ConfigureAwait(false);
                 if (user == null)
                 {
                     user = registrationUserModel.ToUser();
-                    await UserService.AddAsync(user).ConfigureAwait(false);
+                    await _userService.AddAsync(user).ConfigureAwait(false);
                     await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
 
                     var userSubscription = SubscriptionHelper.CreateFreeSubscription(user.Id, registrationUserModel.ApplicationId);
@@ -147,14 +149,11 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 if (!Enum.IsDefined(typeof(Language), language))
                     return StatusCode(405);
 
-                await _userDeviceService.UpdateLanguageAsync(user.Id, installationId, (Language)language).ConfigureAwait(false);
+                await _userDeviceService.UpdateLanguageAsync(userId, installationId, (Language)language).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }

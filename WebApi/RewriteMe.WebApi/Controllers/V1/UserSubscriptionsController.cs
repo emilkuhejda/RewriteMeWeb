@@ -12,6 +12,7 @@ using RewriteMe.Domain.Recording;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -21,7 +22,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class UserSubscriptionsController : RewriteMeControllerBase
+    public class UserSubscriptionsController : ControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
@@ -32,9 +33,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             IUserSubscriptionService userSubscriptionService,
             IRecognizedAudioSampleService recognizedAudioSampleService,
             IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options,
-            IUserService userService)
-            : base(userService)
+            IOptions<AppSettings> options)
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
@@ -53,18 +52,15 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                if (user.Id != billingPurchase.UserId)
+                var userId = HttpContext.User.GetNameIdentifier();
+                if (userId != billingPurchase.UserId)
                     return StatusCode(409);
 
                 var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
                 if (userSubscription == null)
                     return StatusCode(406);
 
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
                 return Ok(timeSpanWrapperDto);
@@ -86,20 +82,17 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 var recognizedAudioSample = new RecognizedAudioSample
                 {
                     Id = Guid.NewGuid(),
-                    UserId = user.Id,
+                    UserId = userId,
                     DateCreatedUtc = DateTime.UtcNow
                 };
 
                 await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
 
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
                 var speechConfigurationDto = new SpeechConfigurationDto
                 {
                     SubscriptionKey = _appSettings.AzureSubscriptionKey,
@@ -108,7 +101,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     SubscriptionRemainingTimeTicks = remainingTime.Ticks
                 };
 
-                await _applicationLogService.InfoAsync($"User with ID='{user.Id}' retrieved speech recognition configuration: {speechConfigurationDto}.", user.Id).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"User with ID='{userId}' retrieved speech recognition configuration: {speechConfigurationDto}.", userId).ConfigureAwait(false);
 
                 return Ok(speechConfigurationDto);
             }
@@ -129,11 +122,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
                 return Ok(timeSpanWrapperDto);

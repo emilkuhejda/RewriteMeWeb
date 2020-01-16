@@ -10,6 +10,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,7 +22,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class UtilsController : RewriteMeControllerBase
+    public class UtilsController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IApplicationLogService _applicationLogService;
@@ -30,9 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         public UtilsController(
             IAuthenticationService authenticationService,
             IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options,
-            IUserService userService)
-            : base(userService)
+            IOptions<AppSettings> options)
         {
             _authenticationService = authenticationService;
             _applicationLogService = applicationLogService;
@@ -57,13 +56,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                     new Claim(ClaimTypes.Role, Role.User.ToString())
                 };
 

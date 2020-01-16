@@ -22,7 +22,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class SpeechResultsController : RewriteMeControllerBase
+    public class SpeechResultsController : ControllerBase
     {
         private readonly ISpeechResultService _speechResultService;
         private readonly IUserSubscriptionService _userSubscriptionService;
@@ -31,9 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         public SpeechResultsController(
             ISpeechResultService speechResultService,
             IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService,
-            IUserService userService)
-            : base(userService)
+            IApplicationLogService applicationLogService)
         {
             _speechResultService = speechResultService;
             _userSubscriptionService = userSubscriptionService;
@@ -49,14 +47,11 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 var speechResult = createSpeechResultModel.ToSpeechResult();
                 await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
-                await _applicationLogService.InfoAsync($"User with ID='{user.Id}' inserted speech result: {speechResult}.", user.Id).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -77,20 +72,17 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime }).ToList();
                 await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
 
                 var totalTimeTicks = speechResults.Sum(x => x.TotalTime.Ticks);
                 var totalTime = TimeSpan.FromTicks(totalTimeTicks);
-                await _userSubscriptionService.SubtractTimeAsync(user.Id, totalTime).ConfigureAwait(false);
+                await _userSubscriptionService.SubtractTimeAsync(userId, totalTime).ConfigureAwait(false);
 
-                await _applicationLogService.InfoAsync("Update speech results total time.", user.Id).ConfigureAwait(false);
+                await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
 
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(user.Id).ConfigureAwait(false);
+                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
                 return Ok(timeSpanWrapperDto);

@@ -8,6 +8,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -17,7 +18,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class LastUpdatesController : RewriteMeControllerBase
+    public class LastUpdatesController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
@@ -30,9 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
             IInformationMessageService informationMessageService,
-            IApplicationLogService applicationLogService,
-            IUserService userService)
-            : base(userService)
+            IApplicationLogService applicationLogService)
         {
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
@@ -50,15 +49,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-                var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(user.Id).ConfigureAwait(false);
-                var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-                var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
-                var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(user.Id).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+                var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
+                var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+                var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+                var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(userId).ConfigureAwait(false);
 
                 return Ok(new LastUpdatesDto
                 {
