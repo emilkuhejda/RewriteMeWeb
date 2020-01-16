@@ -27,7 +27,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class FileItemController : RewriteMeControllerBase
+    public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
@@ -40,9 +40,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
             IApplicationLogService applicationLogService,
-            ISpeechRecognitionManager speechRecognitionManager,
-            IUserService userService)
-            : base(userService)
+            ISpeechRecognitionManager speechRecognitionManager)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
@@ -60,11 +58,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var files = await _fileItemService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var files = await _fileItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
                 return Ok(files.Select(x => x.ToDto()));
             }
@@ -85,11 +80,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var ids = await _fileItemService.GetAllDeletedIdsAsync(user.Id, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
                 return Ok(ids);
             }
@@ -107,11 +99,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var fileItems = await _fileItemService.GetTemporaryDeletedFileItemsAsync(user.Id).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var fileItems = await _fileItemService.GetTemporaryDeletedFileItemsAsync(userId).ConfigureAwait(false);
 
                 return Ok(fileItems);
             }
@@ -132,11 +121,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var file = await _fileItemService.GetAsync(user.Id, fileItemId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
                 return Ok(file.ToDto());
             }
@@ -158,10 +144,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
+                var userId = HttpContext.User.GetNameIdentifier();
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                     return StatusCode(406);
 
@@ -171,7 +154,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var fileItem = new FileItem
                 {
                     Id = fileItemId,
-                    UserId = user.Id,
+                    UserId = userId,
                     ApplicationId = applicationId,
                     Name = name,
                     FileName = fileName,
@@ -209,10 +192,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 if (file == null)
                     return BadRequest();
 
@@ -233,10 +212,11 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                 var dateUpdated = DateTime.UtcNow;
                 var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = new FileItem
                 {
                     Id = fileItemId,
-                    UserId = user.Id,
+                    UserId = userId,
                     ApplicationId = applicationId,
                     Name = name,
                     FileName = fileName,
@@ -271,7 +251,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), user.Id).ConfigureAwait(false);
+                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
 
                     return Conflict();
                 }
@@ -296,17 +276,14 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
                     return StatusCode(406);
 
+                var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = new FileItem
                 {
                     Id = updateFileItemModel.FileItemId,
-                    UserId = user.Id,
+                    UserId = userId,
                     ApplicationId = updateFileItemModel.ApplicationId,
                     Name = updateFileItemModel.Name,
                     Language = updateFileItemModel.Language,
@@ -334,11 +311,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                await _fileItemService.DeleteAsync(user.Id, fileItemId, applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -359,11 +333,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                await _fileItemService.DeleteAllAsync(user.Id, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -381,11 +352,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                await _fileItemService.PermanentDeleteAllAsync(user.Id, fileItemIds, applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -403,11 +371,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                await _fileItemService.RestoreAllAsync(user.Id, fileItemIds, applicationId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -431,24 +396,21 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var fileItemExists = await _fileItemService.ExistsAsync(user.Id, fileItemId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
                 if (!fileItemExists)
                     return BadRequest();
 
                 if (!SupportedLanguages.IsSupported(language))
                     return StatusCode(406);
 
-                var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(user.Id).ConfigureAwait(false);
+                var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
                 if (!canRunRecognition)
                     return StatusCode(405);
 
                 await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
 
-                BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(user.Id, fileItemId));
+                BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
                 return Ok(new OkDto());
             }
