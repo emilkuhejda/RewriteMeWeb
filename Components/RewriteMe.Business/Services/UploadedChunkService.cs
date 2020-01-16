@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -21,9 +22,14 @@ namespace RewriteMe.Business.Services
             await _uploadedChunkRepository.AddAsync(uploadedChunk).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<UploadedChunk>> GetAllAsync(Guid fileItemId)
+        public async Task<IEnumerable<UploadedChunk>> GetAllAsync(Guid fileItemId, Guid applicationId, CancellationToken cancellationToken)
         {
-            return await _uploadedChunkRepository.GetAllAsync(fileItemId).ConfigureAwait(false);
+            return await _uploadedChunkRepository.GetAllAsync(fileItemId, applicationId, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task DeleteAsync(Guid fileItemId, Guid applicationId)
+        {
+            await _uploadedChunkRepository.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
         }
     }
 }

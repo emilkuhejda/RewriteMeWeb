@@ -11,6 +11,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = uploadedChunkEntity.Id,
                 FileItemId = uploadedChunkEntity.FileItemId,
+                ApplicationId = uploadedChunkEntity.ApplicationId,
                 Source = uploadedChunkEntity.Source,
                 Order = uploadedChunkEntity.Order,
                 DateCreatedUtc = uploadedChunkEntity.DateCreatedUtc
@@ -23,6 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             {
                 Id = uploadedChunk.Id,
                 FileItemId = uploadedChunk.FileItemId,
+                ApplicationId = uploadedChunk.ApplicationId,
                 Source = uploadedChunk.Source,
                 Order = uploadedChunk.Order,
                 DateCreatedUtc = uploadedChunk.DateCreatedUtc

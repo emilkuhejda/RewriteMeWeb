@@ -8,6 +8,8 @@ namespace RewriteMe.Domain.Transcription
 
         public Guid FileItemId { get; set; }
 
+        public Guid ApplicationId { get; set; }
+
         public byte[] Source { get; set; }
 
         public int Order { get; set; }
