@@ -20,16 +20,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class InformationMessagesController : RewriteMeControllerBase
+    public class InformationMessagesController : ControllerBase
     {
         private readonly IInformationMessageService _informationMessageService;
         private readonly IApplicationLogService _applicationLogService;
 
         public InformationMessagesController(
             IInformationMessageService informationMessageService,
-            IApplicationLogService applicationLogService,
-            IUserService userService)
-            : base(userService)
+            IApplicationLogService applicationLogService)
         {
             _informationMessageService = informationMessageService;
             _applicationLogService = applicationLogService;
@@ -44,11 +42,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var informationMessages = await _informationMessageService.GetAllAsync(user.Id, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
 
                 return Ok(informationMessages.Select(x => x.ToDto()));
             }
@@ -69,10 +64,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
                 var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
                 return Ok(informationMessage.ToDto());
             }
@@ -94,11 +85,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                var informationMessage = await _informationMessageService.MarkAsOpenedAsync(user.Id, informationMessageId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var informationMessage = await _informationMessageService.MarkAsOpenedAsync(userId, informationMessageId).ConfigureAwait(false);
                 if (informationMessage == null)
                     return BadRequest();
 
@@ -121,11 +109,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var user = await VerifyUserAsync().ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
-
-                await _informationMessageService.MarkAsOpenedAsync(user.Id, ids).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                await _informationMessageService.MarkAsOpenedAsync(userId, ids).ConfigureAwait(false);
                 return Ok(new OkDto());
             }
             catch (Exception ex)
