@@ -55,7 +55,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadChunkFile")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        public async Task<IActionResult> Upload(Guid fileItemId, int order, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
+        public async Task<IActionResult> Upload([FromRoute]Guid fileItemId, [FromRoute]int order, [FromRoute]Guid applicationId, IFormFile file, CancellationToken cancellationToken)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "SubmitChunks")]
-        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, string contentType, Guid applicationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Submit([FromRoute]Guid fileItemId, [FromRoute]int chunksCount, [FromRoute]string contentType, [FromRoute]Guid applicationId, CancellationToken cancellationToken)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "DeleteChunks")]
-        public async Task<IActionResult> DeleteChunks(Guid fileItemId, Guid applicationId)
+        public async Task<IActionResult> DeleteChunks([FromRoute]Guid fileItemId, [FromRoute]Guid applicationId)
         {
             try
             {
