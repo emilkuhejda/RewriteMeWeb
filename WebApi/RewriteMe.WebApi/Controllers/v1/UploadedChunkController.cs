@@ -167,6 +167,8 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return Conflict();
                 }
 
+                await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+
                 return Ok(fileItem.ToDto());
             }
             catch (OperationCanceledException)
