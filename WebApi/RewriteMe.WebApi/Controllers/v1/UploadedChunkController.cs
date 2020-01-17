@@ -23,7 +23,7 @@ namespace RewriteMe.WebApi.Controllers.V1
     [Produces("application/json")]
     [Authorize(Roles = nameof(Role.User))]
     [ApiController]
-    public class UploadedChunkController : RewriteMeControllerBase
+    public class UploadedChunkController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
@@ -36,9 +36,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             IFileItemSourceService fileItemSourceService,
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
-            IApplicationLogService applicationLogService,
-            IUserService userService)
-        : base(userService)
+            IApplicationLogService applicationLogService)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
