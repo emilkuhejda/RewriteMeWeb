@@ -140,7 +140,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateFileItem")]
-        public async Task<IActionResult> CreateFileItem([FromRoute]string name, [FromRoute]string language, [FromRoute]string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId)
         {
             try
             {
@@ -188,7 +188,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        public async Task<IActionResult> Upload([FromRoute]string name, [FromRoute]string language, [FromRoute]string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId, IFormFile file)
+        public async Task<IActionResult> Upload(string name, string language, string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId, IFormFile file)
         {
             try
             {
@@ -392,7 +392,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
-        public async Task<IActionResult> Transcribe([FromRoute]Guid fileItemId, [FromRoute]string language, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> Transcribe([FromRoute]Guid fileItemId, string language, [FromRoute]Guid applicationId)
         {
             try
             {
