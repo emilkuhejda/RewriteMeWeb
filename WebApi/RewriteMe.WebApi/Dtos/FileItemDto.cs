@@ -15,7 +15,6 @@ namespace RewriteMe.WebApi.Dtos
         [Required]
         public string FileName { get; set; }
 
-        [Required]
         public string Language { get; set; }
 
         [Required]

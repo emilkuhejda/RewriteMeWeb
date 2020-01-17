@@ -48,7 +48,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
-        public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, Guid applicationId)
         {
             try
             {

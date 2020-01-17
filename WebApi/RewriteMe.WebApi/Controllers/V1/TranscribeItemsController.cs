@@ -39,7 +39,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
-        public async Task<ActionResult> GetAll([FromRoute]DateTime updatedAfter, [FromRoute]Guid applicationId)
+        public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
-        public async Task<ActionResult> GetAllByFileItemId([FromRoute]Guid fileItemId)
+        public async Task<ActionResult> GetAllByFileItemId(Guid fileItemId)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
-        public async Task<ActionResult> GetAudioSource([FromRoute]Guid transcribeItemId)
+        public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
-        public async Task<ActionResult> GetAudioSourceStream([FromRoute]Guid transcribeItemId)
+        public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
             try
             {

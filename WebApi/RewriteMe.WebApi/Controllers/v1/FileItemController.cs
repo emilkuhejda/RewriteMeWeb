@@ -54,7 +54,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetFileItems")]
-        public async Task<IActionResult> Get([FromRoute]DateTime updatedAfter, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> Get(DateTime updatedAfter, Guid applicationId)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
-        public async Task<IActionResult> GetDeletedFileItemIds([FromRoute]DateTime updatedAfter, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> GetDeletedFileItemIds(DateTime updatedAfter, Guid applicationId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetFileItem")]
-        public async Task<IActionResult> Get([FromRoute]Guid fileItemId)
+        public async Task<IActionResult> Get(Guid fileItemId)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateFileItem")]
-        public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
         {
             try
             {
@@ -188,7 +188,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        public async Task<IActionResult> Upload(string name, string language, string fileName, [FromRoute]DateTime dateCreated, [FromRoute]Guid applicationId, IFormFile file)
+        public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
             try
             {
@@ -307,7 +307,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
-        public async Task<IActionResult> Delete([FromRoute]Guid fileItemId, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
             try
             {
@@ -329,7 +329,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "DeleteAllFileItems")]
-        public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
             try
             {
@@ -348,7 +348,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("permanent-delete-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             try
             {
@@ -367,7 +367,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("restore-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             try
             {
@@ -392,7 +392,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
-        public async Task<IActionResult> Transcribe([FromRoute]Guid fileItemId, string language, [FromRoute]Guid applicationId)
+        public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
             try
             {

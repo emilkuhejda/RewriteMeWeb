@@ -38,7 +38,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "GetInformationMessages")]
-        public async Task<IActionResult> GetAll([FromRoute]DateTime updatedAfter)
+        public async Task<IActionResult> GetAll(DateTime updatedAfter)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> Get([FromRoute]Guid informationMessageId)
+        public async Task<IActionResult> Get(Guid informationMessageId)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "MarkMessageAsOpened")]
-        public async Task<IActionResult> MarkAsOpened([FromRoute]Guid informationMessageId)
+        public async Task<IActionResult> MarkAsOpened(Guid informationMessageId)
         {
             try
             {

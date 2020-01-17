@@ -145,7 +145,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateLanguage")]
-        public async Task<IActionResult> UpdateLanguage([FromRoute]Guid installationId, [FromRoute]int language)
+        public async Task<IActionResult> UpdateLanguage(Guid installationId, int language)
         {
             try
             {
