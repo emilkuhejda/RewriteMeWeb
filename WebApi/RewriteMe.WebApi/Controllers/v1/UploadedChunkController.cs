@@ -136,7 +136,6 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                 fileItem.ApplicationId = applicationId;
                 fileItem.OriginalSourceFileName = uploadedFile.FileName;
-                fileItem.OriginalContentType = "contentType";
                 fileItem.Storage = storageSetting;
                 fileItem.TotalTime = totalTime.Value;
                 fileItem.DateUpdatedUtc = dateUpdated;

@@ -51,6 +51,22 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UploadedChunk",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    FileItemId = table.Column<Guid>(nullable: false),
+                    ApplicationId = table.Column<Guid>(nullable: false),
+                    Source = table.Column<byte[]>(nullable: false),
+                    Order = table.Column<int>(nullable: false),
+                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UploadedChunk", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -146,7 +162,6 @@ namespace RewriteMe.DataAccess.Migrations
                     RecognitionState = table.Column<int>(nullable: false),
                     OriginalSourceFileName = table.Column<string>(maxLength: 100, nullable: true),
                     SourceFileName = table.Column<string>(maxLength: 100, nullable: true),
-                    OriginalContentType = table.Column<string>(maxLength: 100, nullable: true),
                     Storage = table.Column<int>(nullable: false),
                     UploadStatus = table.Column<int>(nullable: false),
                     TotalTime = table.Column<TimeSpan>(nullable: false),
@@ -471,6 +486,9 @@ namespace RewriteMe.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "TranscribeItemSource");
+
+            migrationBuilder.DropTable(
+                name: "UploadedChunk");
 
             migrationBuilder.DropTable(
                 name: "UserDevice");

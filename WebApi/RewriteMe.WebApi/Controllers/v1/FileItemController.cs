@@ -222,7 +222,6 @@ namespace RewriteMe.WebApi.Controllers.V1
                     FileName = fileName,
                     Language = language,
                     OriginalSourceFileName = uploadedFile.FileName,
-                    OriginalContentType = file.ContentType,
                     Storage = storageSetting,
                     TotalTime = totalTime.Value,
                     DateCreated = dateCreated,

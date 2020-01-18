@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
@@ -73,16 +72,7 @@ namespace RewriteMe.Business.Managers
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new InvalidOperationException(nameof(filePath));
 
-                (string outputFilePath, string fileName) sourceFile;
-                if (!fileItem.IsOriginalWav())
-                {
-                    sourceFile = await _wavFileService.ConvertToWavAsync(directoryPath, filePath).ConfigureAwait(false);
-                }
-                else
-                {
-                    sourceFile = _wavFileService.CopyWavAsync(directoryPath, filePath);
-                }
-
+                var sourceFile = await _wavFileService.ConvertToWavAsync(directoryPath, filePath).ConfigureAwait(false);
                 var recognitionState = RecognitionState.Prepared;
                 var source = await File.ReadAllBytesAsync(sourceFile.outputFilePath).ConfigureAwait(false);
                 await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);

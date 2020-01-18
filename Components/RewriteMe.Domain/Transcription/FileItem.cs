@@ -38,8 +38,6 @@ namespace RewriteMe.Domain.Transcription
             ? string.Empty
             : Path.Combine(Id.ToString(), SourceFileName);
 
-        public string OriginalContentType { get; set; }
-
         public StorageSetting Storage { get; set; }
 
         public UploadStatus UploadStatus { get; set; }
