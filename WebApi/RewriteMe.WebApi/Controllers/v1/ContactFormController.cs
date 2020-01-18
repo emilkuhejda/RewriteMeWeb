@@ -36,7 +36,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateContactForm")]
-        public async Task<IActionResult> Create([FromBody] ContactFormModel contactFormModel)
+        public async Task<IActionResult> Create([FromBody]ContactFormModel contactFormModel)
         {
             try
             {

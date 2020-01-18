@@ -42,7 +42,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(typeof(AdministratorDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticationModel authenticationModel)
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticationModel authenticationModel)
         {
             try
             {
