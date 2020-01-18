@@ -13,5 +13,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<IEnumerable<UploadedChunk>> GetAllAsync(Guid fileItemId, Guid applicationId, CancellationToken cancellationToken);
 
         Task DeleteAsync(Guid fileItemId, Guid applicationId);
+
+        Task CleanOutdatedChunksAsync();
     }
 }

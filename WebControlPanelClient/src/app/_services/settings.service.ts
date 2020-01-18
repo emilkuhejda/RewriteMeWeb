@@ -47,4 +47,8 @@ export class SettingsService {
     cleanUp(data: any): Observable<any> {
         return this.http.put<any>(this.routingService.getCleanUpUri(), data);
     }
+
+    cleanOutdatedChunks(): Observable<any> {
+        return this.http.delete<any>(this.routingService.getCleanOutdatedChunksUri());
+    }
 }

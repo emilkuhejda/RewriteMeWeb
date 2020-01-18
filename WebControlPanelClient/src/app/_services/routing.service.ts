@@ -135,6 +135,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/settings/clean-up/";
     }
 
+    getCleanOutdatedChunksUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/clean-chunks/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;
