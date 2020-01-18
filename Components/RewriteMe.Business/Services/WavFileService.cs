@@ -12,16 +12,6 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
-        public (string outputFilePath, string fileName) CopyWavAsync(string directoryPath, string inputFilePath)
-        {
-            var fileName = Guid.NewGuid().ToString();
-            var outputFilePath = Path.Combine(directoryPath, fileName);
-
-            File.Copy(inputFilePath, outputFilePath, true);
-
-            return (outputFilePath, fileName);
-        }
-
         public async Task<(string outputFilePath, string fileName)> ConvertToWavAsync(string directoryPath, string inputFilePath)
         {
             var fileName = Guid.NewGuid().ToString();
