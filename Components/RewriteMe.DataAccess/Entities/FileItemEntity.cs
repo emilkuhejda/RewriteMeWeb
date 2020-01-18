@@ -24,8 +24,6 @@ namespace RewriteMe.DataAccess.Entities
 
         public string SourceFileName { get; set; }
 
-        public string OriginalContentType { get; set; }
-
         public StorageSetting Storage { get; set; }
 
         public UploadStatus UploadStatus { get; set; }

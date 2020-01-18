@@ -340,7 +340,6 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.Name = fileItem.Name;
                 entity.Language = fileItem.Language;
                 entity.OriginalSourceFileName = fileItem.OriginalSourceFileName;
-                entity.OriginalContentType = fileItem.OriginalContentType;
                 entity.Storage = fileItem.Storage;
                 entity.TotalTime = fileItem.TotalTime;
                 entity.DateUpdatedUtc = fileItem.DateUpdatedUtc;
