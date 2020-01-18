@@ -53,7 +53,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateUser")]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel updateUserModel)
+        public async Task<IActionResult> UpdateUser([FromBody]UpdateUserModel updateUserModel)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "RegisterUser")]
-        public async Task<IActionResult> Register([FromBody] RegistrationUserModel registrationUserModel)
+        public async Task<IActionResult> Register([FromBody]RegistrationUserModel registrationUserModel)
         {
             try
             {

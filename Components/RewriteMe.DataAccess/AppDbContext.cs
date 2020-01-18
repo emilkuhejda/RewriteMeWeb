@@ -24,6 +24,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<FileItemSourceEntity> FileItemSources { get; set; }
 
+        public DbSet<UploadedChunkEntity> UploadedChunks { get; set; }
+
         public DbSet<TranscribeItemSourceEntity> TranscribeItemSources { get; set; }
 
         public DbSet<RecognizedAudioSampleEntity> RecognizedAudioSamples { get; set; }
@@ -62,6 +64,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new FileItemSourceEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UploadedChunkEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TranscribeItemEntityConfiguration());
             modelBuilder.ApplyConfiguration(new TranscribeItemSourceEntityConfiguration());
             modelBuilder.ApplyConfiguration(new RecognizedAudioSampleEntityConfiguration());

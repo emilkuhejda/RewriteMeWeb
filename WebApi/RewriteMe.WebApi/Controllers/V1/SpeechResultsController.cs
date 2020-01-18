@@ -73,7 +73,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 var userId = HttpContext.User.GetNameIdentifier();
-                var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = x.TotalTime }).ToList();
+                var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = TimeSpan.FromTicks(x.Ticks) }).ToList();
                 await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
 
                 var totalTimeTicks = speechResults.Sum(x => x.TotalTime.Ticks);

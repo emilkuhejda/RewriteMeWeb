@@ -9,6 +9,6 @@ namespace RewriteMe.WebApi.Models
         public Guid Id { get; set; }
 
         [Required]
-        public TimeSpan TotalTime { get; set; }
+        public long Ticks { get; set; }
     }
 }

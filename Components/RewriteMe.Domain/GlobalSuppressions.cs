@@ -32,5 +32,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Array is OK", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.TranscribeItemSource.Source")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.Domain.Notifications.NotificationContent.CustomData")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.Domain.Messages.InformationMessage.LanguageVersions")]
-[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.FileItemSource.OriginalSource")]
-[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.FileItemSource.Source")]
+[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Array is OK", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.FileItemSource.OriginalSource")]
+[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Array is OK", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.FileItemSource.Source")]
+[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Array is OK", Scope = "member", Target = "~P:RewriteMe.Domain.Transcription.UploadedChunk.Source")]
