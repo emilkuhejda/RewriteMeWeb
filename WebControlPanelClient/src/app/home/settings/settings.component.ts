@@ -187,7 +187,7 @@ export class SettingsComponent implements OnInit {
             () => {
                 this.databaseFormControls.password.setValue('');
                 this.databaseFormSubmitted = false;
-                this.alertService.success('Database was successfully reseted.');
+                this.alertService.success("Database was successfully reseted.");
             },
             (err: ErrorResponse) => {
                 let error = err.message;
@@ -219,7 +219,7 @@ export class SettingsComponent implements OnInit {
             () => {
                 this.databaseFormControls.password.setValue('');
                 this.databaseFormSubmitted = false;
-                this.alertService.success('Database was successfully deleted.');
+                this.alertService.success("Database was successfully deleted.");
             },
             (err: ErrorResponse) => {
                 let error = err.message;
@@ -231,6 +231,16 @@ export class SettingsComponent implements OnInit {
             })
             .add(() => {
                 this.loadingDatabaseForm = false;
+            });
+    }
+
+    cleanUpOutdatedFiles() {
+        this.settingsService.cleanOutdatedChunks().subscribe(
+            () => {
+                this.alertService.success("Outdated files was deleted.");
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
             });
     }
 }
