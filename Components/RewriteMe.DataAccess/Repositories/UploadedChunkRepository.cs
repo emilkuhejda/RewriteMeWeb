@@ -54,5 +54,23 @@ namespace RewriteMe.DataAccess.Repositories
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
+
+        public async Task CleanOutdatedChunksAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var dateToCompare = DateTime.UtcNow.AddDays(-1);
+                var entities = await context.UploadedChunks
+                    .Where(x => x.DateCreatedUtc < dateToCompare)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!entities.Any())
+                    return;
+
+                context.RemoveRange(entities);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
     }
 }

@@ -31,5 +31,10 @@ namespace RewriteMe.Business.Services
         {
             await _uploadedChunkRepository.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
         }
+
+        public async Task CleanOutdatedChunksAsync()
+        {
+            await _uploadedChunkRepository.CleanOutdatedChunksAsync().ConfigureAwait(false);
+        }
     }
 }

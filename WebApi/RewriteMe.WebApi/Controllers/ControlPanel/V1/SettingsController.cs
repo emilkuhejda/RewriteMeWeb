@@ -25,6 +25,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         private readonly IInternalValueService _internalValueService;
         private readonly ICleanUpService _cleanUpService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
@@ -32,12 +33,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             IInternalValueService internalValueService,
             ICleanUpService cleanUpService,
             IAuthenticationService authenticationService,
+            IUploadedChunkService uploadedChunkService,
             IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _internalValueService = internalValueService;
             _cleanUpService = cleanUpService;
             _authenticationService = authenticationService;
+            _uploadedChunkService = uploadedChunkService;
             _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
@@ -155,6 +158,23 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 
                 var deleteBefore = DateTime.UtcNow.AddDays(-cleanUpSettingsModel.DeleteBeforeInDays);
                 BackgroundJob.Enqueue(() => _cleanUpService.CleanUp(deleteBefore, cleanUpSettingsModel.CleanUpSettings, cleanUpSettingsModel.ForceCleanUp));
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpDelete("clean-chunks")]
+        public async Task<IActionResult> CleanOutdatedChunks()
+        {
+            try
+            {
+                await _uploadedChunkService.CleanOutdatedChunksAsync().ConfigureAwait(false);
 
                 return Ok();
             }
