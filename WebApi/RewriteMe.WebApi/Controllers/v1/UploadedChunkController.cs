@@ -11,7 +11,6 @@ using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -43,6 +42,31 @@ namespace RewriteMe.WebApi.Controllers.V1
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _applicationLogService = applicationLogService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(StorageConfiguration), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetChunksStorageConfiguration")]
+        public async Task<IActionResult> GetChunksStorageConfiguration()
+        {
+            try
+            {
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
+                var configuration = new StorageConfiguration
+                {
+                    StorageSetting = storageSetting
+                };
+
+                return Ok(configuration);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPost]
@@ -90,7 +114,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "SubmitChunks")]
-        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, StorageSetting storageSetting, Guid applicationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, StorageSetting chunksStorageSetting, Guid applicationId, CancellationToken cancellationToken)
         {
             try
             {
