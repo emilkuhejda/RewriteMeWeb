@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -14,6 +16,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
+using IOFile = System.IO.File;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
@@ -28,6 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IInternalValueService _internalValueService;
+        private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
 
         public UploadedChunkController(
@@ -35,12 +39,14 @@ namespace RewriteMe.WebApi.Controllers.V1
             IFileItemSourceService fileItemSourceService,
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
+            IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
+            _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
         }
 
@@ -132,8 +138,26 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (chunks.Count != chunksCount)
                     return StatusCode((int)HttpStatusCode.MethodNotAllowed);
 
-                var uploadedFileSource = chunks.OrderBy(x => x.Order).SelectMany(x => x.Source).ToArray();
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+                var uploadedFileSource = new List<byte>();
+                foreach (var chunk in chunks.OrderBy(x => x.Order))
+                {
+                    byte[] bytes;
+                    if (chunksStorageSetting == StorageSetting.Database)
+                    {
+                        bytes = chunk.Source;
+                    }
+                    else
+                    {
+                        var directoryPath = _fileAccessService.GetChunksFileItemStoragePath(chunk.FileItemId);
+                        var filePath = Path.Combine(directoryPath, chunk.Id.ToString());
+                        bytes = await IOFile.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    uploadedFileSource.AddRange(bytes);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource.ToArray()).ConfigureAwait(false);
 
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)
