@@ -55,7 +55,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadChunkFile")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        public async Task<IActionResult> Upload(Guid fileItemId, int order, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
+        public async Task<IActionResult> Upload(Guid fileItemId, int order, StorageSetting storageSetting, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
         {
             try
             {
@@ -65,17 +65,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var uploadedFileSource = await file.GetBytesAsync(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var uploadedChunk = new UploadedChunk
-                {
-                    Id = Guid.NewGuid(),
-                    FileItemId = fileItemId,
-                    ApplicationId = applicationId,
-                    Source = uploadedFileSource,
-                    Order = order,
-                    DateCreatedUtc = DateTime.UtcNow
-                };
-
-                await _uploadedChunkService.AddAsync(uploadedChunk).ConfigureAwait(false);
+                await _uploadedChunkService.SaveAsync(fileItemId, order, storageSetting, applicationId, uploadedFileSource, cancellationToken).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -100,7 +90,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "SubmitChunks")]
-        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, Guid applicationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, StorageSetting storageSetting, Guid applicationId, CancellationToken cancellationToken)
         {
             try
             {

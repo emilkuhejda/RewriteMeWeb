@@ -19,5 +19,9 @@ namespace RewriteMe.Domain.Interfaces.Services
         string GetTranscriptionPath(TranscribeItem transcribeItem);
 
         DirectoryInfo GetFileItemDirectoryInfo(Guid fileItemId);
+
+        string GetChunksStoragePath();
+
+        string GetChunksFileItemStoragePath(Guid fileItemId);
     }
 }
