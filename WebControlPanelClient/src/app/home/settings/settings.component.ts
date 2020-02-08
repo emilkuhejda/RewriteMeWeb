@@ -4,6 +4,7 @@ import { SettingsService } from 'src/app/_services/settings.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { StorageSetting } from 'src/app/_enums/storage-setting';
 
 @Component({
     selector: 'app-settings',
@@ -55,7 +56,7 @@ export class SettingsComponent implements OnInit {
 
         this.settingsService.getStorageSetting().subscribe(
             storageSetting => {
-                this.selectedStorage = storageSetting.toString();
+                this.selectedStorage = StorageSetting[storageSetting].toString();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
@@ -70,7 +71,7 @@ export class SettingsComponent implements OnInit {
 
         this.settingsService.getChunksStorageSetting().subscribe(
             storageSetting => {
-                this.selectedChunksStorage = storageSetting.toString();
+                this.selectedChunksStorage = StorageSetting[storageSetting].toString();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
