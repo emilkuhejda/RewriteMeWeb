@@ -139,6 +139,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     return StatusCode((int)HttpStatusCode.MethodNotAllowed);
 
                 var uploadedFileSource = new List<byte>();
+                var chunksFileItemStoragePath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
                 foreach (var chunk in chunks.OrderBy(x => x.Order))
                 {
                     byte[] bytes;
@@ -148,8 +149,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                     }
                     else
                     {
-                        var directoryPath = _fileAccessService.GetChunksFileItemStoragePath(chunk.FileItemId);
-                        var filePath = Path.Combine(directoryPath, chunk.Id.ToString());
+                        var filePath = Path.Combine(chunksFileItemStoragePath, chunk.Id.ToString());
                         bytes = await IOFile.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
                     }
 
@@ -203,8 +203,10 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     return Conflict();
                 }
-
-                await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+                finally
+                {
+                    await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+                }
 
                 return Ok(fileItem.ToDto());
             }

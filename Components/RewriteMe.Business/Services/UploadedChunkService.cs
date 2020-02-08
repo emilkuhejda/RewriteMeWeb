@@ -35,7 +35,7 @@ namespace RewriteMe.Business.Services
                 DateCreatedUtc = DateTime.UtcNow
             };
 
-            if (storageSetting == StorageSetting.Database)
+            if (storageSetting == StorageSetting.Disk)
             {
                 var directoryPath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
                 var filePath = Path.Combine(directoryPath, uploadedChunk.Id.ToString());
@@ -58,6 +58,9 @@ namespace RewriteMe.Business.Services
 
         public async Task DeleteAsync(Guid fileItemId, Guid applicationId)
         {
+            var directoryPath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
+            Directory.Delete(directoryPath, true);
+
             await _uploadedChunkRepository.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
         }
 
