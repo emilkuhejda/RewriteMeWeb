@@ -96,6 +96,23 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
+        [HttpGet("chunks-storage-setting")]
+        public async Task<IActionResult> GetChunksStorageSetting()
+        {
+            try
+            {
+                var chunksStorageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
+
+                return Ok(chunksStorageSetting);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InsufficientStorage);
+        }
+
         [HttpPut("change-storage")]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {
@@ -136,6 +153,23 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             try
             {
                 await _internalValueService.UpdateValueAsync(InternalValues.IsProgressNotificationsEnabled, isEnabled).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPut("change-chunks-storage")]
+        public async Task<IActionResult> ChangeChunksStorage(StorageSetting storageSetting)
+        {
+            try
+            {
+                await _internalValueService.UpdateValueAsync(InternalValues.ChunksStorageSetting, storageSetting).ConfigureAwait(false);
 
                 return Ok();
             }

@@ -131,6 +131,14 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/settings/change-notifications-setting/";
     }
 
+    getChunksStorageSettingUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/chunks-storage-setting/";
+    }
+
+    getChangeChunksStorageUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/change-chunks-storage/";
+    }
+
     getCleanUpUri(): string {
         return this.getApiUri() + "api/v1/control-panel/settings/clean-up/";
     }
