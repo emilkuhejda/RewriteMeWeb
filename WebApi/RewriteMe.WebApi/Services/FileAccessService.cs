@@ -10,6 +10,7 @@ namespace RewriteMe.WebApi.Services
     {
         private const string UploadedFilesDirectory = "uploaded";
         private const string TranscriptionsDirectory = "transcriptions";
+        private const string ChunksDirectory = "chunks";
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -67,6 +68,26 @@ namespace RewriteMe.WebApi.Services
             var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
 
             return new DirectoryInfo(directoryPath);
+        }
+
+        public string GetChunksStoragePath()
+        {
+            var rootDirectory = GetRootPath();
+            var directoryPath = Path.Combine(rootDirectory, ChunksDirectory);
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            return directoryPath;
+        }
+
+        public string GetChunksFileItemStoragePath(Guid fileItemId)
+        {
+            var rootDirectory = GetChunksStoragePath();
+            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            return directoryPath;
         }
     }
 }

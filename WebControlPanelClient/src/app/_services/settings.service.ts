@@ -15,12 +15,23 @@ export class SettingsService {
         return this.http.get<string>(this.routingService.getStorageSettingUri());
     }
 
+    getChunksStorageSetting(): Observable<string> {
+        return this.http.get<string>(this.routingService.getChunksStorageSettingUri());
+    }
+
     getDatabaseBackupSetting(): Observable<boolean> {
         return this.http.get<boolean>(this.routingService.getDatabaseBackupSettingUri());
     }
 
     getNotificationsSetting(): Observable<boolean> {
         return this.http.get<boolean>(this.routingService.getNotificationsSettingUri());
+    }
+
+    changeChunksStorage(storageSetting: string): Observable<any> {
+        let params = new HttpParams();
+        params = params.append('storageSetting', storageSetting);
+
+        return this.http.put(this.routingService.getChangeChunksStorageUri(), null, { params: params });
     }
 
     changeStorage(storageSetting: string): Observable<any> {

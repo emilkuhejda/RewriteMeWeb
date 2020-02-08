@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -11,10 +13,10 @@ using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
+using IOFile = System.IO.File;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
@@ -29,6 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IInternalValueService _internalValueService;
+        private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
 
         public UploadedChunkController(
@@ -36,13 +39,40 @@ namespace RewriteMe.WebApi.Controllers.V1
             IFileItemSourceService fileItemSourceService,
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
+            IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
+            _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(StorageConfiguration), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(OperationId = "GetChunksStorageConfiguration")]
+        public async Task<IActionResult> GetChunksStorageConfiguration()
+        {
+            try
+            {
+                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
+                var configuration = new StorageConfiguration
+                {
+                    StorageSetting = storageSetting
+                };
+
+                return Ok(configuration);
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpPost]
@@ -55,7 +85,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadChunkFile")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
-        public async Task<IActionResult> Upload(Guid fileItemId, int order, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
+        public async Task<IActionResult> Upload(Guid fileItemId, int order, StorageSetting storageSetting, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
         {
             try
             {
@@ -65,17 +95,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var uploadedFileSource = await file.GetBytesAsync(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var uploadedChunk = new UploadedChunk
-                {
-                    Id = Guid.NewGuid(),
-                    FileItemId = fileItemId,
-                    ApplicationId = applicationId,
-                    Source = uploadedFileSource,
-                    Order = order,
-                    DateCreatedUtc = DateTime.UtcNow
-                };
-
-                await _uploadedChunkService.AddAsync(uploadedChunk).ConfigureAwait(false);
+                await _uploadedChunkService.SaveAsync(fileItemId, order, storageSetting, applicationId, uploadedFileSource, cancellationToken).ConfigureAwait(false);
 
                 return Ok(new OkDto());
             }
@@ -100,7 +120,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [SwaggerOperation(OperationId = "SubmitChunks")]
-        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, Guid applicationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, StorageSetting chunksStorageSetting, Guid applicationId, CancellationToken cancellationToken)
         {
             try
             {
@@ -118,8 +138,26 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (chunks.Count != chunksCount)
                     return StatusCode((int)HttpStatusCode.MethodNotAllowed);
 
-                var uploadedFileSource = chunks.OrderBy(x => x.Order).SelectMany(x => x.Source).ToArray();
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+                var uploadedFileSource = new List<byte>();
+                var chunksFileItemStoragePath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
+                foreach (var chunk in chunks.OrderBy(x => x.Order))
+                {
+                    byte[] bytes;
+                    if (chunksStorageSetting == StorageSetting.Database)
+                    {
+                        bytes = chunk.Source;
+                    }
+                    else
+                    {
+                        var filePath = Path.Combine(chunksFileItemStoragePath, chunk.Id.ToString());
+                        bytes = await IOFile.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    uploadedFileSource.AddRange(bytes);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource.ToArray()).ConfigureAwait(false);
 
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)
@@ -165,8 +203,10 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     return Conflict();
                 }
-
-                await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+                finally
+                {
+                    await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+                }
 
                 return Ok(fileItem.ToDto());
             }
