@@ -4,6 +4,7 @@ import { SettingsService } from 'src/app/_services/settings.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { StorageSetting } from 'src/app/_enums/storage-setting';
 
 @Component({
     selector: 'app-settings',
@@ -18,9 +19,11 @@ export class SettingsComponent implements OnInit {
     loadingCleanUpForm: boolean;
     loadingDatabaseForm: boolean;
     loadingStorageSettings: boolean;
+    loadingChunksStorageSettings: boolean;
     loadingDatabaseBackupSettings: boolean;
     loadingNotificationsSettings: boolean;
     selectedStorage: string;
+    selectedChunksStorage: string;
     isEnabledNotifications: string;
     isEnabledDatabaseBackup: string;
 
@@ -43,6 +46,7 @@ export class SettingsComponent implements OnInit {
         });
 
         this.initializeStorageSetting();
+        this.initializeChunksStorageSetting();
         this.initializeDatabaseBackupSetting();
         this.initializeNotificationsSetting();
     }
@@ -52,13 +56,28 @@ export class SettingsComponent implements OnInit {
 
         this.settingsService.getStorageSetting().subscribe(
             storageSetting => {
-                this.selectedStorage = storageSetting.toString();
+                this.selectedStorage = StorageSetting[storageSetting].toString();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             })
             .add(() => {
                 this.loadingStorageSettings = false;
+            });
+    }
+
+    private initializeChunksStorageSetting() {
+        this.loadingChunksStorageSettings = true;
+
+        this.settingsService.getChunksStorageSetting().subscribe(
+            storageSetting => {
+                this.selectedChunksStorage = StorageSetting[storageSetting].toString();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            })
+            .add(() => {
+                this.loadingChunksStorageSettings = false;
             });
     }
 
@@ -96,6 +115,16 @@ export class SettingsComponent implements OnInit {
         this.settingsService.changeStorage(value).subscribe(
             () => {
                 this.initializeStorageSetting();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            });
+    }
+
+    public onChunksStorageSettingValueChange(value: string) {
+        this.settingsService.changeChunksStorage(value).subscribe(
+            () => {
+                this.initializeChunksStorageSetting();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
