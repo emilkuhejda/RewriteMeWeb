@@ -77,8 +77,8 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("mark-as-opened")]
         [ProducesResponseType(typeof(InformationMessageDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "MarkMessageAsOpened")]
         public async Task<IActionResult> MarkAsOpened(Guid informationMessageId)
