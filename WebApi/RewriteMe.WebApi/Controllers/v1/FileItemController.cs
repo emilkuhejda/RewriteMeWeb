@@ -136,8 +136,8 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPost("create")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateFileItem")]
         public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
@@ -146,7 +146,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             {
                 var userId = HttpContext.User.GetNameIdentifier();
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return StatusCode(406);
+                    return BadRequest(ErrorCode.EC3);
 
                 var fileItemId = Guid.NewGuid();
                 var dateUpdated = DateTime.UtcNow;
@@ -179,11 +179,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
@@ -193,10 +190,10 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (file == null)
-                    return BadRequest();
+                    return BadRequest(ErrorCode.EC1);
 
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return StatusCode(406);
+                    return BadRequest(ErrorCode.EC3);
 
                 var fileItemId = Guid.NewGuid();
                 var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
@@ -207,7 +204,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                    return StatusCode(415);
+                    return BadRequest(ErrorCode.EC4);
                 }
 
                 var dateUpdated = DateTime.UtcNow;
@@ -252,7 +249,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
 
-                    return Conflict();
+                    return BadRequest(ErrorCode.EC5);
                 }
 
                 return Ok(fileItem.ToDto());
@@ -267,8 +264,8 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("update")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
@@ -276,7 +273,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
-                    return StatusCode(406);
+                    return BadRequest(ErrorCode.EC3);
 
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = new FileItem
@@ -385,10 +382,8 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("transcribe")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
@@ -398,14 +393,14 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
                 if (!fileItemExists)
-                    return BadRequest();
+                    return BadRequest(ErrorCode.EC2);
 
                 if (!SupportedLanguages.IsSupported(language))
-                    return StatusCode(406);
+                    return BadRequest(ErrorCode.EC3);
 
                 var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
                 if (!canRunRecognition)
-                    return StatusCode(405);
+                    return BadRequest(ErrorCode.EC6);
 
                 await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
 
