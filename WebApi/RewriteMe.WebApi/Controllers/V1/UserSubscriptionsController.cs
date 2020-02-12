@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
@@ -63,6 +64,12 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
                 return Ok(timeSpanWrapperDto);
+            }
+            catch (DbUpdateException ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+
+                return BadRequest(ErrorCode.EC400);
             }
             catch (Exception ex)
             {
