@@ -146,7 +146,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             {
                 var userId = HttpContext.User.GetNameIdentifier();
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC3);
+                    return BadRequest(ErrorCode.EC200);
 
                 var fileItemId = Guid.NewGuid();
                 var dateUpdated = DateTime.UtcNow;
@@ -190,10 +190,10 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (file == null)
-                    return BadRequest(ErrorCode.EC1);
+                    return BadRequest(ErrorCode.EC101);
 
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC3);
+                    return BadRequest(ErrorCode.EC200);
 
                 var fileItemId = Guid.NewGuid();
                 var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
@@ -204,7 +204,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                    return BadRequest(ErrorCode.EC4);
+                    return BadRequest(ErrorCode.EC201);
                 }
 
                 var dateUpdated = DateTime.UtcNow;
@@ -249,7 +249,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
 
-                    return BadRequest(ErrorCode.EC5);
+                    return BadRequest(ErrorCode.EC400);
                 }
 
                 return Ok(fileItem.ToDto());
@@ -273,7 +273,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
-                    return BadRequest(ErrorCode.EC3);
+                    return BadRequest(ErrorCode.EC200);
 
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = new FileItem
@@ -393,14 +393,14 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
                 if (!fileItemExists)
-                    return BadRequest(ErrorCode.EC2);
+                    return BadRequest(ErrorCode.EC102);
 
                 if (!SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC3);
+                    return BadRequest(ErrorCode.EC200);
 
                 var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
                 if (!canRunRecognition)
-                    return BadRequest(ErrorCode.EC6);
+                    return BadRequest(ErrorCode.EC300);
 
                 await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
 

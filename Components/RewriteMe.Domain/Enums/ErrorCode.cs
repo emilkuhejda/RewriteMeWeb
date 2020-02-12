@@ -8,21 +8,24 @@ namespace RewriteMe.Domain.Enums
         None = 0,
 
         // Uploaded file not found
-        EC1 = 1,
+        EC101 = 100,
 
         // File item not found
-        EC2 = 2,
+        EC102 = 101,
 
         // Language not supported
-        EC3 = 3,
+        EC200 = 200,
 
         // File not supported
-        EC4 = 4,
-
-        // Database error
-        EC5 = 5,
+        EC201 = 201,
 
         // No available subscription
-        EC6 = 6
+        EC300 = 300,
+
+        // Database error
+        EC400 = 400,
+
+        // Unauthorized
+        Unauthorized = 900
     }
 }
