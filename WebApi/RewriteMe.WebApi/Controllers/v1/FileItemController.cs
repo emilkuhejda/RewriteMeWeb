@@ -190,7 +190,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (file == null)
-                    return BadRequest(ErrorCode.EC101);
+                    return BadRequest(ErrorCode.EC100);
 
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                     return BadRequest(ErrorCode.EC200);
@@ -393,7 +393,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
                 if (!fileItemExists)
-                    return BadRequest(ErrorCode.EC102);
+                    return BadRequest(ErrorCode.EC101);
 
                 if (!SupportedLanguages.IsSupported(language))
                     return BadRequest(ErrorCode.EC200);

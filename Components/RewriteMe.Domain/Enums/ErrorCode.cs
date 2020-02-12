@@ -8,10 +8,10 @@ namespace RewriteMe.Domain.Enums
         None = 0,
 
         // Uploaded file not found
-        EC101 = 100,
+        EC100 = 100,
 
         // File item not found
-        EC102 = 101,
+        EC101 = 101,
 
         // Language not supported
         EC200 = 200,
