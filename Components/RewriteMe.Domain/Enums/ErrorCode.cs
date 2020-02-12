@@ -22,8 +22,14 @@ namespace RewriteMe.Domain.Enums
         // File not supported
         EC201 = 201,
 
-        // No available subscription
+        // No free minutes in subscription
         EC300 = 300,
+
+        // User has no permissions to purchase registration
+        EC301 = 301,
+
+        // Invalid subscription type
+        EC302 = 302,
 
         // Database error
         EC400 = 400,
