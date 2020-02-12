@@ -13,6 +13,9 @@ namespace RewriteMe.Domain.Enums
         // File item not found
         EC101 = 101,
 
+        // File is not uploaded correctly
+        EC102 = 102,
+
         // Language not supported
         EC200 = 200,
 
@@ -24,6 +27,9 @@ namespace RewriteMe.Domain.Enums
 
         // Database error
         EC400 = 400,
+
+        // Operation cancelled
+        EC800 = 800,
 
         // Unauthorized
         Unauthorized = 900
