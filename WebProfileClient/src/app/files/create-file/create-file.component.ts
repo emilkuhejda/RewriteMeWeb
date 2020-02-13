@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { HttpEventType, HttpResponse, HttpParams } from '@angular/common/http';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { CommonVariables } from 'src/app/_config/common-variables';
+import { ErrorCode } from 'src/app/_enums/error-code';
 
 @Component({
     selector: 'app-create-file',
@@ -87,13 +88,13 @@ export class CreateFileComponent implements OnInit {
                 },
                 (err: ErrorResponse) => {
                     let error = err.message;
-                    if (err.status === 400)
+                    if (err.errorCode === ErrorCode.EC100)
                         error = "Uploaded file was not found";
 
-                    if (err.status === 406)
+                    if (err.errorCode === ErrorCode.EC200)
                         error = "Language is not supported";
 
-                    if (err.status === 415)
+                    if (err.errorCode === ErrorCode.EC201)
                         error = "Audio file is not supported";
 
                     this.alertService.error(error);
