@@ -7,6 +7,7 @@ import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
 import { timer } from 'rxjs';
 import { RecognitionState } from '../_enums/recognition-state';
+import { ErrorCode } from '../_enums/error-code';
 
 @Component({
     selector: 'app-files',
@@ -69,13 +70,13 @@ export class FilesComponent implements OnInit {
                     },
                     (err: ErrorResponse) => {
                         let error = err.message;
-                        if (err.status === 400)
+                        if (err.errorCode === ErrorCode.EC101)
                             error = "Audio file was not found";
 
-                        if (err.status === 406)
+                        if (err.errorCode === ErrorCode.EC200)
                             error = "Language is not supported";
 
-                        if (err.status === 409)
+                        if (err.errorCode === ErrorCode.EC300)
                             error = "Your subscription does not have enough free minutes";
 
                         this.alertService.error(error);

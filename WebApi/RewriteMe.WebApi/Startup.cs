@@ -50,7 +50,7 @@ namespace RewriteMe.WebApi
                 options.AddPolicy(
                     Constants.CorsPolicy,
                     builder => builder
-                        .AllowAnyOrigin()
+                        .WithOrigins("http://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowAnyMethod());

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
@@ -43,9 +44,8 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPost("create")]
         [ProducesResponseType(typeof(TimeSpanWrapperDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
         public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, Guid applicationId)
@@ -54,16 +54,22 @@ namespace RewriteMe.WebApi.Controllers.V1
             {
                 var userId = HttpContext.User.GetNameIdentifier();
                 if (userId != billingPurchase.UserId)
-                    return StatusCode(409);
+                    return BadRequest(ErrorCode.EC301);
 
                 var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
                 if (userSubscription == null)
-                    return StatusCode(406);
+                    return BadRequest(ErrorCode.EC302);
 
                 var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
                 return Ok(timeSpanWrapperDto);
+            }
+            catch (DbUpdateException ex)
+            {
+                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+
+                return BadRequest(ErrorCode.EC400);
             }
             catch (Exception ex)
             {

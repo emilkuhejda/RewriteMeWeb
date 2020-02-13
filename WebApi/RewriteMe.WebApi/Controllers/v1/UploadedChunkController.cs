@@ -78,9 +78,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [HttpPost]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UploadChunkFile")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
@@ -90,7 +89,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 if (file == null)
-                    return NotFound();
+                    return BadRequest(ErrorCode.EC100);
 
                 var uploadedFileSource = await file.GetBytesAsync(cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -101,7 +100,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             }
             catch (OperationCanceledException)
             {
-                return StatusCode((int)HttpStatusCode.BadRequest);
+                return BadRequest(ErrorCode.EC800);
             }
             catch (Exception ex)
             {
@@ -113,12 +112,9 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpPut("submit")]
         [ProducesResponseType(typeof(FileItemDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "SubmitChunks")]
         public async Task<IActionResult> Submit(Guid fileItemId, int chunksCount, StorageSetting chunksStorageSetting, Guid applicationId, CancellationToken cancellationToken)
         {
@@ -127,7 +123,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
                 if (fileItem == null)
-                    return NotFound();
+                    return BadRequest(ErrorCode.EC101);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -136,7 +132,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 cancellationToken.ThrowIfCancellationRequested();
 
                 if (chunks.Count != chunksCount)
-                    return StatusCode((int)HttpStatusCode.MethodNotAllowed);
+                    return BadRequest(ErrorCode.EC102);
 
                 var uploadedFileSource = new List<byte>();
                 var chunksFileItemStoragePath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
@@ -164,7 +160,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                    return StatusCode((int)HttpStatusCode.UnsupportedMediaType);
+                    return BadRequest(ErrorCode.EC201);
                 }
 
                 await _fileItemService.UpdateUploadStatus(fileItemId, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
@@ -201,7 +197,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                     await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
 
-                    return Conflict();
+                    return BadRequest(ErrorCode.EC400);
                 }
                 finally
                 {
@@ -212,7 +208,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             }
             catch (OperationCanceledException)
             {
-                return StatusCode((int)HttpStatusCode.BadRequest);
+                return BadRequest(ErrorCode.EC800);
             }
             catch (Exception ex)
             {

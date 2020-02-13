@@ -5,6 +5,7 @@ import { FileItemService } from 'src/app/_services/file-item.service';
 import { AlertService } from 'src/app/_services/alert.service';
 import { FileItem } from 'src/app/_models/file-item';
 import { ErrorResponse } from 'src/app/_models/error-response';
+import { ErrorCode } from 'src/app/_enums/error-code';
 
 @Component({
     selector: 'app-edit-file',
@@ -73,7 +74,7 @@ export class EditFileComponent implements OnInit {
             },
             (err: ErrorResponse) => {
                 let error = err.message;
-                if (err.status === 406)
+                if (err.errorCode === ErrorCode.EC200)
                     error = "Language is not supported";
 
                 this.alertService.error(error);
