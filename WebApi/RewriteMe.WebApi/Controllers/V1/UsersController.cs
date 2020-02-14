@@ -117,12 +117,19 @@ namespace RewriteMe.WebApi.Controllers.V1
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, Role.User.ToString())
                 };
-
                 var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
+
+                var refreshClaims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, Role.Security.ToString())
+                };
+                var refreshToken = TokenHelper.Generate(_appSettings.SecretKey, refreshClaims, TimeSpan.FromDays(730));
 
                 var registrationModelDto = new UserRegistrationDto
                 {
                     Token = token,
+                    RefreshToken = refreshToken,
                     Identity = user.ToIdentityDto(),
                     RemainingTime = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks }
                 };
