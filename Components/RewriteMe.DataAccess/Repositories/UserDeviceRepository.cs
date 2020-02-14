@@ -48,7 +48,6 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.UserDevices
-                    .AsNoTracking()
                     .SingleOrDefaultAsync(x => x.UserId == userId && x.InstallationId == installationId)
                     .ConfigureAwait(false);
 
