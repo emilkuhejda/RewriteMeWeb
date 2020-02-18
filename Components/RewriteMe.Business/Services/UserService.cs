@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -53,24 +53,11 @@ namespace RewriteMe.Business.Services
 
         public async Task<bool> DeleteAsync(Guid userId)
         {
-            var user = await _userRepository.GetWithFilesAsync(userId).ConfigureAwait(false);
-            if (user == null)
-                return false;
+            var path = _fileAccessService.GetRootPath(userId);
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
 
-            var fileItems = user.FileItems.ToList();
-            if (fileItems.Any())
-            {
-                foreach (var fileItem in fileItems)
-                {
-                    var directoryInfo = _fileAccessService.GetFileItemDirectoryInfo(userId, fileItem.Id);
-                    if (directoryInfo.Exists)
-                    {
-                        directoryInfo.Delete(true);
-                    }
-                }
-            }
-
-            await _userRepository.DeleteAsync(user).ConfigureAwait(false);
+            await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
             return true;
         }
     }

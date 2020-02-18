@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.UserManagement;
 
@@ -69,20 +70,6 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<User> GetWithFilesAsync(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var entity = await context.Users
-                    .AsNoTracking()
-                    .Include(x => x.FileItems)
-                    .SingleOrDefaultAsync(x => x.Id == userId)
-                    .ConfigureAwait(false);
-
-                return entity?.ToUser();
-            }
-        }
-
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())
@@ -92,11 +79,11 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteAsync(User user)
+        public async Task DeleteAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
             {
-                var userEntity = user.ToUserEntity();
+                var userEntity = new UserEntity { Id = userId };
                 context.Entry(userEntity).State = EntityState.Deleted;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
