@@ -53,9 +53,9 @@ namespace RewriteMe.Business.Services
 
         public async Task<bool> DeleteAsync(Guid userId)
         {
-            var path = _fileAccessService.GetRootPath(userId);
-            if (Directory.Exists(path))
-                Directory.Delete(path, true);
+            var directoryPath = _fileAccessService.GetRootPath(userId);
+            if (Directory.Exists(directoryPath))
+                Directory.Delete(directoryPath, true);
 
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
             return true;
