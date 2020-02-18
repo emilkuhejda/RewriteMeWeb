@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.1.2" />
+    <PackageReference Include="MediatR" Version="8.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -29,6 +30,12 @@
   <ItemGroup>
     <ProjectReference Include="..\RewriteMe.Common\RewriteMe.Common.csproj" />
     <ProjectReference Include="..\RewriteMe.Domain\RewriteMe.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Handlers\" />
+    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>
