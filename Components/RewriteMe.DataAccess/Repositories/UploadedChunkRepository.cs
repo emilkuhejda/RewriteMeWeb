@@ -55,11 +55,10 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task CleanOutdatedChunksAsync()
+        public async Task CleanOutdatedChunksAsync(DateTime dateToCompare)
         {
             using (var context = _contextFactory.Create())
             {
-                var dateToCompare = DateTime.UtcNow.AddDays(-1);
                 var entities = await context.UploadedChunks
                     .Where(x => x.DateCreatedUtc < dateToCompare)
                     .ToListAsync()

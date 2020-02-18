@@ -14,6 +14,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task DeleteAsync(Guid fileItemId, Guid applicationId);
 
-        Task CleanOutdatedChunksAsync();
+        Task CleanOutdatedChunksAsync(DateTime dateToCompare);
     }
 }

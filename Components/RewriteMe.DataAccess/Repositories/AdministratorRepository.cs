@@ -23,7 +23,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entity = await context.Administrators
-                    .SingleOrDefaultAsync(x => x.Username.Equals(administrator.Username, StringComparison.OrdinalIgnoreCase) && x.Id != administrator.Id)
+                    .SingleOrDefaultAsync(x => x.Username == administrator.Username && x.Id != administrator.Id)
                     .ConfigureAwait(false);
 
                 return entity != null;

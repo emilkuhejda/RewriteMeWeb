@@ -153,7 +153,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource.ToArray()).ConfigureAwait(false);
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(userId, fileItemId, uploadedFileSource.ToArray()).ConfigureAwait(false);
 
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)

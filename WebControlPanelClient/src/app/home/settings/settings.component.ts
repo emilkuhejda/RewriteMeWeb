@@ -165,8 +165,8 @@ export class SettingsComponent implements OnInit {
         this.loadingCleanUpForm = true;
 
         let formData = {
-            deleteBeforeInDays: this.cleanUpControls.deleteBeforeInDays.value,
-            cleanUpSettings: this.cleanUpControls.cleanUpSettings.value,
+            deleteBeforeInDays: Number(this.cleanUpControls.deleteBeforeInDays.value),
+            cleanUpSettings: Number(this.cleanUpControls.cleanUpSettings.value),
             forceCleanUp: this.cleanUpControls.forceCleanUp.value,
             password: this.cleanUpControls.password.value
         };

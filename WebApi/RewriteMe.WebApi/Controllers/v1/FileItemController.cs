@@ -195,9 +195,10 @@ namespace RewriteMe.WebApi.Controllers.V1
                 if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
                     return BadRequest(ErrorCode.EC200);
 
+                var userId = HttpContext.User.GetNameIdentifier();
                 var fileItemId = Guid.NewGuid();
                 var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(fileItemId, uploadedFileSource).ConfigureAwait(false);
+                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(userId, fileItemId, uploadedFileSource).ConfigureAwait(false);
 
                 var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
                 if (!totalTime.HasValue)
@@ -209,7 +210,6 @@ namespace RewriteMe.WebApi.Controllers.V1
 
                 var dateUpdated = DateTime.UtcNow;
                 var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                var userId = HttpContext.User.GetNameIdentifier();
                 var fileItem = new FileItem
                 {
                     Id = fileItemId,
