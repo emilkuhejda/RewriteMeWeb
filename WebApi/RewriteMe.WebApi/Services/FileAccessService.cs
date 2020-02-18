@@ -19,35 +19,35 @@ namespace RewriteMe.WebApi.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public string GetRootPath()
+        public string GetRootPath(Guid userId)
         {
-            var rootDirectoryPath = Path.Combine(_webHostEnvironment.WebRootPath, UploadedFilesDirectory);
+            var rootDirectoryPath = Path.Combine(_webHostEnvironment.WebRootPath, UploadedFilesDirectory, userId.ToString());
             if (!Directory.Exists(rootDirectoryPath))
                 Directory.CreateDirectory(rootDirectoryPath);
 
             return rootDirectoryPath;
         }
 
-        public string GetFileItemDirectory(Guid fileItemId)
+        public string GetFileItemDirectory(Guid userId, Guid fileItemId)
         {
-            return Path.Combine(GetRootPath(), fileItemId.ToString());
+            return Path.Combine(GetRootPath(userId), fileItemId.ToString());
         }
 
         public string GetOriginalFileItemPath(FileItem fileItem)
         {
-            var rootDirectory = GetRootPath();
+            var rootDirectory = GetRootPath(fileItem.UserId);
             return Path.Combine(rootDirectory, fileItem.OriginalSourcePath);
         }
 
         public string GetFileItemPath(FileItem fileItem)
         {
-            var rootDirectory = GetRootPath();
+            var rootDirectory = GetRootPath(fileItem.UserId);
             return Path.Combine(rootDirectory, fileItem.SourcePath);
         }
 
-        public string GetTranscriptionsDirectoryPath(Guid fileItemId)
+        public string GetTranscriptionsDirectoryPath(Guid userId, Guid fileItemId)
         {
-            var rootDirectory = GetRootPath();
+            var rootDirectory = GetRootPath(userId);
             var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString(), TranscriptionsDirectory);
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
@@ -55,19 +55,29 @@ namespace RewriteMe.WebApi.Services
             return directoryPath;
         }
 
-        public string GetTranscriptionPath(TranscribeItem transcribeItem)
+        public string GetTranscriptionPath(Guid userId, TranscribeItem transcribeItem)
         {
-            var directoryPath = GetTranscriptionsDirectoryPath(transcribeItem.FileItemId);
+            var directoryPath = GetTranscriptionsDirectoryPath(userId, transcribeItem.FileItemId);
 
             return Path.Combine(directoryPath, transcribeItem.SourceFileName);
         }
 
-        public DirectoryInfo GetFileItemDirectoryInfo(Guid fileItemId)
+        public DirectoryInfo GetFileItemDirectoryInfo(Guid userId, Guid fileItemId)
         {
-            var rootDirectory = GetRootPath();
+            var rootDirectory = GetRootPath(userId);
             var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
 
             return new DirectoryInfo(directoryPath);
+        }
+
+        public string GetChunksFileItemStoragePath(Guid fileItemId)
+        {
+            var rootDirectory = GetChunksStoragePath();
+            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            return directoryPath;
         }
 
         public string GetChunksStoragePath()
@@ -80,14 +90,13 @@ namespace RewriteMe.WebApi.Services
             return directoryPath;
         }
 
-        public string GetChunksFileItemStoragePath(Guid fileItemId)
+        private string GetRootPath()
         {
-            var rootDirectory = GetChunksStoragePath();
-            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
-            if (!Directory.Exists(directoryPath))
-                Directory.CreateDirectory(directoryPath);
+            var rootDirectoryPath = Path.Combine(_webHostEnvironment.WebRootPath, UploadedFilesDirectory);
+            if (!Directory.Exists(rootDirectoryPath))
+                Directory.CreateDirectory(rootDirectoryPath);
 
-            return directoryPath;
+            return rootDirectoryPath;
         }
     }
 }

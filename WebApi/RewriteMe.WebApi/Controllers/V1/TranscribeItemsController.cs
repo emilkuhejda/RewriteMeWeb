@@ -87,7 +87,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
                 if (source == null)
                     return NotFound();
 
@@ -110,7 +111,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             try
             {
-                var source = await _transcribeItemService.GetSourceAsync(transcribeItemId).ConfigureAwait(false);
+                var userId = HttpContext.User.GetNameIdentifier();
+                var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
                 if (source == null)
                     return NotFound();
 

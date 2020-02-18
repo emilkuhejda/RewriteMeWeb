@@ -62,7 +62,7 @@ namespace RewriteMe.Business.Services
             {
                 foreach (var fileItem in fileItems)
                 {
-                    var directoryInfo = _fileAccessService.GetFileItemDirectoryInfo(fileItem.Id);
+                    var directoryInfo = _fileAccessService.GetFileItemDirectoryInfo(userId, fileItem.Id);
                     if (directoryInfo.Exists)
                     {
                         directoryInfo.Delete(true);

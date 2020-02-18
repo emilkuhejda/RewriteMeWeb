@@ -25,7 +25,7 @@ namespace RewriteMe.Business.Services
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
         }
 
-        public async Task<byte[]> GetSourceAsync(Guid transcribeItemId)
+        public async Task<byte[]> GetSourceAsync(Guid userId, Guid transcribeItemId)
         {
             var transcribeItem = await GetAsync(transcribeItemId).ConfigureAwait(false);
             if (transcribeItem == null)
@@ -34,7 +34,7 @@ namespace RewriteMe.Business.Services
             if (transcribeItem.Storage == StorageSetting.Database)
                 return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
 
-            var sourcePath = _fileAccessService.GetTranscriptionPath(transcribeItem);
+            var sourcePath = _fileAccessService.GetTranscriptionPath(userId, transcribeItem);
             if (File.Exists(sourcePath))
                 return await File.ReadAllBytesAsync(sourcePath).ConfigureAwait(false);
 

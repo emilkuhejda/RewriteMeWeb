@@ -227,7 +227,7 @@ namespace RewriteMe.Business.Services
             return false;
         }
 
-        public string CreateUploadDirectoryIfNeeded(Guid fileItemId, bool isTemporaryStorage)
+        public string CreateUploadDirectoryIfNeeded(Guid userId, Guid fileItemId, bool isTemporaryStorage)
         {
             if (isTemporaryStorage)
             {
@@ -237,7 +237,7 @@ namespace RewriteMe.Business.Services
                 return tempDirectoryPath;
             }
 
-            var directoryPath = _fileAccessService.GetRootPath();
+            var directoryPath = _fileAccessService.GetRootPath(userId);
             var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
             if (!Directory.Exists(uploadDirectoryPath))
                 Directory.CreateDirectory(uploadDirectoryPath);
@@ -245,11 +245,11 @@ namespace RewriteMe.Business.Services
             return uploadDirectoryPath;
         }
 
-        public async Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource)
+        public async Task<UploadedFile> UploadFileToStorageAsync(Guid userId, Guid fileItemId, byte[] uploadedFileSource)
         {
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
-            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(fileItemId, storageSetting == StorageSetting.Database);
+            var uploadDirectoryPath = CreateUploadDirectoryIfNeeded(userId, fileItemId, storageSetting == StorageSetting.Database);
             var uploadedFileName = Guid.NewGuid().ToString();
             var uploadedFilePath = Path.Combine(uploadDirectoryPath, uploadedFileName);
 
