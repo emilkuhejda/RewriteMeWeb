@@ -67,7 +67,7 @@ namespace RewriteMe.Business.Managers
             var directoryPath = string.Empty;
             try
             {
-                directoryPath = _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.Id, fileItem.Storage == StorageSetting.Database);
+                directoryPath = _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.UserId, fileItem.Id, fileItem.Storage == StorageSetting.Database);
                 var filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem, directoryPath).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new InvalidOperationException(nameof(filePath));

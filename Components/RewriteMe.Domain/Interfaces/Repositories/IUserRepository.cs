@@ -17,10 +17,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<User> GetAsync(Guid userId);
 
-        Task<User> GetWithFilesAsync(Guid userId);
-
         Task<IEnumerable<User>> GetAllAsync();
 
-        Task DeleteAsync(User user);
+        Task DeleteAsync(Guid userId);
     }
 }

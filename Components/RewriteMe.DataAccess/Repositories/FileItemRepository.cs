@@ -452,7 +452,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<Guid>> GetFileItemIdsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp)
+        public async Task<IEnumerable<(Guid FileItemId, Guid UserId)>> GetFileItemsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp)
         {
             using (var context = _contextFactory.Create())
             {
@@ -465,10 +465,12 @@ namespace RewriteMe.DataAccess.Repositories
                     query = query.Where(x => !x.WasCleaned);
                 }
 
-                return await query
-                    .Select(x => x.Id)
+                var fileItems = await query
+                    .Select(x => new { x.Id, x.UserId })
                     .ToListAsync()
                     .ConfigureAwait(false);
+
+                return fileItems.Select(x => (x.Id, x.UserId));
             }
         }
 

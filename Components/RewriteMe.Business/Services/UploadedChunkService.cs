@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RewriteMe.Domain.Enums;
@@ -66,7 +67,15 @@ namespace RewriteMe.Business.Services
 
         public async Task CleanOutdatedChunksAsync()
         {
-            await _uploadedChunkRepository.CleanOutdatedChunksAsync().ConfigureAwait(false);
+            var dateToCompare = DateTime.UtcNow.AddDays(-1);
+            var directoryPath = _fileAccessService.GetChunksStoragePath();
+            var directoryInfo = new DirectoryInfo(directoryPath);
+            foreach (var directory in directoryInfo.GetDirectories().Where(x => x.CreationTimeUtc < dateToCompare))
+            {
+                directory.Delete(true);
+            }
+
+            await _uploadedChunkRepository.CleanOutdatedChunksAsync(dateToCompare).ConfigureAwait(false);
         }
     }
 }

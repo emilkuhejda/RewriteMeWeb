@@ -65,9 +65,9 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<bool> ConvertedFileItemSourceExistsAsync(FileItem fileItem);
 
-        string CreateUploadDirectoryIfNeeded(Guid fileItemId, bool isTemporaryStorage);
+        string CreateUploadDirectoryIfNeeded(Guid userId, Guid fileItemId, bool isTemporaryStorage);
 
-        Task<UploadedFile> UploadFileToStorageAsync(Guid fileItemId, byte[] uploadedFileSource);
+        Task<UploadedFile> UploadFileToStorageAsync(Guid userId, Guid fileItemId, byte[] uploadedFileSource);
 
         void CleanUploadedData(string directoryPath);
 

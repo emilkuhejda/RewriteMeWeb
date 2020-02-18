@@ -31,7 +31,7 @@ namespace RewriteMe.Business.Services
             AsyncHelper.RunSync(() => CleanUpAsync(deleteBefore, cleanUpSettings, forceCleanUp));
         }
 
-        public async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)
+        private async Task CleanUpAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)
         {
             if (cleanUpSettings == CleanUpSettings.None)
                 return;
@@ -54,29 +54,29 @@ namespace RewriteMe.Business.Services
 
         private async Task<int> CleanUpInternalAsync(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)
         {
-            var fileItemIdsEnumerable = await _fileItemRepository.GetFileItemIdsForCleaningAsync(deleteBefore, forceCleanUp).ConfigureAwait(false);
-            var fileItemIds = fileItemIdsEnumerable.ToList();
-            foreach (var fileItemId in fileItemIds)
+            var fileItemsEnumerable = await _fileItemRepository.GetFileItemsForCleaningAsync(deleteBefore, forceCleanUp).ConfigureAwait(false);
+            var fileItems = fileItemsEnumerable.ToList();
+            foreach (var fileItem in fileItems)
             {
                 if (cleanUpSettings.HasFlag(CleanUpSettings.Disk))
                 {
-                    CleanDataFromDiskAsync(fileItemId);
+                    CleanDataFromDiskAsync(fileItem.UserId, fileItem.FileItemId);
                 }
 
                 if (cleanUpSettings.HasFlag(CleanUpSettings.Database))
                 {
-                    await _fileItemRepository.CleanSourceDataAsync(fileItemId).ConfigureAwait(false);
+                    await _fileItemRepository.CleanSourceDataAsync(fileItem.FileItemId).ConfigureAwait(false);
                 }
 
-                await _fileItemRepository.MarkAsCleanedAsync(fileItemId).ConfigureAwait(false);
+                await _fileItemRepository.MarkAsCleanedAsync(fileItem.FileItemId).ConfigureAwait(false);
             }
 
-            return fileItemIds.Count;
+            return fileItems.Count;
         }
 
-        private void CleanDataFromDiskAsync(Guid fileItemId)
+        private void CleanDataFromDiskAsync(Guid userId, Guid fileItemId)
         {
-            var directoryPath = _fileAccessService.GetFileItemDirectory(fileItemId);
+            var directoryPath = _fileAccessService.GetFileItemDirectory(userId, fileItemId);
             var directoryInfo = new DirectoryInfo(directoryPath);
             if (directoryInfo.Exists)
             {

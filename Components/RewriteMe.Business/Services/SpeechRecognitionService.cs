@@ -59,7 +59,7 @@ namespace RewriteMe.Business.Services
             var task = new List<Task<TranscribeItem>>();
             foreach (var file in files)
             {
-                task.Add(RecognizeSpeech(speechClient, fileItem.Id, fileItem.Language, file, storageSetting));
+                task.Add(RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
             }
 
             return await Task.WhenAll(task).ConfigureAwait(false);
@@ -78,7 +78,7 @@ namespace RewriteMe.Business.Services
             return SpeechClient.Create(channel);
         }
 
-        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
+        private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid userId, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
         {
             return await Task.Run(() =>
             {
@@ -98,7 +98,7 @@ namespace RewriteMe.Business.Services
                 string sourceFileName = null;
                 if (storageSetting == StorageSetting.Disk)
                 {
-                    sourceFileName = SaveFileToDisk(wavPartialFile, fileItemId);
+                    sourceFileName = SaveFileToDisk(wavPartialFile, userId, fileItemId);
                 }
 
                 var dateCreated = DateTime.UtcNow;
@@ -121,10 +121,10 @@ namespace RewriteMe.Business.Services
             }).ConfigureAwait(false);
         }
 
-        private string SaveFileToDisk(WavPartialFile wavPartialFile, Guid fileItemId)
+        private string SaveFileToDisk(WavPartialFile wavPartialFile, Guid userId, Guid fileItemId)
         {
             var sourceFileName = Guid.NewGuid().ToString();
-            var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItemId);
+            var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(userId, fileItemId);
             var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
             File.Copy(wavPartialFile.Path, sourceFilePath);
 
