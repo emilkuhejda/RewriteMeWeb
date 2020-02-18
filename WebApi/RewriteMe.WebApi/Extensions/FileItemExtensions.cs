@@ -1,5 +1,5 @@
-﻿using RewriteMe.Domain.Transcription;
-using RewriteMe.WebApi.Dtos;
+﻿using RewriteMe.Domain.Dtos;
+using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.WebApi.Extensions
 {

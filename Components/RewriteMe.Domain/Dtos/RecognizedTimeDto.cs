@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RewriteMe.WebApi.Dtos
+namespace RewriteMe.Domain.Dtos
 {
     public class RecognizedTimeDto
     {

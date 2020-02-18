@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using RewriteMe.Domain.Transcription;
 
-namespace RewriteMe.WebApi.Dtos
+namespace RewriteMe.Domain.Dtos
 {
     public class TranscribeItemDto
     {
