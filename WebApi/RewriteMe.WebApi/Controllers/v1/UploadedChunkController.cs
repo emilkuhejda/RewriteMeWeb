@@ -5,15 +5,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Business.Commands;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers.V1
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/chunks")]

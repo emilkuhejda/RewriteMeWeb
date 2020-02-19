@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 
-namespace RewriteMe.Business.Commands
+namespace RewriteMe.WebApi.Commands
 {
     public class UploadChunkFileCommand : CommandBase<OkDto>
     {

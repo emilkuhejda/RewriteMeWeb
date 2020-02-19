@@ -2,7 +2,7 @@
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 
-namespace RewriteMe.Business.Commands
+namespace RewriteMe.WebApi.Commands
 {
     public class SubmitChunksCommand : CommandBase<FileItemDto>
     {

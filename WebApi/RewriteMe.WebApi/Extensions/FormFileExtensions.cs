@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace RewriteMe.Business.Extensions
+namespace RewriteMe.WebApi.Extensions
 {
     public static class FormFileExtensions
     {

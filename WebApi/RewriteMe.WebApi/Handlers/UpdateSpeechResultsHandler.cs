@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using RewriteMe.Business.Commands;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Commands;
 
-namespace RewriteMe.Business.Handlers
+namespace RewriteMe.WebApi.Handlers
 {
     public class UpdateSpeechResultsHandler : IRequestHandler<UpdateSpeechResultsCommand, TimeSpanWrapperDto>
     {

@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using RewriteMe.Business.Commands;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Commands;
 
-namespace RewriteMe.Business.Handlers
+namespace RewriteMe.WebApi.Handlers
 {
     public class TranscribeFileItemHandler : IRequestHandler<TranscribeFileItemCommand, OkDto>
     {

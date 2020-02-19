@@ -1,11 +1,13 @@
 ﻿using System;
 using RewriteMe.Domain.Dtos;
 
-namespace RewriteMe.Business.Commands
+namespace RewriteMe.WebApi.Commands
 {
-    public class TranscribeFileItemCommand : CommandBase<OkDto>
+    public class UpdateFileItemCommand : CommandBase<FileItemDto>
     {
         public Guid FileItemId { get; set; }
+
+        public string Name { get; set; }
 
         public string Language { get; set; }
 

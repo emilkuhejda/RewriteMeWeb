@@ -3,19 +3,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RewriteMe.Business.Commands;
 using RewriteMe.Business.Configuration;
-using RewriteMe.Business.Extensions;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using RewriteMe.WebApi.Commands;
+using RewriteMe.WebApi.Extensions;
 
-namespace RewriteMe.Business.Handlers
+namespace RewriteMe.WebApi.Handlers
 {
     public class UploadFileSourceHandler : IRequestHandler<UploadFileSourceCommand, FileItemDto>
     {

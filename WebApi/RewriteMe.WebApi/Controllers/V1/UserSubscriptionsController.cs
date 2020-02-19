@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
 using RewriteMe.Domain.Settings;
@@ -16,7 +15,7 @@ using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers.V1
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/subscriptions")]

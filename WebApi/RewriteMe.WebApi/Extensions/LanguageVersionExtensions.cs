@@ -1,7 +1,7 @@
 ﻿using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Messages;
 
-namespace RewriteMe.Domain.Extensions
+namespace RewriteMe.WebApi.Extensions
 {
     public static class LanguageVersionExtensions
     {

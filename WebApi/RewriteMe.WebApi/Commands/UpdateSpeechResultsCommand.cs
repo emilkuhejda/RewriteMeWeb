@@ -2,7 +2,7 @@
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Recording;
 
-namespace RewriteMe.Business.Commands
+namespace RewriteMe.WebApi.Commands
 {
     public class UpdateSpeechResultsCommand : CommandBase<TimeSpanWrapperDto>
     {

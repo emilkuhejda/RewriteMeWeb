@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RewriteMe.WebApi.Controllers.V1
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/information-messages")]

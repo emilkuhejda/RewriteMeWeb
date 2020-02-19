@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
-using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
+using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
-namespace RewriteMe.WebApi.Controllers.V1
+namespace RewriteMe.WebApi.Controllers.v1
 {
     [ApiVersion("1")]
     [Produces("application/json")]
