@@ -2,7 +2,7 @@
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Messages;
 
-namespace RewriteMe.WebApi.Extensions
+namespace RewriteMe.Domain.Extensions
 {
     public static class InformationMessageExtensions
     {

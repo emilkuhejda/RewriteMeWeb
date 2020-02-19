@@ -15,6 +15,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;

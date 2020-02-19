@@ -1,7 +1,7 @@
 ﻿using RewriteMe.Domain.Administration;
 using RewriteMe.Domain.Dtos;
 
-namespace RewriteMe.WebApi.Extensions
+namespace RewriteMe.Domain.Extensions
 {
     public static class AdministratorExtensions
     {
