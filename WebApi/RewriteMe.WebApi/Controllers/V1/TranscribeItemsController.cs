@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
@@ -25,14 +23,10 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class TranscribeItemsController : ControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
-        private readonly IApplicationLogService _applicationLogService;
 
-        public TranscribeItemsController(
-            ITranscribeItemService transcribeItemService,
-            IApplicationLogService applicationLogService)
+        public TranscribeItemsController(ITranscribeItemService transcribeItemService)
         {
             _transcribeItemService = transcribeItemService;
-            _applicationLogService = applicationLogService;
         }
 
         [HttpGet]
@@ -42,19 +36,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
         public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
-                return Ok(transcribeItems.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(transcribeItems.Select(x => x.ToDto()));
         }
 
         [HttpGet("{fileItemId}")]
@@ -64,18 +49,9 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetTranscribeItems")]
         public async Task<ActionResult> GetAllByFileItemId(Guid fileItemId)
         {
-            try
-            {
-                var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAllAsync(fileItemId).ConfigureAwait(false);
 
-                return Ok(transcribeItems.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(transcribeItems.Select(x => x.ToDto()));
         }
 
         [HttpGet("audio/{transcribeItemId}")]
@@ -86,21 +62,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetTranscribeAudioSource")]
         public async Task<ActionResult> GetAudioSource(Guid transcribeItemId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
-                if (source == null)
-                    return NotFound();
+            var userId = HttpContext.User.GetNameIdentifier();
+            var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
+            if (source == null)
+                return NotFound();
 
-                return Ok(source);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(source);
         }
 
         [HttpGet("audio-stream/{transcribeItemId}")]
@@ -110,21 +77,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetTranscribeAudioSourceStream")]
         public async Task<ActionResult> GetAudioSourceStream(Guid transcribeItemId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
-                if (source == null)
-                    return NotFound();
+            var userId = HttpContext.User.GetNameIdentifier();
+            var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
+            if (source == null)
+                return NotFound();
 
-                return new FileContentResult(source, "audio/wav");
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return new FileContentResult(source, "audio/wav");
         }
 
         [HttpPut("update-transcript")]
@@ -134,19 +92,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateUserTranscript")]
         public async Task<ActionResult> UpdateUserTranscript(UpdateTranscribeItemModel updateTranscribeItemModel)
         {
-            try
-            {
-                var dateUpdated = DateTime.UtcNow;
-                await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItemModel.TranscribeItemId, updateTranscribeItemModel.Transcript, dateUpdated, updateTranscribeItemModel.ApplicationId).ConfigureAwait(false);
+            var dateUpdated = DateTime.UtcNow;
+            await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItemModel.TranscribeItemId, updateTranscribeItemModel.Transcript, dateUpdated, updateTranscribeItemModel.ApplicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto(dateUpdated));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto(dateUpdated));
         }
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Business.Commands;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -23,17 +25,17 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class SpeechResultsController : ControllerBase
     {
         private readonly ISpeechResultService _speechResultService;
-        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly IMediator _mediator;
 
         public SpeechResultsController(
             ISpeechResultService speechResultService,
-            IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+            IApplicationLogService applicationLogService,
+            IMediator mediator)
         {
             _speechResultService = speechResultService;
-            _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _mediator = mediator;
         }
 
         [HttpPost("create")]
@@ -61,16 +63,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             var userId = HttpContext.User.GetNameIdentifier();
             var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = TimeSpan.FromTicks(x.Ticks) }).ToList();
-            await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
-
-            var totalTimeTicks = speechResults.Sum(x => x.TotalTime.Ticks);
-            var totalTime = TimeSpan.FromTicks(totalTimeTicks);
-            await _userSubscriptionService.SubtractTimeAsync(userId, totalTime).ConfigureAwait(false);
-
-            await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
-
-            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
-            var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
+            var updateSpeechResultsCommand = new UpdateSpeechResultsCommand
+            {
+                UserId = userId,
+                SpeechResults = speechResults
+            };
+            var timeSpanWrapperDto = await _mediator.Send(updateSpeechResultsCommand).ConfigureAwait(false);
 
             return Ok(timeSpanWrapperDto);
         }
