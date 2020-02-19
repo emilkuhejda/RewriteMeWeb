@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using RewriteMe.Business.Commands;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
@@ -26,7 +25,7 @@ namespace RewriteMe.Business.Handlers
         public async Task<FileItemDto> Handle(UpdateFileItemCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Language) || !SupportedLanguages.IsSupported(request.Language))
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, ErrorCode.EC200);
+                throw new OperationErrorException(ErrorCode.EC200);
 
             var fileItem = new FileItem
             {

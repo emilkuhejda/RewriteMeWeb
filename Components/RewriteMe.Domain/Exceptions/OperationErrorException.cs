@@ -1,5 +1,6 @@
 ﻿using System;
 using RewriteMe.Domain.Enums;
+using StatusCode = System.Net.HttpStatusCode;
 
 namespace RewriteMe.Domain.Exceptions
 {
@@ -16,6 +17,11 @@ namespace RewriteMe.Domain.Exceptions
 
         public OperationErrorException(string message, Exception innerException)
             : base(message, innerException)
+        {
+        }
+
+        public OperationErrorException(ErrorCode errorCode)
+            : this((int)StatusCode.BadRequest, errorCode)
         {
         }
 

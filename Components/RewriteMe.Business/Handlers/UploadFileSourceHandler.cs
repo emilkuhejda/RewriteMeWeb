@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.Business.Commands;
 using RewriteMe.Business.Configuration;
@@ -40,10 +39,10 @@ namespace RewriteMe.Business.Handlers
         public async Task<FileItemDto> Handle(UploadFileSourceCommand request, CancellationToken cancellationToken)
         {
             if (request.File == null)
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, ErrorCode.EC100);
+                throw new OperationErrorException(ErrorCode.EC100);
 
             if (!string.IsNullOrWhiteSpace(request.Language) && !SupportedLanguages.IsSupported(request.Language))
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, ErrorCode.EC200);
+                throw new OperationErrorException(ErrorCode.EC200);
 
             var fileItemId = Guid.NewGuid();
             var uploadedFileSource = await request.File.GetBytesAsync().ConfigureAwait(false);
@@ -54,7 +53,7 @@ namespace RewriteMe.Business.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, ErrorCode.EC201);
+                throw new OperationErrorException(ErrorCode.EC201);
             }
 
             var dateUpdated = DateTime.UtcNow;
@@ -98,7 +97,7 @@ namespace RewriteMe.Business.Handlers
 
                 await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), request.UserId).ConfigureAwait(false);
 
-                throw new OperationErrorException(StatusCodes.Status400BadRequest, ErrorCode.EC400);
+                throw new OperationErrorException(ErrorCode.EC400);
             }
 
             return fileItem.ToDto();
