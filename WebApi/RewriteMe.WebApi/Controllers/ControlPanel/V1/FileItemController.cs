@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Models;
+using RewriteMe.WebApi.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
