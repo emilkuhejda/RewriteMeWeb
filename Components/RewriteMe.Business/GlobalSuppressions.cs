@@ -6,4 +6,3 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1008:Opening parenthesis must be spaced correctly", Justification = "By design", Scope = "member", Target = "~M:RewriteMe.Business.Services.AuthenticationService.CreatePasswordHash(System.String)")]
-[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.Business.Commands.UpdateSpeechResultsCommand.SpeechResults")]

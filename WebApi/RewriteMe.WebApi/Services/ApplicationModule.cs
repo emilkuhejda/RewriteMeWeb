@@ -1,9 +1,11 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
 using MediatR;
 using RewriteMe.Business;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Filters;
+using Module = Autofac.Module;
 
 namespace RewriteMe.WebApi.Services
 {
@@ -33,6 +35,12 @@ namespace RewriteMe.WebApi.Services
                 var ctx = context.Resolve<IComponentContext>();
                 return t => ctx.Resolve(t);
             });
+
+            var assembly = Assembly.GetExecutingAssembly();
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.IsClosedTypeOf(typeof(IRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .InstancePerDependency();
         }
     }
 }

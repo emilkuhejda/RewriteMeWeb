@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RewriteMe.Business.Queries
+namespace RewriteMe.WebApi.Queries
 {
     public abstract class QueryBase<TResult> : IRequest<TResult> where TResult : class
     {

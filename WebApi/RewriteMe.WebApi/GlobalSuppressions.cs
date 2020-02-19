@@ -11,3 +11,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1813:Avoid unsealed attributes", Justification = "By design", Scope = "type", Target = "~T:RewriteMe.WebApi.Filters.ApiExceptionFilter")]
 [assembly: SuppressMessage("Design", "CA1019:Define accessors for attribute arguments", Justification = "By design", Scope = "member", Target = "~M:RewriteMe.WebApi.Filters.ApiExceptionFilter.#ctor(RewriteMe.Domain.Interfaces.Services.IApplicationLogService)")]
 [assembly: SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix", Justification = "By design", Scope = "type", Target = "~T:RewriteMe.WebApi.Filters.ApiExceptionFilter")]
+[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.WebApi.Commands.UpdateSpeechResultsCommand.SpeechResults")]
