@@ -56,25 +56,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateUser")]
         public async Task<IActionResult> UpdateUser([FromBody]UpdateUserModel updateUserModel)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var user = await _userService.GetAsync(userId).ConfigureAwait(false);
-                if (user == null)
-                    return StatusCode(401);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var user = await _userService.GetAsync(userId).ConfigureAwait(false);
+            if (user == null)
+                return StatusCode(401);
 
-                user.GivenName = updateUserModel.GivenName;
-                user.FamilyName = updateUserModel.FamilyName;
-                await _userService.UpdateAsync(user).ConfigureAwait(false);
+            user.GivenName = updateUserModel.GivenName;
+            user.FamilyName = updateUserModel.FamilyName;
+            await _userService.UpdateAsync(user).ConfigureAwait(false);
 
-                return Ok(user.ToIdentityDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(user.ToIdentityDto());
         }
 
         [HttpPost("/api/b2c/v{version:apiVersion}/users/register")]
@@ -154,22 +145,13 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateLanguage")]
         public async Task<IActionResult> UpdateLanguage(Guid installationId, int language)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                if (!Enum.IsDefined(typeof(Language), language))
-                    return BadRequest(ErrorCode.EC200);
+            var userId = HttpContext.User.GetNameIdentifier();
+            if (!Enum.IsDefined(typeof(Language), language))
+                return BadRequest(ErrorCode.EC200);
 
-                await _userDeviceService.UpdateLanguageAsync(userId, installationId, (Language)language).ConfigureAwait(false);
+            await _userDeviceService.UpdateLanguageAsync(userId, installationId, (Language)language).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
     }
 }
