@@ -39,12 +39,6 @@ namespace RewriteMe.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c =>
-            {
-                c.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
-                c.EnableEndpointRouting = false;
-            });
-
             services.AddCors(options =>
             {
                 options.AddPolicy(
@@ -113,7 +107,12 @@ namespace RewriteMe.WebApi
 
             services.AddRewriteMeAuthorization(appSettings);
             services.AddAzureAdAuthorization(appSettings);
-            services.AddMvc().AddFilterProvider(serviceProvider =>
+            services.AddMvc(c =>
+            {
+                c.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
+                c.EnableEndpointRouting = false;
+                c.Filters.AddService<ApiExceptionFilter>();
+            }).AddFilterProvider(serviceProvider =>
             {
                 var azureAdAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
                 var rewriteMeAuthorizeFilter = new AuthorizeFilter(new[] { new AuthorizeData { AuthenticationSchemes = Constants.RewriteMeScheme } });
@@ -198,7 +197,6 @@ namespace RewriteMe.WebApi
             app.UseCors(Constants.CorsPolicy);
 
             app.MigrateDatabase();
-            app.ConfigureExceptionMiddleware();
             app.UseCookiePolicy();
 
             app.UseSwagger();

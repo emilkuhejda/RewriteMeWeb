@@ -146,43 +146,21 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateFileItem")]
-        [AllowAnonymous]
         public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var createFileItemCommand = new CreateFileItemCommand
             {
-                var fileItemDto = await _mediator.Send(new CreateFileItemCommand()).ConfigureAwait(false);
+                UserId = userId,
+                Name = name,
+                Language = language,
+                FileName = fileName,
+                DateCreated = dateCreated,
+                ApplicationId = applicationId
+            };
 
-                //var userId = HttpContext.User.GetNameIdentifier();
-                //if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                //    return BadRequest(ErrorCode.EC200);
-
-                //var fileItemId = Guid.NewGuid();
-                //var dateUpdated = DateTime.UtcNow;
-                //var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                //var fileItem = new FileItem
-                //{
-                //    Id = fileItemId,
-                //    UserId = userId,
-                //    ApplicationId = applicationId,
-                //    Name = name,
-                //    FileName = fileName,
-                //    Language = language,
-                //    Storage = storageSetting,
-                //    DateCreated = dateCreated,
-                //    DateUpdatedUtc = dateUpdated
-                //};
-
-                //await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-
-                return Ok(fileItemDto);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(createFileItemCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpPost("upload")]

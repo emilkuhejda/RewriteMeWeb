@@ -3,6 +3,7 @@ using MediatR;
 using RewriteMe.Business;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Filters;
 
 namespace RewriteMe.WebApi.Services
 {
@@ -24,6 +25,7 @@ namespace RewriteMe.WebApi.Services
 
         public static void RegisterServices(ContainerBuilder builder)
         {
+            builder.RegisterType<ApiExceptionFilter>().AsSelf();
             builder.RegisterType<FileAccessService>().As<IFileAccessService>().InstancePerLifetimeScope();
             builder.RegisterType<Mediator>().As<IMediator>().InstancePerLifetimeScope();
             builder.Register<ServiceFactory>(context =>

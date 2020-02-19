@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Grpc.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Rest.TransientFaultHandling;
 using RewriteMe.Business.Commands;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
+using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
 
@@ -51,7 +49,7 @@ namespace RewriteMe.Business.Handlers
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
 
-            return new FileItemDto();
+            return fileItem.ToDto();
         }
     }
 }
