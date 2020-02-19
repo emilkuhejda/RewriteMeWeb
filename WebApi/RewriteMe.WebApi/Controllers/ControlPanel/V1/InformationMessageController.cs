@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,73 +37,37 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         [HttpGet("{informationMessageId}")]
         public async Task<IActionResult> Get(Guid informationMessageId)
         {
-            try
-            {
-                var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
-                return Ok(informationMessage);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+            return Ok(informationMessage);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
-                return Ok(informationMessages);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var informationMessages = await _informationMessageService.GetAllShallowAsync().ConfigureAwait(false);
+            return Ok(informationMessages);
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm]InformationMessageModel informationMessageModel)
         {
-            try
-            {
-                var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
-                await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
+            var informationMessage = informationMessageModel.ToInformationMessage(Guid.NewGuid());
+            await _informationMessageService.AddAsync(informationMessage).ConfigureAwait(false);
 
-                return Ok(informationMessage.Id);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(informationMessage.Id);
         }
 
         [HttpPut("{informationMessageId}")]
         public async Task<IActionResult> Update(Guid informationMessageId, [FromForm]InformationMessageModel informationMessageModel)
         {
-            try
-            {
-                var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
-                var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
-                if (!canUpdate)
-                    return BadRequest();
+            var informationMessage = informationMessageModel.ToInformationMessage(informationMessageId);
+            var canUpdate = await _informationMessageService.CanUpdateAsync(informationMessageId).ConfigureAwait(false);
+            if (!canUpdate)
+                return BadRequest();
 
-                await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
+            await _informationMessageService.UpdateAsync(informationMessage).ConfigureAwait(false);
 
-                return Ok(informationMessage);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(informationMessage);
         }
 
         [HttpPut("send")]
@@ -151,12 +114,6 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 
                 return StatusCode(409);
             }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }

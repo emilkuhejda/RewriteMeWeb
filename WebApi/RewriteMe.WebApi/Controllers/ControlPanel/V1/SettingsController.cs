@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RewriteMe.Business.Configuration;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
@@ -26,7 +24,6 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         private readonly ICleanUpService _cleanUpService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IUploadedChunkService _uploadedChunkService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public SettingsController(
@@ -34,190 +31,98 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             ICleanUpService cleanUpService,
             IAuthenticationService authenticationService,
             IUploadedChunkService uploadedChunkService,
-            IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _internalValueService = internalValueService;
             _cleanUpService = cleanUpService;
             _authenticationService = authenticationService;
             _uploadedChunkService = uploadedChunkService;
-            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
         [HttpGet("storage-setting")]
         public async Task<IActionResult> GetStorageSetting()
         {
-            try
-            {
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+            var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
-                return Ok(storageSetting);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(storageSetting);
         }
 
         [HttpGet("database-backup")]
         public async Task<IActionResult> GetDatabaseBackupSetting()
         {
-            try
-            {
-                var isDatabaseBackupEnabled = await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false);
+            var isDatabaseBackupEnabled = await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false);
 
-                return Ok(isDatabaseBackupEnabled);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(isDatabaseBackupEnabled);
         }
 
         [HttpGet("notifications-setting")]
         public async Task<IActionResult> GetNotificationsSetting()
         {
-            try
-            {
-                var isProgressNotificationsEnabled = await _internalValueService.GetValueAsync(InternalValues.IsProgressNotificationsEnabled).ConfigureAwait(false);
+            var isProgressNotificationsEnabled = await _internalValueService.GetValueAsync(InternalValues.IsProgressNotificationsEnabled).ConfigureAwait(false);
 
-                return Ok(isProgressNotificationsEnabled);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(isProgressNotificationsEnabled);
         }
 
         [HttpGet("chunks-storage-setting")]
         public async Task<IActionResult> GetChunksStorageSetting()
         {
-            try
-            {
-                var chunksStorageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
+            var chunksStorageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
 
-                return Ok(chunksStorageSetting);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InsufficientStorage);
+            return Ok(chunksStorageSetting);
         }
 
         [HttpPut("change-storage")]
         public async Task<IActionResult> ChangeStorage(StorageSetting storageSetting)
         {
-            try
-            {
-                await _internalValueService.UpdateValueAsync(InternalValues.StorageSetting, storageSetting).ConfigureAwait(false);
+            await _internalValueService.UpdateValueAsync(InternalValues.StorageSetting, storageSetting).ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpPut("change-database-backup")]
         public async Task<IActionResult> ChangeDatabaseBackupSettings(bool isEnabled)
         {
-            try
-            {
-                await _internalValueService.UpdateValueAsync(InternalValues.IsDatabaseBackupEnabled, isEnabled).ConfigureAwait(false);
+            await _internalValueService.UpdateValueAsync(InternalValues.IsDatabaseBackupEnabled, isEnabled).ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpPut("change-notifications-setting")]
         public async Task<IActionResult> ChangeNotificationsSettings(bool isEnabled)
         {
-            try
-            {
-                await _internalValueService.UpdateValueAsync(InternalValues.IsProgressNotificationsEnabled, isEnabled).ConfigureAwait(false);
+            await _internalValueService.UpdateValueAsync(InternalValues.IsProgressNotificationsEnabled, isEnabled).ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpPut("change-chunks-storage")]
         public async Task<IActionResult> ChangeChunksStorage(StorageSetting storageSetting)
         {
-            try
-            {
-                await _internalValueService.UpdateValueAsync(InternalValues.ChunksStorageSetting, storageSetting).ConfigureAwait(false);
+            await _internalValueService.UpdateValueAsync(InternalValues.ChunksStorageSetting, storageSetting).ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpPut("clean-up")]
-        public async Task<IActionResult> CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
+        public IActionResult CleanUp([FromBody]CleanUpSettingsModel cleanUpSettingsModel)
         {
-            try
-            {
-                var passwordHash = _authenticationService.GenerateHash(cleanUpSettingsModel.Password);
-                if (passwordHash != _appSettings.SecurityPasswordHash)
-                    return BadRequest();
+            var passwordHash = _authenticationService.GenerateHash(cleanUpSettingsModel.Password);
+            if (passwordHash != _appSettings.SecurityPasswordHash)
+                return BadRequest();
 
-                var deleteBefore = DateTime.UtcNow.AddDays(-cleanUpSettingsModel.DeleteBeforeInDays);
-                BackgroundJob.Enqueue(() => _cleanUpService.CleanUp(deleteBefore, cleanUpSettingsModel.CleanUpSettings, cleanUpSettingsModel.ForceCleanUp));
+            var deleteBefore = DateTime.UtcNow.AddDays(-cleanUpSettingsModel.DeleteBeforeInDays);
+            BackgroundJob.Enqueue(() => _cleanUpService.CleanUp(deleteBefore, cleanUpSettingsModel.CleanUpSettings, cleanUpSettingsModel.ForceCleanUp));
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpDelete("clean-chunks")]
         public async Task<IActionResult> CleanOutdatedChunks()
         {
-            try
-            {
-                await _uploadedChunkService.CleanOutdatedChunksAsync().ConfigureAwait(false);
+            await _uploadedChunkService.CleanOutdatedChunksAsync().ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
     }
 }
