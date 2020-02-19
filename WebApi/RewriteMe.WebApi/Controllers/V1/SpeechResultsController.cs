@@ -10,9 +10,9 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Models;
 using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Extensions;
-using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1

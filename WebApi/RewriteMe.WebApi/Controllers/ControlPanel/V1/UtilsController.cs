@@ -9,8 +9,8 @@ using Microsoft.Extensions.Options;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Models;
 using RewriteMe.Domain.Settings;
-using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1

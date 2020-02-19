@@ -8,8 +8,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Extensions;
-using RewriteMe.WebApi.Models;
+using RewriteMe.Domain.Models;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {

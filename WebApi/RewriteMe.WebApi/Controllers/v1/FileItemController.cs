@@ -15,11 +15,12 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
+using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Models;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Extensions;
-using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
