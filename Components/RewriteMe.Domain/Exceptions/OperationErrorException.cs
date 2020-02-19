@@ -25,6 +25,11 @@ namespace RewriteMe.Domain.Exceptions
         {
         }
 
+        public OperationErrorException(int httpStatusCode)
+            : this(httpStatusCode, ErrorCode.None)
+        {
+        }
+
         public OperationErrorException(int httpStatusCode, ErrorCode errorCode)
         {
             HttpStatusCode = httpStatusCode;
