@@ -27,6 +27,11 @@ namespace RewriteMe.WebApi.Filters
             else
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Result = new JsonResult(new ProblemDetails
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Detail = "Operation failed"
+                });
 
                 AsyncHelper.RunSync(() => _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(context.Exception)}"));
             }
