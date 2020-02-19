@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
@@ -24,16 +22,13 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
 
         public AuthenticationController(
             IAuthenticationService authenticationService,
-            IApplicationLogService applicationLogService,
             IOptions<AppSettings> options)
         {
             _authenticationService = authenticationService;
-            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
         }
 
@@ -44,28 +39,19 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticationModel authenticationModel)
         {
-            try
+            var administrator = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
+            if (administrator == null)
+                return NotFound();
+
+            var claims = new[]
             {
-                var administrator = await _authenticationService.AuthenticateAsync(authenticationModel.Username, authenticationModel.Password).ConfigureAwait(false);
-                if (administrator == null)
-                    return NotFound();
+                new Claim(ClaimTypes.NameIdentifier, administrator.Id.ToString()),
+                new Claim(ClaimTypes.Role, Role.Admin.ToString())
+            };
 
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, administrator.Id.ToString()),
-                    new Claim(ClaimTypes.Role, Role.Admin.ToString())
-                };
+            var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(7));
 
-                var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(7));
-
-                return Ok(administrator.ToDto(token));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(administrator.ToDto(token));
         }
     }
 }

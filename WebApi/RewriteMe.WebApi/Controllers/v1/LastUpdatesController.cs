@@ -1,10 +1,7 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -24,20 +21,17 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IInformationMessageService _informationMessageService;
-        private readonly IApplicationLogService _applicationLogService;
 
         public LastUpdatesController(
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
-            IInformationMessageService informationMessageService,
-            IApplicationLogService applicationLogService)
+            IInformationMessageService informationMessageService)
         {
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _informationMessageService = informationMessageService;
-            _applicationLogService = applicationLogService;
         }
 
         [HttpGet]
@@ -47,30 +41,21 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetLastUpdates")]
         public async Task<ActionResult> Get()
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
-                var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
-                var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
-                var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
-                var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
+            var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var userSubscriptionUpdate = await _userSubscriptionService.GetLastUpdateAsync(userId).ConfigureAwait(false);
+            var informationMessageUpdate = await _informationMessageService.GetLastUpdateAsync(userId).ConfigureAwait(false);
 
-                return Ok(new LastUpdatesDto
-                {
-                    FileItemUtc = fileItemLastUpdate,
-                    DeletedFileItemUtc = deletedFileItemLastUpdate,
-                    TranscribeItemUtc = transcribeItemLastUpdate,
-                    UserSubscriptionUtc = userSubscriptionUpdate,
-                    InformationMessageUtc = informationMessageUpdate
-                });
-            }
-            catch (Exception ex)
+            return Ok(new LastUpdatesDto
             {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+                FileItemUtc = fileItemLastUpdate,
+                DeletedFileItemUtc = deletedFileItemLastUpdate,
+                TranscribeItemUtc = transcribeItemLastUpdate,
+                UserSubscriptionUtc = userSubscriptionUpdate,
+                InformationMessageUtc = informationMessageUpdate
+            });
         }
     }
 }

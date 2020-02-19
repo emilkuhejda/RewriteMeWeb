@@ -16,7 +16,9 @@ namespace RewriteMe.Business.Handlers
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
 
-        public TranscribeFileItemHandler(IFileItemService fileItemService, ISpeechRecognitionManager speechRecognitionManager)
+        public TranscribeFileItemHandler(
+            IFileItemService fileItemService,
+            ISpeechRecognitionManager speechRecognitionManager)
         {
             _fileItemService = fileItemService;
             _speechRecognitionManager = speechRecognitionManager;

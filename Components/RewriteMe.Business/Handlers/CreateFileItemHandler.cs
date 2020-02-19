@@ -19,7 +19,9 @@ namespace RewriteMe.Business.Handlers
         private readonly IFileItemService _fileItemService;
         private readonly IInternalValueService _internalValueService;
 
-        public CreateFileItemHandler(IFileItemService fileItemService, IInternalValueService internalValueService)
+        public CreateFileItemHandler(
+            IFileItemService fileItemService,
+            IInternalValueService internalValueService)
         {
             _fileItemService = fileItemService;
             _internalValueService = internalValueService;
