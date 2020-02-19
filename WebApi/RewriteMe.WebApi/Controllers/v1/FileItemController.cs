@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Hangfire;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RewriteMe.Business.Commands;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
@@ -34,19 +36,22 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IInternalValueService _internalValueService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
+        private readonly IMediator _mediator;
 
         public FileItemController(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
             IApplicationLogService applicationLogService,
-            ISpeechRecognitionManager speechRecognitionManager)
+            ISpeechRecognitionManager speechRecognitionManager,
+            IMediator mediator)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
             _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -140,33 +145,36 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "CreateFileItem")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
         {
             try
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
+                var fileItemDto = await _mediator.Send(new CreateFileItemCommand()).ConfigureAwait(false);
 
-                var fileItemId = Guid.NewGuid();
-                var dateUpdated = DateTime.UtcNow;
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                var fileItem = new FileItem
-                {
-                    Id = fileItemId,
-                    UserId = userId,
-                    ApplicationId = applicationId,
-                    Name = name,
-                    FileName = fileName,
-                    Language = language,
-                    Storage = storageSetting,
-                    DateCreated = dateCreated,
-                    DateUpdatedUtc = dateUpdated
-                };
+                //var userId = HttpContext.User.GetNameIdentifier();
+                //if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
+                //    return BadRequest(ErrorCode.EC200);
 
-                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+                //var fileItemId = Guid.NewGuid();
+                //var dateUpdated = DateTime.UtcNow;
+                //var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
+                //var fileItem = new FileItem
+                //{
+                //    Id = fileItemId,
+                //    UserId = userId,
+                //    ApplicationId = applicationId,
+                //    Name = name,
+                //    FileName = fileName,
+                //    Language = language,
+                //    Storage = storageSetting,
+                //    DateCreated = dateCreated,
+                //    DateUpdatedUtc = dateUpdated
+                //};
 
-                return Ok(fileItem.ToDto());
+                //await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+
+                return Ok(fileItemDto);
             }
             catch (Exception ex)
             {

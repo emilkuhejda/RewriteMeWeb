@@ -1,8 +1,11 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
+using MediatR;
 using RewriteMe.Business.Managers;
 using RewriteMe.Business.Services;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using Module = Autofac.Module;
 
 namespace RewriteMe.Business
 {
@@ -44,6 +47,12 @@ namespace RewriteMe.Business
 
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();
+
+            var assembly = Assembly.GetExecutingAssembly();
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.IsClosedTypeOf(typeof(IRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .InstancePerDependency();
         }
     }
 }
