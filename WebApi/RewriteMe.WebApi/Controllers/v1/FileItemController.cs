@@ -8,17 +8,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RewriteMe.Business.Commands;
-using RewriteMe.Business.Configuration;
 using RewriteMe.Common.Utils;
-using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Extensions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -33,23 +29,17 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
-        private readonly IFileItemSourceService _fileItemSourceService;
-        private readonly IInternalValueService _internalValueService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly IMediator _mediator;
 
         public FileItemController(
             IFileItemService fileItemService,
-            IFileItemSourceService fileItemSourceService,
-            IInternalValueService internalValueService,
             IApplicationLogService applicationLogService,
             ISpeechRecognitionManager speechRecognitionManager,
             IMediator mediator)
         {
             _fileItemService = fileItemService;
-            _fileItemSourceService = fileItemSourceService;
-            _internalValueService = internalValueService;
             _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
             _mediator = mediator;
@@ -198,32 +188,18 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var updateFileItemCommand = new UpdateFileItemCommand
             {
-                if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
-                    return BadRequest(ErrorCode.EC200);
+                UserId = userId,
+                FileItemId = updateFileItemModel.FileItemId,
+                Name = updateFileItemModel.Name,
+                Language = updateFileItemModel.Language,
+                ApplicationId = updateFileItemModel.ApplicationId
+            };
 
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItem = new FileItem
-                {
-                    Id = updateFileItemModel.FileItemId,
-                    UserId = userId,
-                    ApplicationId = updateFileItemModel.ApplicationId,
-                    Name = updateFileItemModel.Name,
-                    Language = updateFileItemModel.Language,
-                    DateUpdatedUtc = DateTime.UtcNow
-                };
-
-                await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
-
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(updateFileItemCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpDelete("delete")]
@@ -316,32 +292,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var transcribeFileItemCommand = new TranscribeFileItemCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
-                if (!fileItemExists)
-                    return BadRequest(ErrorCode.EC101);
+                UserId = userId,
+                FileItemId = fileItemId,
+                Language = language,
+                ApplicationId = applicationId
+            };
 
-                if (!SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
+            var okDto = await _mediator.Send(transcribeFileItemCommand).ConfigureAwait(false);
 
-                var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
-                if (!canRunRecognition)
-                    return BadRequest(ErrorCode.EC300);
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
-                await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
-
-                BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
-
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(okDto);
         }
     }
 }
