@@ -10,7 +10,7 @@ using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Models;
 
-namespace RewriteMe.WebApi.Controllers.v1
+namespace RewriteMe.WebApi.Controllers.V1
 {
     [ApiVersion("1")]
     [Produces("application/json")]
