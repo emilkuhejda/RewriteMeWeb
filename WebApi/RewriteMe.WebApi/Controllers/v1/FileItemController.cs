@@ -174,79 +174,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [RequestSizeLimit(int.MaxValue)]
         public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var uploadFileSourceCommand = new UploadFileSourceCommand
             {
-                if (file == null)
-                    return BadRequest(ErrorCode.EC100);
+                UserId = userId,
+                Name = name,
+                Language = language,
+                FileName = fileName,
+                DateCreated = dateCreated,
+                ApplicationId = applicationId,
+                File = file
+            };
 
-                if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
-
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItemId = Guid.NewGuid();
-                var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(userId, fileItemId, uploadedFileSource).ConfigureAwait(false);
-
-                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
-                if (!totalTime.HasValue)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    return BadRequest(ErrorCode.EC201);
-                }
-
-                var dateUpdated = DateTime.UtcNow;
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                var fileItem = new FileItem
-                {
-                    Id = fileItemId,
-                    UserId = userId,
-                    ApplicationId = applicationId,
-                    Name = name,
-                    FileName = fileName,
-                    Language = language,
-                    OriginalSourceFileName = uploadedFile.FileName,
-                    Storage = storageSetting,
-                    TotalTime = totalTime.Value,
-                    DateCreated = dateCreated,
-                    DateUpdatedUtc = dateUpdated
-                };
-
-                try
-                {
-                    await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database ||
-                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
-                    {
-                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
-                    }
-
-                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, applicationId).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database)
-                    {
-                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-                    }
-                }
-                catch (DbUpdateException ex)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
-
-                    return BadRequest(ErrorCode.EC400);
-                }
-
-                return Ok(fileItem.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(uploadFileSourceCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpPut("update")]
