@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Messages;
-using RewriteMe.WebApi.Dtos;
 
 namespace RewriteMe.WebApi.Extensions
 {

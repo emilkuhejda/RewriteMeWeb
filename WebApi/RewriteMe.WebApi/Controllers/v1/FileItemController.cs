@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Hangfire;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RewriteMe.Business.Configuration;
-using RewriteMe.Common.Utils;
-using RewriteMe.Domain;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Transcription;
-using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -30,23 +26,17 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class FileItemController : ControllerBase
     {
         private readonly IFileItemService _fileItemService;
-        private readonly IFileItemSourceService _fileItemSourceService;
-        private readonly IInternalValueService _internalValueService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
+        private readonly IMediator _mediator;
 
         public FileItemController(
             IFileItemService fileItemService,
-            IFileItemSourceService fileItemSourceService,
-            IInternalValueService internalValueService,
-            IApplicationLogService applicationLogService,
-            ISpeechRecognitionManager speechRecognitionManager)
+            ISpeechRecognitionManager speechRecognitionManager,
+            IMediator mediator)
         {
             _fileItemService = fileItemService;
-            _fileItemSourceService = fileItemSourceService;
-            _internalValueService = internalValueService;
-            _applicationLogService = applicationLogService;
             _speechRecognitionManager = speechRecognitionManager;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -56,19 +46,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(DateTime updatedAfter, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var files = await _fileItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var files = await _fileItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
-                return Ok(files.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(files.Select(x => x.ToDto()));
         }
 
         [HttpGet("deleted")]
@@ -78,38 +59,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
         public async Task<IActionResult> GetDeletedFileItemIds(DateTime updatedAfter, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
 
-                return Ok(ids);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(ids);
         }
 
         [HttpGet("temporary-deleted")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> GetTemporaryDeletedFileItems()
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItems = await _fileItemService.GetTemporaryDeletedFileItemsAsync(userId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var fileItems = await _fileItemService.GetTemporaryDeletedFileItemsAsync(userId).ConfigureAwait(false);
 
-                return Ok(fileItems);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(fileItems);
         }
 
         [HttpGet("{fileItemId}")]
@@ -119,19 +82,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetFileItem")]
         public async Task<IActionResult> Get(Guid fileItemId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var file = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
 
-                return Ok(file.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(file.ToDto());
         }
 
         [HttpPost("create")]
@@ -142,38 +96,19 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "CreateFileItem")]
         public async Task<IActionResult> CreateFileItem(string name, string language, string fileName, DateTime dateCreated, Guid applicationId)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var createFileItemCommand = new CreateFileItemCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
+                UserId = userId,
+                Name = name,
+                Language = language,
+                FileName = fileName,
+                DateCreated = dateCreated,
+                ApplicationId = applicationId
+            };
 
-                var fileItemId = Guid.NewGuid();
-                var dateUpdated = DateTime.UtcNow;
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                var fileItem = new FileItem
-                {
-                    Id = fileItemId,
-                    UserId = userId,
-                    ApplicationId = applicationId,
-                    Name = name,
-                    FileName = fileName,
-                    Language = language,
-                    Storage = storageSetting,
-                    DateCreated = dateCreated,
-                    DateUpdatedUtc = dateUpdated
-                };
-
-                await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-
-                return Ok(fileItem.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(createFileItemCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpPost("upload")]
@@ -187,79 +122,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [RequestSizeLimit(int.MaxValue)]
         public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var uploadFileSourceCommand = new UploadFileSourceCommand
             {
-                if (file == null)
-                    return BadRequest(ErrorCode.EC100);
+                UserId = userId,
+                Name = name,
+                Language = language,
+                FileName = fileName,
+                DateCreated = dateCreated,
+                ApplicationId = applicationId,
+                File = file
+            };
 
-                if (!string.IsNullOrWhiteSpace(language) && !SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
-
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItemId = Guid.NewGuid();
-                var uploadedFileSource = await file.GetBytesAsync().ConfigureAwait(false);
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(userId, fileItemId, uploadedFileSource).ConfigureAwait(false);
-
-                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
-                if (!totalTime.HasValue)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    return BadRequest(ErrorCode.EC201);
-                }
-
-                var dateUpdated = DateTime.UtcNow;
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-                var fileItem = new FileItem
-                {
-                    Id = fileItemId,
-                    UserId = userId,
-                    ApplicationId = applicationId,
-                    Name = name,
-                    FileName = fileName,
-                    Language = language,
-                    OriginalSourceFileName = uploadedFile.FileName,
-                    Storage = storageSetting,
-                    TotalTime = totalTime.Value,
-                    DateCreated = dateCreated,
-                    DateUpdatedUtc = dateUpdated
-                };
-
-                try
-                {
-                    await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database ||
-                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
-                    {
-                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
-                    }
-
-                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, applicationId).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database)
-                    {
-                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-                    }
-                }
-                catch (DbUpdateException ex)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
-
-                    return BadRequest(ErrorCode.EC400);
-                }
-
-                return Ok(fileItem.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(uploadFileSourceCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpPut("update")]
@@ -270,32 +146,18 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var updateFileItemCommand = new UpdateFileItemCommand
             {
-                if (string.IsNullOrWhiteSpace(updateFileItemModel.Language) || !SupportedLanguages.IsSupported(updateFileItemModel.Language))
-                    return BadRequest(ErrorCode.EC200);
+                UserId = userId,
+                FileItemId = updateFileItemModel.FileItemId,
+                Name = updateFileItemModel.Name,
+                Language = updateFileItemModel.Language,
+                ApplicationId = updateFileItemModel.ApplicationId
+            };
 
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItem = new FileItem
-                {
-                    Id = updateFileItemModel.FileItemId,
-                    UserId = userId,
-                    ApplicationId = updateFileItemModel.ApplicationId,
-                    Name = updateFileItemModel.Name,
-                    Language = updateFileItemModel.Language,
-                    DateUpdatedUtc = DateTime.UtcNow
-                };
-
-                await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
-
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var fileItemDto = await _mediator.Send(updateFileItemCommand).ConfigureAwait(false);
+            return Ok(fileItemDto);
         }
 
         [HttpDelete("delete")]
@@ -305,19 +167,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "DeleteFileItem")]
         public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
 
         [HttpDelete("delete-all")]
@@ -327,57 +180,30 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "DeleteAllFileItems")]
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
 
         [HttpPut("permanent-delete-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
 
         [HttpPut("restore-all")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
 
         [HttpPut("transcribe")]
@@ -388,32 +214,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "TranscribeFileItem")]
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var transcribeFileItemCommand = new TranscribeFileItemCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var fileItemExists = await _fileItemService.ExistsAsync(userId, fileItemId).ConfigureAwait(false);
-                if (!fileItemExists)
-                    return BadRequest(ErrorCode.EC101);
+                UserId = userId,
+                FileItemId = fileItemId,
+                Language = language,
+                ApplicationId = applicationId
+            };
 
-                if (!SupportedLanguages.IsSupported(language))
-                    return BadRequest(ErrorCode.EC200);
+            var okDto = await _mediator.Send(transcribeFileItemCommand).ConfigureAwait(false);
 
-                var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(userId).ConfigureAwait(false);
-                if (!canRunRecognition)
-                    return BadRequest(ErrorCode.EC300);
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
-                await _fileItemService.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
-
-                BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
-
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(okDto);
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 
@@ -18,48 +16,26 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     public class ContactFormController : ControllerBase
     {
         private readonly IContactFormService _contactFormService;
-        private readonly IApplicationLogService _applicationLogService;
 
-        public ContactFormController(
-            IContactFormService contactFormService,
-            IApplicationLogService applicationLogService)
+        public ContactFormController(IContactFormService contactFormService)
         {
             _contactFormService = contactFormService;
-            _applicationLogService = applicationLogService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var contactForms = await _contactFormService.GetAllAsync().ConfigureAwait(false);
+            var contactForms = await _contactFormService.GetAllAsync().ConfigureAwait(false);
 
-                return Ok(contactForms);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(contactForms);
         }
 
         [HttpGet("{contactFormId}")]
         public async Task<IActionResult> Get(Guid contactFormId)
         {
-            try
-            {
-                var contactForm = await _contactFormService.GetAsync(contactFormId).ConfigureAwait(false);
+            var contactForm = await _contactFormService.GetAsync(contactFormId).ConfigureAwait(false);
 
-                return Ok(contactForm);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(contactForm);
         }
     }
 }

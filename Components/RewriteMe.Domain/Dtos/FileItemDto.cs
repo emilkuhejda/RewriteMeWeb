@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using RewriteMe.Domain.Enums;
 
-namespace RewriteMe.WebApi.Dtos
+namespace RewriteMe.Domain.Dtos
 {
     public class FileItemDto
     {

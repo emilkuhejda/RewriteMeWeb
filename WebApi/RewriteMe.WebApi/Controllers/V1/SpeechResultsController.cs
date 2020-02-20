@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
-using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -25,17 +25,17 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class SpeechResultsController : ControllerBase
     {
         private readonly ISpeechResultService _speechResultService;
-        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IApplicationLogService _applicationLogService;
+        private readonly IMediator _mediator;
 
         public SpeechResultsController(
             ISpeechResultService speechResultService,
-            IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+            IApplicationLogService applicationLogService,
+            IMediator mediator)
         {
             _speechResultService = speechResultService;
-            _userSubscriptionService = userSubscriptionService;
             _applicationLogService = applicationLogService;
+            _mediator = mediator;
         }
 
         [HttpPost("create")]
@@ -45,22 +45,13 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "CreateSpeechResult")]
         public async Task<IActionResult> Create(CreateSpeechResultModel createSpeechResultModel)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var speechResult = createSpeechResultModel.ToSpeechResult();
-                await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var speechResult = createSpeechResultModel.ToSpeechResult();
+            await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
-                await _applicationLogService.InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId).ConfigureAwait(false);
+            await _applicationLogService.InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
 
         [HttpPut("update")]
@@ -70,29 +61,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UpdateSpeechResults")]
         public async Task<IActionResult> Update(IEnumerable<SpeechResultModel> speechResultModels)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = TimeSpan.FromTicks(x.Ticks) }).ToList();
+            var updateSpeechResultsCommand = new UpdateSpeechResultsCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var speechResults = speechResultModels.Select(x => new SpeechResult { Id = x.Id, TotalTime = TimeSpan.FromTicks(x.Ticks) }).ToList();
-                await _speechResultService.UpdateAllAsync(speechResults).ConfigureAwait(false);
+                UserId = userId,
+                SpeechResults = speechResults
+            };
+            var timeSpanWrapperDto = await _mediator.Send(updateSpeechResultsCommand).ConfigureAwait(false);
 
-                var totalTimeTicks = speechResults.Sum(x => x.TotalTime.Ticks);
-                var totalTime = TimeSpan.FromTicks(totalTimeTicks);
-                await _userSubscriptionService.SubtractTimeAsync(userId, totalTime).ConfigureAwait(false);
-
-                await _applicationLogService.InfoAsync("Update speech results total time.", userId).ConfigureAwait(false);
-
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
-                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
-
-                return Ok(timeSpanWrapperDto);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(timeSpanWrapperDto);
         }
     }
 }
