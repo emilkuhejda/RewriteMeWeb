@@ -3,6 +3,7 @@ using RewriteMe.Business.Managers;
 using RewriteMe.Business.Services;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using Module = Autofac.Module;
 
 namespace RewriteMe.Business
 {

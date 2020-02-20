@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RewriteMe.Business.Configuration;
-using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
-using IOFile = System.IO.File;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
@@ -27,27 +22,18 @@ namespace RewriteMe.WebApi.Controllers.V1
     [ApiController]
     public class UploadedChunkController : ControllerBase
     {
-        private readonly IFileItemService _fileItemService;
-        private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IInternalValueService _internalValueService;
-        private readonly IFileAccessService _fileAccessService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly IMediator _mediator;
 
         public UploadedChunkController(
-            IFileItemService fileItemService,
-            IFileItemSourceService fileItemSourceService,
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
-            IFileAccessService fileAccessService,
-            IApplicationLogService applicationLogService)
+            IMediator mediator)
         {
-            _fileItemService = fileItemService;
-            _fileItemSourceService = fileItemSourceService;
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
-            _fileAccessService = fileAccessService;
-            _applicationLogService = applicationLogService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -57,22 +43,13 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetChunksStorageConfiguration")]
         public async Task<IActionResult> GetChunksStorageConfiguration()
         {
-            try
+            var storageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
+            var configuration = new StorageConfiguration
             {
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
-                var configuration = new StorageConfiguration
-                {
-                    StorageSetting = storageSetting
-                };
+                StorageSetting = storageSetting
+            };
 
-                return Ok(configuration);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(configuration);
         }
 
         [HttpPost]
@@ -86,28 +63,17 @@ namespace RewriteMe.WebApi.Controllers.V1
         [RequestSizeLimit(int.MaxValue)]
         public async Task<IActionResult> Upload(Guid fileItemId, int order, StorageSetting storageSetting, Guid applicationId, IFormFile file, CancellationToken cancellationToken)
         {
-            try
+            var uploadChunkFileCommand = new UploadChunkFileCommand
             {
-                if (file == null)
-                    return BadRequest(ErrorCode.EC100);
+                FileItemId = fileItemId,
+                Order = order,
+                StorageSetting = storageSetting,
+                ApplicationId = applicationId,
+                File = file
+            };
 
-                var uploadedFileSource = await file.GetBytesAsync(cancellationToken).ConfigureAwait(false);
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await _uploadedChunkService.SaveAsync(fileItemId, order, storageSetting, applicationId, uploadedFileSource, cancellationToken).ConfigureAwait(false);
-
-                return Ok(new OkDto());
-            }
-            catch (OperationCanceledException)
-            {
-                return BadRequest(ErrorCode.EC800);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var okDto = await _mediator.Send(uploadChunkFileCommand, cancellationToken).ConfigureAwait(false);
+            return Ok(okDto);
         }
 
         [HttpPut("submit")]
@@ -121,101 +87,22 @@ namespace RewriteMe.WebApi.Controllers.V1
             try
             {
                 var userId = HttpContext.User.GetNameIdentifier();
-                var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
-                if (fileItem == null)
-                    return BadRequest(ErrorCode.EC101);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var chunkList = await _uploadedChunkService.GetAllAsync(fileItemId, applicationId, cancellationToken).ConfigureAwait(false);
-                var chunks = chunkList.ToList();
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (chunks.Count != chunksCount)
-                    return BadRequest(ErrorCode.EC102);
-
-                var uploadedFileSource = new List<byte>();
-                var chunksFileItemStoragePath = _fileAccessService.GetChunksFileItemStoragePath(fileItemId);
-                foreach (var chunk in chunks.OrderBy(x => x.Order))
+                var submitChunksCommand = new SubmitChunksCommand
                 {
-                    byte[] bytes;
-                    if (chunksStorageSetting == StorageSetting.Database)
-                    {
-                        bytes = chunk.Source;
-                    }
-                    else
-                    {
-                        var filePath = Path.Combine(chunksFileItemStoragePath, chunk.Id.ToString());
-                        bytes = await IOFile.ReadAllBytesAsync(filePath, cancellationToken).ConfigureAwait(false);
-                    }
+                    UserId = userId,
+                    FileItemId = fileItemId,
+                    ChunksCount = chunksCount,
+                    ChunksStorageSetting = chunksStorageSetting,
+                    ApplicationId = applicationId
+                };
 
-                    uploadedFileSource.AddRange(bytes);
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-                var uploadedFile = await _fileItemService.UploadFileToStorageAsync(userId, fileItemId, uploadedFileSource.ToArray()).ConfigureAwait(false);
-
-                var totalTime = _fileItemService.GetAudioTotalTime(uploadedFile.FilePath);
-                if (!totalTime.HasValue)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    return BadRequest(ErrorCode.EC201);
-                }
-
-                await _fileItemService.UpdateUploadStatus(fileItemId, UploadStatus.InProgress, applicationId).ConfigureAwait(false);
-
-                var dateUpdated = DateTime.UtcNow;
-                var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
-
-                fileItem.ApplicationId = applicationId;
-                fileItem.OriginalSourceFileName = uploadedFile.FileName;
-                fileItem.Storage = storageSetting;
-                fileItem.TotalTime = totalTime.Value;
-                fileItem.DateUpdatedUtc = dateUpdated;
-
-                try
-                {
-                    await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database ||
-                        await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
-                    {
-                        await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
-                    }
-
-                    await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, applicationId).ConfigureAwait(false);
-
-                    if (storageSetting == StorageSetting.Database)
-                    {
-                        _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-                    }
-                }
-                catch (DbUpdateException ex)
-                {
-                    _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
-
-                    await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), userId).ConfigureAwait(false);
-
-                    return BadRequest(ErrorCode.EC400);
-                }
-                finally
-                {
-                    await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
-                }
-
-                return Ok(fileItem.ToDto());
+                var fileItemDto = await _mediator.Send(submitChunksCommand, cancellationToken).ConfigureAwait(false);
+                return Ok(fileItemDto);
             }
             catch (OperationCanceledException)
             {
                 return BadRequest(ErrorCode.EC800);
             }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [HttpDelete("{fileItemId}")]
@@ -225,18 +112,9 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "DeleteChunks")]
         public async Task<IActionResult> DeleteChunks(Guid fileItemId, Guid applicationId)
         {
-            try
-            {
-                await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+            await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
     }
 }

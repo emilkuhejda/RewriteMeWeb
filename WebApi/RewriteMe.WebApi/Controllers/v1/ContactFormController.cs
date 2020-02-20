@@ -1,12 +1,9 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -21,14 +18,10 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class ContactFormController : ControllerBase
     {
         private readonly IContactFormService _contactFormService;
-        private readonly IApplicationLogService _applicationLogService;
 
-        public ContactFormController(
-            IContactFormService contactFormService,
-            IApplicationLogService applicationLogService)
+        public ContactFormController(IContactFormService contactFormService)
         {
             _contactFormService = contactFormService;
-            _applicationLogService = applicationLogService;
         }
 
         [AllowAnonymous]
@@ -38,20 +31,11 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "CreateContactForm")]
         public async Task<IActionResult> Create([FromBody]ContactFormModel contactFormModel)
         {
-            try
-            {
-                var contactForm = contactFormModel.ToContactForm();
+            var contactForm = contactFormModel.ToContactForm();
 
-                await _contactFormService.AddAsync(contactForm).ConfigureAwait(false);
+            await _contactFormService.AddAsync(contactForm).ConfigureAwait(false);
 
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(new OkDto());
         }
     }
 }

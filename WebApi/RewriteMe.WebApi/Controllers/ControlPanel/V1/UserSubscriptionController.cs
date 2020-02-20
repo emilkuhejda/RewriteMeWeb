@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
@@ -20,58 +18,36 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     public class UserSubscriptionController : ControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
-        private readonly IApplicationLogService _applicationLogService;
 
-        public UserSubscriptionController(
-            IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+        public UserSubscriptionController(IUserSubscriptionService userSubscriptionService)
         {
             _userSubscriptionService = userSubscriptionService;
-            _applicationLogService = applicationLogService;
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm]CreateSubscriptionModel createSubscriptionModel)
         {
-            try
+            var userSubscription = new UserSubscription
             {
-                var userSubscription = new UserSubscription
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = createSubscriptionModel.UserId,
-                    ApplicationId = createSubscriptionModel.ApplicationId,
-                    Time = TimeSpan.FromSeconds(createSubscriptionModel.Seconds),
-                    Operation = createSubscriptionModel.Operation,
-                    DateCreatedUtc = DateTime.UtcNow
-                };
+                Id = Guid.NewGuid(),
+                UserId = createSubscriptionModel.UserId,
+                ApplicationId = createSubscriptionModel.ApplicationId,
+                Time = TimeSpan.FromSeconds(createSubscriptionModel.Seconds),
+                Operation = createSubscriptionModel.Operation,
+                DateCreatedUtc = DateTime.UtcNow
+            };
 
-                await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
+            await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok();
         }
 
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetSubscriptions(Guid userId)
         {
-            try
-            {
-                var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId).ConfigureAwait(false);
+            var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId).ConfigureAwait(false);
 
-                return Ok(userSubscriptions);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(userSubscriptions);
         }
     }
 }

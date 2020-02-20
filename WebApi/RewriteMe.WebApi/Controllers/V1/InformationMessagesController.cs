@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.WebApi.Dtos;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,14 +21,10 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class InformationMessagesController : ControllerBase
     {
         private readonly IInformationMessageService _informationMessageService;
-        private readonly IApplicationLogService _applicationLogService;
 
-        public InformationMessagesController(
-            IInformationMessageService informationMessageService,
-            IApplicationLogService applicationLogService)
+        public InformationMessagesController(IInformationMessageService informationMessageService)
         {
             _informationMessageService = informationMessageService;
-            _applicationLogService = applicationLogService;
         }
 
         [HttpGet]
@@ -40,19 +34,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetInformationMessages")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+            var userId = HttpContext.User.GetNameIdentifier();
+            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
 
-                return Ok(informationMessages.Select(x => x.ToDto()));
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(informationMessages.Select(x => x.ToDto()));
         }
 
         [HttpGet("{informationMessageId}")]
@@ -62,17 +47,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Get(Guid informationMessageId)
         {
-            try
-            {
-                var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
-                return Ok(informationMessage.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
+            return Ok(informationMessage.ToDto());
         }
 
         [HttpPut("mark-as-opened")]
@@ -83,21 +59,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "MarkMessageAsOpened")]
         public async Task<IActionResult> MarkAsOpened(Guid informationMessageId)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var informationMessage = await _informationMessageService.MarkAsOpenedAsync(userId, informationMessageId).ConfigureAwait(false);
-                if (informationMessage == null)
-                    return BadRequest();
+            var userId = HttpContext.User.GetNameIdentifier();
+            var informationMessage = await _informationMessageService.MarkAsOpenedAsync(userId, informationMessageId).ConfigureAwait(false);
+            if (informationMessage == null)
+                return BadRequest();
 
-                return Ok(informationMessage.ToDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(informationMessage.ToDto());
         }
 
         [HttpPut("mark-messages-as-opened")]
@@ -107,18 +74,9 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "MarkMessagesAsOpened")]
         public async Task<IActionResult> MarkMessagesAsOpened(IEnumerable<Guid> ids)
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                await _informationMessageService.MarkAsOpenedAsync(userId, ids).ConfigureAwait(false);
-                return Ok(new OkDto());
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var userId = HttpContext.User.GetNameIdentifier();
+            await _informationMessageService.MarkAsOpenedAsync(userId, ids).ConfigureAwait(false);
+            return Ok(new OkDto());
         }
     }
 }

@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using RewriteMe.Common.Utils;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Recording;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
-using RewriteMe.WebApi.Dtos;
+using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -26,19 +24,16 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class UserSubscriptionsController : ControllerBase
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
-        private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly IMediator _mediator;
         private readonly AppSettings _appSettings;
 
         public UserSubscriptionsController(
             IUserSubscriptionService userSubscriptionService,
-            IRecognizedAudioSampleService recognizedAudioSampleService,
-            IApplicationLogService applicationLogService,
+            IMediator mediator,
             IOptions<AppSettings> options)
         {
             _userSubscriptionService = userSubscriptionService;
-            _recognizedAudioSampleService = recognizedAudioSampleService;
-            _applicationLogService = applicationLogService;
+            _mediator = mediator;
             _appSettings = options.Value;
         }
 
@@ -50,33 +45,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "CreateUserSubscription")]
         public async Task<IActionResult> Create([FromBody]BillingPurchase billingPurchase, Guid applicationId)
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var createUserSubscriptionCommand = new CreateUserSubscriptionCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                if (userId != billingPurchase.UserId)
-                    return BadRequest(ErrorCode.EC301);
+                UserId = userId,
+                BillingPurchase = billingPurchase,
+                ApplicationId = applicationId
+            };
 
-                var userSubscription = await _userSubscriptionService.RegisterPurchaseAsync(billingPurchase, applicationId).ConfigureAwait(false);
-                if (userSubscription == null)
-                    return BadRequest(ErrorCode.EC302);
-
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
-                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
-
-                return Ok(timeSpanWrapperDto);
-            }
-            catch (DbUpdateException ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-
-                return BadRequest(ErrorCode.EC400);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var timeSpanWrapperDto = await _mediator.Send(createUserSubscriptionCommand).ConfigureAwait(false);
+            return Ok(timeSpanWrapperDto);
         }
 
         [HttpGet("speech-configuration")]
@@ -86,37 +64,15 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetSpeechConfiguration")]
         public async Task<IActionResult> GetSpeechConfiguration()
         {
-            try
+            var userId = HttpContext.User.GetNameIdentifier();
+            var createSpeechConfigurationCommand = new CreateSpeechConfigurationCommand
             {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var recognizedAudioSample = new RecognizedAudioSample
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    DateCreatedUtc = DateTime.UtcNow
-                };
+                UserId = userId,
+                AppSettings = _appSettings
+            };
 
-                await _recognizedAudioSampleService.AddAsync(recognizedAudioSample).ConfigureAwait(false);
-
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
-                var speechConfigurationDto = new SpeechConfigurationDto
-                {
-                    SubscriptionKey = _appSettings.AzureSubscriptionKey,
-                    SpeechRegion = _appSettings.AzureSpeechRegion,
-                    AudioSampleId = recognizedAudioSample.Id,
-                    SubscriptionRemainingTimeTicks = remainingTime.Ticks
-                };
-
-                await _applicationLogService.InfoAsync($"User with ID='{userId}' retrieved speech recognition configuration: {speechConfigurationDto}.", userId).ConfigureAwait(false);
-
-                return Ok(speechConfigurationDto);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            var speechConfigurationDto = await _mediator.Send(createSpeechConfigurationCommand).ConfigureAwait(false);
+            return Ok(speechConfigurationDto);
         }
 
         [HttpGet("remaining-time")]
@@ -126,20 +82,11 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetSubscriptionRemainingTime")]
         public async Task<IActionResult> GetSubscriptionRemainingTime()
         {
-            try
-            {
-                var userId = HttpContext.User.GetNameIdentifier();
-                var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
-                var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
+            var userId = HttpContext.User.GetNameIdentifier();
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
+            var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 
-                return Ok(timeSpanWrapperDto);
-            }
-            catch (Exception ex)
-            {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError);
+            return Ok(timeSpanWrapperDto);
         }
     }
 }

@@ -1,7 +1,11 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
+using MediatR;
 using RewriteMe.Business;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Filters;
+using Module = Autofac.Module;
 
 namespace RewriteMe.WebApi.Services
 {
@@ -23,7 +27,20 @@ namespace RewriteMe.WebApi.Services
 
         public static void RegisterServices(ContainerBuilder builder)
         {
+            builder.RegisterType<ApiExceptionFilter>().AsSelf();
             builder.RegisterType<FileAccessService>().As<IFileAccessService>().InstancePerLifetimeScope();
+            builder.RegisterType<Mediator>().As<IMediator>().InstancePerLifetimeScope();
+            builder.Register<ServiceFactory>(context =>
+            {
+                var ctx = context.Resolve<IComponentContext>();
+                return t => ctx.Resolve(t);
+            });
+
+            var assembly = Assembly.GetExecutingAssembly();
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.IsClosedTypeOf(typeof(IRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .InstancePerDependency();
         }
     }
 }
