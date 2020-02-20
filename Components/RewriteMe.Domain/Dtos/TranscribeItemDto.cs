@@ -16,7 +16,6 @@ namespace RewriteMe.Domain.Dtos
         [Required]
         public IEnumerable<RecognitionAlternative> Alternatives { get; set; }
 
-        [Required]
         public string UserTranscript { get; set; }
 
         [Required]
