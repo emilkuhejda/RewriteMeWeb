@@ -7,3 +7,6 @@
 .border-white {
     border-color: #ffffff;
 }
+.list-inline-item .btn.btn-outline-primary {
+    cursor: default;
+}
