@@ -10,3 +10,13 @@
 .list-inline-item .btn.btn-outline-primary {
     cursor: default;
 }
+.image-wrapper {
+    height: 500px;
+    text-align: center;
+}
+.image-wrapper.web {
+    height: 300px;
+}
+.image-wrapper img {
+    height: 100%;
+}
