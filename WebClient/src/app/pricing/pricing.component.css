@@ -4,5 +4,9 @@ div.h1 {
 div.h1 .cents-label {
     font-size: 20px;
     line-height: 40px;
+    margin-right: 2px;
     vertical-align: top;
+}
+.badge {
+    font-size: 15px;
 }
