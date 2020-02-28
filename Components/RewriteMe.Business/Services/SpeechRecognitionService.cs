@@ -128,7 +128,7 @@ namespace RewriteMe.Business.Services
             var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
             File.Copy(wavPartialFile.Path, sourceFilePath);
 
-            return sourceFilePath;
+            return sourceFileName;
         }
     }
 }
