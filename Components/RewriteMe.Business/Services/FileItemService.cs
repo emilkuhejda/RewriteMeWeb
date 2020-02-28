@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NAudio.Wave;
 using RewriteMe.Business.Configuration;
+using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -18,18 +19,24 @@ namespace RewriteMe.Business.Services
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
+        private readonly IApplicationLogService _applicationLogService;
         private readonly IFileItemRepository _fileItemRepository;
+        private readonly IFileItemSourceRepository _fileItemSourceRepository;
 
         public FileItemService(
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
-            IFileItemRepository fileItemRepository)
+            IApplicationLogService applicationLogService,
+            IFileItemRepository fileItemRepository,
+            IFileItemSourceRepository fileItemSourceRepository)
         {
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
+            _applicationLogService = applicationLogService;
             _fileItemRepository = fileItemRepository;
+            _fileItemSourceRepository = fileItemSourceRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -154,15 +161,24 @@ namespace RewriteMe.Business.Services
 
         public async Task RemoveSourceFileAsync(FileItem fileItem)
         {
-            await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
-
-            if (fileItem.Storage == StorageSetting.Disk)
+            try
             {
-                var filePath = _fileAccessService.GetFileItemPath(fileItem);
-                if (File.Exists(filePath))
+                await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
+                await _fileItemSourceRepository.RemoveAsync(fileItem.Id).ConfigureAwait(false);
+
+                if (fileItem.Storage == StorageSetting.Disk)
                 {
-                    File.Delete(filePath);
+                    var sourceDirectory = _fileAccessService.GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
+                    if (Directory.Exists(sourceDirectory))
+                    {
+                        Directory.Delete(sourceDirectory, true);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationLogService.ErrorAsync($"File item source for file item ID = '{fileItem.Id}' was not correctly deleted.", fileItem.UserId).ConfigureAwait(false);
+                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), fileItem.UserId).ConfigureAwait(false);
             }
         }
 
