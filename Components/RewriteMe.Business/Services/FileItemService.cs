@@ -237,8 +237,7 @@ namespace RewriteMe.Business.Services
                 return tempDirectoryPath;
             }
 
-            var directoryPath = _fileAccessService.GetRootPath(userId);
-            var uploadDirectoryPath = Path.Combine(directoryPath, fileItemId.ToString());
+            var uploadDirectoryPath = _fileAccessService.GetFileItemSourceDirectory(userId, fileItemId);
             if (!Directory.Exists(uploadDirectoryPath))
                 Directory.CreateDirectory(uploadDirectoryPath);
 
