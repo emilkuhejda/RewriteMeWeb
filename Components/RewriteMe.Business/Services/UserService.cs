@@ -13,15 +13,18 @@ namespace RewriteMe.Business.Services
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
+        private readonly IDeletedUserRepository _deletedUserRepository;
 
         public UserService(
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IDeletedUserRepository deletedUserRepository)
         {
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _userRepository = userRepository;
+            _deletedUserRepository = deletedUserRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId)
@@ -61,6 +64,7 @@ namespace RewriteMe.Business.Services
                 Directory.Delete(directoryPath, true);
 
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
+            await _deletedUserRepository.AddAsync(new DeletedUser { Id = Guid.NewGuid(), UserId = userId }).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);
             return true;
