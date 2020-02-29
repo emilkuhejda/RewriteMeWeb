@@ -9,6 +9,7 @@ namespace RewriteMe.WebApi.Services
     public class FileAccessService : IFileAccessService
     {
         private const string UploadedFilesDirectory = "uploaded";
+        private const string SourceDirectory = "source";
         private const string TranscriptionsDirectory = "transcriptions";
         private const string ChunksDirectory = "chunks";
 
@@ -28,21 +29,27 @@ namespace RewriteMe.WebApi.Services
             return rootDirectoryPath;
         }
 
-        public string GetFileItemDirectory(Guid userId, Guid fileItemId)
+        public string GetFileItemRootDirectory(Guid userId, Guid fileItemId)
         {
             return Path.Combine(GetRootPath(userId), fileItemId.ToString());
         }
 
+        public string GetFileItemSourceDirectory(Guid userId, Guid fileItemId)
+        {
+            var rootDirectory = GetRootPath(userId);
+            return Path.Combine(rootDirectory, fileItemId.ToString(), SourceDirectory);
+        }
+
         public string GetOriginalFileItemPath(FileItem fileItem)
         {
-            var rootDirectory = GetRootPath(fileItem.UserId);
-            return Path.Combine(rootDirectory, fileItem.OriginalSourcePath);
+            var rootDirectory = GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
+            return Path.Combine(rootDirectory, fileItem.OriginalSourceFileName);
         }
 
         public string GetFileItemPath(FileItem fileItem)
         {
-            var rootDirectory = GetRootPath(fileItem.UserId);
-            return Path.Combine(rootDirectory, fileItem.SourcePath);
+            var rootDirectory = GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
+            return Path.Combine(rootDirectory, fileItem.SourceFileName);
         }
 
         public string GetTranscriptionsDirectoryPath(Guid userId, Guid fileItemId)
@@ -60,14 +67,6 @@ namespace RewriteMe.WebApi.Services
             var directoryPath = GetTranscriptionsDirectoryPath(userId, transcribeItem.FileItemId);
 
             return Path.Combine(directoryPath, transcribeItem.SourceFileName);
-        }
-
-        public DirectoryInfo GetFileItemDirectoryInfo(Guid userId, Guid fileItemId)
-        {
-            var rootDirectory = GetRootPath(userId);
-            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString());
-
-            return new DirectoryInfo(directoryPath);
         }
 
         public string GetChunksFileItemStoragePath(Guid fileItemId)

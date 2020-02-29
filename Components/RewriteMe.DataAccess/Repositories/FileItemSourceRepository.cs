@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
 
@@ -68,6 +69,29 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 entity.Source = source;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task RemoveAsync(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItemSources
+                    .Where(x => x.FileItemId == fileItemId)
+                    .Select(x => new { x.Id })
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!entities.Any())
+                    return;
+
+                foreach (var entity in entities)
+                {
+                    var fileItemSourceEntity = new FileItemSourceEntity { Id = entity.Id };
+                    context.Entry(fileItemSourceEntity).State = EntityState.Deleted;
+                }
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

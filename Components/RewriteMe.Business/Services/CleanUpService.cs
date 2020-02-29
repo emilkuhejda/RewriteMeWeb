@@ -76,7 +76,7 @@ namespace RewriteMe.Business.Services
 
         private void CleanDataFromDiskAsync(Guid userId, Guid fileItemId)
         {
-            var directoryPath = _fileAccessService.GetFileItemDirectory(userId, fileItemId);
+            var directoryPath = _fileAccessService.GetFileItemRootDirectory(userId, fileItemId);
             var directoryInfo = new DirectoryInfo(directoryPath);
             if (directoryInfo.Exists)
             {
