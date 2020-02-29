@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -8,7 +7,9 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         string GetRootPath(Guid userId);
 
-        string GetFileItemDirectory(Guid userId, Guid fileItemId);
+        string GetFileItemRootDirectory(Guid userId, Guid fileItemId);
+
+        string GetFileItemSourceDirectory(Guid userId, Guid fileItemId);
 
         string GetOriginalFileItemPath(FileItem fileItem);
 
@@ -17,8 +18,6 @@ namespace RewriteMe.Domain.Interfaces.Services
         string GetTranscriptionsDirectoryPath(Guid userId, Guid fileItemId);
 
         string GetTranscriptionPath(Guid userId, TranscribeItem transcribeItem);
-
-        DirectoryInfo GetFileItemDirectoryInfo(Guid userId, Guid fileItemId);
 
         string GetChunksFileItemStoragePath(Guid fileItemId);
 

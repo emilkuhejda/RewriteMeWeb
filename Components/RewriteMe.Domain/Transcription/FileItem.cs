@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using RewriteMe.Domain.Enums;
 
 namespace RewriteMe.Domain.Transcription
@@ -28,15 +27,7 @@ namespace RewriteMe.Domain.Transcription
 
         public string OriginalSourceFileName { get; set; }
 
-        public string OriginalSourcePath => string.IsNullOrWhiteSpace(OriginalSourceFileName)
-            ? string.Empty
-            : Path.Combine(Id.ToString(), OriginalSourceFileName);
-
         public string SourceFileName { get; set; }
-
-        public string SourcePath => string.IsNullOrWhiteSpace(SourceFileName)
-            ? string.Empty
-            : Path.Combine(Id.ToString(), SourceFileName);
 
         public StorageSetting Storage { get; set; }
 
