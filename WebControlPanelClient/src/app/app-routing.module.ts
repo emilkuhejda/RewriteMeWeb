@@ -20,6 +20,7 @@ import { DetailInformationMessageComponent } from './home/information-messages/d
 import { FilesComponent } from './home/users/files/files.component';
 import { DetailFileComponent } from './home/users/files/detail-file/detail-file.component';
 import { SettingsComponent } from './home/settings/settings.component';
+import { DeletedAccountsComponent } from './home/deleted-accounts/deleted-accounts.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -31,6 +32,7 @@ const routes: Routes = [
     { path: 'users/subscriptions/:userId', component: SubscriptionsComponent, canActivate: [AuthGuard] },
     { path: 'users/files/:userId', component: FilesComponent, canActivate: [AuthGuard] },
     { path: 'users/files/:userId/:fileItemId', component: DetailFileComponent, canActivate: [AuthGuard] },
+    { path: 'deleted-accounts', component: DeletedAccountsComponent, canActivate: [AuthGuard] },
     { path: 'administrators', component: AdministratorsComponent, canActivate: [AuthGuard] },
     { path: 'administrators/create', component: CreateAdministratorComponent, canActivate: [AuthGuard] },
     { path: 'administrators/edit/:administratorId', component: EditAdministratorComponent, canActivate: [AuthGuard] },
@@ -54,6 +56,7 @@ export const routingComponents = [
     HomeComponent,
     LoginComponent,
     UsersComponent,
+    DeletedAccountsComponent,
     PurchasesComponent,
     DetailPurchaseComponent,
     SubscriptionsComponent,
