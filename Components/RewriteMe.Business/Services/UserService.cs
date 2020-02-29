@@ -64,7 +64,14 @@ namespace RewriteMe.Business.Services
                 Directory.Delete(directoryPath, true);
 
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
-            await _deletedAccountRepository.AddAsync(new DeletedAccount { Id = Guid.NewGuid(), UserId = userId }).ConfigureAwait(false);
+
+            var deletedAccount = new DeletedAccount
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                DateDeleted = DateTime.UtcNow
+            };
+            await _deletedAccountRepository.AddAsync(deletedAccount).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);
             return true;
