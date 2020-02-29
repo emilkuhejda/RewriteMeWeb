@@ -48,6 +48,8 @@ namespace RewriteMe.DataAccess
 
         public DbSet<UserDeviceEntity> UserDevices { get; set; }
 
+        public DbSet<DeletedUserEntity> DeletedUsers { get; set; }
+
         public DbSet<InternalValueEntity> InternalValues { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -77,6 +79,7 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new InformationMessageEntityConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageVersionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserDeviceEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new DeletedUserEntityConfiguration());
             modelBuilder.ApplyConfiguration(new InternalValueEntityConfiguration());
         }
     }
