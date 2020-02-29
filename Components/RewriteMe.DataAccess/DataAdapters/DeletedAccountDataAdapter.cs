@@ -10,7 +10,8 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new DeletedAccount
             {
                 Id = deletedAccountEntity.Id,
-                UserId = deletedAccountEntity.UserId
+                UserId = deletedAccountEntity.UserId,
+                DateDeleted = deletedAccountEntity.DateDeleted
             };
         }
 
@@ -19,7 +20,8 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new DeletedAccountEntity
             {
                 Id = deletedAccount.Id,
-                UserId = deletedAccount.UserId
+                UserId = deletedAccount.UserId,
+                DateDeleted = deletedAccount.DateDeleted
             };
         }
     }

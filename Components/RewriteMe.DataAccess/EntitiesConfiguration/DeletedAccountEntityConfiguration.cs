@@ -12,6 +12,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.UserId).IsRequired();
+            builder.Property(x => x.DateDeleted).IsRequired();
         }
     }
 }
