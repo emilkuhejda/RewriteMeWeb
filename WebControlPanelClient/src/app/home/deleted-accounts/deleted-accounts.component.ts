@@ -14,6 +14,6 @@ export class DeletedAccountsComponent implements OnInit {
             console.log(accounts);
         });
 
-        // this.deletedAccountService.delete("f9f01e95-ba8e-4cd4-93b1-347d5f213d54").subscribe();
+        this.deletedAccountService.delete("f9f01e95-ba8e-4cd4-93b1-347d5f213d54").subscribe();
     }
 }

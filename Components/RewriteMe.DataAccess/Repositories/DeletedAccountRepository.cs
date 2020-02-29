@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
-using RewriteMe.DataAccess.Entities;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.UserManagement;
 
@@ -42,8 +41,11 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var deletedAccountEntity = new DeletedAccountEntity { Id = deletedAccountId };
-                context.Entry(deletedAccountEntity).State = EntityState.Deleted;
+                var deletedAccountEntity = await context.DeletedAccounts.SingleOrDefaultAsync(x => x.Id == deletedAccountId).ConfigureAwait(false);
+                if (deletedAccountEntity == null)
+                    return;
+
+                context.DeletedAccounts.Remove(deletedAccountEntity);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
