@@ -10,40 +10,40 @@ using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.DataAccess.Repositories
 {
-    public class DeletedUserRepository : IDeletedUserRepository
+    public class DeletedAccountRepository : IDeletedAccountRepository
     {
         private readonly IDbContextFactory _contextFactory;
 
-        public DeletedUserRepository(IDbContextFactory contextFactory)
+        public DeletedAccountRepository(IDbContextFactory contextFactory)
         {
             _contextFactory = contextFactory;
         }
 
-        public async Task<IEnumerable<DeletedUser>> GetAllAsync()
+        public async Task<IEnumerable<DeletedAccount>> GetAllAsync()
         {
             using (var context = _contextFactory.Create())
             {
-                var deletedUsers = await context.DeletedUsers.ToListAsync().ConfigureAwait(false);
+                var deletedAccounts = await context.DeletedAccounts.ToListAsync().ConfigureAwait(false);
 
-                return deletedUsers.Select(x => x.ToDeletedUser());
+                return deletedAccounts.Select(x => x.ToDeletedAccount());
             }
         }
 
-        public async Task AddAsync(DeletedUser deletedUser)
+        public async Task AddAsync(DeletedAccount deletedAccount)
         {
             using (var context = _contextFactory.Create())
             {
-                await context.DeletedUsers.AddAsync(deletedUser.ToDeletedUserEntity()).ConfigureAwait(false);
+                await context.DeletedAccounts.AddAsync(deletedAccount.ToDeletedAccountEntity()).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
-        public async Task DeleteAsync(Guid deletedUserId)
+        public async Task DeleteAsync(Guid deletedAccountId)
         {
             using (var context = _contextFactory.Create())
             {
-                var deletedUserEntity = new DeletedUserEntity { Id = deletedUserId };
-                context.Entry(deletedUserEntity).State = EntityState.Deleted;
+                var deletedAccountEntity = new DeletedAccountEntity { Id = deletedAccountId };
+                context.Entry(deletedAccountEntity).State = EntityState.Deleted;
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

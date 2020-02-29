@@ -4,11 +4,11 @@ using RewriteMe.DataAccess.Entities;
 
 namespace RewriteMe.DataAccess.EntitiesConfiguration
 {
-    public class DeletedUserEntityConfiguration : IEntityTypeConfiguration<DeletedUserEntity>
+    public class DeletedAccountEntityConfiguration : IEntityTypeConfiguration<DeletedAccountEntity>
     {
-        public void Configure(EntityTypeBuilder<DeletedUserEntity> builder)
+        public void Configure(EntityTypeBuilder<DeletedAccountEntity> builder)
         {
-            builder.ToTable("DeletedUser");
+            builder.ToTable("DeletedAccount");
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.UserId).IsRequired();

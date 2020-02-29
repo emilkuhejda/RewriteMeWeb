@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace RewriteMe.Domain.UserManagement
+namespace RewriteMe.DataAccess.Entities
 {
-    public class DeletedUser
+    public class DeletedAccountEntity
     {
         public Guid Id { get; set; }
 

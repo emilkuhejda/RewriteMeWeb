@@ -5,10 +5,10 @@ using RewriteMe.Domain.UserManagement;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
-    public interface IDeletedUserService
+    public interface IDeletedAccountService
     {
-        Task<IEnumerable<DeletedUser>> GetAllAsync();
+        Task<IEnumerable<DeletedAccount>> GetAllAsync();
 
-        Task DeleteAsync(Guid deletedUserId);
+        Task DeleteAsync(Guid deletedAccountId);
     }
 }
