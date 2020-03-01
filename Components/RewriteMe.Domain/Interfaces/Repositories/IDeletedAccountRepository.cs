@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using RewriteMe.Domain.UserManagement;
+
+namespace RewriteMe.Domain.Interfaces.Repositories
+{
+    public interface IDeletedAccountRepository
+    {
+        Task<IEnumerable<DeletedAccount>> GetAllAsync();
+
+        Task AddAsync(DeletedAccount deletedAccount);
+
+        Task DeleteAsync(Guid deletedAccountId);
+    }
+}

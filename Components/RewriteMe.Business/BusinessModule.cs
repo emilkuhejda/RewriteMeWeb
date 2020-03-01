@@ -33,6 +33,7 @@ namespace RewriteMe.Business
             builder.RegisterType<InformationMessageService>().As<IInformationMessageService>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageVersionService>().As<ILanguageVersionService>().InstancePerLifetimeScope();
             builder.RegisterType<UserDeviceService>().As<IUserDeviceService>().InstancePerLifetimeScope();
+            builder.RegisterType<DeletedAccountService>().As<IDeletedAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<InternalValueService>().As<IInternalValueService>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseService>().As<IDatabaseService>().InstancePerLifetimeScope();
 

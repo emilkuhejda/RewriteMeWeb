@@ -42,10 +42,10 @@ export class UsersComponent implements OnInit {
                 },
                 (err: ErrorResponse) => {
                     let error = err.message;
-                    if (err.status === 400)
+                    if (err.status === 404)
                         error = "User was not found.";
 
-                    if (err.status === 404)
+                    if (err.status === 400)
                         error = "User was not deleted.";
 
                     this.alertService.error(error);
