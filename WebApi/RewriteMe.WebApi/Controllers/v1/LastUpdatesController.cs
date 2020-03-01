@@ -17,17 +17,20 @@ namespace RewriteMe.WebApi.Controllers.V1
     [ApiController]
     public class LastUpdatesController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IInformationMessageService _informationMessageService;
 
         public LastUpdatesController(
+            IUserService userService,
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
             IInformationMessageService informationMessageService)
         {
+            _userService = userService;
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
@@ -42,6 +45,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<ActionResult> Get()
         {
             var userId = HttpContext.User.GetNameIdentifier();
+            var user = await _userService.GetAsync(userId).ConfigureAwait(false);
+            if (user == null)
+                return Unauthorized();
+
             var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
             var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
             var transcribeItemLastUpdate = await _transcribeItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
