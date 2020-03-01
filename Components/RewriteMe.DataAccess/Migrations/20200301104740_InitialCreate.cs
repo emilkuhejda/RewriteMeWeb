@@ -39,6 +39,19 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeletedAccount",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    DateDeleted = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeletedAccount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "InternalValue",
                 columns: table => new
                 {
@@ -468,6 +481,9 @@ namespace RewriteMe.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "CurrentUserSubscription");
+
+            migrationBuilder.DropTable(
+                name: "DeletedAccount");
 
             migrationBuilder.DropTable(
                 name: "FileItemSource");
