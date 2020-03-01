@@ -13,20 +13,26 @@ namespace RewriteMe.Business.Tests
         private readonly Mock<IFileItemSourceService> _fileItemSourceServiceMock;
         private readonly Mock<IInternalValueService> _internalValueServiceMock;
         private readonly Mock<IFileAccessService> _fileAccessServiceMock;
+        private readonly Mock<IApplicationLogService> _applicationLogServiceMock;
         private readonly Mock<IFileItemRepository> _fileItemRepositoryMock;
+        private readonly Mock<IFileItemSourceRepository> _fileItemSourceRepositoryMock;
 
         public FileItemServiceTests()
         {
             _fileItemSourceServiceMock = new Mock<IFileItemSourceService>();
             _internalValueServiceMock = new Mock<IInternalValueService>();
             _fileAccessServiceMock = new Mock<IFileAccessService>();
+            _applicationLogServiceMock = new Mock<IApplicationLogService>();
             _fileItemRepositoryMock = new Mock<IFileItemRepository>();
+            _fileItemSourceRepositoryMock = new Mock<IFileItemSourceRepository>();
 
             _fileItemService = new FileItemService(
                 _fileItemSourceServiceMock.Object,
                 _internalValueServiceMock.Object,
                 _fileAccessServiceMock.Object,
-                _fileItemRepositoryMock.Object);
+                _applicationLogServiceMock.Object,
+                _fileItemRepositoryMock.Object,
+                _fileItemSourceRepositoryMock.Object);
         }
 
         [Trait("Category", "Unit")]

@@ -23,6 +23,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/users/delete/";
     }
 
+    getDeletedAccountsUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/deleted-accounts/";
+    }
+
     getPurchasesUri(): string {
         return this.getApiUri() + "api/v1/control-panel/purchases/";
     }

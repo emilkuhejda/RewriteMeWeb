@@ -32,6 +32,7 @@ namespace RewriteMe.DataAccess
             builder.RegisterType<InformationMessageRepository>().As<IInformationMessageRepository>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageVersionRepository>().As<ILanguageVersionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserDeviceRepository>().As<IUserDeviceRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<DeletedAccountRepository>().As<IDeletedAccountRepository>().InstancePerLifetimeScope();
             builder.RegisterType<InternalValueRepository>().As<IInternalValueRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseRepository>().As<IDatabaseRepository>().InstancePerLifetimeScope();
         }

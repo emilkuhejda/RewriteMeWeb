@@ -35,11 +35,11 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             var userExists = await _userService.ExistsAsync(userId, email).ConfigureAwait(false);
             if (!userExists)
-                return BadRequest();
+                return NotFound();
 
             var isSuccess = await _userService.DeleteAsync(userId).ConfigureAwait(false);
             if (!isSuccess)
-                return NotFound();
+                return BadRequest();
 
             return Ok();
         }
