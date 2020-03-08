@@ -13,18 +13,15 @@ namespace RewriteMe.Business.Services
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
-        private readonly IDeletedAccountRepository _deletedAccountRepository;
 
         public UserService(
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
-            IUserRepository userRepository,
-            IDeletedAccountRepository deletedAccountRepository)
+            IUserRepository userRepository)
         {
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _userRepository = userRepository;
-            _deletedAccountRepository = deletedAccountRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId)
@@ -57,24 +54,17 @@ namespace RewriteMe.Business.Services
             return await _userRepository.GetAllAsync().ConfigureAwait(false);
         }
 
-        public async Task<bool> DeleteAsync(Guid userId)
+        public async Task DeleteAsync(Guid userId)
         {
+            await _applicationLogService.InfoAsync($"Start deleting user with ID = '{userId}'.").ConfigureAwait(false);
+
             var directoryPath = _fileAccessService.GetRootPath(userId);
             if (Directory.Exists(directoryPath))
                 Directory.Delete(directoryPath, true);
 
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
 
-            var deletedAccount = new DeletedAccount
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                DateDeleted = DateTime.UtcNow
-            };
-            await _deletedAccountRepository.AddAsync(deletedAccount).ConfigureAwait(false);
-
             await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);
-            return true;
         }
     }
 }
