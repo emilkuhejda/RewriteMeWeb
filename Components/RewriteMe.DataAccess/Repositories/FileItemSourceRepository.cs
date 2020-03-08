@@ -18,11 +18,11 @@ namespace RewriteMe.DataAccess.Repositories
             _contextFactory = contextFactory;
         }
 
-        public async Task<FileItemSource> GetAsync(Guid fileItemId)
+        public FileItemSource GetFileItemSource(Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.FileItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
+                var entity = context.FileItemSources.SingleOrDefault(x => x.FileItemId == fileItemId);
                 return entity?.ToFileItemSource();
             }
         }
@@ -31,13 +31,9 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.FileItemSources
-                    .Where(x => x.FileItemId == fileItemId && x.Source != null && x.Source.Any())
-                    .Select(x => new { x.Id })
-                    .SingleOrDefaultAsync()
+                return await context.FileItemSources
+                    .AnyAsync(x => x.FileItemId == fileItemId && x.Source != null)
                     .ConfigureAwait(false);
-
-                return entity != null;
             }
         }
 
@@ -64,7 +60,7 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
-                var entity = await context.FileItemSources.SingleOrDefaultAsync(x => x.FileItemId == fileItemId).ConfigureAwait(false);
+                var entity = context.FileItemSources.SingleOrDefault(x => x.FileItemId == fileItemId);
                 if (entity == null)
                     return;
 

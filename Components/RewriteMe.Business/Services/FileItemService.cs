@@ -185,18 +185,18 @@ namespace RewriteMe.Business.Services
         public async Task<byte[]> GetAudioSourceAsync(FileItem fileItem)
         {
             if (fileItem.Storage == StorageSetting.Database)
-                return await GetAudioSourceFromDatabaseAsync(fileItem.Id).ConfigureAwait(false);
+                return GetAudioSourceFromDatabaseAsync(fileItem.Id);
 
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
-                return await GetAudioSourceFromDatabaseAsync(fileItem.Id).ConfigureAwait(false);
+                return GetAudioSourceFromDatabaseAsync(fileItem.Id);
 
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
 
-        private async Task<byte[]> GetAudioSourceFromDatabaseAsync(Guid fileItemId)
+        private byte[] GetAudioSourceFromDatabaseAsync(Guid fileItemId)
         {
-            var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+            var fileItemSource = _fileItemSourceService.GetFileItemSource(fileItemId);
             return fileItemSource?.Source ?? Array.Empty<byte>();
         }
 
@@ -214,7 +214,7 @@ namespace RewriteMe.Business.Services
 
         private async Task<string> GetMaterializedFileItemPathAsync(Guid fileItemId, string directoryPath)
         {
-            var fileItemSource = await _fileItemSourceService.GetAsync(fileItemId).ConfigureAwait(false);
+            var fileItemSource = _fileItemSourceService.GetFileItemSource(fileItemId);
             if (fileItemSource.OriginalSource == null || !fileItemSource.OriginalSource.Any())
                 return null;
 
