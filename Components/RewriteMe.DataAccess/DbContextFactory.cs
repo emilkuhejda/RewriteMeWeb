@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RewriteMe.Domain.Settings;
 
@@ -20,6 +21,13 @@ namespace RewriteMe.DataAccess
         public AppDbContext Create()
         {
             return new AppDbContext(_appSettings.ConnectionString, _contextOptions);
+        }
+
+        public AppDbContext Create(TimeSpan timeout)
+        {
+            var context = new AppDbContext(_appSettings.ConnectionString, _contextOptions);
+            context.Database.SetCommandTimeout(timeout);
+            return context;
         }
     }
 }
