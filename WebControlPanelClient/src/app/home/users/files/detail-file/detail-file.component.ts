@@ -54,7 +54,7 @@ export class DetailFileComponent implements OnInit {
             let data = {
                 fileItemId: this.fileItem.id,
                 fileName: dialogComponent.confirmationValue,
-                recognitionState: recognitionState.toString(),
+                recognitionState: recognitionState,
                 applicationId: CommonVariables.ApplicationId
             };
 
