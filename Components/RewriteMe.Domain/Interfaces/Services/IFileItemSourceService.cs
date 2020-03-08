@@ -6,7 +6,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IFileItemSourceService
     {
-        Task<FileItemSource> GetAsync(Guid fileItemId);
+        FileItemSource GetFileItemSource(Guid fileItemId);
 
         Task<bool> HasFileItemSourceAsync(Guid fileItemId);
 
