@@ -12,6 +12,7 @@ namespace RewriteMe.DataAccess.Repositories
     public class FileItemSourceRepository : IFileItemSourceRepository
     {
         private readonly IDbContextFactory _contextFactory;
+        private readonly TimeSpan _timeout = TimeSpan.FromMinutes(10);
 
         public FileItemSourceRepository(IDbContextFactory contextFactory)
         {
@@ -20,7 +21,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public FileItemSource GetFileItemSource(Guid fileItemId)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var entity = context.FileItemSources.SingleOrDefault(x => x.FileItemId == fileItemId);
                 return entity?.ToFileItemSource();
@@ -39,7 +40,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task AddAsync(FileItemSource fileItemSource)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var entities = await context.FileItemSources
                     .Where(x => x.FileItemId == fileItemSource.FileItemId)
@@ -58,7 +59,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task UpdateSourceAsync(Guid fileItemId, byte[] source)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var entity = context.FileItemSources.SingleOrDefault(x => x.FileItemId == fileItemId);
                 if (entity == null)
@@ -71,7 +72,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task RemoveAsync(Guid fileItemId)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var entities = await context.FileItemSources
                     .Where(x => x.FileItemId == fileItemId)
