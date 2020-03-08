@@ -12,6 +12,7 @@ namespace RewriteMe.DataAccess.Repositories
     public class TranscribeItemSourceRepository : ITranscribeItemSourceRepository
     {
         private readonly IDbContextFactory _contextFactory;
+        private readonly TimeSpan _timeout = TimeSpan.FromMinutes(10);
 
         public TranscribeItemSourceRepository(IDbContextFactory contextFactory)
         {
@@ -20,7 +21,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task<TranscribeItemSource> GetAsync(Guid transcribeItemId)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var entity = await context.TranscribeItemSources.SingleOrDefaultAsync(x => x.Id == transcribeItemId).ConfigureAwait(false);
 
@@ -30,7 +31,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task AddAsync(IEnumerable<TranscribeItemSource> transcribeItemSources)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(_timeout))
             {
                 var transcribeItems = transcribeItemSources.Select(x => x.ToTranscribeItemSourceEntity());
                 await context.TranscribeItemSources.AddRangeAsync(transcribeItems).ConfigureAwait(false);

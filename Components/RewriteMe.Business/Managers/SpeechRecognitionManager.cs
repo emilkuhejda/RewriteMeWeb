@@ -87,7 +87,7 @@ namespace RewriteMe.Business.Managers
             await _applicationLogService.InfoAsync($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.", userId).ConfigureAwait(false);
             if (fileItem.RecognitionState < RecognitionState.Prepared)
             {
-                var message = $"File with ID: '{fileItem.Id}' is stil converting. Speech recognition is stopped.";
+                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped.";
                 await _applicationLogService.ErrorAsync(message, userId).ConfigureAwait(false);
                 throw new InvalidOperationException(message);
             }
