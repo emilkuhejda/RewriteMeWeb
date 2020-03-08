@@ -9,6 +9,8 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<IEnumerable<DeletedAccount>> GetAllAsync();
 
+        Task AddAsync(DeletedAccount deletedAccount);
+
         Task DeleteAsync(Guid deletedAccountId);
     }
 }

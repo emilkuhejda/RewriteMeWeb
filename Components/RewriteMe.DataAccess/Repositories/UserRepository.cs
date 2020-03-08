@@ -81,7 +81,7 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task DeleteAsync(Guid userId)
         {
-            using (var context = _contextFactory.Create())
+            using (var context = _contextFactory.Create(TimeSpan.FromHours(1)))
             {
                 var userEntity = new UserEntity { Id = userId };
                 context.Entry(userEntity).State = EntityState.Deleted;

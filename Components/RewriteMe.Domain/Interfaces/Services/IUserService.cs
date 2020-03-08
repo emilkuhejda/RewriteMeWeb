@@ -19,6 +19,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<IEnumerable<User>> GetAllAsync();
 
-        Task<bool> DeleteAsync(Guid userId);
+        Task DeleteAsync(Guid userId);
     }
 }

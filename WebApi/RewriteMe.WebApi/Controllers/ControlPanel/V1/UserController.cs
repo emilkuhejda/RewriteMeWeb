@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.WebApi.Commands;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
@@ -16,10 +18,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService)
+        public UserController(
+            IUserService userService,
+            IMediator mediator)
         {
             _userService = userService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -33,13 +39,12 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteUser(Guid userId, string email)
         {
-            var userExists = await _userService.ExistsAsync(userId, email).ConfigureAwait(false);
-            if (!userExists)
-                return NotFound();
-
-            var isSuccess = await _userService.DeleteAsync(userId).ConfigureAwait(false);
-            if (!isSuccess)
-                return BadRequest();
+            var deleteUserAccountCommand = new DeleteUserAccountCommand
+            {
+                UserId = userId,
+                Email = email
+            };
+            await _mediator.Send(deleteUserAccountCommand).ConfigureAwait(false);
 
             return Ok();
         }
