@@ -212,7 +212,7 @@ namespace RewriteMe.WebApi
                 Authorization = new[] { new RewriteMeHangfireAuthorizationFilter(appSettings.HangfireSecretKey) }
             });
 
-            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 1, DelaysInSeconds = new[] { 30, 60, 120, 240 } });
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
         }
     }
 }

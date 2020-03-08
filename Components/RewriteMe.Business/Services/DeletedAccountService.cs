@@ -21,6 +21,11 @@ namespace RewriteMe.Business.Services
             return await _deletedAccountRepository.GetAllAsync().ConfigureAwait(false);
         }
 
+        public async Task AddAsync(DeletedAccount deletedAccount)
+        {
+            await _deletedAccountRepository.AddAsync(deletedAccount).ConfigureAwait(false);
+        }
+
         public async Task DeleteAsync(Guid deletedAccountId)
         {
             await _deletedAccountRepository.DeleteAsync(deletedAccountId).ConfigureAwait(false);

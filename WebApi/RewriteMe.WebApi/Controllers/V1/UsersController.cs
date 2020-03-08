@@ -99,7 +99,6 @@ namespace RewriteMe.WebApi.Controllers.V1
         [HttpDelete]
         [Authorize(Roles = nameof(Role.User))]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -107,13 +106,12 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> DeleteUser(string email)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var userExists = await _userService.ExistsAsync(userId, email).ConfigureAwait(false);
-            if (!userExists)
-                return NotFound();
-
-            var isSuccess = await _userService.DeleteAsync(userId).ConfigureAwait(false);
-            if (!isSuccess)
-                return BadRequest();
+            var deleteUserAccountCommand = new DeleteUserAccountCommand
+            {
+                UserId = userId,
+                Email = email
+            };
+            await _mediator.Send(deleteUserAccountCommand).ConfigureAwait(false);
 
             return Ok();
         }
