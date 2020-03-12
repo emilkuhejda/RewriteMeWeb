@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Options;
+using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -35,7 +36,12 @@ namespace RewriteMe.Business.Services
 
         private BlobContainerClient ContainerClient => _containerClient ?? (_containerClient = GetContainerClient().GetAwaiter().GetResult());
 
-        public async Task MigrateAsync()
+        public void Migrate()
+        {
+            AsyncHelper.RunSync(MigrateAsync);
+        }
+
+        private async Task MigrateAsync()
         {
             var fileItemsToMigrate = (await _fileItemRepository.GetFileItemsForMigrationAsync().ConfigureAwait(false)).ToList();
             if (!fileItemsToMigrate.Any())

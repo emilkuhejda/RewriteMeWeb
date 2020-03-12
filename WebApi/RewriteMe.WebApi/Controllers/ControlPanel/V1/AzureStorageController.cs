@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using MediatR;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Enums;
-using RewriteMe.WebApi.Commands;
+using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
@@ -16,19 +15,19 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     [AllowAnonymous]
     public class AzureStorageController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IStorageService _storageService;
 
-        public AzureStorageController(IMediator mediator)
+        public AzureStorageController(IStorageService storageService)
         {
-            _mediator = mediator;
+            _storageService = storageService;
         }
 
         [HttpPatch("migration")]
-        public async Task<IActionResult> Migration()
+        public IActionResult Migration()
         {
-            var okDto = await _mediator.Send(new MigrateFilesCommand()).ConfigureAwait(false);
+            BackgroundJob.Enqueue(() => _storageService.Migrate());
 
-            return Ok(okDto);
+            return Ok();
         }
     }
 }

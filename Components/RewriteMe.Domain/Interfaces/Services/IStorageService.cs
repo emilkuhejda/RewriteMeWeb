@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace RewriteMe.Domain.Interfaces.Services
+﻿namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IStorageService
     {
-        Task MigrateAsync();
+        void Migrate();
     }
 }
