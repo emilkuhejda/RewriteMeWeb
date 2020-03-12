@@ -406,7 +406,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
+        public async Task UpdateUploadStatusAsync(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
