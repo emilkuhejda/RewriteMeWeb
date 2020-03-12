@@ -422,6 +422,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task UpdateStorage(Guid fileItemId, StorageSetting storageSetting)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.Storage = storageSetting;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task MarkAsCleanedAsync(Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
@@ -471,6 +485,19 @@ namespace RewriteMe.DataAccess.Repositories
                     .ConfigureAwait(false);
 
                 return fileItems.Select(x => (x.Id, x.UserId));
+            }
+        }
+
+        public async Task<IEnumerable<FileItem>> GetFileItemsForMigrationAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => x.Storage == StorageSetting.Disk)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return entities?.Select(x => x.ToFileItem());
             }
         }
 
