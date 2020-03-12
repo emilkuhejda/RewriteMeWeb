@@ -422,7 +422,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateStorage(Guid fileItemId, StorageSetting storageSetting)
+        public async Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting)
         {
             using (var context = _contextFactory.Create())
             {

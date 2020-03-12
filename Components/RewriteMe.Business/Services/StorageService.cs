@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Options;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
@@ -42,9 +43,6 @@ namespace RewriteMe.Business.Services
 
             foreach (var fileItem in fileItemsToMigrate)
             {
-                if (!fileItem.CanMigrate)
-                    continue;
-
                 await MigrateFileItemAsync(fileItem).ConfigureAwait(false);
             }
         }
@@ -59,6 +57,10 @@ namespace RewriteMe.Business.Services
 
             await UploadFilesAsync(sourceDirectoryPath, GetSourcePath(fileItem)).ConfigureAwait(false);
             await UploadFilesAsync(transcriptionsDirectoryPath, GetTranscriptionsPath(fileItem)).ConfigureAwait(false);
+
+            ClearFileItemData(fileItem);
+
+            await _fileItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
         }
 
         private async Task UploadFilesAsync(string directoryPath, string destinationPath)
@@ -100,6 +102,12 @@ namespace RewriteMe.Business.Services
         private string GetTranscriptionsPath(FileItem fileItem)
         {
             return $"{fileItem.UserId}/{fileItem.Id}/{TranscriptionsDirectory}";
+        }
+
+        private void ClearFileItemData(FileItem fileItem)
+        {
+            var directoryPath = _fileAccessService.GetFileItemRootDirectory(fileItem.UserId, fileItem.Id);
+            Directory.Delete(directoryPath, true);
         }
     }
 }

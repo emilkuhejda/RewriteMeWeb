@@ -59,7 +59,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId);
 
-        Task UpdateStorage(Guid fileItemId, StorageSetting storageSetting);
+        Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting);
 
         Task MarkAsCleanedAsync(Guid fileItemId);
 
