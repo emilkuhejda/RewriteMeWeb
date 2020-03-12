@@ -18,7 +18,7 @@ namespace RewriteMe.WebApi.Handlers
 
         public async Task<OkDto> Handle(MigrateFilesCommand request, CancellationToken cancellationToken)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
+            await _storageService.MigrateAsync().ConfigureAwait(false);
 
             return new OkDto();
         }
