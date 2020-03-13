@@ -494,6 +494,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entities = await context.FileItems
                     .Where(x => x.Storage == StorageSetting.Disk)
+                    .Where(x => x.RecognitionState != RecognitionState.Converting || x.RecognitionState != RecognitionState.InProgress)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
