@@ -492,9 +492,12 @@ namespace RewriteMe.DataAccess.Repositories
         {
             using (var context = _contextFactory.Create())
             {
+                var dateToCompare = DateTime.UtcNow.AddDays(-1);
                 var entities = await context.FileItems
                     .Where(x => x.Storage == StorageSetting.Disk)
-                    .Where(x => x.RecognitionState != RecognitionState.Converting || x.RecognitionState != RecognitionState.InProgress)
+                    .Where(x => x.RecognitionState == RecognitionState.None ||
+                                x.RecognitionState == RecognitionState.Prepared ||
+                                (x.RecognitionState == RecognitionState.Completed && x.DateProcessedUtc < dateToCompare))
                     .ToListAsync()
                     .ConfigureAwait(false);
 
