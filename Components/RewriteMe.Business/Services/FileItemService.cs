@@ -17,6 +17,7 @@ namespace RewriteMe.Business.Services
     public class FileItemService : IFileItemService
     {
         private readonly IFileItemSourceService _fileItemSourceService;
+        private readonly IStorageService _storageService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
@@ -25,6 +26,7 @@ namespace RewriteMe.Business.Services
 
         public FileItemService(
             IFileItemSourceService fileItemSourceService,
+            IStorageService storageService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
@@ -32,6 +34,7 @@ namespace RewriteMe.Business.Services
             IFileItemSourceRepository fileItemSourceRepository)
         {
             _fileItemSourceService = fileItemSourceService;
+            _storageService = storageService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
@@ -186,6 +189,9 @@ namespace RewriteMe.Business.Services
         {
             if (fileItem.Storage == StorageSetting.Database)
                 return GetAudioSourceFromDatabaseAsync(fileItem.Id);
+
+            if (fileItem.Storage == StorageSetting.Azure)
+                return await _storageService.GetFileItemBytesAsync(fileItem).ConfigureAwait(false);
 
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))

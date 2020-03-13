@@ -40,32 +40,6 @@ namespace RewriteMe.Business.Services
 
         private BlobContainerClient ContainerClient => _containerClient ?? (_containerClient = GetContainerClient().GetAwaiter().GetResult());
 
-        public async Task<byte[]> GetFileItemBytesAsync(FileItem fileItem)
-        {
-            var path = GetSourceFilePath(fileItem);
-            var client = ContainerClient.GetBlobClient(path);
-
-            using (var memoryStream = new MemoryStream())
-            {
-                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
-
-                return memoryStream.ToArray();
-            }
-        }
-
-        public async Task<byte[]> GetTranscribeItemBytesAsync(TranscribeItem transcribeItem, Guid userId)
-        {
-            var path = GetTranscriptionFilePath(transcribeItem, userId);
-            var client = ContainerClient.GetBlobClient(path);
-
-            using (var memoryStream = new MemoryStream())
-            {
-                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
-
-                return memoryStream.ToArray();
-            }
-        }
-
         public void Migrate()
         {
             AsyncHelper.RunSync(MigrateAsync);
@@ -98,6 +72,32 @@ namespace RewriteMe.Business.Services
 
             await _fileItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
             await _transcribeItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
+        }
+
+        public async Task<byte[]> GetFileItemBytesAsync(FileItem fileItem)
+        {
+            var path = GetSourceFilePath(fileItem);
+            var client = ContainerClient.GetBlobClient(path);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
+
+                return memoryStream.ToArray();
+            }
+        }
+
+        public async Task<byte[]> GetTranscribeItemBytesAsync(TranscribeItem transcribeItem, Guid userId)
+        {
+            var path = GetTranscriptionFilePath(transcribeItem, userId);
+            var client = ContainerClient.GetBlobClient(path);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
+
+                return memoryStream.ToArray();
+            }
         }
 
         private async Task UploadFilesAsync(string directoryPath, string destinationPath)
