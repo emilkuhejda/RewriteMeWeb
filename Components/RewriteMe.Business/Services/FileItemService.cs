@@ -176,6 +176,9 @@ namespace RewriteMe.Business.Services
                 }
 
                 await _storageService.DeleteFileItemSourceAsync(fileItem).ConfigureAwait(false);
+
+                var storageSetting = fileItem.Storage == StorageSetting.Azure ? StorageSetting.Disk : fileItem.Storage;
+                await _fileItemRepository.UpdateStorageAsync(fileItem.Id, storageSetting).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
