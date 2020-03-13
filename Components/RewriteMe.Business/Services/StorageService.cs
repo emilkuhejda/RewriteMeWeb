@@ -100,7 +100,7 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        public async Task DeleteFileItemAsync(FileItem fileItem)
+        public async Task DeleteFileItemSourceAsync(FileItem fileItem)
         {
             var path = GetSourceFilePath(fileItem);
             var client = ContainerClient.GetBlobClient(path);
@@ -112,6 +112,15 @@ namespace RewriteMe.Business.Services
             var path = GetTranscriptionFilePath(transcribeItem, userId);
             var client = ContainerClient.GetBlobClient(path);
             await client.DeleteIfExistsAsync().ConfigureAwait(false);
+        }
+
+        public async Task DeleteFileItemAsync(FileItem fileItem)
+        {
+            await DeleteFileItemSourceAsync(fileItem).ConfigureAwait(false);
+            foreach (var transcribeItem in fileItem.TranscribeItems)
+            {
+                await DeleteTranscribeItemAsync(transcribeItem, fileItem.UserId).ConfigureAwait(false);
+            }
         }
 
         private async Task UploadFilesAsync(string directoryPath, string destinationPath)

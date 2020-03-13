@@ -10,18 +10,27 @@ namespace RewriteMe.Business.Services
 {
     public class UserService : IUserService
     {
+        private readonly IStorageService _storageService;
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
+        private readonly IFileItemRepository _fileItemRepository;
+        private readonly ITranscribeItemRepository _transcribeItemRepository;
 
         public UserService(
+            IStorageService storageService,
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IFileItemRepository fileItemRepository,
+            ITranscribeItemRepository transcribeItemRepository)
         {
+            _storageService = storageService;
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _userRepository = userRepository;
+            _fileItemRepository = fileItemRepository;
+            _transcribeItemRepository = transcribeItemRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId)
@@ -61,6 +70,13 @@ namespace RewriteMe.Business.Services
             var directoryPath = _fileAccessService.GetRootPath(userId);
             if (Directory.Exists(directoryPath))
                 Directory.Delete(directoryPath, true);
+
+            var fileItems = await _fileItemRepository.GetAllForUserAsync(userId).ConfigureAwait(false);
+            foreach (var fileItem in fileItems)
+            {
+                fileItem.TranscribeItems = await _transcribeItemRepository.GetAllAsync(fileItem.Id).ConfigureAwait(false);
+                await _storageService.DeleteFileItemAsync(fileItem).ConfigureAwait(false);
+            }
 
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
 

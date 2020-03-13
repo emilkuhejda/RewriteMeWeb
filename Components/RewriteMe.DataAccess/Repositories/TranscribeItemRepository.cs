@@ -40,34 +40,11 @@ namespace RewriteMe.DataAccess.Repositories
                 var transcribeItemEntities = await context.TranscribeItems
                     .Where(x => x.FileItemId == fileItemId)
                     .AsNoTracking()
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.FileItemId,
-                        x.Alternatives,
-                        x.UserTranscript,
-                        x.StartTime,
-                        x.EndTime,
-                        x.TotalTime,
-                        DateCreated = x.DateCreatedUtc,
-                        DateUpdated = x.DateUpdatedUtc
-                    })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                return transcribeItemEntities.Select(x => new TranscribeItem
-                {
-                    Id = x.Id,
-                    FileItemId = x.FileItemId,
-                    Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
-                    UserTranscript = x.UserTranscript,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    TotalTime = x.TotalTime,
-                    DateCreatedUtc = x.DateCreated,
-                    DateUpdatedUtc = x.DateUpdated
-                });
+                return transcribeItemEntities?.Select(x => x.ToTranscribeItem());
             }
         }
 
@@ -78,34 +55,11 @@ namespace RewriteMe.DataAccess.Repositories
                 var transcribeItemEntities = await context.TranscribeItems
                     .Where(x => x.FileItem.UserId == userId && x.DateUpdatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.FileItemId,
-                        x.Alternatives,
-                        x.UserTranscript,
-                        x.StartTime,
-                        x.EndTime,
-                        x.TotalTime,
-                        DateCreated = x.DateCreatedUtc,
-                        DateUpdated = x.DateUpdatedUtc
-                    })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                return transcribeItemEntities.Select(x => new TranscribeItem
-                {
-                    Id = x.Id,
-                    FileItemId = x.FileItemId,
-                    Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
-                    UserTranscript = x.UserTranscript,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    TotalTime = x.TotalTime,
-                    DateCreatedUtc = x.DateCreated,
-                    DateUpdatedUtc = x.DateUpdated
-                });
+                return transcribeItemEntities?.Select(x => x.ToTranscribeItem());
             }
         }
 
