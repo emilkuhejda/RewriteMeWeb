@@ -22,6 +22,9 @@ namespace RewriteMe.Business.Services
         private readonly IFileItemRepository _fileItemRepository;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly AppSettings _appSettings;
+        private readonly object _lockObject = new object();
+
+        private bool _isRunning;
 
         public StorageService(
             IFileAccessService fileAccessService,
@@ -35,9 +38,25 @@ namespace RewriteMe.Business.Services
             _appSettings = options.Value;
         }
 
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                lock (_lockObject)
+                {
+                    _isRunning = value;
+                }
+            }
+        }
+
         public void Migrate()
         {
+            IsRunning = true;
+
             AsyncHelper.RunSync(MigrateAsync);
+
+            IsRunning = false;
         }
 
         private async Task MigrateAsync()

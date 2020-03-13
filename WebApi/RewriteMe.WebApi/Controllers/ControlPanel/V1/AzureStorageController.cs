@@ -25,6 +25,9 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         [HttpPatch("migration")]
         public IActionResult Migration()
         {
+            if (_storageService.IsRunning)
+                return BadRequest();
+
             BackgroundJob.Enqueue(() => _storageService.Migrate());
 
             return Ok();

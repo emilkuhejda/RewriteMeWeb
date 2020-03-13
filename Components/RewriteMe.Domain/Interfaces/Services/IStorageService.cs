@@ -6,6 +6,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface IStorageService
     {
+        bool IsRunning { get; }
+
         void Migrate();
 
         Task<byte[]> GetFileItemBytesAsync(FileItem fileItem);
