@@ -37,7 +37,7 @@ namespace RewriteMe.Business.Services
             if (transcribeItem.Storage == StorageSetting.Database)
                 return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
 
-            if (transcribeItem.Storage == StorageSetting.Disk)
+            if (transcribeItem.Storage == StorageSetting.Azure)
                 return await _storageService.GetTranscribeItemBytesAsync(transcribeItem, userId).ConfigureAwait(false);
 
             var sourcePath = _fileAccessService.GetTranscriptionPath(userId, transcribeItem);
