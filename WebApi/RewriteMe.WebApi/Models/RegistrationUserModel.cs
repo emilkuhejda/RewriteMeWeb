@@ -14,10 +14,8 @@ namespace RewriteMe.WebApi.Models
         [Required]
         public string Email { get; set; }
 
-        [Required]
         public string GivenName { get; set; }
 
-        [Required]
         public string FamilyName { get; set; }
 
         public RegistrationDeviceModel Device { get; set; }
