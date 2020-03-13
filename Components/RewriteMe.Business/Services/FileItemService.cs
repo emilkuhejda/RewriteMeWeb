@@ -174,6 +174,8 @@ namespace RewriteMe.Business.Services
                 {
                     Directory.Delete(sourceDirectory, true);
                 }
+
+                await _storageService.DeleteFileItemSourceAsync(fileItem).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

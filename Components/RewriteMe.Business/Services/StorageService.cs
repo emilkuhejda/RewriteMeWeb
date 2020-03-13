@@ -15,7 +15,6 @@ namespace RewriteMe.Business.Services
 {
     public class StorageService : IStorageService
     {
-        private const string ContainerName = "voicipher-storage";
         private const string SourceDirectory = "source";
         private const string TranscriptionsDirectory = "transcriptions";
 
@@ -23,8 +22,6 @@ namespace RewriteMe.Business.Services
         private readonly IFileItemRepository _fileItemRepository;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly AppSettings _appSettings;
-
-        private BlobContainerClient _containerClient;
 
         public StorageService(
             IFileAccessService fileAccessService,
@@ -37,8 +34,6 @@ namespace RewriteMe.Business.Services
             _transcribeItemRepository = transcribeItemRepository;
             _appSettings = options.Value;
         }
-
-        private BlobContainerClient ContainerClient => _containerClient ?? (_containerClient = GetContainerClient().GetAwaiter().GetResult());
 
         public void Migrate()
         {
@@ -65,8 +60,8 @@ namespace RewriteMe.Business.Services
             var sourceDirectoryPath = _fileAccessService.GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
             var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItem.UserId, fileItem.Id);
 
-            await UploadFilesAsync(sourceDirectoryPath, GetSourceDirectoryPath(fileItem)).ConfigureAwait(false);
-            await UploadFilesAsync(transcriptionsDirectoryPath, GetTranscriptionsDirectoryPath(fileItem)).ConfigureAwait(false);
+            await UploadFilesAsync(sourceDirectoryPath, GetSourceDirectoryPath(fileItem), fileItem.UserId).ConfigureAwait(false);
+            await UploadFilesAsync(transcriptionsDirectoryPath, GetTranscriptionsDirectoryPath(fileItem), fileItem.UserId).ConfigureAwait(false);
 
             ClearFileItemData(fileItem);
 
@@ -77,7 +72,8 @@ namespace RewriteMe.Business.Services
         public async Task<byte[]> GetFileItemBytesAsync(FileItem fileItem)
         {
             var path = GetSourceFilePath(fileItem);
-            var client = ContainerClient.GetBlobClient(path);
+            var container = await GetContainerClient(fileItem.UserId).ConfigureAwait(false);
+            var client = container.GetBlobClient(path);
 
             using (var memoryStream = new MemoryStream())
             {
@@ -89,8 +85,9 @@ namespace RewriteMe.Business.Services
 
         public async Task<byte[]> GetTranscribeItemBytesAsync(TranscribeItem transcribeItem, Guid userId)
         {
-            var path = GetTranscriptionFilePath(transcribeItem, userId);
-            var client = ContainerClient.GetBlobClient(path);
+            var path = GetTranscriptionFilePath(transcribeItem);
+            var container = await GetContainerClient(userId).ConfigureAwait(false);
+            var client = container.GetBlobClient(path);
 
             using (var memoryStream = new MemoryStream())
             {
@@ -103,27 +100,18 @@ namespace RewriteMe.Business.Services
         public async Task DeleteFileItemSourceAsync(FileItem fileItem)
         {
             var path = GetSourceFilePath(fileItem);
-            var client = ContainerClient.GetBlobClient(path);
+            var container = await GetContainerClient(fileItem.UserId).ConfigureAwait(false);
+            var client = container.GetBlobClient(path);
             await client.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
-        public async Task DeleteTranscribeItemAsync(TranscribeItem transcribeItem, Guid userId)
+        public async Task DeleteContainerAsync(Guid userId)
         {
-            var path = GetTranscriptionFilePath(transcribeItem, userId);
-            var client = ContainerClient.GetBlobClient(path);
+            var client = await GetContainerClient(userId).ConfigureAwait(false);
             await client.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
-        public async Task DeleteFileItemAsync(FileItem fileItem)
-        {
-            await DeleteFileItemSourceAsync(fileItem).ConfigureAwait(false);
-            foreach (var transcribeItem in fileItem.TranscribeItems)
-            {
-                await DeleteTranscribeItemAsync(transcribeItem, fileItem.UserId).ConfigureAwait(false);
-            }
-        }
-
-        private async Task UploadFilesAsync(string directoryPath, string destinationPath)
+        private async Task UploadFilesAsync(string directoryPath, string destinationPath, Guid userId)
         {
             var directoryInfo = new DirectoryInfo(directoryPath);
             if (!directoryInfo.Exists)
@@ -132,24 +120,25 @@ namespace RewriteMe.Business.Services
             var files = directoryInfo.GetFiles();
             foreach (var fileInfo in files)
             {
-                await UpdateFileAsync(fileInfo, destinationPath).ConfigureAwait(false);
+                await UpdateFileAsync(fileInfo, destinationPath, userId).ConfigureAwait(false);
             }
         }
 
-        private async Task UpdateFileAsync(FileInfo fileInfo, string destinationPath)
+        private async Task UpdateFileAsync(FileInfo fileInfo, string destinationPath, Guid userId)
         {
             var filePath = Path.Combine(destinationPath, fileInfo.Name);
-            var client = ContainerClient.GetBlobClient(filePath);
+            var container = await GetContainerClient(userId).ConfigureAwait(false);
+            var client = container.GetBlobClient(filePath);
             using (var fileStream = File.OpenRead(fileInfo.FullName))
             {
                 await client.UploadAsync(fileStream, true).ConfigureAwait(false);
             }
         }
 
-        private async Task<BlobContainerClient> GetContainerClient()
+        private async Task<BlobContainerClient> GetContainerClient(Guid userId)
         {
             var blobServiceClient = new BlobServiceClient(_appSettings.AzureStorageAccount.ConnectionString);
-            var container = blobServiceClient.GetBlobContainerClient(ContainerName);
+            var container = blobServiceClient.GetBlobContainerClient(userId.ToString());
             await container.CreateIfNotExistsAsync().ConfigureAwait(false);
 
             return container;
@@ -157,22 +146,22 @@ namespace RewriteMe.Business.Services
 
         private string GetSourceDirectoryPath(FileItem fileItem)
         {
-            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), SourceDirectory);
+            return Path.Combine(fileItem.Id.ToString(), SourceDirectory);
         }
 
         private string GetSourceFilePath(FileItem fileItem)
         {
-            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), SourceDirectory, fileItem.OriginalSourceFileName);
+            return Path.Combine(fileItem.Id.ToString(), SourceDirectory, fileItem.OriginalSourceFileName);
         }
 
-        private string GetTranscriptionFilePath(TranscribeItem transcribeItem, Guid userId)
+        private string GetTranscriptionFilePath(TranscribeItem transcribeItem)
         {
-            return Path.Combine(userId.ToString(), transcribeItem.FileItemId.ToString(), TranscriptionsDirectory, transcribeItem.SourceFileName);
+            return Path.Combine(transcribeItem.FileItemId.ToString(), TranscriptionsDirectory, transcribeItem.SourceFileName);
         }
 
         private string GetTranscriptionsDirectoryPath(FileItem fileItem)
         {
-            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), TranscriptionsDirectory);
+            return Path.Combine(fileItem.Id.ToString(), TranscriptionsDirectory);
         }
 
         private void ClearFileItemData(FileItem fileItem)

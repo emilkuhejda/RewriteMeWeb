@@ -14,23 +14,17 @@ namespace RewriteMe.Business.Services
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
-        private readonly IFileItemRepository _fileItemRepository;
-        private readonly ITranscribeItemRepository _transcribeItemRepository;
 
         public UserService(
             IStorageService storageService,
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
-            IUserRepository userRepository,
-            IFileItemRepository fileItemRepository,
-            ITranscribeItemRepository transcribeItemRepository)
+            IUserRepository userRepository)
         {
             _storageService = storageService;
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _userRepository = userRepository;
-            _fileItemRepository = fileItemRepository;
-            _transcribeItemRepository = transcribeItemRepository;
         }
 
         public async Task<bool> ExistsAsync(Guid userId)
@@ -71,13 +65,7 @@ namespace RewriteMe.Business.Services
             if (Directory.Exists(directoryPath))
                 Directory.Delete(directoryPath, true);
 
-            var fileItems = await _fileItemRepository.GetAllForUserAsync(userId).ConfigureAwait(false);
-            foreach (var fileItem in fileItems)
-            {
-                fileItem.TranscribeItems = await _transcribeItemRepository.GetAllAsync(fileItem.Id).ConfigureAwait(false);
-                await _storageService.DeleteFileItemAsync(fileItem).ConfigureAwait(false);
-            }
-
+            await _storageService.DeleteContainerAsync(userId).ConfigureAwait(false);
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);

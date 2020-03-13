@@ -14,8 +14,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task DeleteFileItemSourceAsync(FileItem fileItem);
 
-        Task DeleteTranscribeItemAsync(TranscribeItem transcribeItem, Guid userId);
-
-        Task DeleteFileItemAsync(FileItem fileItem);
+        Task DeleteContainerAsync(Guid userId);
     }
 }
