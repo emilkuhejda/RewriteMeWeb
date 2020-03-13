@@ -21,6 +21,7 @@ namespace RewriteMe.Business.Services
 
         private readonly IFileAccessService _fileAccessService;
         private readonly IFileItemRepository _fileItemRepository;
+        private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly AppSettings _appSettings;
 
         private BlobContainerClient _containerClient;
@@ -28,10 +29,12 @@ namespace RewriteMe.Business.Services
         public StorageService(
             IFileAccessService fileAccessService,
             IFileItemRepository fileItemRepository,
+            ITranscribeItemRepository transcribeItemRepository,
             IOptions<AppSettings> options)
         {
             _fileAccessService = fileAccessService;
             _fileItemRepository = fileItemRepository;
+            _transcribeItemRepository = transcribeItemRepository;
             _appSettings = options.Value;
         }
 
@@ -94,6 +97,7 @@ namespace RewriteMe.Business.Services
             ClearFileItemData(fileItem);
 
             await _fileItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
+            await _transcribeItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
         }
 
         private async Task UploadFilesAsync(string directoryPath, string destinationPath)

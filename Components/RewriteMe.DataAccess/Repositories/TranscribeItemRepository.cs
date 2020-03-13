@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
 
@@ -141,6 +142,27 @@ namespace RewriteMe.DataAccess.Repositories
                 transcribeItemEntity.ApplicationId = applicationId;
                 transcribeItemEntity.UserTranscript = transcript;
                 transcribeItemEntity.DateUpdatedUtc = dateUpdated;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var transcribeItemEntities = await context.TranscribeItems
+                    .Where(x => x.FileItemId == fileItemId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!transcribeItemEntities.Any())
+                    return;
+
+                foreach (var transcribeItemEntity in transcribeItemEntities)
+                {
+                    transcribeItemEntity.Storage = storageSetting;
+                }
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
