@@ -11,5 +11,9 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<byte[]> GetFileItemBytesAsync(FileItem fileItem);
 
         Task<byte[]> GetTranscribeItemBytesAsync(TranscribeItem transcribeItem, Guid userId);
+
+        Task DeleteFileItemAsync(FileItem fileItem);
+
+        Task DeleteTranscribeItemAsync(TranscribeItem transcribeItem, Guid userId);
     }
 }

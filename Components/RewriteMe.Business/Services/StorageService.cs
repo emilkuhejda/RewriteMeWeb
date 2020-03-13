@@ -100,6 +100,20 @@ namespace RewriteMe.Business.Services
             }
         }
 
+        public async Task DeleteFileItemAsync(FileItem fileItem)
+        {
+            var path = GetSourceFilePath(fileItem);
+            var client = ContainerClient.GetBlobClient(path);
+            await client.DeleteIfExistsAsync().ConfigureAwait(false);
+        }
+
+        public async Task DeleteTranscribeItemAsync(TranscribeItem transcribeItem, Guid userId)
+        {
+            var path = GetTranscriptionFilePath(transcribeItem, userId);
+            var client = ContainerClient.GetBlobClient(path);
+            await client.DeleteIfExistsAsync().ConfigureAwait(false);
+        }
+
         private async Task UploadFilesAsync(string directoryPath, string destinationPath)
         {
             var directoryInfo = new DirectoryInfo(directoryPath);
