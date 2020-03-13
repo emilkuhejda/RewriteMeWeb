@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -36,6 +37,32 @@ namespace RewriteMe.Business.Services
 
         private BlobContainerClient ContainerClient => _containerClient ?? (_containerClient = GetContainerClient().GetAwaiter().GetResult());
 
+        public async Task<byte[]> GetFileItemBytesAsync(FileItem fileItem)
+        {
+            var path = GetSourceFilePath(fileItem);
+            var client = ContainerClient.GetBlobClient(path);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
+
+                return memoryStream.ToArray();
+            }
+        }
+
+        public async Task<byte[]> GetTranscribeItemBytesAsync(TranscribeItem transcribeItem, Guid userId)
+        {
+            var path = GetTranscriptionFilePath(transcribeItem, userId);
+            var client = ContainerClient.GetBlobClient(path);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await client.DownloadToAsync(memoryStream).ConfigureAwait(false);
+
+                return memoryStream.ToArray();
+            }
+        }
+
         public void Migrate()
         {
             AsyncHelper.RunSync(MigrateAsync);
@@ -61,8 +88,8 @@ namespace RewriteMe.Business.Services
             var sourceDirectoryPath = _fileAccessService.GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
             var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(fileItem.UserId, fileItem.Id);
 
-            await UploadFilesAsync(sourceDirectoryPath, GetSourcePath(fileItem)).ConfigureAwait(false);
-            await UploadFilesAsync(transcriptionsDirectoryPath, GetTranscriptionsPath(fileItem)).ConfigureAwait(false);
+            await UploadFilesAsync(sourceDirectoryPath, GetSourceDirectoryPath(fileItem)).ConfigureAwait(false);
+            await UploadFilesAsync(transcriptionsDirectoryPath, GetTranscriptionsDirectoryPath(fileItem)).ConfigureAwait(false);
 
             ClearFileItemData(fileItem);
 
@@ -82,9 +109,10 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        private async Task UpdateFileAsync(FileInfo fileInfo, string path)
+        private async Task UpdateFileAsync(FileInfo fileInfo, string destinationPath)
         {
-            var client = ContainerClient.GetBlobClient(Path.Combine(path, fileInfo.Name));
+            var filePath = Path.Combine(destinationPath, fileInfo.Name);
+            var client = ContainerClient.GetBlobClient(filePath);
             using (var fileStream = File.OpenRead(fileInfo.FullName))
             {
                 await client.UploadAsync(fileStream, true).ConfigureAwait(false);
@@ -100,14 +128,24 @@ namespace RewriteMe.Business.Services
             return container;
         }
 
-        private string GetSourcePath(FileItem fileItem)
+        private string GetSourceDirectoryPath(FileItem fileItem)
         {
-            return $"{fileItem.UserId}/{fileItem.Id}/{SourceDirectory}";
+            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), SourceDirectory);
         }
 
-        private string GetTranscriptionsPath(FileItem fileItem)
+        private string GetSourceFilePath(FileItem fileItem)
         {
-            return $"{fileItem.UserId}/{fileItem.Id}/{TranscriptionsDirectory}";
+            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), SourceDirectory, fileItem.OriginalSourceFileName);
+        }
+
+        private string GetTranscriptionFilePath(TranscribeItem transcribeItem, Guid userId)
+        {
+            return Path.Combine(userId.ToString(), transcribeItem.FileItemId.ToString(), TranscriptionsDirectory, transcribeItem.SourceFileName);
+        }
+
+        private string GetTranscriptionsDirectoryPath(FileItem fileItem)
+        {
+            return Path.Combine(fileItem.UserId.ToString(), fileItem.Id.ToString(), TranscriptionsDirectory);
         }
 
         private void ClearFileItemData(FileItem fileItem)
