@@ -169,13 +169,10 @@ namespace RewriteMe.Business.Services
                 await _fileItemRepository.UpdateSourceFileNameAsync(fileItem.Id, null).ConfigureAwait(false);
                 await _fileItemSourceRepository.RemoveAsync(fileItem.Id).ConfigureAwait(false);
 
-                if (fileItem.Storage == StorageSetting.Disk)
+                var sourceDirectory = _fileAccessService.GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
+                if (Directory.Exists(sourceDirectory))
                 {
-                    var sourceDirectory = _fileAccessService.GetFileItemSourceDirectory(fileItem.UserId, fileItem.Id);
-                    if (Directory.Exists(sourceDirectory))
-                    {
-                        Directory.Delete(sourceDirectory, true);
-                    }
+                    Directory.Delete(sourceDirectory, true);
                 }
             }
             catch (Exception ex)
@@ -190,12 +187,16 @@ namespace RewriteMe.Business.Services
             if (fileItem.Storage == StorageSetting.Database)
                 return GetAudioSourceFromDatabaseAsync(fileItem.Id);
 
-            if (fileItem.Storage == StorageSetting.Azure)
-                return await _storageService.GetFileItemBytesAsync(fileItem).ConfigureAwait(false);
-
             var fileItemPath = _fileAccessService.GetFileItemPath(fileItem);
             if (!File.Exists(fileItemPath))
+            {
+                if (fileItem.Storage == StorageSetting.Azure)
+                {
+                    return await _storageService.GetFileItemBytesAsync(fileItem).ConfigureAwait(false);
+                }
+
                 return GetAudioSourceFromDatabaseAsync(fileItem.Id);
+            }
 
             return await File.ReadAllBytesAsync(fileItemPath).ConfigureAwait(false);
         }
@@ -210,6 +211,9 @@ namespace RewriteMe.Business.Services
         {
             if (fileItem.Storage == StorageSetting.Database)
                 return await GetMaterializedFileItemPathAsync(fileItem.Id, directoryPath).ConfigureAwait(false);
+
+            if (fileItem.Storage == StorageSetting.Azure)
+                return await GetMaterializedFileItemFromStoragePathAsync(fileItem, directoryPath).ConfigureAwait(false);
 
             var filePath = _fileAccessService.GetOriginalFileItemPath(fileItem);
             if (!File.Exists(filePath))
@@ -226,6 +230,14 @@ namespace RewriteMe.Business.Services
 
             var tempFilePath = Path.Combine(directoryPath, $"{Guid.NewGuid()}.wav");
             await File.WriteAllBytesAsync(tempFilePath, fileItemSource.OriginalSource).ConfigureAwait(false);
+            return tempFilePath;
+        }
+
+        private async Task<string> GetMaterializedFileItemFromStoragePathAsync(FileItem fileItem, string directoryPath)
+        {
+            var source = await _storageService.GetFileItemBytesAsync(fileItem).ConfigureAwait(false);
+            var tempFilePath = Path.Combine(directoryPath, $"{Guid.NewGuid()}.wav");
+            await File.WriteAllBytesAsync(tempFilePath, source).ConfigureAwait(false);
             return tempFilePath;
         }
 
