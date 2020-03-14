@@ -5,6 +5,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { StorageSetting } from 'src/app/_enums/storage-setting';
+import { AzureStorageService } from 'src/app/_service/azure-storage.service';
 
 @Component({
     selector: 'app-settings',
@@ -31,6 +32,7 @@ export class SettingsComponent implements OnInit {
         private formBuilder: FormBuilder,
         private utilsService: UtilsService,
         private settingsService: SettingsService,
+        private azureStorageService: AzureStorageService,
         private alertService: AlertService) { }
 
     ngOnInit() {
@@ -271,5 +273,22 @@ export class SettingsComponent implements OnInit {
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             });
+    }
+
+    migrate() {
+        this.alertService.clear();
+
+        this.azureStorageService.migrate().subscribe(
+            () => {
+                this.alertService.success('Job was queued.');
+            },
+            (err: ErrorResponse) => {
+                let error = err.message;
+                if (err.status === 400)
+                    error = 'Some background jobs are in progress.';
+
+                this.alertService.error(error);
+            }
+        );
     }
 }

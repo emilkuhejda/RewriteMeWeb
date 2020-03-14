@@ -22,8 +22,8 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             _storageService = storageService;
         }
 
-        [HttpPatch("migration")]
-        public IActionResult Migration()
+        [HttpPatch("migrate")]
+        public IActionResult Migrate()
         {
             var monitoringApi = JobStorage.Current.GetMonitoringApi();
             if (monitoringApi.ProcessingCount() > 0)
