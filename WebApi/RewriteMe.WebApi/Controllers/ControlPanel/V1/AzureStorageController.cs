@@ -9,7 +9,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/control-panel/azure-storage")]
     [Produces("application/json")]
-    //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = nameof(Role.Admin))]
     [ApiController]
     [AllowAnonymous]
@@ -25,6 +25,10 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         [HttpPatch("migration")]
         public IActionResult Migration()
         {
+            var monitoringApi = JobStorage.Current.GetMonitoringApi();
+            if (monitoringApi.ProcessingCount() > 0)
+                return BadRequest();
+
             BackgroundJob.Enqueue(() => _storageService.Migrate());
 
             return Ok();
