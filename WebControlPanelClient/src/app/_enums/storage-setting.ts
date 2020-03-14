@@ -1,4 +1,5 @@
 export enum StorageSetting {
     Disk = 0,
-    Database
+    Database = 1,
+    Azure = 2
 }

@@ -15,6 +15,8 @@ namespace RewriteMe.Domain.Settings
 
         public string SecurityPasswordHash { get; set; }
 
+        public AzureStorageAccountSettings AzureStorageAccount { get; set; }
+
         public NotificationSettings NotificationSettings { get; set; }
 
         public Authentication Authentication { get; set; }

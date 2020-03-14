@@ -151,6 +151,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/settings/clean-chunks/";
     }
 
+    getMigrateUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/azure-storage/migrate/";
+    }
+
     private getApiUri(): string {
         if (isDevMode()) {
             return CommonVariables.ApiUriDevelopment;

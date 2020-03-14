@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Interfaces.Repositories
@@ -18,5 +19,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
 
         Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId);
+
+        Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting);
     }
 }

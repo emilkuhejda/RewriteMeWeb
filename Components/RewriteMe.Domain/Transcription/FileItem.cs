@@ -49,6 +49,9 @@ namespace RewriteMe.Domain.Transcription
 
         public bool WasCleaned { get; set; }
 
+        public bool CanMigrate => RecognitionState != RecognitionState.Converting ||
+                                  RecognitionState != RecognitionState.InProgress;
+
         public IEnumerable<TranscribeItem> TranscribeItems { get; set; }
     }
 }

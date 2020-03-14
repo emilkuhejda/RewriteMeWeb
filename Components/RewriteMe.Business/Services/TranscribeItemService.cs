@@ -12,15 +12,18 @@ namespace RewriteMe.Business.Services
     public class TranscribeItemService : ITranscribeItemService
     {
         private readonly IFileAccessService _fileAccessService;
+        private readonly IStorageService _storageService;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly ITranscribeItemSourceRepository _transcribeItemSourceRepository;
 
         public TranscribeItemService(
             IFileAccessService fileAccessService,
+            IStorageService storageService,
             ITranscribeItemRepository transcribeItemRepository,
             ITranscribeItemSourceRepository transcribeItemSourceRepository)
         {
             _fileAccessService = fileAccessService;
+            _storageService = storageService;
             _transcribeItemRepository = transcribeItemRepository;
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
         }
@@ -33,6 +36,9 @@ namespace RewriteMe.Business.Services
 
             if (transcribeItem.Storage == StorageSetting.Database)
                 return await GetTranscribeItemSourceAsync(transcribeItemId).ConfigureAwait(false);
+
+            if (transcribeItem.Storage == StorageSetting.Azure)
+                return await _storageService.GetTranscribeItemBytesAsync(transcribeItem, userId).ConfigureAwait(false);
 
             var sourcePath = _fileAccessService.GetTranscriptionPath(userId, transcribeItem);
             if (File.Exists(sourcePath))

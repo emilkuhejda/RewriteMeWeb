@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RewriteMe.DataAccess.DataAdapters;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Transcription;
 
@@ -39,34 +40,11 @@ namespace RewriteMe.DataAccess.Repositories
                 var transcribeItemEntities = await context.TranscribeItems
                     .Where(x => x.FileItemId == fileItemId)
                     .AsNoTracking()
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.FileItemId,
-                        x.Alternatives,
-                        x.UserTranscript,
-                        x.StartTime,
-                        x.EndTime,
-                        x.TotalTime,
-                        DateCreated = x.DateCreatedUtc,
-                        DateUpdated = x.DateUpdatedUtc
-                    })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                return transcribeItemEntities.Select(x => new TranscribeItem
-                {
-                    Id = x.Id,
-                    FileItemId = x.FileItemId,
-                    Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
-                    UserTranscript = x.UserTranscript,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    TotalTime = x.TotalTime,
-                    DateCreatedUtc = x.DateCreated,
-                    DateUpdatedUtc = x.DateUpdated
-                });
+                return transcribeItemEntities?.Select(x => x.ToTranscribeItem());
             }
         }
 
@@ -77,34 +55,11 @@ namespace RewriteMe.DataAccess.Repositories
                 var transcribeItemEntities = await context.TranscribeItems
                     .Where(x => x.FileItem.UserId == userId && x.DateUpdatedUtc >= updatedAfter && x.ApplicationId != applicationId)
                     .AsNoTracking()
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.FileItemId,
-                        x.Alternatives,
-                        x.UserTranscript,
-                        x.StartTime,
-                        x.EndTime,
-                        x.TotalTime,
-                        DateCreated = x.DateCreatedUtc,
-                        DateUpdated = x.DateUpdatedUtc
-                    })
                     .OrderBy(x => x.StartTime)
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                return transcribeItemEntities.Select(x => new TranscribeItem
-                {
-                    Id = x.Id,
-                    FileItemId = x.FileItemId,
-                    Alternatives = JsonConvert.DeserializeObject<IEnumerable<RecognitionAlternative>>(x.Alternatives),
-                    UserTranscript = x.UserTranscript,
-                    StartTime = x.StartTime,
-                    EndTime = x.EndTime,
-                    TotalTime = x.TotalTime,
-                    DateCreatedUtc = x.DateCreated,
-                    DateUpdatedUtc = x.DateUpdated
-                });
+                return transcribeItemEntities?.Select(x => x.ToTranscribeItem());
             }
         }
 
@@ -141,6 +96,27 @@ namespace RewriteMe.DataAccess.Repositories
                 transcribeItemEntity.ApplicationId = applicationId;
                 transcribeItemEntity.UserTranscript = transcript;
                 transcribeItemEntity.DateUpdatedUtc = dateUpdated;
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var transcribeItemEntities = await context.TranscribeItems
+                    .Where(x => x.FileItemId == fileItemId)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                if (!transcribeItemEntities.Any())
+                    return;
+
+                foreach (var transcribeItemEntity in transcribeItemEntities)
+                {
+                    transcribeItemEntity.Storage = storageSetting;
+                }
+
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

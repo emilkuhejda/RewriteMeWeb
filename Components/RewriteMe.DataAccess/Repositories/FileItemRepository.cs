@@ -406,7 +406,7 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
+        public async Task UpdateUploadStatusAsync(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
         {
             using (var context = _contextFactory.Create())
             {
@@ -417,6 +417,20 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.ApplicationId = applicationId;
                 entity.UploadStatus = uploadStatus;
                 entity.DateUpdatedUtc = DateTime.UtcNow;
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entity = await context.FileItems.SingleOrDefaultAsync(x => x.Id == fileItemId).ConfigureAwait(false);
+                if (entity == null)
+                    return;
+
+                entity.Storage = storageSetting;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -471,6 +485,23 @@ namespace RewriteMe.DataAccess.Repositories
                     .ConfigureAwait(false);
 
                 return fileItems.Select(x => (x.Id, x.UserId));
+            }
+        }
+
+        public async Task<IEnumerable<FileItem>> GetFileItemsForMigrationAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var dateToCompare = DateTime.UtcNow.AddDays(-1);
+                var entities = await context.FileItems
+                    .Where(x => x.Storage == StorageSetting.Disk)
+                    .Where(x => x.RecognitionState == RecognitionState.None ||
+                                x.RecognitionState == RecognitionState.Prepared ||
+                                (x.RecognitionState == RecognitionState.Completed && x.DateProcessedUtc < dateToCompare))
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return entities?.Select(x => x.ToFileItem());
             }
         }
 
