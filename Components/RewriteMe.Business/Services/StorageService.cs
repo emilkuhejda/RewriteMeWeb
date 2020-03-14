@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Options;
-using RewriteMe.Common.Helpers;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
@@ -35,12 +34,7 @@ namespace RewriteMe.Business.Services
             _appSettings = options.Value;
         }
 
-        public void Migrate()
-        {
-            AsyncHelper.RunSync(MigrateAsync);
-        }
-
-        private async Task MigrateAsync()
+        public async Task MigrateAsync()
         {
             var fileItemsToMigrate = (await _fileItemRepository.GetFileItemsForMigrationAsync().ConfigureAwait(false)).ToList();
             if (!fileItemsToMigrate.Any())

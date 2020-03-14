@@ -29,7 +29,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             if (monitoringApi.ProcessingCount() > 0)
                 return BadRequest();
 
-            BackgroundJob.Enqueue(() => _storageService.Migrate());
+            BackgroundJob.Enqueue(() => _storageService.MigrateAsync());
 
             return Ok();
         }
