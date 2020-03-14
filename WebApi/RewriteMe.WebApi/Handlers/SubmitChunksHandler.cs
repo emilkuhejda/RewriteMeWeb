@@ -86,7 +86,7 @@ namespace RewriteMe.WebApi.Handlers
                 throw new OperationErrorException(ErrorCode.EC201);
             }
 
-            await _fileItemService.UpdateUploadStatus(request.FileItemId, UploadStatus.InProgress, request.ApplicationId).ConfigureAwait(false);
+            await _fileItemService.UpdateUploadStatusAsync(request.FileItemId, UploadStatus.InProgress, request.ApplicationId).ConfigureAwait(false);
 
             var dateUpdated = DateTime.UtcNow;
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace RewriteMe.WebApi.Handlers
                     await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
                 }
 
-                await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
+                await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
 
                 if (storageSetting == StorageSetting.Database)
                 {

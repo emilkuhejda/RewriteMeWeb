@@ -57,13 +57,17 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
-        Task UpdateUploadStatus(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId);
+        Task UpdateUploadStatusAsync(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId);
+
+        Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting);
 
         Task MarkAsCleanedAsync(Guid fileItemId);
 
         Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);
 
         Task<IEnumerable<(Guid FileItemId, Guid UserId)>> GetFileItemsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp);
+
+        Task<IEnumerable<FileItem>> GetFileItemsForMigrationAsync();
 
         Task CleanSourceDataAsync(Guid fileItemId);
     }

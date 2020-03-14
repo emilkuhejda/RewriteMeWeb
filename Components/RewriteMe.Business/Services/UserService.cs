@@ -10,15 +10,18 @@ namespace RewriteMe.Business.Services
 {
     public class UserService : IUserService
     {
+        private readonly IStorageService _storageService;
         private readonly IFileAccessService _fileAccessService;
         private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
 
         public UserService(
+            IStorageService storageService,
             IFileAccessService fileAccessService,
             IApplicationLogService applicationLogService,
             IUserRepository userRepository)
         {
+            _storageService = storageService;
             _fileAccessService = fileAccessService;
             _applicationLogService = applicationLogService;
             _userRepository = userRepository;
@@ -62,6 +65,7 @@ namespace RewriteMe.Business.Services
             if (Directory.Exists(directoryPath))
                 Directory.Delete(directoryPath, true);
 
+            await _storageService.DeleteContainerAsync(userId).ConfigureAwait(false);
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
 
             await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);

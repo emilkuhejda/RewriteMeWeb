@@ -75,7 +75,7 @@ namespace RewriteMe.WebApi.Handlers
             try
             {
                 await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
-                await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.InProgress, request.ApplicationId).ConfigureAwait(false);
+                await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.InProgress, request.ApplicationId).ConfigureAwait(false);
 
                 if (storageSetting == StorageSetting.Database ||
                     await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
@@ -83,7 +83,7 @@ namespace RewriteMe.WebApi.Handlers
                     await _fileItemSourceService.AddFileItemSourceAsync(fileItem, uploadedFile.FilePath).ConfigureAwait(false);
                 }
 
-                await _fileItemService.UpdateUploadStatus(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
+                await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
 
                 if (storageSetting == StorageSetting.Database)
                 {
