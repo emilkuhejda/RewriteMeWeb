@@ -114,6 +114,12 @@ export class SettingsComponent implements OnInit {
     }
 
     public onStorageSettingValueChange(value: string) {
+        this.alertService.clear();
+        if (value == StorageSetting.Database.toString()) {
+            this.alertService.error('Setting is not available.');
+            return;
+        }
+
         this.settingsService.changeStorage(value).subscribe(
             () => {
                 this.initializeStorageSetting();
@@ -124,6 +130,7 @@ export class SettingsComponent implements OnInit {
     }
 
     public onChunksStorageSettingValueChange(value: string) {
+        this.alertService.clear();
         this.settingsService.changeChunksStorage(value).subscribe(
             () => {
                 this.initializeChunksStorageSetting();
@@ -134,6 +141,7 @@ export class SettingsComponent implements OnInit {
     }
 
     public onDatabaseBackupSettingValueChange(value: boolean) {
+        this.alertService.clear();
         this.settingsService.changeDatabaseBackupSettings(value).subscribe(
             () => {
                 this.initializeDatabaseBackupSetting();
@@ -144,6 +152,7 @@ export class SettingsComponent implements OnInit {
     }
 
     public onNotificationsSettingValueChange(value: boolean) {
+        this.alertService.clear();
         this.settingsService.changeNotificationsSetting(value).subscribe(
             () => {
                 this.initializeNotificationsSetting();
@@ -266,6 +275,7 @@ export class SettingsComponent implements OnInit {
     }
 
     cleanUpOutdatedFiles() {
+        this.alertService.clear();
         this.settingsService.cleanOutdatedChunks().subscribe(
             () => {
                 this.alertService.success("Outdated files was deleted.");
@@ -277,7 +287,6 @@ export class SettingsComponent implements OnInit {
 
     migrate() {
         this.alertService.clear();
-
         this.azureStorageService.migrate().subscribe(
             () => {
                 this.alertService.success('Job was queued.');
