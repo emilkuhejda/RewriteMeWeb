@@ -15,7 +15,6 @@ namespace RewriteMe.Business.Tests
         private readonly Mock<IStorageService> _storageServiceMock;
         private readonly Mock<IInternalValueService> _internalValueServiceMock;
         private readonly Mock<IFileAccessService> _fileAccessServiceMock;
-        private readonly Mock<IApplicationLogService> _applicationLogServiceMock;
         private readonly Mock<IFileItemRepository> _fileItemRepositoryMock;
         private readonly Mock<IFileItemSourceRepository> _fileItemSourceRepositoryMock;
         private readonly Mock<ILogger> _loggerMock;
@@ -26,7 +25,6 @@ namespace RewriteMe.Business.Tests
             _internalValueServiceMock = new Mock<IInternalValueService>();
             _storageServiceMock = new Mock<IStorageService>();
             _fileAccessServiceMock = new Mock<IFileAccessService>();
-            _applicationLogServiceMock = new Mock<IApplicationLogService>();
             _fileItemRepositoryMock = new Mock<IFileItemRepository>();
             _fileItemSourceRepositoryMock = new Mock<IFileItemSourceRepository>();
             _loggerMock = new Mock<ILogger>();
