@@ -31,7 +31,7 @@ namespace RewriteMe.WebApi.Handlers
             _userService = userService;
             _userSubscriptionService = userSubscriptionService;
             _userDeviceService = userDeviceService;
-            _logger = logger;
+            _logger = logger.ForContext<RegisterUserHandler>();
         }
 
         public async Task<UserRegistrationDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)

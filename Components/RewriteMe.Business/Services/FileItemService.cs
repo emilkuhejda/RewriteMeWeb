@@ -40,7 +40,7 @@ namespace RewriteMe.Business.Services
             _fileAccessService = fileAccessService;
             _fileItemRepository = fileItemRepository;
             _fileItemSourceRepository = fileItemSourceRepository;
-            _logger = logger;
+            _logger = logger.ForContext<FileItemService>();
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)

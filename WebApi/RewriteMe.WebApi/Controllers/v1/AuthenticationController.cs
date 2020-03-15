@@ -30,7 +30,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             _mediator = mediator;
             _appSettings = options.Value;
-            _logger = logger;
+            _logger = logger.ForContext<AuthenticationController>();
         }
 
         [AllowAnonymous]

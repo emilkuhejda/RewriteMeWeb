@@ -41,8 +41,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             _userService = userService;
             _userDeviceService = userDeviceService;
             _mediator = mediator;
-            _logger = logger;
             _appSettings = options.Value;
+            _logger = logger.ForContext<UsersController>();
         }
 
         [HttpPut("update")]

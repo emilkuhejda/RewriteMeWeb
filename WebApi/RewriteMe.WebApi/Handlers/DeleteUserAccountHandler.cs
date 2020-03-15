@@ -26,7 +26,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _userService = userService;
             _deletedAccountService = deletedAccountService;
-            _logger = logger;
+            _logger = logger.ForContext<DeleteUserAccountHandler>();
         }
 
         public async Task<OkDto> Handle(DeleteUserAccountCommand request, CancellationToken cancellationToken)

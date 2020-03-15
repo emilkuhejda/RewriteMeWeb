@@ -26,7 +26,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             ILogger logger)
         {
             _contactFormService = contactFormService;
-            _logger = logger;
+            _logger = logger.ForContext<ContactFormController>();
         }
 
         [AllowAnonymous]

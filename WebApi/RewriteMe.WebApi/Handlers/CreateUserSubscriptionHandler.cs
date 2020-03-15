@@ -22,7 +22,7 @@ namespace RewriteMe.WebApi.Handlers
             ILogger logger)
         {
             _userSubscriptionService = userSubscriptionService;
-            _logger = logger;
+            _logger = logger.ForContext<CreateUserSubscriptionHandler>();
         }
 
         public async Task<TimeSpanWrapperDto> Handle(CreateUserSubscriptionCommand request, CancellationToken cancellationToken)

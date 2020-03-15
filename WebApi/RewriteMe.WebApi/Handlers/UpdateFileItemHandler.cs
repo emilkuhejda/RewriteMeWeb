@@ -25,7 +25,7 @@ namespace RewriteMe.WebApi.Handlers
             ILogger logger)
         {
             _fileItemService = fileItemService;
-            _logger = logger;
+            _logger = logger.ForContext<UpdateFileItemHandler>();
         }
 
         public async Task<FileItemDto> Handle(UpdateFileItemCommand request, CancellationToken cancellationToken)

@@ -29,7 +29,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _fileItemService = fileItemService;
             _internalValueService = internalValueService;
-            _logger = logger;
+            _logger = logger.ForContext<CreateFileItemHandler>();
         }
 
         public async Task<FileItemDto> Handle(CreateFileItemCommand request, CancellationToken cancellationToken)

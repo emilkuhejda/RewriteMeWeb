@@ -25,7 +25,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _fileItemService = fileItemService;
             _speechRecognitionManager = speechRecognitionManager;
-            _logger = logger;
+            _logger = logger.ForContext<UpdateFileItemLanguageHandler>();
         }
 
         public async Task<OkDto> Handle(UpdateFileItemLanguageCommand request, CancellationToken cancellationToken)

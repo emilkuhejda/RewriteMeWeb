@@ -32,7 +32,7 @@ namespace RewriteMe.Business.Managers
             _fileItemSourceService = fileItemSourceService;
             _wavFileService = wavFileService;
             _appSettings = options.Value;
-            _logger = logger;
+            _logger = logger.ForContext<WavFileManager>();
         }
 
         public async Task RunConversionToWavAsync(FileItem fileItem, Guid userId)

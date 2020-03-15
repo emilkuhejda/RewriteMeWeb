@@ -59,7 +59,7 @@ namespace RewriteMe.Business.Managers
             _pushNotificationsService = pushNotificationsService;
             _wavFileManager = wavFileManager;
             _appSettings = options.Value;
-            _logger = logger;
+            _logger = logger.ForContext<SpeechRecognitionManager>();
         }
 
         public async Task<bool> CanRunRecognition(Guid userId)

@@ -22,7 +22,7 @@ namespace RewriteMe.WebApi.Handlers
             ILogger logger)
         {
             _uploadedChunkService = uploadedChunkService;
-            _logger = logger;
+            _logger = logger.ForContext<UploadChunkFileHandler>();
         }
 
         public async Task<OkDto> Handle(UploadChunkFileCommand request, CancellationToken cancellationToken)

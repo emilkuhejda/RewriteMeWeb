@@ -30,7 +30,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             ILogger logger)
         {
             _informationMessageService = informationMessageService;
-            _logger = logger;
+            _logger = logger.ForContext<InformationMessagesController>();
         }
 
         [HttpGet]

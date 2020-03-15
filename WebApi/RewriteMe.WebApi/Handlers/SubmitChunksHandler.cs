@@ -40,7 +40,7 @@ namespace RewriteMe.WebApi.Handlers
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
-            _logger = logger;
+            _logger = logger.ForContext<SubmitChunksHandler>();
         }
 
         public async Task<FileItemDto> Handle(SubmitChunksCommand request, CancellationToken cancellationToken)

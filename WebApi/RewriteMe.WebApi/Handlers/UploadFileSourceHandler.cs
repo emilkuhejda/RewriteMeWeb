@@ -34,7 +34,7 @@ namespace RewriteMe.WebApi.Handlers
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
-            _logger = logger;
+            _logger = logger.ForContext<UploadFileSourceHandler>();
         }
 
         public async Task<FileItemDto> Handle(UploadFileSourceCommand request, CancellationToken cancellationToken)

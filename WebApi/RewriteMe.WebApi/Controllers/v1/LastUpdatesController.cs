@@ -38,7 +38,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _informationMessageService = informationMessageService;
-            _logger = logger;
+            _logger = logger.ForContext<LastUpdatesController>();
         }
 
         [HttpGet]

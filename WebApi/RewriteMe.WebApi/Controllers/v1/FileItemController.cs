@@ -41,7 +41,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             _fileItemService = fileItemService;
             _speechRecognitionManager = speechRecognitionManager;
             _mediator = mediator;
-            _logger = logger;
+            _logger = logger.ForContext<FileItemController>();
         }
 
         [HttpGet]

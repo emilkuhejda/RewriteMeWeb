@@ -31,7 +31,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             ILogger logger)
         {
             _transcribeItemService = transcribeItemService;
-            _logger = logger;
+            _logger = logger.ForContext<TranscribeItemsController>();
         }
 
         [HttpGet]

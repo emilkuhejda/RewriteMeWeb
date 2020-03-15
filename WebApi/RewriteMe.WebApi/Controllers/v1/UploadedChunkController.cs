@@ -38,7 +38,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _mediator = mediator;
-            _logger = logger;
+            _logger = logger.ForContext<UploadedChunkController>();
         }
 
         [HttpGet]

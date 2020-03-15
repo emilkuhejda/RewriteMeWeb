@@ -25,7 +25,7 @@ namespace RewriteMe.WebApi.Handlers
             ILogger logger)
         {
             _authenticationService = authenticationService;
-            _logger = logger;
+            _logger = logger.ForContext<UserAuthenticateHandler>();
         }
 
         public async Task<AdministratorDto> Handle(UserAuthenticateCommand request, CancellationToken cancellationToken)

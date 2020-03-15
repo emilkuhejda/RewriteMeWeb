@@ -23,7 +23,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
-            _logger = logger;
+            _logger = logger.ForContext<CreateSpeechConfigurationHandler>();
         }
 
         public async Task<SpeechConfigurationDto> Handle(CreateSpeechConfigurationCommand request, CancellationToken cancellationToken)
