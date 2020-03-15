@@ -28,7 +28,6 @@ namespace RewriteMe.Business
             builder.RegisterType<RecognizedAudioSampleService>().As<IRecognizedAudioSampleService>().InstancePerLifetimeScope();
             builder.RegisterType<SpeechResultService>().As<ISpeechResultService>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionService>().As<IUserSubscriptionService>().InstancePerLifetimeScope();
-            builder.RegisterType<ApplicationLogService>().As<IApplicationLogService>().InstancePerLifetimeScope();
             builder.RegisterType<ContactFormService>().As<IContactFormService>().InstancePerLifetimeScope();
             builder.RegisterType<InformationMessageService>().As<IInformationMessageService>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageVersionService>().As<ILanguageVersionService>().InstancePerLifetimeScope();
