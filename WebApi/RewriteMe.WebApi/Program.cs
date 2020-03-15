@@ -13,7 +13,7 @@ namespace RewriteMe.WebApi
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.File($"Logs/logs.txt",
                     fileSizeLimitBytes: 104857600,
