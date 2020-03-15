@@ -4,20 +4,21 @@ using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
     public class FileItemSourceService : IFileItemSourceService
     {
         private readonly IFileItemSourceRepository _fileItemSourceRepository;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public FileItemSourceService(
             IFileItemSourceRepository fileItemSourceRepository,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _fileItemSourceRepository = fileItemSourceRepository;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public FileItemSource GetFileItemSource(Guid fileItemId)
@@ -34,7 +35,8 @@ namespace RewriteMe.Business.Services
         {
             if (!File.Exists(fileItemPath))
             {
-                await _applicationLogService.ErrorAsync($"File '{fileItemPath}' was not found.").ConfigureAwait(false);
+                _logger.Warning($"File '{fileItemPath}' was not found.");
+
                 return;
             }
 

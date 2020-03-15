@@ -21,6 +21,7 @@ using RewriteMe.WebApi.Security;
 using RewriteMe.WebApi.Security.Extensions;
 using RewriteMe.WebApi.Services;
 using RewriteMe.WebApi.Utils;
+using Serilog;
 
 namespace RewriteMe.WebApi
 {
@@ -195,6 +196,7 @@ namespace RewriteMe.WebApi
             });
 
             app.UseCors(Constants.CorsPolicy);
+            app.UseSerilogRequestLogging();
 
             app.MigrateDatabase();
             app.UseCookiePolicy();

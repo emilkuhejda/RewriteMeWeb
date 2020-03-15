@@ -45,9 +45,9 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         }
 
         [HttpGet("is-deployment-successful")]
-        public async Task<IActionResult> IsDeploymentSuccessful()
+        public IActionResult IsDeploymentSuccessful()
         {
-            var canCreateSpeechClient = await _speechRecognitionService.CanCreateSpeechClientAsync().ConfigureAwait(false);
+            var canCreateSpeechClient = _speechRecognitionService.CanCreateSpeechClientAsync();
             if (!canCreateSpeechClient)
                 return BadRequest();
 

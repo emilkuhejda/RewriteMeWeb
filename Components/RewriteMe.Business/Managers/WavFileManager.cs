@@ -9,6 +9,7 @@ using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Managers
 {
@@ -17,21 +18,21 @@ namespace RewriteMe.Business.Managers
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IWavFileService _wavFileService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public WavFileManager(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IWavFileService wavFileService,
-            IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _wavFileService = wavFileService;
-            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
+            _logger = logger;
         }
 
         public async Task RunConversionToWavAsync(FileItem fileItem, Guid userId)
@@ -42,20 +43,17 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                await _applicationLogService
-                    .InfoAsync($"File WAV conversion is started for file ID: {fileItem.Id}.", userId)
-                    .ConfigureAwait(false);
+                _logger.Information($"File WAV conversion is started for file ID: {fileItem.Id}. [{userId}]");
 
                 await RunConversionToWavAsync(fileItem).ConfigureAwait(false);
 
-                await _applicationLogService
-                    .InfoAsync($"File WAV conversion is completed for file ID: {fileItem.Id}.", userId)
-                    .ConfigureAwait(false);
+                _logger.Information($"File WAV conversion is completed for file ID: {fileItem.Id}. [{userId}]");
             }
             catch
             {
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.None, _appSettings.ApplicationId).ConfigureAwait(false);
-                await _applicationLogService.InfoAsync($"File WAV conversion is not successful for file ID: {fileItem.Id}.", userId).ConfigureAwait(false);
+                _logger.Warning($"File WAV conversion is not successful for file ID: {fileItem.Id}. [{userId}]");
+
                 throw;
             }
         }
@@ -84,8 +82,8 @@ namespace RewriteMe.Business.Managers
             }
             catch (Exception ex)
             {
-                var message = $"Exception occurred during conversion for file ID = '{fileItem.Id}'.{Environment.NewLine}{ExceptionFormatter.FormatException(ex)}";
-                await _applicationLogService.ErrorAsync(message).ConfigureAwait(false);
+                _logger.Warning($"Exception occurred during conversion for file ID = '{fileItem.Id}'. [{fileItem.UserId}]");
+                _logger.Warning(ExceptionFormatter.FormatException(ex));
             }
             finally
             {

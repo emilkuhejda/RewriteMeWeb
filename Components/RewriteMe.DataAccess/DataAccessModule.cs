@@ -27,7 +27,6 @@ namespace RewriteMe.DataAccess
             builder.RegisterType<SpeechResultRepository>().As<ISpeechResultRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UserSubscriptionRepository>().As<IUserSubscriptionRepository>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseRepository>().As<IBillingPurchaseRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<ApplicationLogRepository>().As<IApplicationLogRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ContactFormRepository>().As<IContactFormRepository>().InstancePerLifetimeScope();
             builder.RegisterType<InformationMessageRepository>().As<IInformationMessageRepository>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageVersionRepository>().As<ILanguageVersionRepository>().InstancePerLifetimeScope();

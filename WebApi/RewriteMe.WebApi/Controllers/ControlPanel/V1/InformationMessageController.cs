@@ -9,6 +9,7 @@ using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 
 namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
 {
@@ -22,16 +23,16 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
     {
         private readonly IInformationMessageService _informationMessageService;
         private readonly IPushNotificationsService _pushNotificationsService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public InformationMessageController(
             IInformationMessageService informationMessageService,
             IPushNotificationsService pushNotificationsService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _informationMessageService = informationMessageService;
             _pushNotificationsService = pushNotificationsService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         [HttpGet("{informationMessageId}")]
@@ -82,7 +83,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
                 if (informationMessage == null)
                     return BadRequest();
 
-                await _applicationLogService.InfoAsync($"Sending notification with ID = '{informationMessage.Id}'").ConfigureAwait(false);
+                _logger.Information($"Sending notification with ID = '{informationMessage.Id}'.");
                 await _pushNotificationsService.SendAsync(informationMessage, runtimePlatform, language).ConfigureAwait(false);
 
                 informationMessage = await _informationMessageService.GetAsync(informationMessageId).ConfigureAwait(false);
@@ -90,27 +91,27 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             }
             catch (SerializationException ex)
             {
-                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.Message}'").ConfigureAwait(false);
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
+                _logger.Error($"Request exception during sending notification with message: '{ex.Message}'.");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 return StatusCode(500);
             }
             catch (NotificationErrorException ex)
             {
-                await _applicationLogService.ErrorAsync($"Request exception during sending notification with message: '{ex.NotificationError.Message}'").ConfigureAwait(false);
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex)).ConfigureAwait(false);
+                _logger.Error($"Request exception during sending notification with message: '{ex.NotificationError.Message}'.");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 return StatusCode((int)ex.NotificationError.Code);
             }
             catch (LanguageVersionNotExistsException)
             {
-                await _applicationLogService.ErrorAsync($"Language version not found for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
+                _logger.Error($"Language version not found for information message with ID = '{informationMessageId}'.");
 
                 return NotFound();
             }
             catch (PushNotificationWasSentException)
             {
-                await _applicationLogService.ErrorAsync($"Push notification was already sent for information message with ID = '{informationMessageId}'.").ConfigureAwait(false);
+                _logger.Error($"Push notification was already sent for information message with ID = '{informationMessageId}'.");
 
                 return StatusCode(409);
             }

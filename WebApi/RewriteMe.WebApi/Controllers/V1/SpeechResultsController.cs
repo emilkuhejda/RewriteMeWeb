@@ -13,6 +13,7 @@ using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -25,17 +26,17 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class SpeechResultsController : ControllerBase
     {
         private readonly ISpeechResultService _speechResultService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
         public SpeechResultsController(
             ISpeechResultService speechResultService,
-            IApplicationLogService applicationLogService,
-            IMediator mediator)
+            IMediator mediator,
+            ILogger logger)
         {
             _speechResultService = speechResultService;
-            _applicationLogService = applicationLogService;
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("create")]
@@ -49,7 +50,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             var speechResult = createSpeechResultModel.ToSpeechResult();
             await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
-            await _applicationLogService.InfoAsync($"User with ID='{userId}' inserted speech result: {speechResult}.", userId).ConfigureAwait(false);
+            _logger.Information($"User with ID='{userId}' inserted speech result: {speechResult}. [{userId}]");
 
             return Ok(new OkDto());
         }

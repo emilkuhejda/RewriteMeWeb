@@ -10,6 +10,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Utils;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -18,23 +19,23 @@ namespace RewriteMe.WebApi.Handlers
         private readonly IUserService _userService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IUserDeviceService _userDeviceService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public RegisterUserHandler(
             IUserService userService,
             IUserSubscriptionService userSubscriptionService,
             IUserDeviceService userDeviceService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _userService = userService;
             _userSubscriptionService = userSubscriptionService;
             _userDeviceService = userDeviceService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<UserRegistrationDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            await _applicationLogService.InfoAsync($"Attempt to register user with ID = '{request.RegistrationUserModel.Id}'.").ConfigureAwait(false);
+            _logger.Information($"Attempt to register user with ID = '{request.RegistrationUserModel.Id}'.");
 
             TimeSpan remainingTime;
             var user = await _userService.GetAsync(request.RegistrationUserModel.Id).ConfigureAwait(false);
@@ -42,11 +43,11 @@ namespace RewriteMe.WebApi.Handlers
             {
                 user = request.RegistrationUserModel.ToUser();
                 await _userService.AddAsync(user).ConfigureAwait(false);
-                await _applicationLogService.InfoAsync($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.").ConfigureAwait(false);
+                _logger.Information($"User with ID = '{user.Id}' and Email = '{user.Email}' was created.");
 
                 var userSubscription = SubscriptionHelper.CreateFreeSubscription(user.Id, request.RegistrationUserModel.ApplicationId);
                 await _userSubscriptionService.AddAsync(userSubscription).ConfigureAwait(false);
-                await _applicationLogService.InfoAsync($"Basic {userSubscription.Time.TotalMinutes} minutes subscription with ID = '{userSubscription.Id}' was created.", user.Id).ConfigureAwait(false);
+                _logger.Information($"Basic {userSubscription.Time.TotalMinutes} minutes subscription with ID = '{userSubscription.Id}' was created. [{user.Id}]");
 
                 remainingTime = userSubscription.Time;
             }
