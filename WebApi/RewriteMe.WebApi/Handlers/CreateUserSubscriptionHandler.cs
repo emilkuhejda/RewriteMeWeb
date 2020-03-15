@@ -36,6 +36,8 @@ namespace RewriteMe.WebApi.Handlers
                 if (userSubscription == null)
                     throw new OperationErrorException(ErrorCode.EC302);
 
+                _logger.Information($"Billing purchase was successfully registered. Billing purchase: {request.BillingPurchase.Id}");
+
                 var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(request.UserId).ConfigureAwait(false);
                 var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
 

@@ -46,7 +46,7 @@ namespace RewriteMe.WebApi.Handlers
                 SubscriptionRemainingTimeTicks = remainingTime.Ticks
             };
 
-            _logger.Information($"User with ID='{request.UserId}' retrieved speech recognition configuration: {speechConfigurationDto}. [{request.UserId}]");
+            _logger.Information($"User with ID='{request.UserId}' retrieved speech recognition configuration. [{request.UserId}]");
 
             return speechConfigurationDto;
         }
