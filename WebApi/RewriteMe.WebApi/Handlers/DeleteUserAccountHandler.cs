@@ -9,6 +9,7 @@ using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.UserManagement;
 using RewriteMe.WebApi.Commands;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -16,20 +17,27 @@ namespace RewriteMe.WebApi.Handlers
     {
         private readonly IUserService _userService;
         private readonly IDeletedAccountService _deletedAccountService;
+        private readonly ILogger _logger;
 
         public DeleteUserAccountHandler(
             IUserService userService,
-            IDeletedAccountService deletedAccountService)
+            IDeletedAccountService deletedAccountService,
+            ILogger logger)
         {
             _userService = userService;
             _deletedAccountService = deletedAccountService;
+            _logger = logger;
         }
 
         public async Task<OkDto> Handle(DeleteUserAccountCommand request, CancellationToken cancellationToken)
         {
             var userExists = await _userService.ExistsAsync(request.UserId, request.Email).ConfigureAwait(false);
             if (!userExists)
+            {
+                _logger.Error($"[Delete user] User '{request.UserId}' was not found.");
+
                 throw new OperationErrorException(StatusCodes.Status404NotFound);
+            }
 
             var deletedAccount = new DeletedAccount
             {
