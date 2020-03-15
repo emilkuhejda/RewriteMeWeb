@@ -32,8 +32,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             ILogger logger)
         {
             _authenticationService = authenticationService;
-            _logger = logger;
             _appSettings = options.Value;
+            _logger = logger.ForContext<UtilsController>();
         }
 
         [AllowAnonymous]
