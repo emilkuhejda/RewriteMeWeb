@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using RewriteMe.Business.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
@@ -83,6 +84,8 @@ namespace RewriteMe.WebApi.Handlers
                 Identity = user.ToIdentityDto(),
                 RemainingTime = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks }
             };
+
+            _logger.Information($"User was successfully registered. User: {JsonConvert.SerializeObject(registrationModelDto.Identity)}");
 
             return registrationModelDto;
         }

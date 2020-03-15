@@ -55,6 +55,8 @@ namespace RewriteMe.WebApi.Handlers
 
             await _fileItemService.UpdateLanguageAsync(request.FileItemId, request.Language, request.ApplicationId).ConfigureAwait(false);
 
+            _logger.Information($"[Transcribe file item] File item '{request.FileItemId}' updated language to '{request.Language}'.");
+
             return new OkDto();
         }
     }
