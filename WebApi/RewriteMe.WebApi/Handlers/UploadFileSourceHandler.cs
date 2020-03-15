@@ -41,14 +41,14 @@ namespace RewriteMe.WebApi.Handlers
         {
             if (request.File == null)
             {
-                _logger.Error("[Upload file source] Uploaded file source was not found.");
+                _logger.Error($"[Upload file source] Uploaded file source was not found. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC100);
             }
 
             if (!string.IsNullOrWhiteSpace(request.Language) && !SupportedLanguages.IsSupported(request.Language))
             {
-                _logger.Error($"[Upload file source] Language '{request.Language}' is not supported.");
+                _logger.Error($"[Upload file source] Language '{request.Language}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC200);
             }
@@ -62,7 +62,7 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                _logger.Error($"[Upload file source] File '{request.FileName}' is not supported.");
+                _logger.Error($"[Upload file source] File '{request.FileName}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC201);
             }
