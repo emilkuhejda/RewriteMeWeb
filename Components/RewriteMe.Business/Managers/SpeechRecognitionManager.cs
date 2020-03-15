@@ -78,17 +78,17 @@ namespace RewriteMe.Business.Managers
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             if (fileItem.RecognitionState > RecognitionState.Prepared)
             {
-                _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized.");
+                _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{userId}]");
 
                 return;
             }
 
             await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
-            _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'.");
+            _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{userId}]");
             if (fileItem.RecognitionState < RecognitionState.Prepared)
             {
-                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped.";
+                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{userId}]";
                 _logger.Warning(message);
 
                 throw new InvalidOperationException(message);
@@ -97,7 +97,7 @@ namespace RewriteMe.Business.Managers
             var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
             if (!canRunRecognition)
             {
-                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription.";
+                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{userId}]";
                 _logger.Warning(message);
 
                 throw new InvalidOperationException(message);
@@ -108,27 +108,27 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                _logger.Information($"Speech recognition is started for file ID: '{fileItem.Id}'.");
+                _logger.Information($"Speech recognition is started for file ID: '{fileItem.Id}'. [{userId}]");
                 await RunRecognitionInternalAsync(userId, fileItem).ConfigureAwait(false);
-                _logger.Information($"Speech recognition is completed for file ID: '{fileItem.Id}'.");
+                _logger.Information($"Speech recognition is completed for file ID: '{fileItem.Id}'. [{userId}]");
 
                 await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
             }
             catch (FileItemNotExistsException)
             {
-                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not found.");
+                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not found. [{userId}]");
 
                 return;
             }
             catch (FileItemIsNotInPreparedStateException)
             {
-                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not in PREPARED state.");
+                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not in PREPARED state. [{userId}]");
 
                 return;
             }
             catch (Exception ex)
             {
-                _logger.Error($"Speech recognition is not successful for file ID: '{fileItem.Id}'.");
+                _logger.Error($"Speech recognition is not successful for file ID: '{fileItem.Id}'. [{userId}]");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw;
@@ -216,21 +216,21 @@ namespace RewriteMe.Business.Managers
             }
             catch (SerializationException ex)
             {
-                _logger.Error($"Request exception during sending notification with message: '{ex.Message}'");
+                _logger.Error($"Request exception during sending notification with message: '{ex.Message}'. [{userId}]");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
             }
             catch (NotificationErrorException ex)
             {
-                _logger.Error($"Request exception during sending notification with message: '{ex.NotificationError.Message}'");
+                _logger.Error($"Request exception during sending notification with message: '{ex.NotificationError.Message}'. [{userId}]");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
             }
             catch (LanguageVersionNotExistsException)
             {
-                _logger.Error($"Language version not found for information message with ID = '{informationMessage.Id}'.");
+                _logger.Error($"Language version not found for information message with ID = '{informationMessage.Id}'. [{userId}]");
             }
             catch (PushNotificationWasSentException)
             {
-                _logger.Error($"Push notification was already sent for information message with ID = '{informationMessage.Id}'.");
+                _logger.Error($"Push notification was already sent for information message with ID = '{informationMessage.Id}'. [{userId}]");
             }
         }
     }
