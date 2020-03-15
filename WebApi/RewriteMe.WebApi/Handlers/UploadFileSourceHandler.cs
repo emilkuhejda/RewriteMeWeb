@@ -13,6 +13,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -21,18 +22,18 @@ namespace RewriteMe.WebApi.Handlers
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IInternalValueService _internalValueService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public UploadFileSourceHandler(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<FileItemDto> Handle(UploadFileSourceCommand request, CancellationToken cancellationToken)
@@ -94,7 +95,8 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), request.UserId).ConfigureAwait(false);
+                _logger.Error($"Exception occurred during uploading file item source. Message: {ex.Message}. [{request.UserId}]");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw new OperationErrorException(ErrorCode.EC400);
             }

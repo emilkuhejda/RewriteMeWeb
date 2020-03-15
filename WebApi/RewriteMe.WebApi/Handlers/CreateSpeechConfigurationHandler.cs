@@ -6,6 +6,7 @@ using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Recording;
 using RewriteMe.WebApi.Commands;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -13,16 +14,16 @@ namespace RewriteMe.WebApi.Handlers
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IRecognizedAudioSampleService _recognizedAudioSampleService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public CreateSpeechConfigurationHandler(
             IUserSubscriptionService userSubscriptionService,
             IRecognizedAudioSampleService recognizedAudioSampleService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<SpeechConfigurationDto> Handle(CreateSpeechConfigurationCommand request, CancellationToken cancellationToken)
@@ -45,7 +46,7 @@ namespace RewriteMe.WebApi.Handlers
                 SubscriptionRemainingTimeTicks = remainingTime.Ticks
             };
 
-            await _applicationLogService.InfoAsync($"User with ID='{request.UserId}' retrieved speech recognition configuration: {speechConfigurationDto}.", request.UserId).ConfigureAwait(false);
+            _logger.Information($"User with ID='{request.UserId}' retrieved speech recognition configuration: {speechConfigurationDto}. [{request.UserId}]");
 
             return speechConfigurationDto;
         }

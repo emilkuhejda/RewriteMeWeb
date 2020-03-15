@@ -38,8 +38,6 @@ namespace RewriteMe.DataAccess
 
         public DbSet<BillingPurchaseEntity> BillingPurchases { get; set; }
 
-        public DbSet<ApplicationLogEntity> ApplicationLogs { get; set; }
-
         public DbSet<ContactFormEntity> ContactForms { get; set; }
 
         public DbSet<InformationMessageEntity> InformationMessages { get; set; }
@@ -74,7 +72,6 @@ namespace RewriteMe.DataAccess
             modelBuilder.ApplyConfiguration(new CurrentUserSubscriptionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new UserSubscriptionEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BillingPurchaseEntityConfiguration());
-            modelBuilder.ApplyConfiguration(new ApplicationLogEntityConfiguration());
             modelBuilder.ApplyConfiguration(new ContactFormEntityConfiguration());
             modelBuilder.ApplyConfiguration(new InformationMessageEntityConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageVersionEntityConfiguration());

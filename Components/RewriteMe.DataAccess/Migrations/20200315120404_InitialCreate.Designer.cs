@@ -10,7 +10,7 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200301104740_InitialCreate")]
+    [Migration("20200315120404_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,33 +50,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Administrator");
-                });
-
-            modelBuilder.Entity("RewriteMe.DataAccess.Entities.ApplicationLogEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateCreatedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LogLevel")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ApplicationLog");
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.BillingPurchaseEntity", b =>
@@ -611,14 +584,6 @@ namespace RewriteMe.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSubscription");
-                });
-
-            modelBuilder.Entity("RewriteMe.DataAccess.Entities.ApplicationLogEntity", b =>
-                {
-                    b.HasOne("RewriteMe.DataAccess.Entities.UserEntity", "User")
-                        .WithMany("ApplicationLogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("RewriteMe.DataAccess.Entities.BillingPurchaseEntity", b =>

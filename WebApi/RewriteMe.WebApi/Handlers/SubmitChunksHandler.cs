@@ -14,6 +14,7 @@ using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -24,7 +25,7 @@ namespace RewriteMe.WebApi.Handlers
         private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public SubmitChunksHandler(
             IFileItemService fileItemService,
@@ -32,14 +33,14 @@ namespace RewriteMe.WebApi.Handlers
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<FileItemDto> Handle(SubmitChunksCommand request, CancellationToken cancellationToken)
@@ -118,7 +119,8 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), request.UserId).ConfigureAwait(false);
+                _logger.Error($"Exception occurred during submitting file item chunks. Message: {ex.Message}. [{request.UserId}]");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw new OperationErrorException(ErrorCode.EC400);
             }

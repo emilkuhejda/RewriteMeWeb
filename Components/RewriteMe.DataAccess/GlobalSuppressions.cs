@@ -21,7 +21,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.RecognizedAudioSamples")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.UserSubscriptions")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.BillingPurchases")]
-[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.ApplicationLogs")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.UserDevices")]
 [assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "By design", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.UserEntity.InformationMessages")]
 [assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Array is OK", Scope = "member", Target = "~P:RewriteMe.DataAccess.Entities.FileItemSourceEntity.OriginalSource")]

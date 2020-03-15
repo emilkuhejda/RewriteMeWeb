@@ -6,7 +6,7 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ISpeechRecognitionService
     {
-        Task<bool> CanCreateSpeechClientAsync();
+        bool CanCreateSpeechClientAsync();
 
         Task<IEnumerable<TranscribeItem>> RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files);
     }

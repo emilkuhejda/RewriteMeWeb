@@ -11,6 +11,7 @@ using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -20,26 +21,26 @@ namespace RewriteMe.Business.Services
         private readonly IStorageService _storageService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly IFileItemRepository _fileItemRepository;
         private readonly IFileItemSourceRepository _fileItemSourceRepository;
+        private readonly ILogger _logger;
 
         public FileItemService(
             IFileItemSourceService fileItemSourceService,
             IStorageService storageService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
-            IApplicationLogService applicationLogService,
             IFileItemRepository fileItemRepository,
-            IFileItemSourceRepository fileItemSourceRepository)
+            IFileItemSourceRepository fileItemSourceRepository,
+            ILogger logger)
         {
             _fileItemSourceService = fileItemSourceService;
             _storageService = storageService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
-            _applicationLogService = applicationLogService;
             _fileItemRepository = fileItemRepository;
             _fileItemSourceRepository = fileItemSourceRepository;
+            _logger = logger;
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -184,8 +185,8 @@ namespace RewriteMe.Business.Services
             }
             catch (Exception ex)
             {
-                await _applicationLogService.ErrorAsync($"File item source for file item ID = '{fileItem.Id}' was not correctly deleted.", fileItem.UserId).ConfigureAwait(false);
-                await _applicationLogService.ErrorAsync(ExceptionFormatter.FormatException(ex), fileItem.UserId).ConfigureAwait(false);
+                _logger.Warning($"File item source for file item ID = '{fileItem.Id}' was not correctly deleted. [{fileItem.UserId}]");
+                _logger.Warning(ExceptionFormatter.FormatException(ex));
             }
         }
 

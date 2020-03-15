@@ -14,6 +14,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -21,22 +22,22 @@ namespace RewriteMe.Business.Services
     {
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public SpeechRecognitionService(
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
-            IApplicationLogService applicationLogService,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
-            _applicationLogService = applicationLogService;
             _appSettings = options.Value;
+            _logger = logger;
         }
 
-        public async Task<bool> CanCreateSpeechClientAsync()
+        public bool CanCreateSpeechClientAsync()
         {
             try
             {
@@ -45,7 +46,8 @@ namespace RewriteMe.Business.Services
             }
             catch (Exception ex)
             {
-                await _applicationLogService.ErrorAsync($"Unable create Speech client.{Environment.NewLine}{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+                _logger.Fatal($"Unable create Speech client.");
+                _logger.Fatal(ExceptionFormatter.FormatException(ex));
             }
 
             return false;
