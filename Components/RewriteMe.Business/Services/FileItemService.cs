@@ -315,6 +315,8 @@ namespace RewriteMe.Business.Services
         public void CleanUploadedData(string directoryPath)
         {
             Directory.Delete(directoryPath, true);
+
+            _logger.Information($"File in destination '{directoryPath}' was deleted.");
         }
 
         public TimeSpan? GetAudioTotalTime(string filePath)
