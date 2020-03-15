@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -22,10 +24,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class TranscribeItemsController : ControllerBase
     {
         private readonly ITranscribeItemService _transcribeItemService;
+        private readonly ILogger _logger;
 
-        public TranscribeItemsController(ITranscribeItemService transcribeItemService)
+        public TranscribeItemsController(
+            ITranscribeItemService transcribeItemService,
+            ILogger logger)
         {
             _transcribeItemService = transcribeItemService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -64,7 +70,11 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
             if (source == null)
+            {
+                _logger.Error($"Transcribe item '{transcribeItemId}' was not found.");
+
                 return NotFound();
+            }
 
             return Ok(source);
         }
@@ -79,7 +89,11 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             var source = await _transcribeItemService.GetSourceAsync(userId, transcribeItemId).ConfigureAwait(false);
             if (source == null)
+            {
+                _logger.Error($"Transcribe item '{transcribeItemId}' was not found.");
+
                 return NotFound();
+            }
 
             return new FileContentResult(source, "audio/wav");
         }
@@ -93,6 +107,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             var dateUpdated = DateTime.UtcNow;
             await _transcribeItemService.UpdateUserTranscriptAsync(updateTranscribeItemModel.TranscribeItemId, updateTranscribeItemModel.Transcript, dateUpdated, updateTranscribeItemModel.ApplicationId).ConfigureAwait(false);
+
+            _logger.Error($"User transcript was updated. Transcribe item model: {JsonConvert.SerializeObject(updateTranscribeItemModel)}");
 
             return Ok(new OkDto(dateUpdated));
         }
