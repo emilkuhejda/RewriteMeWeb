@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.UserManagement;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -12,19 +13,19 @@ namespace RewriteMe.Business.Services
     {
         private readonly IStorageService _storageService;
         private readonly IFileAccessService _fileAccessService;
-        private readonly IApplicationLogService _applicationLogService;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
         public UserService(
             IStorageService storageService,
             IFileAccessService fileAccessService,
-            IApplicationLogService applicationLogService,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ILogger logger)
         {
             _storageService = storageService;
             _fileAccessService = fileAccessService;
-            _applicationLogService = applicationLogService;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<bool> ExistsAsync(Guid userId)
@@ -59,7 +60,7 @@ namespace RewriteMe.Business.Services
 
         public async Task DeleteAsync(Guid userId)
         {
-            await _applicationLogService.InfoAsync($"Start deleting user with ID = '{userId}'.").ConfigureAwait(false);
+            _logger.Information($"Start deleting user with ID = '{userId}'.");
 
             var directoryPath = _fileAccessService.GetRootPath(userId);
             if (Directory.Exists(directoryPath))
@@ -68,7 +69,7 @@ namespace RewriteMe.Business.Services
             await _storageService.DeleteContainerAsync(userId).ConfigureAwait(false);
             await _userRepository.DeleteAsync(userId).ConfigureAwait(false);
 
-            await _applicationLogService.InfoAsync($"User with ID = '{userId}' was successfully deleted.").ConfigureAwait(false);
+            _logger.Information($"User with ID = '{userId}' was successfully deleted.");
         }
     }
 }
