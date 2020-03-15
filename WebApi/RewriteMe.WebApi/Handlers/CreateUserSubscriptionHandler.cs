@@ -8,20 +8,21 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
     public class CreateUserSubscriptionHandler : IRequestHandler<CreateUserSubscriptionCommand, TimeSpanWrapperDto>
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public CreateUserSubscriptionHandler(
             IUserSubscriptionService userSubscriptionService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _userSubscriptionService = userSubscriptionService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<TimeSpanWrapperDto> Handle(CreateUserSubscriptionCommand request, CancellationToken cancellationToken)
@@ -42,7 +43,7 @@ namespace RewriteMe.WebApi.Handlers
             }
             catch (DbUpdateException ex)
             {
-                await _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(ex)}").ConfigureAwait(false);
+                _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw new OperationErrorException(ErrorCode.EC400);
             }
