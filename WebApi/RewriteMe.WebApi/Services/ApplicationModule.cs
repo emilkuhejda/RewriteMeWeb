@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
+using AutofacSerilogIntegration;
 using MediatR;
 using RewriteMe.Business;
 using RewriteMe.DataAccess;
@@ -27,6 +28,8 @@ namespace RewriteMe.WebApi.Services
 
         public static void RegisterServices(ContainerBuilder builder)
         {
+            builder.RegisterLogger();
+
             builder.RegisterType<ApiExceptionFilter>().AsSelf();
             builder.RegisterType<FileAccessService>().As<IFileAccessService>().InstancePerLifetimeScope();
             builder.RegisterType<Mediator>().As<IMediator>().InstancePerLifetimeScope();
