@@ -185,8 +185,8 @@ namespace RewriteMe.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.Error($"File item source for file item ID = '{fileItem.Id}' was not correctly deleted. [{fileItem.UserId}]");
-                _logger.Error(ExceptionFormatter.FormatException(ex));
+                _logger.Warning($"File item source for file item ID = '{fileItem.Id}' was not correctly deleted. [{fileItem.UserId}]");
+                _logger.Warning(ExceptionFormatter.FormatException(ex));
             }
         }
 
