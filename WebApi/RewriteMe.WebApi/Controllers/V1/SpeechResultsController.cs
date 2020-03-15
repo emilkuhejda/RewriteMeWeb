@@ -50,7 +50,7 @@ namespace RewriteMe.WebApi.Controllers.V1
             var speechResult = createSpeechResultModel.ToSpeechResult();
             await _speechResultService.AddAsync(speechResult).ConfigureAwait(false);
 
-            _logger.Information($"User with ID='{userId}' inserted speech result: {speechResult}. [userId]");
+            _logger.Information($"User with ID='{userId}' inserted speech result: {speechResult}. [{userId}]");
 
             return Ok(new OkDto());
         }
