@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -21,10 +23,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class InformationMessagesController : ControllerBase
     {
         private readonly IInformationMessageService _informationMessageService;
+        private readonly ILogger _logger;
 
-        public InformationMessagesController(IInformationMessageService informationMessageService)
+        public InformationMessagesController(
+            IInformationMessageService informationMessageService,
+            ILogger logger)
         {
             _informationMessageService = informationMessageService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -64,6 +70,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             if (informationMessage == null)
                 return BadRequest();
 
+            _logger.Information($"Information message '{informationMessageId}' was marked as opened.");
+
             return Ok(informationMessage.ToDto());
         }
 
@@ -76,6 +84,9 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             var userId = HttpContext.User.GetNameIdentifier();
             await _informationMessageService.MarkAsOpenedAsync(userId, ids).ConfigureAwait(false);
+
+            _logger.Information($"Information messages '{JsonConvert.SerializeObject(ids)}' was marked as opened.");
+
             return Ok(new OkDto());
         }
     }
