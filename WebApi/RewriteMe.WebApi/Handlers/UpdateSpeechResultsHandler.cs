@@ -6,6 +6,7 @@ using MediatR;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -13,16 +14,16 @@ namespace RewriteMe.WebApi.Handlers
     {
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ISpeechResultService _speechResultService;
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
         public UpdateSpeechResultsHandler(
             IUserSubscriptionService userSubscriptionService,
             ISpeechResultService speechResultService,
-            IApplicationLogService applicationLogService)
+            ILogger logger)
         {
             _userSubscriptionService = userSubscriptionService;
             _speechResultService = speechResultService;
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public async Task<TimeSpanWrapperDto> Handle(UpdateSpeechResultsCommand request, CancellationToken cancellationToken)
@@ -33,7 +34,7 @@ namespace RewriteMe.WebApi.Handlers
             var totalTime = TimeSpan.FromTicks(totalTimeTicks);
             await _userSubscriptionService.SubtractTimeAsync(request.UserId, totalTime).ConfigureAwait(false);
 
-            await _applicationLogService.InfoAsync("Update speech results total time.", request.UserId).ConfigureAwait(false);
+            _logger.Information($"Update speech results total time. [{request.UserId}]");
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(request.UserId).ConfigureAwait(false);
             var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };

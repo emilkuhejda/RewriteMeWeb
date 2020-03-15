@@ -119,7 +119,7 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                _logger.Error($"Exception occurred during submitting file item source. [{request.UserId}]");
+                _logger.Error($"Exception occurred during submitting file item chunks. Message: {ex.Message}. [{request.UserId}]");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw new OperationErrorException(ErrorCode.EC400);
