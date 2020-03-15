@@ -12,13 +12,13 @@ using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
-    public class TranscribeFileItemHandler : IRequestHandler<TranscribeFileItemCommand, OkDto>
+    public class UpdateFileItemLanguageHandler : IRequestHandler<UpdateFileItemLanguageCommand, OkDto>
     {
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly ILogger _logger;
 
-        public TranscribeFileItemHandler(
+        public UpdateFileItemLanguageHandler(
             IFileItemService fileItemService,
             ISpeechRecognitionManager speechRecognitionManager,
             ILogger logger)
@@ -28,7 +28,7 @@ namespace RewriteMe.WebApi.Handlers
             _logger = logger;
         }
 
-        public async Task<OkDto> Handle(TranscribeFileItemCommand request, CancellationToken cancellationToken)
+        public async Task<OkDto> Handle(UpdateFileItemLanguageCommand request, CancellationToken cancellationToken)
         {
             var fileItemExists = await _fileItemService.ExistsAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
             if (!fileItemExists)

@@ -230,7 +230,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeFileItemCommand = new TranscribeFileItemCommand
+            var updateFileItemLanguageCommand = new UpdateFileItemLanguageCommand
             {
                 UserId = userId,
                 FileItemId = fileItemId,
@@ -238,7 +238,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 ApplicationId = applicationId
             };
 
-            var okDto = await _mediator.Send(transcribeFileItemCommand).ConfigureAwait(false);
+            var okDto = await _mediator.Send(updateFileItemLanguageCommand).ConfigureAwait(false);
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
