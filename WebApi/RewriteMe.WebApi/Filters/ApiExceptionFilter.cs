@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Exceptions;
-using RewriteMe.Domain.Interfaces.Services;
+using Serilog;
 
 namespace RewriteMe.WebApi.Filters
 {
     public class ApiExceptionFilter : ExceptionFilterAttribute
     {
-        private readonly IApplicationLogService _applicationLogService;
+        private readonly ILogger _logger;
 
-        public ApiExceptionFilter(IApplicationLogService applicationLogService)
+        public ApiExceptionFilter(ILogger logger)
         {
-            _applicationLogService = applicationLogService;
+            _logger = logger;
         }
 
         public override void OnException(ExceptionContext context)
@@ -33,7 +32,7 @@ namespace RewriteMe.WebApi.Filters
                     Detail = "Operation failed"
                 });
 
-                AsyncHelper.RunSync(() => _applicationLogService.ErrorAsync($"{ExceptionFormatter.FormatException(context.Exception)}"));
+                _logger.Error($"{ExceptionFormatter.FormatException(context.Exception)}");
             }
 
             base.OnException(context);
