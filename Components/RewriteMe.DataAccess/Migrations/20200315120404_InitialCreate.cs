@@ -95,28 +95,6 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationLog",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<Guid>(nullable: true),
-                    LogLevel = table.Column<int>(nullable: false),
-                    Message = table.Column<string>(nullable: false),
-                    DateCreatedUtc = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationLog", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ApplicationLog_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BillingPurchase",
                 columns: table => new
                 {
@@ -398,11 +376,6 @@ namespace RewriteMe.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationLog_UserId",
-                table: "ApplicationLog",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BillingPurchase_UserId",
                 table: "BillingPurchase",
                 column: "UserId");
@@ -469,9 +442,6 @@ namespace RewriteMe.DataAccess.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Administrator");
-
-            migrationBuilder.DropTable(
-                name: "ApplicationLog");
 
             migrationBuilder.DropTable(
                 name: "BillingPurchase");
