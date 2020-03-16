@@ -23,7 +23,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _userSubscriptionService = userSubscriptionService;
             _speechResultService = speechResultService;
-            _logger = logger;
+            _logger = logger.ForContext<UpdateSpeechResultsHandler>();
         }
 
         public async Task<TimeSpanWrapperDto> Handle(UpdateSpeechResultsCommand request, CancellationToken cancellationToken)

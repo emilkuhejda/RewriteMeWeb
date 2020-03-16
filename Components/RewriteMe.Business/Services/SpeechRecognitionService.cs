@@ -34,7 +34,7 @@ namespace RewriteMe.Business.Services
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _appSettings = options.Value;
-            _logger = logger;
+            _logger = logger.ForContext<SpeechRecognitionService>();
         }
 
         public bool CanCreateSpeechClientAsync()

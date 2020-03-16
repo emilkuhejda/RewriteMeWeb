@@ -24,7 +24,7 @@ namespace RewriteMe.Business.Services
         {
             _fileAccessService = fileAccessService;
             _fileItemRepository = fileItemRepository;
-            _logger = logger;
+            _logger = logger.ForContext<CleanUpService>();
         }
 
         public void CleanUp(DateTime deleteBefore, CleanUpSettings cleanUpSettings, bool forceCleanUp)

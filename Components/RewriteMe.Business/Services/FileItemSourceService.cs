@@ -18,7 +18,7 @@ namespace RewriteMe.Business.Services
             ILogger logger)
         {
             _fileItemSourceRepository = fileItemSourceRepository;
-            _logger = logger;
+            _logger = logger.ForContext<FileItemSourceService>();
         }
 
         public FileItemSource GetFileItemSource(Guid fileItemId)

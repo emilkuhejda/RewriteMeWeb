@@ -40,14 +40,18 @@ namespace RewriteMe.WebApi.Handlers
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
-            _logger = logger;
+            _logger = logger.ForContext<SubmitChunksHandler>();
         }
 
         public async Task<FileItemDto> Handle(SubmitChunksCommand request, CancellationToken cancellationToken)
         {
             var fileItem = await _fileItemService.GetAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
             if (fileItem == null)
+            {
+                _logger.Error($"File item '{request.FileItemId}' was not found. [{request.UserId}]");
+
                 throw new OperationErrorException(ErrorCode.EC101);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -56,7 +60,11 @@ namespace RewriteMe.WebApi.Handlers
             cancellationToken.ThrowIfCancellationRequested();
 
             if (chunks.Count != request.ChunksCount)
+            {
+                _logger.Error($"Chunks count does not match. [{request.UserId}]");
+
                 throw new OperationErrorException(ErrorCode.EC102);
+            }
 
             var uploadedFileSource = new List<byte>();
             var chunksFileItemStoragePath = _fileAccessService.GetChunksFileItemStoragePath(request.FileItemId);
@@ -83,6 +91,8 @@ namespace RewriteMe.WebApi.Handlers
             if (!totalTime.HasValue)
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
+
+                _logger.Error($"File '{uploadedFile.FileName}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC201);
             }
@@ -114,6 +124,8 @@ namespace RewriteMe.WebApi.Handlers
                 {
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
                 }
+
+                _logger.Information($"File item '{fileItem.Id}' was successfully submitted. [{request.UserId}]");
             }
             catch (DbUpdateException ex)
             {

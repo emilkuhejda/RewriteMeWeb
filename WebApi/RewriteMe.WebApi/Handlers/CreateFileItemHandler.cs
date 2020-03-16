@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
@@ -11,6 +12,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
@@ -18,19 +20,26 @@ namespace RewriteMe.WebApi.Handlers
     {
         private readonly IFileItemService _fileItemService;
         private readonly IInternalValueService _internalValueService;
+        private readonly ILogger _logger;
 
         public CreateFileItemHandler(
             IFileItemService fileItemService,
-            IInternalValueService internalValueService)
+            IInternalValueService internalValueService,
+            ILogger logger)
         {
             _fileItemService = fileItemService;
             _internalValueService = internalValueService;
+            _logger = logger.ForContext<CreateFileItemHandler>();
         }
 
         public async Task<FileItemDto> Handle(CreateFileItemCommand request, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(request.Language) && !SupportedLanguages.IsSupported(request.Language))
+            {
+                _logger.Error($"Language '{request.Language}' is not supported.");
+
                 throw new OperationErrorException(ErrorCode.EC200);
+            }
 
             var fileItemId = Guid.NewGuid();
             var dateUpdated = DateTime.UtcNow;
@@ -49,6 +58,8 @@ namespace RewriteMe.WebApi.Handlers
             };
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
 
             return fileItem.ToDto();
         }

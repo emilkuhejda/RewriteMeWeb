@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using RewriteMe.Business.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
@@ -30,7 +31,7 @@ namespace RewriteMe.WebApi.Handlers
             _userService = userService;
             _userSubscriptionService = userSubscriptionService;
             _userDeviceService = userDeviceService;
-            _logger = logger;
+            _logger = logger.ForContext<RegisterUserHandler>();
         }
 
         public async Task<UserRegistrationDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -83,6 +84,8 @@ namespace RewriteMe.WebApi.Handlers
                 Identity = user.ToIdentityDto(),
                 RemainingTime = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks }
             };
+
+            _logger.Information($"User was successfully registered. User: {JsonConvert.SerializeObject(registrationModelDto.Identity)}");
 
             return registrationModelDto;
         }

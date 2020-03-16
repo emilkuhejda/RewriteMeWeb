@@ -40,7 +40,7 @@ namespace RewriteMe.Business.Services
             _fileAccessService = fileAccessService;
             _fileItemRepository = fileItemRepository;
             _fileItemSourceRepository = fileItemSourceRepository;
-            _logger = logger;
+            _logger = logger.ForContext<FileItemService>();
         }
 
         public async Task<bool> ExistsAsync(Guid userId, Guid fileItemId)
@@ -315,6 +315,8 @@ namespace RewriteMe.Business.Services
         public void CleanUploadedData(string directoryPath)
         {
             Directory.Delete(directoryPath, true);
+
+            _logger.Information($"File in destination '{directoryPath}' was deleted.");
         }
 
         public TimeSpan? GetAudioTotalTime(string filePath)

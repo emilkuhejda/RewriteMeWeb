@@ -25,7 +25,7 @@ namespace RewriteMe.Business.Services
             _storageService = storageService;
             _fileAccessService = fileAccessService;
             _userRepository = userRepository;
-            _logger = logger;
+            _logger = logger.ForContext<UserService>();
         }
 
         public async Task<bool> ExistsAsync(Guid userId)

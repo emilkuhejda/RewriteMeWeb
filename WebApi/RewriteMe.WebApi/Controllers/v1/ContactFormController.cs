@@ -6,6 +6,7 @@ using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -18,10 +19,14 @@ namespace RewriteMe.WebApi.Controllers.V1
     public class ContactFormController : ControllerBase
     {
         private readonly IContactFormService _contactFormService;
+        private readonly ILogger _logger;
 
-        public ContactFormController(IContactFormService contactFormService)
+        public ContactFormController(
+            IContactFormService contactFormService,
+            ILogger logger)
         {
             _contactFormService = contactFormService;
+            _logger = logger.ForContext<ContactFormController>();
         }
 
         [AllowAnonymous]
@@ -34,6 +39,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             var contactForm = contactFormModel.ToContactForm();
 
             await _contactFormService.AddAsync(contactForm).ConfigureAwait(false);
+
+            _logger.Information($"Contact '{contactForm.Id}' form was created.");
 
             return Ok(new OkDto());
         }

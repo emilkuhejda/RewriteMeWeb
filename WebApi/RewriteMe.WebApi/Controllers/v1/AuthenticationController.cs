@@ -9,6 +9,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Models;
+using Serilog;
 
 namespace RewriteMe.WebApi.Controllers.V1
 {
@@ -20,13 +21,16 @@ namespace RewriteMe.WebApi.Controllers.V1
     {
         private readonly IMediator _mediator;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public AuthenticationController(
             IMediator mediator,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _mediator = mediator;
             _appSettings = options.Value;
+            _logger = logger.ForContext<AuthenticationController>();
         }
 
         [AllowAnonymous]
@@ -36,6 +40,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticationModel authenticationModel)
         {
+            _logger.Information($"User authentication with username = '{authenticationModel.Username}'.");
+
             var userAuthenticateCommand = new UserAuthenticateCommand
             {
                 Username = authenticationModel.Username,
@@ -44,6 +50,9 @@ namespace RewriteMe.WebApi.Controllers.V1
             };
 
             var administratorDto = await _mediator.Send(userAuthenticateCommand).ConfigureAwait(false);
+
+            _logger.Information($"User authentication for '{authenticationModel.Username}' was successful.");
+
             return Ok(administratorDto);
         }
     }

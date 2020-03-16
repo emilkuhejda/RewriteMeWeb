@@ -23,7 +23,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             _userSubscriptionService = userSubscriptionService;
             _recognizedAudioSampleService = recognizedAudioSampleService;
-            _logger = logger;
+            _logger = logger.ForContext<CreateSpeechConfigurationHandler>();
         }
 
         public async Task<SpeechConfigurationDto> Handle(CreateSpeechConfigurationCommand request, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ namespace RewriteMe.WebApi.Handlers
                 SubscriptionRemainingTimeTicks = remainingTime.Ticks
             };
 
-            _logger.Information($"User with ID='{request.UserId}' retrieved speech recognition configuration: {speechConfigurationDto}. [{request.UserId}]");
+            _logger.Information($"User with ID='{request.UserId}' retrieved speech recognition configuration. [{request.UserId}]");
 
             return speechConfigurationDto;
         }

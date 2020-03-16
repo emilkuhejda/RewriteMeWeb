@@ -6,6 +6,7 @@ using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -22,19 +23,22 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly IInformationMessageService _informationMessageService;
+        private readonly ILogger _logger;
 
         public LastUpdatesController(
             IUserService userService,
             IFileItemService fileItemService,
             ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
-            IInformationMessageService informationMessageService)
+            IInformationMessageService informationMessageService,
+            ILogger logger)
         {
             _userService = userService;
             _fileItemService = fileItemService;
             _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _informationMessageService = informationMessageService;
+            _logger = logger.ForContext<LastUpdatesController>();
         }
 
         [HttpGet]
@@ -47,7 +51,11 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             var user = await _userService.GetAsync(userId).ConfigureAwait(false);
             if (user == null)
+            {
+                _logger.Error($"User '{userId}' was not found in database.");
+
                 return Unauthorized();
+            }
 
             var fileItemLastUpdate = await _fileItemService.GetLastUpdateAsync(userId).ConfigureAwait(false);
             var deletedFileItemLastUpdate = await _fileItemService.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
