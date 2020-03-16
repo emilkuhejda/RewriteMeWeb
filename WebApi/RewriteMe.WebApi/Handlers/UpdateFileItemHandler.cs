@@ -32,7 +32,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             if (string.IsNullOrWhiteSpace(request.Language) || !SupportedLanguages.IsSupported(request.Language))
             {
-                _logger.Error($"[Update file item] Language '{request.Language}' is not supported.");
+                _logger.Error($"Language '{request.Language}' is not supported.");
 
                 throw new OperationErrorException(ErrorCode.EC200);
             }
@@ -49,7 +49,7 @@ namespace RewriteMe.WebApi.Handlers
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
 
-            _logger.Information($"[Update file item] File item '{fileItem.Id}' was updated. File item: {JsonConvert.SerializeObject(fileItem)}");
+            _logger.Information($"File item '{fileItem.Id}' was updated. File item: {JsonConvert.SerializeObject(fileItem)}");
 
             return fileItem.ToDto();
         }

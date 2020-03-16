@@ -41,14 +41,14 @@ namespace RewriteMe.WebApi.Handlers
         {
             if (request.File == null)
             {
-                _logger.Error($"[Upload file source] Uploaded file source was not found. [{request.UserId}]");
+                _logger.Error($"Uploaded file source was not found. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC100);
             }
 
             if (!string.IsNullOrWhiteSpace(request.Language) && !SupportedLanguages.IsSupported(request.Language))
             {
-                _logger.Error($"[Upload file source] Language '{request.Language}' is not supported. [{request.UserId}]");
+                _logger.Error($"Language '{request.Language}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC200);
             }
@@ -62,7 +62,7 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                _logger.Error($"[Upload file source] File '{request.FileName}' is not supported. [{request.UserId}]");
+                _logger.Error($"File '{request.FileName}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC201);
             }
@@ -97,7 +97,7 @@ namespace RewriteMe.WebApi.Handlers
 
                 await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
 
-                _logger.Information($"[Upload file source] File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
+                _logger.Information($"File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
 
                 if (storageSetting == StorageSetting.Database)
                 {

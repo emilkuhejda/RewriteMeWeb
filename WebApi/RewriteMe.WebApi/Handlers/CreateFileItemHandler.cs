@@ -36,7 +36,7 @@ namespace RewriteMe.WebApi.Handlers
         {
             if (!string.IsNullOrWhiteSpace(request.Language) && !SupportedLanguages.IsSupported(request.Language))
             {
-                _logger.Error($"[Create file item] Language '{request.Language}' is not supported.");
+                _logger.Error($"Language '{request.Language}' is not supported.");
 
                 throw new OperationErrorException(ErrorCode.EC200);
             }
@@ -59,7 +59,7 @@ namespace RewriteMe.WebApi.Handlers
 
             await _fileItemService.AddAsync(fileItem).ConfigureAwait(false);
 
-            _logger.Information($"[Create file item] File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
+            _logger.Information($"File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
 
             return fileItem.ToDto();
         }

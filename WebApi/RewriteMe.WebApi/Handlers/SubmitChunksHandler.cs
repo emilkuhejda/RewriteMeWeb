@@ -48,7 +48,7 @@ namespace RewriteMe.WebApi.Handlers
             var fileItem = await _fileItemService.GetAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
             if (fileItem == null)
             {
-                _logger.Error($"[Submit chunks] File item '{request.FileItemId}' was not found. [{request.UserId}]");
+                _logger.Error($"File item '{request.FileItemId}' was not found. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC101);
             }
@@ -61,7 +61,7 @@ namespace RewriteMe.WebApi.Handlers
 
             if (chunks.Count != request.ChunksCount)
             {
-                _logger.Error($"[Submit chunks] Chunks number does not match. [{request.UserId}]");
+                _logger.Error($"Chunks count does not match. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC102);
             }
@@ -92,7 +92,7 @@ namespace RewriteMe.WebApi.Handlers
             {
                 _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
 
-                _logger.Error($"[Submit chunks] File '{uploadedFile.FileName}' is not supported. [{request.UserId}]");
+                _logger.Error($"File '{uploadedFile.FileName}' is not supported. [{request.UserId}]");
 
                 throw new OperationErrorException(ErrorCode.EC201);
             }
@@ -125,7 +125,7 @@ namespace RewriteMe.WebApi.Handlers
                     _fileItemService.CleanUploadedData(uploadedFile.DirectoryPath);
                 }
 
-                _logger.Information($"[Submit chunks] File item '{fileItem.Id}' was successfully submitted. [{request.UserId}]");
+                _logger.Information($"File item '{fileItem.Id}' was successfully submitted. [{request.UserId}]");
             }
             catch (DbUpdateException ex)
             {

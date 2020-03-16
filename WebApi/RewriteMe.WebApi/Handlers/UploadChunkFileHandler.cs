@@ -31,7 +31,7 @@ namespace RewriteMe.WebApi.Handlers
             {
                 if (request.File == null)
                 {
-                    _logger.Error("[Upload chunk file] Uploaded file source was not found.");
+                    _logger.Error("Uploaded file source was not found.");
 
                     throw new OperationErrorException(ErrorCode.EC100);
                 }
@@ -41,7 +41,7 @@ namespace RewriteMe.WebApi.Handlers
 
                 await _uploadedChunkService.SaveAsync(request.FileItemId, request.Order, request.StorageSetting, request.ApplicationId, uploadedFileSource, cancellationToken).ConfigureAwait(false);
 
-                _logger.Information($"[Upload chunk file] File chunk for file item '{request.FileItemId}' was uploaded.");
+                _logger.Information($"File chunk for file item '{request.FileItemId}' was uploaded.");
 
                 return new OkDto();
             }

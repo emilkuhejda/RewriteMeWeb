@@ -34,7 +34,7 @@ namespace RewriteMe.WebApi.Handlers
             var userExists = await _userService.ExistsAsync(request.UserId, request.Email).ConfigureAwait(false);
             if (!userExists)
             {
-                _logger.Error($"[Delete user] User '{request.UserId}' was not found.");
+                _logger.Error($"User '{request.UserId}' was not found.");
 
                 throw new OperationErrorException(StatusCodes.Status404NotFound);
             }

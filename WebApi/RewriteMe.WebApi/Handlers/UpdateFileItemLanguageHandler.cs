@@ -33,14 +33,14 @@ namespace RewriteMe.WebApi.Handlers
             var fileItemExists = await _fileItemService.ExistsAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
             if (!fileItemExists)
             {
-                _logger.Error($"[Transcribe file item] File item '{request.FileItemId}' not exists.");
+                _logger.Error($"File item '{request.FileItemId}' not exists.");
 
                 throw new OperationErrorException(ErrorCode.EC101);
             }
 
             if (!SupportedLanguages.IsSupported(request.Language))
             {
-                _logger.Error($"[Transcribe file item] Language '{request.Language}' is not supported.");
+                _logger.Error($"Language '{request.Language}' is not supported.");
 
                 throw new OperationErrorException(ErrorCode.EC200);
             }
@@ -48,14 +48,14 @@ namespace RewriteMe.WebApi.Handlers
             var canRunRecognition = await _speechRecognitionManager.CanRunRecognition(request.UserId).ConfigureAwait(false);
             if (!canRunRecognition)
             {
-                _logger.Error($"[Transcribe file item] User '{request.UserId}' has no enough left minutes in subscription.");
+                _logger.Error($"User '{request.UserId}' has no enough left minutes in subscription.");
 
                 throw new OperationErrorException(ErrorCode.EC300);
             }
 
             await _fileItemService.UpdateLanguageAsync(request.FileItemId, request.Language, request.ApplicationId).ConfigureAwait(false);
 
-            _logger.Information($"[Transcribe file item] File item '{request.FileItemId}' updated language to '{request.Language}'.");
+            _logger.Information($"File item '{request.FileItemId}' updated language to '{request.Language}'.");
 
             return new OkDto();
         }
