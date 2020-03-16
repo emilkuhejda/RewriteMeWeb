@@ -36,7 +36,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             _speechResultService = speechResultService;
             _mediator = mediator;
-            _logger = logger;
+            _logger = logger.ForContext<SpeechResultsController>();
         }
 
         [HttpPost("create")]

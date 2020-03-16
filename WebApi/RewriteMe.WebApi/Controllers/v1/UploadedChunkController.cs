@@ -5,12 +5,14 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -25,15 +27,18 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IUploadedChunkService _uploadedChunkService;
         private readonly IInternalValueService _internalValueService;
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
         public UploadedChunkController(
             IUploadedChunkService uploadedChunkService,
             IInternalValueService internalValueService,
-            IMediator mediator)
+            IMediator mediator,
+            ILogger logger)
         {
             _uploadedChunkService = uploadedChunkService;
             _internalValueService = internalValueService;
             _mediator = mediator;
+            _logger = logger.ForContext<UploadedChunkController>();
         }
 
         [HttpGet]
@@ -43,11 +48,15 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetChunksStorageConfiguration")]
         public async Task<IActionResult> GetChunksStorageConfiguration()
         {
+            var userId = HttpContext.User.GetNameIdentifier();
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.ChunksStorageSetting).ConfigureAwait(false);
             var configuration = new StorageConfiguration
             {
                 StorageSetting = storageSetting
             };
+
+
+            _logger.Information($"Retrieve storage configuration: {JsonConvert.SerializeObject(configuration)}. [{userId}]");
 
             return Ok(configuration);
         }
@@ -113,6 +122,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> DeleteChunks(Guid fileItemId, Guid applicationId)
         {
             await _uploadedChunkService.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItemId}' chunks was deleted.");
 
             return Ok(new OkDto());
         }

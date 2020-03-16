@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -12,6 +13,7 @@ using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -27,17 +29,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IUserDeviceService _userDeviceService;
         private readonly IMediator _mediator;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public UsersController(
             IUserService userService,
             IUserDeviceService userDeviceService,
             IMediator mediator,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _userService = userService;
             _userDeviceService = userDeviceService;
             _mediator = mediator;
             _appSettings = options.Value;
+            _logger = logger.ForContext<UsersController>();
         }
 
         [HttpPut("update")]
@@ -52,11 +57,17 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             var user = await _userService.GetAsync(userId).ConfigureAwait(false);
             if (user == null)
+            {
+                _logger.Error($"User '{userId}' was not found.");
+
                 return StatusCode(401);
+            }
 
             user.GivenName = updateUserModel.GivenName;
             user.FamilyName = updateUserModel.FamilyName;
             await _userService.UpdateAsync(user).ConfigureAwait(false);
+
+            _logger.Information($"User '{userId}' was successfully updated.");
 
             return Ok(user.ToIdentityDto());
         }
@@ -75,6 +86,9 @@ namespace RewriteMe.WebApi.Controllers.V1
             };
 
             var userRegistrationDto = await _mediator.Send(registerUserCommand).ConfigureAwait(false);
+
+            _logger.Information($"User was successfully registered. User registration model: {JsonConvert.SerializeObject(registrationUserModel)}");
+
             return Ok(userRegistrationDto);
         }
 
@@ -89,9 +103,15 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             var userId = HttpContext.User.GetNameIdentifier();
             if (!Enum.IsDefined(typeof(Language), language))
+            {
+                _logger.Error($"Language '{language}' is not supported. [{userId}]");
+
                 return BadRequest(ErrorCode.EC200);
+            }
 
             await _userDeviceService.UpdateLanguageAsync(userId, installationId, (Language)language).ConfigureAwait(false);
+
+            _logger.Information($"Language '{language}' was updated for device. [{userId}]");
 
             return Ok(new OkDto());
         }

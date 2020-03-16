@@ -32,7 +32,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         {
             _informationMessageService = informationMessageService;
             _pushNotificationsService = pushNotificationsService;
-            _logger = logger;
+            _logger = logger.ForContext<InformationMessageController>();
         }
 
         [HttpGet("{informationMessageId}")]

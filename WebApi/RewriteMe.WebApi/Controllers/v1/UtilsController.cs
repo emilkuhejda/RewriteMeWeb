@@ -11,6 +11,7 @@ using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
 using RewriteMe.WebApi.Utils;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -23,13 +24,16 @@ namespace RewriteMe.WebApi.Controllers.V1
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public UtilsController(
             IAuthenticationService authenticationService,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _authenticationService = authenticationService;
             _appSettings = options.Value;
+            _logger = logger.ForContext<UtilsController>();
         }
 
         [AllowAnonymous]
@@ -57,6 +61,9 @@ namespace RewriteMe.WebApi.Controllers.V1
             };
 
             var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
+
+            _logger.Information($"Token was refreshed. [{userId}]");
+
             return Ok(token);
         }
 
@@ -76,6 +83,9 @@ namespace RewriteMe.WebApi.Controllers.V1
             };
 
             var token = TokenHelper.Generate(_appSettings.SecretKey, claims, TimeSpan.FromDays(180));
+
+            _logger.Information($"Token was created. [{createTokenModel.UserId}]");
+
             return Ok(token);
         }
     }

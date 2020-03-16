@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
@@ -14,6 +15,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RewriteMe.WebApi.Controllers.V1
@@ -28,15 +30,18 @@ namespace RewriteMe.WebApi.Controllers.V1
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
         public FileItemController(
             IFileItemService fileItemService,
             ISpeechRecognitionManager speechRecognitionManager,
-            IMediator mediator)
+            IMediator mediator,
+            ILogger logger)
         {
             _fileItemService = fileItemService;
             _speechRecognitionManager = speechRecognitionManager;
             _mediator = mediator;
+            _logger = logger.ForContext<FileItemController>();
         }
 
         [HttpGet]
@@ -170,6 +175,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
 
+            _logger.Information($"File item '{fileItemId}' was deleted.");
+
             return Ok(new OkDto());
         }
 
@@ -181,7 +188,11 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.DeleteAllAsync(userId, fileItems.Select(x => x.ToDeletedFileItem()), applicationId).ConfigureAwait(false);
+            var deletedFileItems = fileItems.Select(x => x.ToDeletedFileItem()).ToList();
+            await _fileItemService.DeleteAllAsync(userId, deletedFileItems, applicationId).ConfigureAwait(false);
+
+            var fileItemIds = deletedFileItems.Select(x => x.Id).ToList();
+            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were deleted.");
 
             return Ok(new OkDto());
         }
@@ -193,6 +204,8 @@ namespace RewriteMe.WebApi.Controllers.V1
             var userId = HttpContext.User.GetNameIdentifier();
             await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
 
+            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were permanently deleted.");
+
             return Ok(new OkDto());
         }
 
@@ -202,6 +215,8 @@ namespace RewriteMe.WebApi.Controllers.V1
         {
             var userId = HttpContext.User.GetNameIdentifier();
             await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were restored.");
 
             return Ok(new OkDto());
         }
@@ -215,7 +230,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> Transcribe(Guid fileItemId, string language, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeFileItemCommand = new TranscribeFileItemCommand
+            var updateFileItemLanguageCommand = new UpdateFileItemLanguageCommand
             {
                 UserId = userId,
                 FileItemId = fileItemId,
@@ -223,7 +238,7 @@ namespace RewriteMe.WebApi.Controllers.V1
                 ApplicationId = applicationId
             };
 
-            var okDto = await _mediator.Send(transcribeFileItemCommand).ConfigureAwait(false);
+            var okDto = await _mediator.Send(updateFileItemLanguageCommand).ConfigureAwait(false);
 
             BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
 
