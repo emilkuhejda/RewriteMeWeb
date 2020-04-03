@@ -69,6 +69,8 @@ namespace RewriteMe.Business.Services
 
         private SpeechClient CreateSpeechClient()
         {
+            _logger.Information("Create speech recognition client.");
+
             var serializedCredentials = JsonConvert.SerializeObject(_appSettings.SpeechCredentials);
             var credentials = GoogleCredential.FromJson(serializedCredentials);
             if (credentials.IsCreateScopedRequired)
@@ -84,6 +86,8 @@ namespace RewriteMe.Business.Services
         {
             return await Task.Run(() =>
             {
+                _logger.Information($"Start recognition for file {wavPartialFile.Path}.");
+
                 var longOperation = speech.LongRunningRecognize(new RecognitionConfig
                 {
                     Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
@@ -119,6 +123,8 @@ namespace RewriteMe.Business.Services
                     DateUpdatedUtc = dateCreated
                 };
 
+                _logger.Information($"Partial file '{wavPartialFile.Path}' was recognized.");
+
                 return transcribeItem;
             }).ConfigureAwait(false);
         }
@@ -129,6 +135,8 @@ namespace RewriteMe.Business.Services
             var transcriptionsDirectoryPath = _fileAccessService.GetTranscriptionsDirectoryPath(userId, fileItemId);
             var sourceFilePath = Path.Combine(transcriptionsDirectoryPath, sourceFileName);
             File.Copy(wavPartialFile.Path, sourceFilePath);
+
+            _logger.Information($"Partial file '{wavPartialFile.Path}' was saved to disk.");
 
             return sourceFileName;
         }
