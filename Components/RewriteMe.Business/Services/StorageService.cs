@@ -9,6 +9,7 @@ using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -21,17 +22,20 @@ namespace RewriteMe.Business.Services
         private readonly IFileItemRepository _fileItemRepository;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public StorageService(
             IFileAccessService fileAccessService,
             IFileItemRepository fileItemRepository,
             ITranscribeItemRepository transcribeItemRepository,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _fileAccessService = fileAccessService;
             _fileItemRepository = fileItemRepository;
             _transcribeItemRepository = transcribeItemRepository;
             _appSettings = options.Value;
+            _logger = logger.ForContext<StorageService>();
         }
 
         public async Task MigrateAsync()
@@ -39,6 +43,8 @@ namespace RewriteMe.Business.Services
             var fileItemsToMigrate = (await _fileItemRepository.GetFileItemsForMigrationAsync().ConfigureAwait(false)).ToList();
             if (!fileItemsToMigrate.Any())
                 return;
+
+            _logger.Information("Start migration to Azure.");
 
             foreach (var fileItem in fileItemsToMigrate)
             {
@@ -61,6 +67,8 @@ namespace RewriteMe.Business.Services
 
             await _fileItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
             await _transcribeItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Azure).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItem.Id}' was migrated.");
         }
 
         public async Task<byte[]> GetFileItemBytesAsync(FileItem fileItem)
@@ -97,12 +105,16 @@ namespace RewriteMe.Business.Services
             var container = await GetContainerClient(fileItem.UserId).ConfigureAwait(false);
             var client = container.GetBlobClient(path);
             await client.DeleteIfExistsAsync().ConfigureAwait(false);
+
+            _logger.Information($"File item source '{path}' was deleted.");
         }
 
         public async Task DeleteContainerAsync(Guid userId)
         {
             var client = await GetContainerClient(userId).ConfigureAwait(false);
             await client.DeleteIfExistsAsync().ConfigureAwait(false);
+
+            _logger.Information($"Container was deleted. Name = {client.Name}, Account name = {client.AccountName}.");
         }
 
         private async Task UploadFilesAsync(string directoryPath, string destinationPath, Guid userId)
@@ -126,6 +138,8 @@ namespace RewriteMe.Business.Services
             using (var fileStream = File.OpenRead(fileInfo.FullName))
             {
                 await client.UploadAsync(fileStream, true).ConfigureAwait(false);
+
+                _logger.Information($"File '{filePath}' was updated.");
             }
         }
 
@@ -162,6 +176,8 @@ namespace RewriteMe.Business.Services
         {
             var directoryPath = _fileAccessService.GetFileItemRootDirectory(fileItem.UserId, fileItem.Id);
             Directory.Delete(directoryPath, true);
+
+            _logger.Information($"File item data in destination '{directoryPath}' were deleted.");
         }
     }
 }

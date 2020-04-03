@@ -15,6 +15,7 @@ using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Messages;
 using RewriteMe.Domain.Notifications;
 using RewriteMe.Domain.Settings;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -27,17 +28,20 @@ namespace RewriteMe.Business.Services
         private readonly IInformationMessageService _informationMessageService;
         private readonly ILanguageVersionService _languageVersionService;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public PushNotificationsService(
             IUserDeviceService userDeviceService,
             IInformationMessageService informationMessageService,
             ILanguageVersionService languageVersionService,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _userDeviceService = userDeviceService;
             _informationMessageService = informationMessageService;
             _languageVersionService = languageVersionService;
             _appSettings = options.Value;
+            _logger = logger.ForContext<PushNotificationsService>();
         }
 
         public async Task<NotificationResult> SendAsync(InformationMessage informationMessage, RuntimePlatform runtimePlatform, Language language, Guid? userId = null)
@@ -84,6 +88,8 @@ namespace RewriteMe.Business.Services
                 await _informationMessageService.UpdateDatePublishedAsync(informationMessage.Id, DateTime.UtcNow).ConfigureAwait(false);
             }
 
+            _logger.Information($"Notification '{informationMessage.Id}' was sent to runtime platform '{runtimePlatform}' for language '{language}'.");
+
             return notificationResult;
         }
 
@@ -107,6 +113,8 @@ namespace RewriteMe.Business.Services
                 Content = new StringContent(content, Encoding.UTF8, MediaType),
                 RequestUri = new Uri(url, UriKind.Absolute)
             };
+
+            _logger.Information($"Send request to url = '{url}'.");
 
             cancellationToken.ThrowIfCancellationRequested();
             var httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);

@@ -60,6 +60,8 @@ namespace RewriteMe.Business.Managers
 
         private async Task RunConversionToWavAsync(FileItem fileItem)
         {
+            _logger.Information($"Start conversion to wav file. File item ID = {fileItem.Id}, File name = {fileItem.FileName}.");
+
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
 
             var directoryPath = string.Empty;
@@ -79,6 +81,9 @@ namespace RewriteMe.Business.Managers
 
                 fileItem.RecognitionState = recognitionState;
                 fileItem.SourceFileName = sourceFile.fileName;
+
+                var message = $"Conversion to wav file finished. File item ID = {fileItem.Id}, File name = {fileItem.FileName}, Old destination = {filePath}, New destination = {sourceFile.outputFilePath}.";
+                _logger.Information(message);
             }
             catch (Exception ex)
             {

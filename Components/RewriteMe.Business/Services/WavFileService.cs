@@ -5,12 +5,20 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
     public class WavFileService : IWavFileService
     {
         private const int FileLengthInSeconds = 59;
+
+        private readonly ILogger _logger;
+
+        public WavFileService(ILogger logger)
+        {
+            _logger = logger.ForContext<WavFileService>();
+        }
 
         public async Task<(string outputFilePath, string fileName)> ConvertToWavAsync(string directoryPath, string inputFilePath)
         {
@@ -23,6 +31,8 @@ namespace RewriteMe.Business.Services
                     WaveFileWriter.CreateWaveFile(outputFilePath, reader);
                 }
             }).ConfigureAwait(false);
+
+            _logger.Information($"File '{inputFilePath}' was converted. New destination = {outputFilePath}.");
 
             return (outputFilePath, fileName);
         }
@@ -53,6 +63,8 @@ namespace RewriteMe.Business.Services
 
                 ProcessSampleAudio(reader, remainingTime, totalTime, files);
 
+                _logger.Information($"Wav file was split to {files.Count} parts.");
+
                 return files;
             }
         }
@@ -81,6 +93,8 @@ namespace RewriteMe.Business.Services
             var outputFileName = GetTempFullPath();
             var fileItem = TrimWavFile(reader, outputFileName, start, end);
             files.Add(fileItem);
+
+            _logger.Information($"Partial wav file was created. File path = {outputFileName}.");
         }
 
         private WavPartialFile TrimWavFile(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end)
