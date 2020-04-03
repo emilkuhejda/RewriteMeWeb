@@ -41,11 +41,15 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(User user)
         {
             await _userRepository.AddAsync(user).ConfigureAwait(false);
+
+            _logger.Information($"User ID = '{user.Id}' was created.");
         }
 
         public async Task UpdateAsync(User user)
         {
             await _userRepository.UpdateAsync(user).ConfigureAwait(false);
+
+            _logger.Information($"User ID = '{user.Id}' was updated.");
         }
 
         public async Task<User> GetAsync(Guid userId)

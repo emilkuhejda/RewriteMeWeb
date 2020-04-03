@@ -8,6 +8,7 @@ using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -18,19 +19,22 @@ namespace RewriteMe.Business.Services
         private readonly IFileItemRepository _fileItemRepository;
         private readonly IRecognizedAudioSampleRepository _recognizedAudioSampleRepository;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public UserSubscriptionService(
             IUserSubscriptionRepository userSubscriptionRepository,
             IBillingPurchaseRepository billingPurchaseRepository,
             IFileItemRepository fileItemRepository,
             IRecognizedAudioSampleRepository recognizedAudioSampleRepository,
-            IOptions<AppSettings> options)
+            IOptions<AppSettings> options,
+            ILogger logger)
         {
             _userSubscriptionRepository = userSubscriptionRepository;
             _billingPurchaseRepository = billingPurchaseRepository;
             _fileItemRepository = fileItemRepository;
             _recognizedAudioSampleRepository = recognizedAudioSampleRepository;
             _appSettings = options.Value;
+            _logger = logger.ForContext<UserSubscriptionService>();
         }
 
         public async Task<IEnumerable<UserSubscription>> GetAllAsync(Guid userId)
@@ -46,6 +50,8 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(UserSubscription userSubscription)
         {
             await _userSubscriptionRepository.AddAndRecalculateUserSubscriptionAsync(userSubscription).ConfigureAwait(false);
+
+            _logger.Information($"User subscription was created. User subscription = '{userSubscription}'.");
         }
 
         public async Task SubtractTimeAsync(Guid userId, TimeSpan time)
@@ -61,6 +67,8 @@ namespace RewriteMe.Business.Services
             };
 
             await AddAsync(userSubscription).ConfigureAwait(false);
+
+            _logger.Information($"Subtract time '{time}' for user ID = '{userId}'.");
         }
 
         public async Task<TimeSpan> GetRemainingTimeAsync(Guid userId)
@@ -96,6 +104,8 @@ namespace RewriteMe.Business.Services
             };
 
             await AddAsync(userSubscription).ConfigureAwait(false);
+
+            _logger.Information($"Purchase was registered. Purchase ID = {billingPurchase.Id}, Subscription time = {userSubscription.Time}.");
 
             return userSubscription;
         }

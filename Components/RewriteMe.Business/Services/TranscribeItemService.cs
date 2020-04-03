@@ -6,6 +6,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -15,17 +16,20 @@ namespace RewriteMe.Business.Services
         private readonly IStorageService _storageService;
         private readonly ITranscribeItemRepository _transcribeItemRepository;
         private readonly ITranscribeItemSourceRepository _transcribeItemSourceRepository;
+        private readonly ILogger _logger;
 
         public TranscribeItemService(
             IFileAccessService fileAccessService,
             IStorageService storageService,
             ITranscribeItemRepository transcribeItemRepository,
-            ITranscribeItemSourceRepository transcribeItemSourceRepository)
+            ITranscribeItemSourceRepository transcribeItemSourceRepository,
+            ILogger logger)
         {
             _fileAccessService = fileAccessService;
             _storageService = storageService;
             _transcribeItemRepository = transcribeItemRepository;
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
+            _logger = logger.ForContext<TranscribeItemService>();
         }
 
         public async Task<byte[]> GetSourceAsync(Guid userId, Guid transcribeItemId)
@@ -76,11 +80,15 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
         {
             await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
+
+            _logger.Information("Transcribe items were created.");
         }
 
         public async Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId)
         {
             await _transcribeItemRepository.UpdateUserTranscriptAsync(transcribeItemId, transcript, dateUpdated, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"Transcribe item '{transcribeItemId}' was updated.");
         }
     }
 }

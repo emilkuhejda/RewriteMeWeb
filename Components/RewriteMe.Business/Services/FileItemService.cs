@@ -106,61 +106,85 @@ namespace RewriteMe.Business.Services
         public async Task AddAsync(FileItem fileItem)
         {
             await _fileItemRepository.AddAsync(fileItem).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItem.Id}' was created.");
         }
 
         public async Task DeleteAsync(Guid userId, Guid fileItemId, Guid applicationId)
         {
             await _fileItemRepository.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItemId}' was deleted.");
         }
 
         public async Task DeleteAllAsync(Guid userId, IEnumerable<DeletedFileItem> fileItems, Guid applicationId)
         {
             await _fileItemRepository.DeleteAllAsync(userId, fileItems, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File items '{fileItems}' was deleted.");
         }
 
         public async Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             await _fileItemRepository.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File items '{fileItemIds}' was permanently deleted.");
         }
 
         public async Task RestoreAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             await _fileItemRepository.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File items '{fileItemIds}' was restored.");
         }
 
         public async Task UpdateLanguageAsync(Guid fileItemId, string language, Guid applicationId)
         {
             await _fileItemRepository.UpdateLanguageAsync(fileItemId, language, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"Language for file item '{fileItemId}' was changed to '{language}'.");
         }
 
         public async Task UpdateAsync(FileItem fileItem)
         {
             await _fileItemRepository.UpdateAsync(fileItem).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItem.Id}' was updated.");
         }
 
         public async Task UpdateSourceFileNameAsync(Guid fileItemId, string sourceFileName)
         {
             await _fileItemRepository.UpdateSourceFileNameAsync(fileItemId, sourceFileName).ConfigureAwait(false);
+
+            _logger.Information($"Source file name for file item '{fileItemId}' was updated.");
         }
 
         public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState, Guid applicationId)
         {
             await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"Recognition state for file item '{fileItemId}' was updated.");
         }
 
         public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)
         {
             await _fileItemRepository.UpdateDateProcessedAsync(fileItemId, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"Date processed for file item '{fileItemId}' was updated.");
         }
 
         public async Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime)
         {
             await _fileItemRepository.UpdateTranscribedTimeAsync(fileItemId, transcribedTime).ConfigureAwait(false);
+
+            _logger.Information($"Transcribed time for file item '{fileItemId}' was updated.");
         }
 
         public async Task UpdateUploadStatusAsync(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId)
         {
             await _fileItemRepository.UpdateUploadStatusAsync(fileItemId, uploadStatus, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"Upload status for file item '{fileItemId}' was updated.");
         }
 
         public async Task RemoveSourceFileAsync(FileItem fileItem)
@@ -174,6 +198,8 @@ namespace RewriteMe.Business.Services
                 if (Directory.Exists(sourceDirectory))
                 {
                     Directory.Delete(sourceDirectory, true);
+
+                    _logger.Information($"Files in directory '{sourceDirectory}' was deleted.");
                 }
 
                 await _storageService.DeleteFileItemSourceAsync(fileItem).ConfigureAwait(false);
@@ -182,6 +208,8 @@ namespace RewriteMe.Business.Services
                 {
                     await _fileItemRepository.UpdateStorageAsync(fileItem.Id, StorageSetting.Disk).ConfigureAwait(false);
                 }
+
+                _logger.Information($"Source file for file item '{fileItem.Id}' was removed.");
             }
             catch (Exception ex)
             {
@@ -257,6 +285,8 @@ namespace RewriteMe.Business.Services
             if (fileItem.Storage == StorageSetting.Database)
                 return await _fileItemSourceService.HasFileItemSourceAsync(fileItem.Id).ConfigureAwait(false);
 
+            _logger.Information($"Start converting file item '{fileItem.Id}'.");
+
             if (!string.IsNullOrWhiteSpace(fileItem.SourceFileName))
             {
                 var convertedFilePath = _fileAccessService.GetFileItemPath(fileItem);
@@ -276,12 +306,16 @@ namespace RewriteMe.Business.Services
                 var tempDirectoryPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
                 Directory.CreateDirectory(tempDirectoryPath);
 
+                _logger.Information($"Temporary upload directory '{tempDirectoryPath}' was created.");
+
                 return tempDirectoryPath;
             }
 
             var uploadDirectoryPath = _fileAccessService.GetFileItemSourceDirectory(userId, fileItemId);
             if (!Directory.Exists(uploadDirectoryPath))
                 Directory.CreateDirectory(uploadDirectoryPath);
+
+            _logger.Information($"Upload directory '{uploadDirectoryPath}' was created.");
 
             return uploadDirectoryPath;
         }
@@ -298,6 +332,8 @@ namespace RewriteMe.Business.Services
 
             await File.WriteAllBytesAsync(uploadedFilePath, uploadedFileSource).ConfigureAwait(false);
 
+            _logger.Information($"File '{uploadedFilePath}' for file item '{fileItemId}' was uploaded to '{uploadDirectoryPath}'.");
+
             return new UploadedFile
             {
                 FileName = uploadedFileName,
@@ -310,13 +346,15 @@ namespace RewriteMe.Business.Services
         {
             Directory.Delete(path, true);
             Directory.CreateDirectory(path);
+
+            _logger.Information($"Directory '{path}' was deleted.");
         }
 
         public void CleanUploadedData(string directoryPath)
         {
             Directory.Delete(directoryPath, true);
 
-            _logger.Information($"File in destination '{directoryPath}' was deleted.");
+            _logger.Information($"Files in destination '{directoryPath}' was deleted.");
         }
 
         public TimeSpan? GetAudioTotalTime(string filePath)

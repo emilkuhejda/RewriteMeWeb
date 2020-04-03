@@ -8,6 +8,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
@@ -15,13 +16,16 @@ namespace RewriteMe.Business.Services
     {
         private readonly IFileAccessService _fileAccessService;
         private readonly IUploadedChunkRepository _uploadedChunkRepository;
+        private readonly ILogger _logger;
 
         public UploadedChunkService(
             IFileAccessService fileAccessService,
-            IUploadedChunkRepository uploadedChunkRepository)
+            IUploadedChunkRepository uploadedChunkRepository,
+            ILogger logger)
         {
             _fileAccessService = fileAccessService;
             _uploadedChunkRepository = uploadedChunkRepository;
+            _logger = logger.ForContext<UploadedChunkService>();
         }
 
         public async Task SaveAsync(Guid fileItemId, int order, StorageSetting storageSetting, Guid applicationId, byte[] source, CancellationToken cancellationToken)
@@ -63,6 +67,8 @@ namespace RewriteMe.Business.Services
             Directory.Delete(directoryPath, true);
 
             await _uploadedChunkRepository.DeleteAsync(fileItemId, applicationId).ConfigureAwait(false);
+
+            _logger.Information($"File chunks were deleted for file item '{fileItemId}'.");
         }
 
         public async Task CleanOutdatedChunksAsync()
@@ -76,6 +82,8 @@ namespace RewriteMe.Business.Services
             }
 
             await _uploadedChunkRepository.CleanOutdatedChunksAsync(dateToCompare).ConfigureAwait(false);
+
+            _logger.Information($"Outdated chunks were deleted. Date to compare = {dateToCompare}.");
         }
     }
 }
