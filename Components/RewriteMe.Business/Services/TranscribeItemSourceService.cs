@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 using RewriteMe.Domain.Interfaces.Repositories;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Transcription;
+using Serilog;
 
 namespace RewriteMe.Business.Services
 {
     public class TranscribeItemSourceService : ITranscribeItemSourceService
     {
         private readonly ITranscribeItemSourceRepository _transcribeItemSourceRepository;
+        private readonly ILogger _logger;
 
-        public TranscribeItemSourceService(ITranscribeItemSourceRepository transcribeItemSourceRepository)
+        public TranscribeItemSourceService(
+            ITranscribeItemSourceRepository transcribeItemSourceRepository,
+            ILogger logger)
         {
             _transcribeItemSourceRepository = transcribeItemSourceRepository;
+            _logger = logger.ForContext<TranscribeItemSourceService>();
         }
 
         public async Task AddWavFileSourcesAsync(Guid fileItemId, IEnumerable<WavPartialFile> wavFiles)
@@ -42,6 +47,8 @@ namespace RewriteMe.Business.Services
                 return;
 
             await _transcribeItemSourceRepository.AddAsync(items).ConfigureAwait(false);
+
+            _logger.Information($"Transcribe items for file item '{fileItemId}' were stored to database.");
         }
     }
 }
