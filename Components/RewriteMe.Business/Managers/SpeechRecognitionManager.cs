@@ -191,6 +191,8 @@ namespace RewriteMe.Business.Managers
                 if (File.Exists(file.Path))
                     File.Delete(file.Path);
             }
+
+            _logger.Information("Partial files after recognition were deleted.");
         }
 
         private async Task SendNotificationsAsync(Guid userId, Guid fileItemId)
