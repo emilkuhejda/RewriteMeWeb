@@ -51,11 +51,15 @@ namespace RewriteMe.Business.Services
             };
 
             await _fileItemSourceRepository.AddAsync(fileItemSource).ConfigureAwait(false);
+
+            _logger.Information($"File item source '{fileItemSource.Id}' for file item '{fileItem.Id}' was created.");
         }
 
         public async Task UpdateSourceAsync(Guid fileItemId, byte[] source)
         {
             await _fileItemSourceRepository.UpdateSourceAsync(fileItemId, source).ConfigureAwait(false);
+
+            _logger.Information($"File item '{fileItemId}' source was updated.");
         }
     }
 }
