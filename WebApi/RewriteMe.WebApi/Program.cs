@@ -19,7 +19,7 @@ namespace RewriteMe.WebApi
                 .WriteTo.File($"Logs/logs.txt",
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}]|[{SourceContext}] {Message:lj}{NewLine}{Exception}",
                     fileSizeLimitBytes: 104857600,
-                    rollingInterval: RollingInterval.Day,
+                    rollingInterval: RollingInterval.Month,
                     rollOnFileSizeLimit: true)
                 .CreateLogger();
 
