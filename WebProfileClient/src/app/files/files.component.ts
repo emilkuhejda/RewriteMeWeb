@@ -79,9 +79,6 @@ export class FilesComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.alertService.success(`The file '${fileItem.name}' started processing`);
-
-                        fileItem.recognitionState = RecognitionState.InProgress;
-                        this.synchronizeFileItems(this.fileItems);
                     },
                     (err: ErrorResponse) => {
                         let error = err.message;
@@ -121,37 +118,10 @@ export class FilesComponent implements OnInit {
                 this.fileItems = fileItems.sort((a, b) => {
                     return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
                 });
-
-                this.synchronizeFileItems(fileItems);
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }
         );
-    }
-
-    synchronizeFileItems(fileItems: FileItem[]) {
-        let anyWaitingForSynchronization = fileItems.filter(fileItem => fileItem.recognitionState == RecognitionState.InProgress);
-        if (anyWaitingForSynchronization.length > 0) {
-            let source = timer(30000);
-            source.subscribe(() => {
-                this.updateFileItems();
-            });
-        }
-    }
-
-    updateFileItems() {
-        this.fileItemService.getAll().subscribe(
-            (fileItems: FileItem[]) => {
-                for (let fileItem of fileItems) {
-                    let items = this.fileItems.filter(x => x.id == fileItem.id);
-                    if (items.length > 0) {
-                        let item = items[0];
-                        item.recognitionState = fileItem.recognitionState;
-                    }
-                }
-
-                this.synchronizeFileItems(fileItems);
-            });
     }
 }
