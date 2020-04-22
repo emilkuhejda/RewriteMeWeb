@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Speech.V1;
@@ -21,17 +22,23 @@ namespace RewriteMe.Business.Services
 {
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
+        private readonly ISpeechRecognitionCacheService _speechRecognitionCacheService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
+        private int _totalTasks;
+        private int _tasksDone;
+
         public SpeechRecognitionService(
+            ISpeechRecognitionCacheService speechRecognitionCacheService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             IOptions<AppSettings> options,
             ILogger logger)
         {
+            _speechRecognitionCacheService = speechRecognitionCacheService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _appSettings = options.Value;
@@ -59,20 +66,31 @@ namespace RewriteMe.Business.Services
             var speechClient = CreateSpeechClient();
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
-            var recognitionTasks = new List<Func<Task<TranscribeItem>>>();
+            var updateMethods = new List<Func<Task<TranscribeItem>>>();
             foreach (var file in files)
             {
-                recognitionTasks.Add(() => RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
+                updateMethods.Add(() => RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
             }
 
+            _totalTasks = updateMethods.Count;
+            _tasksDone = 0;
+
             var transcribeItems = new List<TranscribeItem>();
-            foreach (var tasks in recognitionTasks.Split(10))
+            foreach (var enumerable in updateMethods.Split(10))
             {
-                var items = await Task.WhenAll(tasks.Select(x => x())).ConfigureAwait(false);
+                var tasks = enumerable.WhenTaskDone(() => UpdateCache(fileItem.Id)).Select(x => x());
+                var items = await Task.WhenAll(tasks).ConfigureAwait(false);
                 transcribeItems.AddRange(items);
             }
 
             return transcribeItems;
+        }
+
+        private void UpdateCache(Guid fileItemId)
+        {
+            var currentTask = Interlocked.Increment(ref _tasksDone);
+            var percentageDone = (int)((double)currentTask / _totalTasks * 100);
+            _speechRecognitionCacheService.AddOrUpdateItem(fileItemId, percentageDone);
         }
 
         private SpeechClient CreateSpeechClient()

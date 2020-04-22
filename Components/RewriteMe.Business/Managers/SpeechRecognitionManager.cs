@@ -32,6 +32,7 @@ namespace RewriteMe.Business.Managers
         private readonly IInformationMessageService _informationMessageService;
         private readonly IInternalValueService _internalValueService;
         private readonly IPushNotificationsService _pushNotificationsService;
+        private readonly ISpeechRecognitionCacheService _speechRecognitionCacheService;
         private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
@@ -45,6 +46,7 @@ namespace RewriteMe.Business.Managers
             IInformationMessageService informationMessageService,
             IInternalValueService internalValueService,
             IPushNotificationsService pushNotificationsService,
+            ISpeechRecognitionCacheService speechRecognitionCacheService,
             IWavFileManager wavFileManager,
             IOptions<AppSettings> options,
             ILogger logger)
@@ -57,6 +59,7 @@ namespace RewriteMe.Business.Managers
             _informationMessageService = informationMessageService;
             _internalValueService = internalValueService;
             _pushNotificationsService = pushNotificationsService;
+            _speechRecognitionCacheService = speechRecognitionCacheService;
             _wavFileManager = wavFileManager;
             _appSettings = options.Value;
             _logger = logger.ForContext<SpeechRecognitionManager>();
@@ -180,6 +183,8 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
+                _speechRecognitionCacheService.RemoveItem(fileItem.Id);
+
                 DeleteTempFiles(files);
             }
         }

@@ -6,7 +6,7 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         double GetPercentage(Guid fileItemId);
 
-        void AddItem(Guid fileItemId);
+        void AddOrUpdateItem(Guid fileItemId, double percentage);
 
         void RemoveItem(Guid fileItemId);
     }
