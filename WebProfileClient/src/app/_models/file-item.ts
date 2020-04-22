@@ -14,6 +14,7 @@ export class FileItem {
     public dateProcessed: Date;
     public dateUpdated: Date;
     public isDeleted: boolean;
+    public percentageDone: number = 0;
 
     get CanTranscribe() {
         return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;

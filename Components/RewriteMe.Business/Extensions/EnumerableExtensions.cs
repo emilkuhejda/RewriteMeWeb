@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RewriteMe.Business.Extensions
 {
@@ -19,6 +21,17 @@ namespace RewriteMe.Business.Extensions
             {
                 yield return array.Skip(i * size).Take(size);
             }
+        }
+
+        public static IEnumerable<Func<Task<T>>> WhenTaskDone<T>(this IEnumerable<Func<Task<T>>> list, Action action)
+        {
+            return list.Select<Func<Task<T>>, Func<Task<T>>>(x => async () =>
+            {
+                var result = await x().ConfigureAwait(false);
+                action();
+
+                return result;
+            });
         }
     }
 }

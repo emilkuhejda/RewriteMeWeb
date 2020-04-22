@@ -5,9 +5,9 @@ import { AlertService } from '../_services/alert.service';
 import { FileItem } from '../_models/file-item';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
-import { timer } from 'rxjs';
-import { RecognitionState } from '../_enums/recognition-state';
 import { ErrorCode } from '../_enums/error-code';
+import { CachService } from '../_services/cach.service';
+import { CacheItem } from '../_models/cache-item';
 
 @Component({
     selector: 'app-files',
@@ -18,12 +18,25 @@ export class FilesComponent implements OnInit {
     constructor(
         private fileItemService: FileItemService,
         private alertService: AlertService,
+        private cachService: CachService,
         private modal: GecoDialog) { }
 
     fileItems: FileItem[];
 
     ngOnInit() {
+        this.cachService.startConnection();
+        this.cachService.addListener(cacheItem => this.onMessageReceived(cacheItem, this.fileItems));
+
         this.initialize();
+    }
+
+    private onMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
+        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItem);
+        if (fileItem === undefined)
+            return;
+
+        fileItem.recognitionState = cacheItem.recognitionState;
+        fileItem.percentageDone = cacheItem.percentageDone;
     }
 
     delete(fileItem: FileItem) {
@@ -64,9 +77,6 @@ export class FilesComponent implements OnInit {
                 .subscribe(
                     () => {
                         this.alertService.success(`The file '${fileItem.name}' started processing`);
-
-                        fileItem.recognitionState = RecognitionState.InProgress;
-                        this.synchronizeFileItems(this.fileItems);
                     },
                     (err: ErrorResponse) => {
                         let error = err.message;
@@ -106,37 +116,10 @@ export class FilesComponent implements OnInit {
                 this.fileItems = fileItems.sort((a, b) => {
                     return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
                 });
-
-                this.synchronizeFileItems(fileItems);
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }
         );
-    }
-
-    synchronizeFileItems(fileItems: FileItem[]) {
-        let anyWaitingForSynchronization = fileItems.filter(fileItem => fileItem.recognitionState == RecognitionState.InProgress);
-        if (anyWaitingForSynchronization.length > 0) {
-            let source = timer(30000);
-            source.subscribe(() => {
-                this.updateFileItems();
-            });
-        }
-    }
-
-    updateFileItems() {
-        this.fileItemService.getAll().subscribe(
-            (fileItems: FileItem[]) => {
-                for (let fileItem of fileItems) {
-                    let items = this.fileItems.filter(x => x.id == fileItem.id);
-                    if (items.length > 0) {
-                        let item = items[0];
-                        item.recognitionState = fileItem.recognitionState;
-                    }
-                }
-
-                this.synchronizeFileItems(fileItems);
-            });
     }
 }

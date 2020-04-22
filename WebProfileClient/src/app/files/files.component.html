@@ -29,7 +29,10 @@
                     <tr *ngFor="let fileItem of fileItems">
                         <td>{{fileItem.name}}</td>
                         <td>{{fileItem.dateCreated|date}}</td>
-                        <td>{{fileItem.recognitionState|recognitionState}}</td>
+                        <td>
+                            {{fileItem.recognitionState|recognitionState}}
+                            <label *ngIf="fileItem.recognitionState == 3"> ({{fileItem.percentageDone}}%)</label>
+                        </td>
                         <td>
                             <a *ngIf="fileItem.CanTranscribe" (click)="transcribe(fileItem)">Transcribe</a>
                             <span *ngIf="fileItem.CanTranscribe"> | </span>
