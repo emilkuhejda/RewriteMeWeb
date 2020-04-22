@@ -46,9 +46,9 @@ namespace RewriteMe.WebApi
                     Constants.CorsPolicy,
                     builder => builder
                         .WithOrigins("http://localhost:4200")
-                        .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowCredentials());
             });
 
             var appSettingsSection = Configuration.GetSection("ApplicationSettings");
