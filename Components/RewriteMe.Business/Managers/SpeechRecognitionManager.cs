@@ -14,6 +14,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Polling;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using Serilog;
@@ -32,6 +33,7 @@ namespace RewriteMe.Business.Managers
         private readonly IInformationMessageService _informationMessageService;
         private readonly IInternalValueService _internalValueService;
         private readonly IPushNotificationsService _pushNotificationsService;
+        private readonly ICacheService _cacheService;
         private readonly IWavFileManager _wavFileManager;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
@@ -45,6 +47,7 @@ namespace RewriteMe.Business.Managers
             IInformationMessageService informationMessageService,
             IInternalValueService internalValueService,
             IPushNotificationsService pushNotificationsService,
+            ICacheService cacheService,
             IWavFileManager wavFileManager,
             IOptions<AppSettings> options,
             ILogger logger)
@@ -57,6 +60,7 @@ namespace RewriteMe.Business.Managers
             _informationMessageService = informationMessageService;
             _internalValueService = internalValueService;
             _pushNotificationsService = pushNotificationsService;
+            _cacheService = cacheService;
             _wavFileManager = wavFileManager;
             _appSettings = options.Value;
             _logger = logger.ForContext<SpeechRecognitionManager>();
@@ -146,12 +150,16 @@ namespace RewriteMe.Business.Managers
                 if (!isInPreparedState)
                     throw new FileItemIsNotInPreparedStateException();
 
-                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(true);
+                fileItem.RecognitionState = RecognitionState.InProgress;
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, fileItem.RecognitionState, _appSettings.ApplicationId).ConfigureAwait(true);
             }
             finally
             {
                 SemaphoreSlim.Release();
             }
+
+            var cacheItem = new CacheItem(userId, fileItem.Id, fileItem.RecognitionState);
+            await _cacheService.AddItem(fileItem.Id, cacheItem).ConfigureAwait(false);
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
@@ -180,6 +188,8 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
+                await _cacheService.RemoveItem(fileItem.Id).ConfigureAwait(false);
+
                 DeleteTempFiles(files);
             }
         }

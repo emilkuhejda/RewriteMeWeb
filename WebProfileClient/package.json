@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "@aspnet/signalr": "^1.1.4",
     "@azure/msal-angular": "^0.1.2",
     "@ng-bootstrap/ng-bootstrap": "^4.0.4",
     "angular-dynamic-dialog": "^1.0.7",

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RewriteMe.Business.Polling;
 using RewriteMe.DataAccess;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
@@ -106,6 +107,8 @@ namespace RewriteMe.WebApi
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(appSettings.ConnectionString, providerOptions => providerOptions.CommandTimeout(60)));
 
+            services.AddSignalR();
+
             services.AddRewriteMeAuthorization(appSettings);
             services.AddAzureAdAuthorization(appSettings);
             services.AddMvc(c =>
@@ -197,6 +200,12 @@ namespace RewriteMe.WebApi
 
             app.UseCors(Constants.CorsPolicy);
             app.UseSerilogRequestLogging();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<CacheHub>("/api/cache");
+            });
 
             app.MigrateDatabase();
             app.UseCookiePolicy();

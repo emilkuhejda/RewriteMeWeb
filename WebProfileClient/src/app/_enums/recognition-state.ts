@@ -1,7 +1,7 @@
 export enum RecognitionState {
     None = 0,
-    Converting,
-    Prepared,
-    InProgress,
-    Completed
+    Converting = 1,
+    Prepared = 2,
+    InProgress = 3,
+    Completed = 4
 }
