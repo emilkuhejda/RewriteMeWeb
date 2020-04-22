@@ -86,6 +86,11 @@ namespace RewriteMe.Business.Services
             return totalSubscriptionTime.Subtract(transcribedTotalSeconds);
         }
 
+        public async Task RecalculateCurrentUserSubscriptions()
+        {
+            await _userSubscriptionRepository.RecalculateCurrentUserSubscriptions().ConfigureAwait(false);
+        }
+
         public async Task<UserSubscription> RegisterPurchaseAsync(BillingPurchase billingPurchase, Guid applicationId)
         {
             await _billingPurchaseRepository.AddAsync(billingPurchase).ConfigureAwait(false);
