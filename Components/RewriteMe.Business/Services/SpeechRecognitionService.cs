@@ -9,6 +9,7 @@ using Grpc.Auth;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RewriteMe.Business.Configuration;
+using RewriteMe.Business.Extensions;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
@@ -58,13 +59,20 @@ namespace RewriteMe.Business.Services
             var speechClient = CreateSpeechClient();
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
-            var task = new List<Task<TranscribeItem>>();
+            var recognitionTasks = new List<Task<TranscribeItem>>();
             foreach (var file in files)
             {
-                task.Add(RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
+                recognitionTasks.Add(RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
             }
 
-            return await Task.WhenAll(task).ConfigureAwait(false);
+            var transcribeItems = new List<TranscribeItem>();
+            foreach (var tasks in recognitionTasks.Split(10))
+            {
+                var items = await Task.WhenAll(tasks).ConfigureAwait(false);
+                transcribeItems.AddRange(items);
+            }
+
+            return transcribeItems;
         }
 
         private SpeechClient CreateSpeechClient()
