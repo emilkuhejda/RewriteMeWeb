@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.1.2" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -31,6 +32,12 @@
   <ItemGroup>
     <ProjectReference Include="..\RewriteMe.Common\RewriteMe.Common.csproj" />
     <ProjectReference Include="..\RewriteMe.Domain\RewriteMe.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.SignalR.Core">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.0\ref\netcoreapp3.1\Microsoft.AspNetCore.SignalR.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

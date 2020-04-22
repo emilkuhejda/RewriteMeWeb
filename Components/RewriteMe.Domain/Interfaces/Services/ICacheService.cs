@@ -2,7 +2,7 @@
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
-    public interface ISpeechRecognitionCacheService
+    public interface ICacheService
     {
         double GetPercentage(Guid fileItemId);
 

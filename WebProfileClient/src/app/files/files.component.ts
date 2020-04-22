@@ -8,6 +8,7 @@ import { DialogComponent } from '../_directives/dialog/dialog.component';
 import { timer } from 'rxjs';
 import { RecognitionState } from '../_enums/recognition-state';
 import { ErrorCode } from '../_enums/error-code';
+import { CachService } from '../_services/cach.service';
 
 @Component({
     selector: 'app-files',
@@ -18,11 +19,15 @@ export class FilesComponent implements OnInit {
     constructor(
         private fileItemService: FileItemService,
         private alertService: AlertService,
+        private cachService: CachService,
         private modal: GecoDialog) { }
 
     fileItems: FileItem[];
 
     ngOnInit() {
+        this.cachService.startConnection();
+        this.cachService.addListener();
+
         this.initialize();
     }
 

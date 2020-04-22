@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.SignalR;
+using RewriteMe.Business.Polling;
 using RewriteMe.Domain.Interfaces.Services;
 
 namespace RewriteMe.Business.Services
 {
-    public class SpeechRecognitionCacheService : ISpeechRecognitionCacheService
+    public class CacheService : ICacheService
     {
+        private readonly IHubContext<CacheHub> _cacheHub;
+
         private readonly Dictionary<Guid, double> _cache = new Dictionary<Guid, double>();
         private readonly object _lockObject = new object();
+
+        public CacheService(IHubContext<CacheHub> cacheHub)
+        {
+            _cacheHub = cacheHub;
+        }
 
         public double GetPercentage(Guid fileItemId)
         {
@@ -30,6 +39,8 @@ namespace RewriteMe.Business.Services
                     _cache.Add(fileItemId, percentage);
                 }
             }
+
+            _cacheHub.Clients.All.SendAsync("transferdata", percentage);
         }
 
         public void RemoveItem(Guid fileItemId)

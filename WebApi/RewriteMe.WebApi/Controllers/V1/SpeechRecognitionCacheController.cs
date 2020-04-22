@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RewriteMe.Domain.Interfaces.Services;
@@ -12,11 +13,11 @@ namespace RewriteMe.WebApi.Controllers.V1
     [ApiController]
     public class SpeechRecognitionCacheController : ControllerBase
     {
-        private readonly ISpeechRecognitionCacheService _speechRecognitionCacheService;
+        private readonly ICacheService _cacheService;
 
-        public SpeechRecognitionCacheController(ISpeechRecognitionCacheService speechRecognitionCacheService)
+        public SpeechRecognitionCacheController(ICacheService cacheService)
         {
-            _speechRecognitionCacheService = speechRecognitionCacheService;
+            _cacheService = cacheService;
         }
 
         [HttpGet("{fileItemId}")]
@@ -26,9 +27,20 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetPercentage")]
         public IActionResult GetPercentage(Guid fileItemId)
         {
-            var percentage = _speechRecognitionCacheService.GetPercentage(fileItemId);
+            var percentage = _cacheService.GetPercentage(fileItemId);
 
             return Ok(percentage);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetRandom()
+        {
+            var rnd = new Random();
+            var number = rnd.Next(0, 100);
+            _cacheService.AddOrUpdateItem(Guid.NewGuid(), number);
+
+            return Ok();
         }
     }
 }

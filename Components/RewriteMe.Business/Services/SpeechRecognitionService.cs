@@ -22,7 +22,7 @@ namespace RewriteMe.Business.Services
 {
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
-        private readonly ISpeechRecognitionCacheService _speechRecognitionCacheService;
+        private readonly ICacheService _cacheService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly AppSettings _appSettings;
@@ -32,13 +32,13 @@ namespace RewriteMe.Business.Services
         private int _tasksDone;
 
         public SpeechRecognitionService(
-            ISpeechRecognitionCacheService speechRecognitionCacheService,
+            ICacheService cacheService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             IOptions<AppSettings> options,
             ILogger logger)
         {
-            _speechRecognitionCacheService = speechRecognitionCacheService;
+            _cacheService = cacheService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _appSettings = options.Value;
@@ -90,7 +90,7 @@ namespace RewriteMe.Business.Services
         {
             var currentTask = Interlocked.Increment(ref _tasksDone);
             var percentageDone = (int)((double)currentTask / _totalTasks * 100);
-            _speechRecognitionCacheService.AddOrUpdateItem(fileItemId, percentageDone);
+            _cacheService.AddOrUpdateItem(fileItemId, percentageDone);
         }
 
         private SpeechClient CreateSpeechClient()
