@@ -170,6 +170,13 @@
                 </div>
             </mat-tab>
 
+            <mat-tab label="Options">
+                <div class="p-3">
+                    <p>Recalculate current user subscriptions</p>
+                    <button (click)="recalculateCurrentSubscription()" class="btn btn-primary">Recalculate</button>
+                </div>
+            </mat-tab>
+
             <mat-tab label="Migrate files data">
                 <div class="p-3">
                     <button (click)="migrate()" class="btn btn-primary">Migrate</button>

@@ -12,7 +12,7 @@ namespace RewriteMe.DataAccess.EntitiesConfiguration
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.UserId).IsRequired();
-            builder.Property(x => x.Time).IsRequired();
+            builder.Property(x => x.Ticks).IsRequired();
             builder.Property(x => x.DateUpdatedUtc).IsRequired();
         }
     }

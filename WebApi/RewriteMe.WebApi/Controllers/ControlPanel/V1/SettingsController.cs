@@ -24,6 +24,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         private readonly ICleanUpService _cleanUpService;
         private readonly IAuthenticationService _authenticationService;
         private readonly IUploadedChunkService _uploadedChunkService;
+        private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly AppSettings _appSettings;
 
         public SettingsController(
@@ -31,12 +32,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             ICleanUpService cleanUpService,
             IAuthenticationService authenticationService,
             IUploadedChunkService uploadedChunkService,
+            IUserSubscriptionService userSubscriptionService,
             IOptions<AppSettings> options)
         {
             _internalValueService = internalValueService;
             _cleanUpService = cleanUpService;
             _authenticationService = authenticationService;
             _uploadedChunkService = uploadedChunkService;
+            _userSubscriptionService = userSubscriptionService;
             _appSettings = options.Value;
         }
 
@@ -121,6 +124,14 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         public async Task<IActionResult> CleanOutdatedChunks()
         {
             await _uploadedChunkService.CleanOutdatedChunksAsync().ConfigureAwait(false);
+
+            return Ok();
+        }
+
+        [HttpPut("subscription-recalculation")]
+        public async Task<IActionResult> SubscriptionRecalculation()
+        {
+            await _userSubscriptionService.RecalculateCurrentUserSubscriptions().ConfigureAwait(false);
 
             return Ok();
         }
