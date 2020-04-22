@@ -285,6 +285,18 @@ export class SettingsComponent implements OnInit {
             });
     }
 
+    recalculateCurrentSubscription() {
+        this.alertService.clear();
+        this.settingsService.recalculateCurrentSubscription().subscribe(
+            () => {
+                this.alertService.success("Current subscription time was recalculated.");
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }
+        )
+    }
+
     migrate() {
         this.alertService.clear();
         this.azureStorageService.migrate().subscribe(

@@ -16,5 +16,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task<TimeSpan> GetTotalSubscriptionTimeAsync(Guid userId);
 
         Task<TimeSpan> GetRemainingTimeAsync(Guid userId);
+
+        Task RecalculateCurrentUserSubscriptions();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RewriteMe.DataAccess.Entities
 {
@@ -8,7 +9,10 @@ namespace RewriteMe.DataAccess.Entities
 
         public Guid UserId { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public long Ticks { get; set; }
+
+        [NotMapped]
+        public TimeSpan Time => TimeSpan.FromTicks(Ticks);
 
         public DateTime DateUpdatedUtc { get; set; }
 

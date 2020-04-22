@@ -62,4 +62,8 @@ export class SettingsService {
     cleanOutdatedChunks(): Observable<any> {
         return this.http.delete<any>(this.routingService.getCleanOutdatedChunksUri());
     }
+
+    recalculateCurrentSubscription(): Observable<any> {
+        return this.http.put(this.routingService.getRecalculateCurrentSubscriptionUri(), null);
+    }
 }

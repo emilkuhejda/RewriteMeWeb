@@ -151,6 +151,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/settings/clean-chunks/";
     }
 
+    getRecalculateCurrentSubscriptionUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/settings/subscription-recalculation/";
+    }
+
     getMigrateUri(): string {
         return this.getApiUri() + "api/v1/control-panel/azure-storage/migrate/";
     }

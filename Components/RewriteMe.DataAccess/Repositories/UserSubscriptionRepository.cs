@@ -71,7 +71,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 Id = Guid.NewGuid(),
                 UserId = userSubscription.UserId,
-                Time = TimeSpan.FromTicks(ticks),
+                Ticks = ticks,
                 DateUpdatedUtc = DateTime.UtcNow
             };
 
@@ -111,6 +111,25 @@ namespace RewriteMe.DataAccess.Repositories
                     return TimeSpan.Zero;
 
                 return entity.Time;
+            }
+        }
+
+        public async Task RecalculateCurrentUserSubscriptions()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var currentUserSubscriptions = await context.CurrentUserSubscription.ToListAsync().ConfigureAwait(false);
+                foreach (var currentUserSubscription in currentUserSubscriptions)
+                {
+                    var userSubscriptions = await context.UserSubscriptions
+                        .AsNoTracking()
+                        .Where(x => x.UserId == currentUserSubscription.UserId)
+                        .ToListAsync()
+                        .ConfigureAwait(false);
+                    currentUserSubscription.Ticks = userSubscriptions.CalculateRemainingTicks();
+                }
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }
