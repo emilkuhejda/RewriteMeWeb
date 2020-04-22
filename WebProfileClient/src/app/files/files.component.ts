@@ -5,8 +5,6 @@ import { AlertService } from '../_services/alert.service';
 import { FileItem } from '../_models/file-item';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
-import { timer } from 'rxjs';
-import { RecognitionState } from '../_enums/recognition-state';
 import { ErrorCode } from '../_enums/error-code';
 import { CachService } from '../_services/cach.service';
 import { CacheItem } from '../_models/cache-item';
