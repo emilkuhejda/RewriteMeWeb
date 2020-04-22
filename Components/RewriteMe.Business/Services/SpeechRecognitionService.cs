@@ -59,16 +59,16 @@ namespace RewriteMe.Business.Services
             var speechClient = CreateSpeechClient();
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
 
-            var recognitionTasks = new List<Task<TranscribeItem>>();
+            var recognitionTasks = new List<Func<Task<TranscribeItem>>>();
             foreach (var file in files)
             {
-                recognitionTasks.Add(RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
+                recognitionTasks.Add(() => RecognizeSpeech(speechClient, fileItem.UserId, fileItem.Id, fileItem.Language, file, storageSetting));
             }
 
             var transcribeItems = new List<TranscribeItem>();
             foreach (var tasks in recognitionTasks.Split(10))
             {
-                var items = await Task.WhenAll(tasks).ConfigureAwait(false);
+                var items = await Task.WhenAll(tasks.Select(x => x())).ConfigureAwait(false);
                 transcribeItems.AddRange(items);
             }
 
@@ -92,49 +92,46 @@ namespace RewriteMe.Business.Services
 
         private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid userId, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
         {
-            return await Task.Run(() =>
+            _logger.Information($"Start recognition for file {wavPartialFile.Path}.");
+
+            var longOperation = speech.LongRunningRecognize(new RecognitionConfig
             {
-                _logger.Information($"Start recognition for file {wavPartialFile.Path}.");
+                Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
+                LanguageCode = language
+            }, RecognitionAudio.FromFile(wavPartialFile.Path));
 
-                var longOperation = speech.LongRunningRecognize(new RecognitionConfig
-                {
-                    Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
-                    LanguageCode = language
-                }, RecognitionAudio.FromFile(wavPartialFile.Path));
+            longOperation = await longOperation.PollUntilCompletedAsync().ConfigureAwait(false);
+            var response = longOperation.Result;
 
-                longOperation = longOperation.PollUntilCompleted();
-                var response = longOperation.Result;
+            var alternatives = response.Results
+                .SelectMany(x => x.Alternatives)
+                .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
 
-                var alternatives = response.Results
-                    .SelectMany(x => x.Alternatives)
-                    .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
+            string sourceFileName = null;
+            if (storageSetting == StorageSetting.Disk)
+            {
+                sourceFileName = SaveFileToDisk(wavPartialFile, userId, fileItemId);
+            }
 
-                string sourceFileName = null;
-                if (storageSetting == StorageSetting.Disk)
-                {
-                    sourceFileName = SaveFileToDisk(wavPartialFile, userId, fileItemId);
-                }
+            var dateCreated = DateTime.UtcNow;
+            var transcribeItem = new TranscribeItem
+            {
+                Id = wavPartialFile.Id,
+                FileItemId = fileItemId,
+                ApplicationId = _appSettings.ApplicationId,
+                Alternatives = alternatives,
+                SourceFileName = sourceFileName,
+                Storage = storageSetting,
+                StartTime = wavPartialFile.StartTime,
+                EndTime = wavPartialFile.EndTime,
+                TotalTime = wavPartialFile.TotalTime,
+                DateCreatedUtc = dateCreated,
+                DateUpdatedUtc = dateCreated
+            };
 
-                var dateCreated = DateTime.UtcNow;
-                var transcribeItem = new TranscribeItem
-                {
-                    Id = wavPartialFile.Id,
-                    FileItemId = fileItemId,
-                    ApplicationId = _appSettings.ApplicationId,
-                    Alternatives = alternatives,
-                    SourceFileName = sourceFileName,
-                    Storage = storageSetting,
-                    StartTime = wavPartialFile.StartTime,
-                    EndTime = wavPartialFile.EndTime,
-                    TotalTime = wavPartialFile.TotalTime,
-                    DateCreatedUtc = dateCreated,
-                    DateUpdatedUtc = dateCreated
-                };
+            _logger.Information($"Partial file '{wavPartialFile.Path}' was recognized.");
 
-                _logger.Information($"Partial file '{wavPartialFile.Path}' was recognized.");
-
-                return transcribeItem;
-            }).ConfigureAwait(false);
+            return transcribeItem;
         }
 
         private string SaveFileToDisk(WavPartialFile wavPartialFile, Guid userId, Guid fileItemId)
