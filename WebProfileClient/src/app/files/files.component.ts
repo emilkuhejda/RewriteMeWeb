@@ -9,6 +9,7 @@ import { timer } from 'rxjs';
 import { RecognitionState } from '../_enums/recognition-state';
 import { ErrorCode } from '../_enums/error-code';
 import { CachService } from '../_services/cach.service';
+import { CacheItem } from '../_models/cache-item';
 
 @Component({
     selector: 'app-files',
@@ -26,9 +27,17 @@ export class FilesComponent implements OnInit {
 
     ngOnInit() {
         this.cachService.startConnection();
-        this.cachService.addListener();
+        this.cachService.addListener(cacheItem => this.onMessageReceived(cacheItem, this.fileItems));
 
         this.initialize();
+    }
+
+    private onMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
+        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItem);
+        if (fileItem === undefined)
+            return;
+
+        fileItem.recognitionState = cacheItem.recognitionState;
     }
 
     delete(fileItem: FileItem) {

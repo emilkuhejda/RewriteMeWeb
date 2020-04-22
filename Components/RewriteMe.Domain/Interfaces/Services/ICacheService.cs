@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
+using RewriteMe.Domain.Polling;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ICacheService
     {
-        double GetPercentage(Guid fileItemId);
+        Task AddItem(Guid fileItemId, CacheItem cacheItem);
 
-        void AddOrUpdateItem(Guid fileItemId, double percentage);
+        Task UpdatePercentage(Guid fileItemId, double percentage);
 
-        void RemoveItem(Guid fileItemId);
+        Task RemoveItem(Guid fileItemId);
     }
 }

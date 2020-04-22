@@ -78,7 +78,7 @@ namespace RewriteMe.Business.Services
             var transcribeItems = new List<TranscribeItem>();
             foreach (var enumerable in updateMethods.Split(10))
             {
-                var tasks = enumerable.WhenTaskDone(() => UpdateCache(fileItem.Id)).Select(x => x());
+                var tasks = enumerable.WhenTaskDone(async () => await UpdateCache(fileItem.Id).ConfigureAwait(false)).Select(x => x());
                 var items = await Task.WhenAll(tasks).ConfigureAwait(false);
                 transcribeItems.AddRange(items);
             }
@@ -86,11 +86,11 @@ namespace RewriteMe.Business.Services
             return transcribeItems;
         }
 
-        private void UpdateCache(Guid fileItemId)
+        private async Task UpdateCache(Guid fileItemId)
         {
             var currentTask = Interlocked.Increment(ref _tasksDone);
             var percentageDone = (int)((double)currentTask / _totalTasks * 100);
-            _cacheService.AddOrUpdateItem(fileItemId, percentageDone);
+            await _cacheService.UpdatePercentage(fileItemId, percentageDone).ConfigureAwait(false);
         }
 
         private SpeechClient CreateSpeechClient()

@@ -14,6 +14,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Polling;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using Serilog;
@@ -156,6 +157,9 @@ namespace RewriteMe.Business.Managers
                 SemaphoreSlim.Release();
             }
 
+            var cacheItem = new CacheItem(userId, fileItem.Id, fileItem.RecognitionState);
+            await _cacheService.AddItem(fileItem.Id, cacheItem).ConfigureAwait(false);
+
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
@@ -183,7 +187,7 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
-                _cacheService.RemoveItem(fileItem.Id);
+                await _cacheService.RemoveItem(fileItem.Id).ConfigureAwait(false);
 
                 DeleteTempFiles(files);
             }

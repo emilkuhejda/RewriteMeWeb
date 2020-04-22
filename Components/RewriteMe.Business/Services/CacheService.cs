@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using RewriteMe.Business.Polling;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Polling;
 
 namespace RewriteMe.Business.Services
 {
@@ -10,7 +13,7 @@ namespace RewriteMe.Business.Services
     {
         private readonly IHubContext<CacheHub> _cacheHub;
 
-        private readonly Dictionary<Guid, double> _cache = new Dictionary<Guid, double>();
+        private readonly Dictionary<Guid, CacheItem> _cache = new Dictionary<Guid, CacheItem>();
         private readonly object _lockObject = new object();
 
         public CacheService(IHubContext<CacheHub> cacheHub)
@@ -18,37 +21,54 @@ namespace RewriteMe.Business.Services
             _cacheHub = cacheHub;
         }
 
-        public double GetPercentage(Guid fileItemId)
+        public async Task AddItem(Guid fileItemId, CacheItem cacheItem)
+        {
+            _cache.Add(fileItemId, cacheItem);
+
+            await SendAsync(fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task UpdatePercentage(Guid fileItemId, double percentage)
+        {
+            lock (_lockObject)
+            {
+                if (!_cache.ContainsKey(fileItemId))
+                    throw new InvalidOperationException(nameof(fileItemId));
+
+                _cache[fileItemId].PercentageDone = percentage;
+            }
+
+            await SendAsync(fileItemId).ConfigureAwait(false);
+        }
+
+        public async Task RemoveItem(Guid fileItemId)
+        {
+            var cacheItem = GetCacheItem(fileItemId).Copy();
+
+            _cache.Remove(fileItemId);
+
+            cacheItem.RecognitionState = RecognitionState.Completed;
+            await SendAsync(cacheItem).ConfigureAwait(false);
+        }
+
+        private CacheItem GetCacheItem(Guid fileItemId)
         {
             if (!_cache.ContainsKey(fileItemId))
-                return 0;
+                throw new InvalidOperationException(nameof(fileItemId));
 
             return _cache[fileItemId];
         }
 
-        public void AddOrUpdateItem(Guid fileItemId, double percentage)
+        private async Task SendAsync(Guid fileItemId)
         {
-            lock (_lockObject)
-            {
-                if (_cache.ContainsKey(fileItemId))
-                {
-                    _cache[fileItemId] = percentage;
-                }
-                else
-                {
-                    _cache.Add(fileItemId, percentage);
-                }
-            }
-
-            _cacheHub.Clients.All.SendAsync("transferdata", percentage);
+            var cacheItem = GetCacheItem(fileItemId);
+            await SendAsync(cacheItem).ConfigureAwait(false);
         }
 
-        public void RemoveItem(Guid fileItemId)
+        private async Task SendAsync(CacheItem cacheItem)
         {
-            if (_cache.ContainsKey(fileItemId))
-            {
-                _cache.Remove(fileItemId);
-            }
+            await _cacheHub.Clients.All.SendAsync(cacheItem.UserId.ToString(), cacheItem).ConfigureAwait(false);
         }
+
     }
 }
