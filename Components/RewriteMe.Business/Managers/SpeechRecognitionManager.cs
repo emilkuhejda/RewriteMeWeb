@@ -150,7 +150,8 @@ namespace RewriteMe.Business.Managers
                 if (!isInPreparedState)
                     throw new FileItemIsNotInPreparedStateException();
 
-                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(true);
+                fileItem.RecognitionState = RecognitionState.InProgress;
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, fileItem.RecognitionState, _appSettings.ApplicationId).ConfigureAwait(true);
             }
             finally
             {

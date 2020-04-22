@@ -38,6 +38,7 @@ export class FilesComponent implements OnInit {
             return;
 
         fileItem.recognitionState = cacheItem.recognitionState;
+        fileItem.percentageDone = cacheItem.percentageDone;
     }
 
     delete(fileItem: FileItem) {
