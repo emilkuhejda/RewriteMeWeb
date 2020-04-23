@@ -127,16 +127,16 @@ namespace RewriteMe.Business.Services
         public async Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             var ids = fileItemIds.ToList();
-            foreach (var fileItemId in ids)
-            {
-                var directory = _fileAccessService.GetFileItemRootDirectory(userId, fileItemId);
-                if (Directory.Exists(directory))
-                {
-                    Directory.Delete(directory, true);
-                }
+            //foreach (var fileItemId in ids)
+            //{
+            //    var directory = _fileAccessService.GetFileItemRootDirectory(userId, fileItemId);
+            //    if (Directory.Exists(directory))
+            //    {
+            //        Directory.Delete(directory, true);
+            //    }
 
-                await _storageService.DeleteFileItemDataAsync(userId, fileItemId).ConfigureAwait(false);
-            }
+            //    await _storageService.DeleteFileItemDataAsync(userId, fileItemId).ConfigureAwait(false);
+            //}
 
             await _fileItemRepository.PermanentDeleteAllAsync(userId, ids, applicationId).ConfigureAwait(false);
 
