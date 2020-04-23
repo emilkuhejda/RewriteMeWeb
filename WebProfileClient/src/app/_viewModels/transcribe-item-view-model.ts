@@ -4,6 +4,7 @@ export class TranscribeItemViewModel {
     readonly transcribeItemId: string;
     readonly transcript: string;
     public userTranscript: string;
+    public time: string;
     public source: any;
     public isDirty: boolean;
     public isLoading: boolean;
@@ -12,6 +13,7 @@ export class TranscribeItemViewModel {
         this.transcribeItemId = transcribeItem.id;
         this.transcript = transcribeItem.transcript;
         this.userTranscript = transcribeItem.userTranscript;
+        this.time = `${transcribeItem.startTimeString} - ${transcribeItem.endTimeString}`;
     }
 
     get isUserTranscriptChanged() {
