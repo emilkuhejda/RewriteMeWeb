@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using RewriteMe.Business.Extensions;
 using RewriteMe.Business.Polling;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Polling;
@@ -14,23 +16,49 @@ namespace RewriteMe.Business.Services
         private readonly IHubContext<CacheHub> _cacheHub;
 
         private readonly Dictionary<Guid, CacheItem> _cache = new Dictionary<Guid, CacheItem>();
-        private readonly object _lockObject = new object();
+        private readonly object _lockUpdateRecognitionStateObject = new object();
+        private readonly object _lockUpdatePercentageObject = new object();
 
         public CacheService(IHubContext<CacheHub> cacheHub)
         {
             _cacheHub = cacheHub;
         }
 
-        public async Task AddItem(Guid fileItemId, CacheItem cacheItem)
+        public CacheItem GetItem(Guid fileItemId)
         {
-            _cache.Add(fileItemId, cacheItem);
+            try
+            {
+                return GetCacheItem(fileItemId);
+            }
+            catch (Exception)
+            {
+                return CacheItem.Empty;
+            }
+        }
+
+        public async Task AddItemAsync(CacheItem cacheItem)
+        {
+            _cache.Add(cacheItem.FileItemId, cacheItem);
+
+            await SendAsync(cacheItem.UserId, cacheItem.ToDto()).ConfigureAwait(false);
+        }
+
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        {
+            lock (_lockUpdateRecognitionStateObject)
+            {
+                if (!_cache.ContainsKey(fileItemId))
+                    throw new InvalidOperationException(nameof(fileItemId));
+
+                _cache[fileItemId].RecognitionState = recognitionState;
+            }
 
             await SendAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task UpdatePercentage(Guid fileItemId, double percentage)
+        public async Task UpdatePercentageAsync(Guid fileItemId, double percentage)
         {
-            lock (_lockObject)
+            lock (_lockUpdatePercentageObject)
             {
                 if (!_cache.ContainsKey(fileItemId))
                     throw new InvalidOperationException(nameof(fileItemId));
@@ -41,14 +69,15 @@ namespace RewriteMe.Business.Services
             await SendAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task RemoveItem(Guid fileItemId)
+        public async Task RemoveItemAsync(Guid fileItemId)
         {
-            var cacheItem = GetCacheItem(fileItemId).Copy();
+            var cacheItem = GetCacheItem(fileItemId);
+            var cacheItemDto = cacheItem.ToDto();
 
             _cache.Remove(fileItemId);
 
-            cacheItem.RecognitionState = RecognitionState.Completed;
-            await SendAsync(cacheItem).ConfigureAwait(false);
+            cacheItemDto.RecognitionState = RecognitionState.Completed;
+            await SendAsync(cacheItem.UserId, cacheItemDto).ConfigureAwait(false);
         }
 
         private CacheItem GetCacheItem(Guid fileItemId)
@@ -62,12 +91,12 @@ namespace RewriteMe.Business.Services
         private async Task SendAsync(Guid fileItemId)
         {
             var cacheItem = GetCacheItem(fileItemId);
-            await SendAsync(cacheItem).ConfigureAwait(false);
+            await SendAsync(cacheItem.UserId, cacheItem.ToDto()).ConfigureAwait(false);
         }
 
-        private async Task SendAsync(CacheItem cacheItem)
+        private async Task SendAsync(Guid userId, CacheItemDto cacheItemDto)
         {
-            await _cacheHub.Clients.All.SendAsync(cacheItem.UserId.ToString(), cacheItem).ConfigureAwait(false);
+            await _cacheHub.Clients.All.SendAsync(userId.ToString(), cacheItemDto).ConfigureAwait(false);
         }
 
     }

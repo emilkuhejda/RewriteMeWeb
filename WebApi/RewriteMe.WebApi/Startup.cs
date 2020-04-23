@@ -204,7 +204,7 @@ namespace RewriteMe.WebApi
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<CacheHub>("/api/cache");
+                endpoints.MapHub<CacheHub>("/api/cache-hub");
             });
 
             app.MigrateDatabase();
