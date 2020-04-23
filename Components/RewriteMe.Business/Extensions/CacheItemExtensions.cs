@@ -9,7 +9,7 @@ namespace RewriteMe.Business.Extensions
         {
             return new CacheItemDto
             {
-                FileItem = cacheItem.FileItem,
+                FileItemId = cacheItem.FileItemId,
                 RecognitionState = cacheItem.RecognitionState,
                 PercentageDone = cacheItem.PercentageDone
             };

@@ -16,7 +16,8 @@ namespace RewriteMe.Business.Services
         private readonly IHubContext<CacheHub> _cacheHub;
 
         private readonly Dictionary<Guid, CacheItem> _cache = new Dictionary<Guid, CacheItem>();
-        private readonly object _lockObject = new object();
+        private readonly object _lockUpdateRecognitionStateObject = new object();
+        private readonly object _lockUpdatePercentageObject = new object();
 
         public CacheService(IHubContext<CacheHub> cacheHub)
         {
@@ -35,16 +36,29 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        public async Task AddItemAsync(Guid fileItemId, CacheItem cacheItem)
+        public async Task AddItemAsync(CacheItem cacheItem)
         {
-            _cache.Add(fileItemId, cacheItem);
+            _cache.Add(cacheItem.FileItemId, cacheItem);
+
+            await SendAsync(cacheItem.UserId, cacheItem.ToDto()).ConfigureAwait(false);
+        }
+
+        public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
+        {
+            lock (_lockUpdateRecognitionStateObject)
+            {
+                if (!_cache.ContainsKey(fileItemId))
+                    throw new InvalidOperationException(nameof(fileItemId));
+
+                _cache[fileItemId].RecognitionState = recognitionState;
+            }
 
             await SendAsync(fileItemId).ConfigureAwait(false);
         }
 
         public async Task UpdatePercentageAsync(Guid fileItemId, double percentage)
         {
-            lock (_lockObject)
+            lock (_lockUpdatePercentageObject)
             {
                 if (!_cache.ContainsKey(fileItemId))
                     throw new InvalidOperationException(nameof(fileItemId));

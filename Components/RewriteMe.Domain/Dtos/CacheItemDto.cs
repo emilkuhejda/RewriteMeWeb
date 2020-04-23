@@ -5,7 +5,7 @@ namespace RewriteMe.Domain.Dtos
 {
     public class CacheItemDto
     {
-        public Guid FileItem { get; set; }
+        public Guid FileItemId { get; set; }
 
         public RecognitionState RecognitionState { get; set; }
 

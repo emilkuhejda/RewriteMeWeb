@@ -5,10 +5,10 @@ namespace RewriteMe.Domain.Polling
 {
     public class CacheItem
     {
-        public CacheItem(Guid userId, Guid fileItem, RecognitionState recognitionState)
+        public CacheItem(Guid userId, Guid fileItemId, RecognitionState recognitionState)
         {
             UserId = userId;
-            FileItem = fileItem;
+            FileItemId = fileItemId;
             RecognitionState = recognitionState;
         }
 
@@ -16,7 +16,7 @@ namespace RewriteMe.Domain.Polling
 
         public Guid UserId { get; }
 
-        public Guid FileItem { get; }
+        public Guid FileItemId { get; }
 
         public RecognitionState RecognitionState { get; set; }
 

@@ -32,7 +32,7 @@ export class FilesComponent implements OnInit {
     }
 
     private onMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
-        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItem);
+        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItemId);
         if (fileItem === undefined)
             return;
 

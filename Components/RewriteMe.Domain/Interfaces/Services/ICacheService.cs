@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Polling;
 
 namespace RewriteMe.Domain.Interfaces.Services
@@ -8,7 +9,9 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         CacheItem GetItem(Guid fileItemId);
 
-        Task AddItemAsync(Guid fileItemId, CacheItem cacheItem);
+        Task AddItemAsync(CacheItem cacheItem);
+
+        Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
 
         Task UpdatePercentageAsync(Guid fileItemId, double percentage);
 
