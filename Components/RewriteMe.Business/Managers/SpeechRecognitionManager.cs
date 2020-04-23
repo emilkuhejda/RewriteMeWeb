@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Business.InformationMessages;
-using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
@@ -73,7 +72,18 @@ namespace RewriteMe.Business.Managers
 
         public void RunRecognition(Guid userId, Guid fileItemId)
         {
-            AsyncHelper.RunSync(() => RunRecognitionAsync(userId, fileItemId));
+            try
+            {
+                RunRecognitionAsync(userId, fileItemId).RunSynchronously();
+            }
+            catch (Exception ex)
+            {
+                _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId).RunSynchronously();
+                _logger.Error($"Exception occurred during recognition. File item ID = '{fileItemId}'.");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
+
+                throw;
+            }
         }
 
         private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
@@ -85,6 +95,8 @@ namespace RewriteMe.Business.Managers
 
                 return;
             }
+
+            _cacheService.RemoveItem(fileItemId);
 
             await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
@@ -183,10 +195,11 @@ namespace RewriteMe.Business.Managers
 
                 await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
             }
             finally
             {
-                await _cacheService.RemoveItemAsync(fileItem.Id).ConfigureAwait(false);
+                _cacheService.RemoveItem(fileItem.Id);
 
                 DeleteTempFiles(files);
             }
