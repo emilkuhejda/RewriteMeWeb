@@ -111,11 +111,11 @@ export class MsalService {
     }
 
     getGivenName(): string {
-        return this.getUser().idToken['given_name'];
+        return this.decode(this.getUser().idToken['given_name']);
     }
 
     getFamilyName(): string {
-        return this.getUser().idToken['family_name'];
+        return this.decode(this.getUser().idToken['family_name']);
     }
 
     getB2CToken() {
@@ -124,5 +124,9 @@ export class MsalService {
 
     private getUser() {
         return this.clientApplication.getUser();
+    }
+
+    private decode(text: string) {
+        return decodeURIComponent(escape(text));
     }
 }
