@@ -9,6 +9,9 @@ import { ErrorCode } from '../_enums/error-code';
 import { CachService } from '../_services/cach.service';
 import { CacheItem } from '../_models/cache-item';
 import { RecognitionState } from '../_enums/recognition-state';
+import { TranscribeItemService } from '../_services/transcribe-item.service';
+import { TranscribeItem } from '../_models/transcribe-item';
+import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -18,6 +21,7 @@ import { RecognitionState } from '../_enums/recognition-state';
 export class FilesComponent implements OnInit {
     constructor(
         private fileItemService: FileItemService,
+        private transcribeItemService: TranscribeItemService,
         private alertService: AlertService,
         private cachService: CachService,
         private modal: GecoDialog) { }
@@ -38,6 +42,26 @@ export class FilesComponent implements OnInit {
 
         fileItem.recognitionState = cacheItem.recognitionState;
         fileItem.percentageDone = cacheItem.percentageDone;
+    }
+
+    download(fileItem: FileItem) {
+        this.transcribeItemService.getAll(fileItem.id).subscribe(
+            (transcribeItems: TranscribeItem[]) => {
+                let modal = this.modal.openDialog(ExportDialogComponent, {
+                    data: {
+                        fileName: fileItem.fileName,
+                        transcribeItems: transcribeItems
+                    },
+                    useStyles: 'none'
+                });
+
+                modal.onClosedModal().subscribe();
+            },
+            (err: ErrorResponse) => {
+                this.alertService.error(err.message);
+            }
+        );
+        console.log(fileItem);
     }
 
     delete(fileItem: FileItem) {
