@@ -99,6 +99,15 @@ namespace RewriteMe.Business.Services
             }
         }
 
+        public async Task DeleteFileItemDataAsync(Guid userId, Guid fileItemId)
+        {
+            var container = await GetContainerClient(userId).ConfigureAwait(false);
+            var client = container.GetBlobClient(fileItemId.ToString());
+            await client.DeleteIfExistsAsync().ConfigureAwait(false);
+
+            _logger.Information($"File item container '{fileItemId}' was deleted.");
+        }
+
         public async Task DeleteFileItemSourceAsync(FileItem fileItem)
         {
             var path = GetSourceFilePath(fileItem);
