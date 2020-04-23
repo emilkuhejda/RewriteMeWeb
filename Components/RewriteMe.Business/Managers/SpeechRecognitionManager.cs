@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Business.InformationMessages;
+using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
@@ -74,11 +75,12 @@ namespace RewriteMe.Business.Managers
         {
             try
             {
-                RunRecognitionAsync(userId, fileItemId).RunSynchronously();
+                AsyncHelper.RunSync(() => RunRecognitionAsync(userId, fileItemId));
             }
             catch (Exception ex)
             {
-                _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId).RunSynchronously();
+                AsyncHelper.RunSync(() => _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId));
+
                 _logger.Error($"Exception occurred during recognition. File item ID = '{fileItemId}'.");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
