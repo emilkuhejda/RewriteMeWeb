@@ -27,8 +27,8 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let fileItem of fileItems">
-                        <td>{{fileItem.name}}</td>
-                        <td>{{fileItem.dateCreated|date}}</td>
+                        <td><label>{{fileItem.name}}</label></td>
+                        <td><label>{{fileItem.dateCreated|date}}</label></td>
                         <td>
                             <label class="col-md-8">{{fileItem.recognitionState|recognitionState}}</label>
                             <label *ngIf="fileItem.recognitionState >= 1 && fileItem.recognitionState <= 3"
