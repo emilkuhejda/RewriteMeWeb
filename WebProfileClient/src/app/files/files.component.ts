@@ -61,7 +61,6 @@ export class FilesComponent implements OnInit {
                 this.alertService.error(err.message);
             }
         );
-        console.log(fileItem);
     }
 
     delete(fileItem: FileItem) {
