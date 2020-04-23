@@ -15,6 +15,6 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task UpdatePercentageAsync(Guid fileItemId, double percentage);
 
-        Task RemoveItemAsync(Guid fileItemId);
+        void RemoveItem(Guid fileItemId);
     }
 }

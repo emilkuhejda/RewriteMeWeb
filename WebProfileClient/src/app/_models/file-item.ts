@@ -17,7 +17,7 @@ export class FileItem {
     public percentageDone: number = 0;
 
     get CanTranscribe() {
-        return this.recognitionState == RecognitionState.None || this.recognitionState == RecognitionState.Prepared;
+        return this.recognitionState == RecognitionState.None;
     }
 
     get IsInProgress() {
