@@ -14,25 +14,19 @@
 </div>
 
 <!-- Content -->
-<div *ngFor="let transcribeItem of transcribeItems">
-	<div class="mb-4" *ngIf="transcribeItem.source">
-		<div class="card border-left-primary shadow h-100 py-2">
-			<div class="card-body">
-				<div class="row no-gutters align-items-center">
-					<audio controls="controls" [src]="transcribeItem.source"></audio>
-				</div>
-			</div>
-		</div>
+<div class="card shadow mb-4">
+	<!-- Card Header - Dropdown -->
+	<div class="card-header py-3 align-items-center justify-content-between">
+		<h6 class="m-0 font-weight-bold text-primary">Transcript</h6>
 	</div>
 
-	<div class="card shadow mb-4">
-		<!-- Card Header - Dropdown -->
-		<div class="card-header py-3 align-items-center justify-content-between">
-			<h6 class="m-0 font-weight-bold text-primary">Transcript</h6>
-		</div>
+	<!-- Card Body -->
+	<div class="card-body">
+		<div *ngFor="let transcribeItem of transcribeItems">
+			<div class="row no-gutters align-items-center mb-4" *ngIf="transcribeItem.source">
+				<audio controls="controls" [src]="transcribeItem.source"></audio>
+			</div>
 
-		<!-- Card Body -->
-		<div class="card-body">
 			<div class="row mb-2">
 				<div class="col-sm">
 					<a [class.disabled]="transcribeItem.isLoading || !transcribeItem.isDirty"
@@ -60,7 +54,7 @@
 			</div>
 
 			<div class="form-group shadow-textarea">
-				<textarea autosize class="form-control" [(ngModel)]="transcribeItem.userTranscript"
+				<textarea autosize class="form-control md-textarea" [(ngModel)]="transcribeItem.userTranscript"
 					[disabled]="transcribeItem.isLoading" (input)="onChange(transcribeItem)"></textarea>
 			</div>
 		</div>
