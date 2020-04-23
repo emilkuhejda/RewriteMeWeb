@@ -3,7 +3,7 @@ using RewriteMe.Domain.Dtos;
 
 namespace RewriteMe.WebApi.Commands
 {
-    public class UpdateFileItemLanguageCommand : CommandBase<OkDto>
+    public class CanRunRecognitionCommand : CommandBase<OkDto>
     {
         public Guid FileItemId { get; set; }
 

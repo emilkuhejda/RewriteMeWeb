@@ -12,30 +12,37 @@ using Serilog;
 
 namespace RewriteMe.WebApi.Handlers
 {
-    public class UpdateFileItemLanguageHandler : IRequestHandler<UpdateFileItemLanguageCommand, OkDto>
+    public class CanRunRecognitionHandler : IRequestHandler<CanRunRecognitionCommand, OkDto>
     {
         private readonly IFileItemService _fileItemService;
         private readonly ISpeechRecognitionManager _speechRecognitionManager;
         private readonly ILogger _logger;
 
-        public UpdateFileItemLanguageHandler(
+        public CanRunRecognitionHandler(
             IFileItemService fileItemService,
             ISpeechRecognitionManager speechRecognitionManager,
             ILogger logger)
         {
             _fileItemService = fileItemService;
             _speechRecognitionManager = speechRecognitionManager;
-            _logger = logger.ForContext<UpdateFileItemLanguageHandler>();
+            _logger = logger.ForContext<CanRunRecognitionHandler>();
         }
 
-        public async Task<OkDto> Handle(UpdateFileItemLanguageCommand request, CancellationToken cancellationToken)
+        public async Task<OkDto> Handle(CanRunRecognitionCommand request, CancellationToken cancellationToken)
         {
-            var fileItemExists = await _fileItemService.ExistsAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
-            if (!fileItemExists)
+            var fileItem = await _fileItemService.GetAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
+            if (fileItem == null)
             {
                 _logger.Error($"File item '{request.FileItemId}' not exists.");
 
                 throw new OperationErrorException(ErrorCode.EC101);
+            }
+
+            if (fileItem.RecognitionState != RecognitionState.None)
+            {
+                _logger.Error($"File item '{request.FileItemId}' is in wrong recognition state. Recognition state is '{fileItem.RecognitionState}'.");
+
+                throw new OperationErrorException(ErrorCode.EC103);
             }
 
             if (!SupportedLanguages.IsSupported(request.Language))
