@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Polling;
 
 namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ICacheService
     {
-        Task AddItem(Guid fileItemId, CacheItem cacheItem);
+        CacheItem GetItem(Guid fileItemId);
 
-        Task UpdatePercentage(Guid fileItemId, double percentage);
+        Task AddItemAsync(CacheItem cacheItem);
 
-        Task RemoveItem(Guid fileItemId);
+        Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState);
+
+        Task UpdatePercentageAsync(Guid fileItemId, double percentage);
+
+        Task RemoveItemAsync(Guid fileItemId);
     }
 }

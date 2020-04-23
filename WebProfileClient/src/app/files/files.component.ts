@@ -8,6 +8,7 @@ import { DialogComponent } from '../_directives/dialog/dialog.component';
 import { ErrorCode } from '../_enums/error-code';
 import { CachService } from '../_services/cach.service';
 import { CacheItem } from '../_models/cache-item';
+import { RecognitionState } from '../_enums/recognition-state';
 
 @Component({
     selector: 'app-files',
@@ -31,7 +32,7 @@ export class FilesComponent implements OnInit {
     }
 
     private onMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
-        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItem);
+        let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItemId);
         if (fileItem === undefined)
             return;
 
@@ -110,16 +111,29 @@ export class FilesComponent implements OnInit {
         modal.onClosedModal().subscribe();
     }
 
-    initialize() {
+    private initialize() {
         this.fileItemService.getAll().subscribe(
             (fileItems: FileItem[]) => {
                 this.fileItems = fileItems.sort((a, b) => {
                     return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
                 });
+
+                this.updateProgress();
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
             }
         );
+    }
+
+    private updateProgress() {
+        for (let index in this.fileItems) {
+            let fileItem = this.fileItems[index];
+            if (fileItem.recognitionState == RecognitionState.InProgress) {
+                this.cachService.getCacheItem(fileItem.id).subscribe((cacheItem: CacheItem) => {
+                    fileItem.percentageDone = cacheItem.percentageDone;
+                });
+            }
+        }
     }
 }

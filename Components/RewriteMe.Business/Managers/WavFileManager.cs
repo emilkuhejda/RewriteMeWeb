@@ -7,6 +7,7 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Polling;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using Serilog;
@@ -18,6 +19,7 @@ namespace RewriteMe.Business.Managers
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IWavFileService _wavFileService;
+        private readonly ICacheService _cacheService;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
@@ -25,12 +27,14 @@ namespace RewriteMe.Business.Managers
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IWavFileService wavFileService,
+            ICacheService cacheService,
             IOptions<AppSettings> options,
             ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _wavFileService = wavFileService;
+            _cacheService = cacheService;
             _appSettings = options.Value;
             _logger = logger.ForContext<WavFileManager>();
         }
@@ -62,7 +66,10 @@ namespace RewriteMe.Business.Managers
         {
             _logger.Information($"Start conversion to wav file. File item ID = {fileItem.Id}, File name = {fileItem.FileName}.");
 
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
+            var convertingRecognitionState = RecognitionState.Converting;
+            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, convertingRecognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
+            var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, convertingRecognitionState);
+            await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
 
             var directoryPath = string.Empty;
             try

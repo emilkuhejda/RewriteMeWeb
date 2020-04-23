@@ -90,7 +90,7 @@ namespace RewriteMe.Business.Services
         {
             var currentTask = Interlocked.Increment(ref _tasksDone);
             var percentageDone = (int)((double)currentTask / _totalTasks * 100);
-            await _cacheService.UpdatePercentage(fileItemId, percentageDone).ConfigureAwait(false);
+            await _cacheService.UpdatePercentageAsync(fileItemId, percentageDone).ConfigureAwait(false);
         }
 
         private SpeechClient CreateSpeechClient()
