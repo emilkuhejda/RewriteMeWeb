@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Business.InformationMessages;
-using RewriteMe.Common.Helpers;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
@@ -72,23 +71,18 @@ namespace RewriteMe.Business.Managers
             return subscriptionRemainingTime.TotalSeconds > 15;
         }
 
-        public void RunRecognition(Guid userId, Guid fileItemId)
+        public async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
             try
             {
                 _cacheService.RemoveItem(fileItemId);
 
-                AsyncHelper.RunSync(() => RunRecognitionAsync(userId, fileItemId));
+                await RunRecognitionInternalAsync(userId, fileItemId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                AsyncHelper.RunSync(() =>
-                {
-                    _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId);
-                    _cacheService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None);
-
-                    return Task.FromResult(true);
-                });
+                await _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None).ConfigureAwait(false);
 
                 _logger.Error($"Exception occurred during recognition. File item ID = '{fileItemId}'.");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
@@ -101,7 +95,7 @@ namespace RewriteMe.Business.Managers
             }
         }
 
-        private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
+        private async Task RunRecognitionInternalAsync(Guid userId, Guid fileItemId)
         {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             if (fileItem.RecognitionState > RecognitionState.Prepared)
