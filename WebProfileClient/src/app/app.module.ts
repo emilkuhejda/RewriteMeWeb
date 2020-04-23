@@ -17,6 +17,7 @@ import { ExportDialogComponent } from './_directives/export-dialog/export-dialog
 import { DialogComponent } from './_directives/dialog/dialog.component';
 import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         FormsModule,
         ExportAsModule,
         NgbModule,
-        GecoDialogModule
+        GecoDialogModule,
+        TextareaAutosizeModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,

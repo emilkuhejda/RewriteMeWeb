@@ -65,6 +65,9 @@ export class DetailFileComponent implements OnInit {
     }
 
     update(transcribeItem: TranscribeItemViewModel) {
+        if (transcribeItem.isLoading || !transcribeItem.isDirty)
+            return;
+
         transcribeItem.isLoading = true;
 
         let data = {
@@ -85,6 +88,9 @@ export class DetailFileComponent implements OnInit {
     }
 
     loadAudioFile(transcribeItem: TranscribeItemViewModel) {
+        if (transcribeItem.isLoading)
+            return;
+
         this.alertService.clear();
         transcribeItem.isLoading = true;
 
@@ -104,6 +110,9 @@ export class DetailFileComponent implements OnInit {
     }
 
     refresh(transcribeItem: TranscribeItemViewModel) {
+        if (transcribeItem.isLoading)
+            return;
+
         transcribeItem.refreshTranscript();
     }
 
