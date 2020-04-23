@@ -65,11 +65,11 @@ export class MsalService {
     }
 
     getMsalGivenName() {
-        return this.clientApplication.getUser().idToken['given_name'];
+        return this.decode(this.clientApplication.getUser().idToken['given_name']);
     }
 
     getMsalFamilyName() {
-        return this.clientApplication.getUser().idToken['family_name'];
+        return this.decode(this.clientApplication.getUser().idToken['family_name']);
     }
 
     getIdentityUserName(): string {
@@ -89,5 +89,9 @@ export class MsalService {
 
     getIdentity(): Identity {
         return JSON.parse(localStorage.getItem(CommonVariables.CurrentIdentity));
+    }
+
+    private decode(text: string) {
+        return decodeURIComponent(escape(text));
     }
 }
