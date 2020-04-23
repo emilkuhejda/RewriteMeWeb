@@ -96,6 +96,10 @@ export class FilesComponent implements OnInit {
 
     transcribe(fileItem: FileItem) {
         this.alertService.clear();
+        if (!fileItem.CanTranscribe) {
+            this.alertService.error("File is already processing");
+        }
+
         let onAccept = (dialogComponent: DialogComponent) => {
             this.fileItemService.transcribe(fileItem.id, fileItem.language)
                 .subscribe(
@@ -106,6 +110,9 @@ export class FilesComponent implements OnInit {
                         let error = err.message;
                         if (err.errorCode === ErrorCode.EC101)
                             error = "Audio file was not found";
+
+                        if (err.errorCode === ErrorCode.EC103)
+                            error = "File is already processing";
 
                         if (err.errorCode === ErrorCode.EC200)
                             error = "Language is not supported";
