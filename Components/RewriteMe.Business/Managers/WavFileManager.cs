@@ -68,12 +68,13 @@ namespace RewriteMe.Business.Managers
 
             var convertingRecognitionState = RecognitionState.Converting;
             await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, convertingRecognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
-            var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, convertingRecognitionState);
-            await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
 
             var directoryPath = string.Empty;
             try
             {
+                var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, convertingRecognitionState);
+                await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
+
                 directoryPath = _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.UserId, fileItem.Id, fileItem.Storage == StorageSetting.Database);
                 var filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem, directoryPath).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(filePath))
@@ -99,6 +100,8 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
+                _cacheService.RemoveItem(fileItem.Id);
+
                 if (fileItem.Storage == StorageSetting.Database)
                 {
                     _fileItemService.CleanUploadedData(directoryPath);

@@ -69,15 +69,12 @@ namespace RewriteMe.Business.Services
             await SendAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task RemoveItemAsync(Guid fileItemId)
+        public void RemoveItem(Guid fileItemId)
         {
-            var cacheItem = GetCacheItem(fileItemId);
-            var cacheItemDto = cacheItem.ToDto();
-
-            _cache.Remove(fileItemId);
-
-            cacheItemDto.RecognitionState = RecognitionState.Completed;
-            await SendAsync(cacheItem.UserId, cacheItemDto).ConfigureAwait(false);
+            if (_cache.ContainsKey(fileItemId))
+            {
+                _cache.Remove(fileItemId);
+            }
         }
 
         private CacheItem GetCacheItem(Guid fileItemId)

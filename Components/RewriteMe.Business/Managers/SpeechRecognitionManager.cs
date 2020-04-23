@@ -86,6 +86,8 @@ namespace RewriteMe.Business.Managers
                 return;
             }
 
+            _cacheService.RemoveItem(fileItemId);
+
             await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
             _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{userId}]");
@@ -183,10 +185,11 @@ namespace RewriteMe.Business.Managers
 
                 await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
             }
             finally
             {
-                await _cacheService.RemoveItemAsync(fileItem.Id).ConfigureAwait(false);
+                _cacheService.RemoveItem(fileItem.Id);
 
                 DeleteTempFiles(files);
             }
