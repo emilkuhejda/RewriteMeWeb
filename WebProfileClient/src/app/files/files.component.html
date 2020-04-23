@@ -30,9 +30,9 @@
                         <td>{{fileItem.name}}</td>
                         <td>{{fileItem.dateCreated|date}}</td>
                         <td>
-                            {{fileItem.recognitionState|recognitionState}}
-                            <label *ngIf="fileItem.recognitionState >= 1 && fileItem.recognitionState <= 3">
-                                ({{fileItem.percentageDone}}%)</label>
+                            <label class="col-md-8">{{fileItem.recognitionState|recognitionState}}</label>
+                            <label *ngIf="fileItem.recognitionState >= 1 && fileItem.recognitionState <= 3"
+                                class="text-primary text-right col-md-4">{{fileItem.percentageDone}}%</label>
                         </td>
                         <td>
                             <a *ngIf="fileItem.CanTranscribe" (click)="transcribe(fileItem)">Transcribe</a>
