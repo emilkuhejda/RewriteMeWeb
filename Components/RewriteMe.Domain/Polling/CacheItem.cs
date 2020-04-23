@@ -5,10 +5,6 @@ namespace RewriteMe.Domain.Polling
 {
     public class CacheItem
     {
-        public CacheItem()
-        {
-        }
-
         public CacheItem(Guid userId, Guid fileItem, RecognitionState recognitionState)
         {
             UserId = userId;
@@ -16,23 +12,14 @@ namespace RewriteMe.Domain.Polling
             RecognitionState = recognitionState;
         }
 
-        public Guid UserId { get; private set; }
+        public static CacheItem Empty => new CacheItem(Guid.Empty, Guid.Empty, RecognitionState.None);
 
-        public Guid FileItem { get; private set; }
+        public Guid UserId { get; }
+
+        public Guid FileItem { get; }
 
         public RecognitionState RecognitionState { get; set; }
 
         public double PercentageDone { get; set; }
-
-        public CacheItem Copy()
-        {
-            return new CacheItem
-            {
-                UserId = UserId,
-                FileItem = FileItem,
-                RecognitionState = RecognitionState,
-                PercentageDone = PercentageDone
-            };
-        }
     }
 }

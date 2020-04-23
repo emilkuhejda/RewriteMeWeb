@@ -6,10 +6,12 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ICacheService
     {
-        Task AddItem(Guid fileItemId, CacheItem cacheItem);
+        CacheItem GetItem(Guid fileItemId);
 
-        Task UpdatePercentage(Guid fileItemId, double percentage);
+        Task AddItemAsync(Guid fileItemId, CacheItem cacheItem);
 
-        Task RemoveItem(Guid fileItemId);
+        Task UpdatePercentageAsync(Guid fileItemId, double percentage);
+
+        Task RemoveItemAsync(Guid fileItemId);
     }
 }

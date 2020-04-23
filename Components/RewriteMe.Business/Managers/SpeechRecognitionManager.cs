@@ -159,7 +159,7 @@ namespace RewriteMe.Business.Managers
             }
 
             var cacheItem = new CacheItem(userId, fileItem.Id, fileItem.RecognitionState);
-            await _cacheService.AddItem(fileItem.Id, cacheItem).ConfigureAwait(false);
+            await _cacheService.AddItemAsync(fileItem.Id, cacheItem).ConfigureAwait(false);
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
@@ -188,7 +188,7 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
-                await _cacheService.RemoveItem(fileItem.Id).ConfigureAwait(false);
+                await _cacheService.RemoveItemAsync(fileItem.Id).ConfigureAwait(false);
 
                 DeleteTempFiles(files);
             }
