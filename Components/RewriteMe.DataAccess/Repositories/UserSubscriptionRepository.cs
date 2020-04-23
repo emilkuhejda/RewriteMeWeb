@@ -88,20 +88,6 @@ namespace RewriteMe.DataAccess.Repositories
             await context.CurrentUserSubscription.AddAsync(current).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetTotalSubscriptionTimeAsync(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var remainingTicks = await context.UserSubscriptions
-                    .Where(x => x.UserId == userId)
-                    .Select(x => x.Time.Ticks)
-                    .SumAsync(x => x)
-                    .ConfigureAwait(false);
-
-                return TimeSpan.FromTicks(remainingTicks);
-            }
-        }
-
         public async Task<TimeSpan> GetRemainingTimeAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())

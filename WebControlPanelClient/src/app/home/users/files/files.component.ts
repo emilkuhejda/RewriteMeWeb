@@ -17,8 +17,7 @@ export class FilesComponent implements OnInit {
     userId: string;
     fileItems: FileItem[] = [];
     deletedFileItems: FileItem[] = [];
-    permanentlyDeletedFileItems: FileItem[] = [];
-
+    
     constructor(
         private location: Location,
         private route: ActivatedRoute,
@@ -71,9 +70,8 @@ export class FilesComponent implements OnInit {
                     return <any>new Date(b.dateCreated) - <any>new Date(a.dateCreated);
                 });
 
-                this.fileItems = fileItems.filter(x => !x.isDeleted && !x.isPermanentlyDeleted);
-                this.deletedFileItems = fileItems.filter(x => x.isDeleted && !x.isPermanentlyDeleted);
-                this.permanentlyDeletedFileItems = fileItems.filter(x => x.isDeleted && x.isPermanentlyDeleted);
+                this.fileItems = fileItems.filter(x => !x.isDeleted);
+                this.deletedFileItems = fileItems.filter(x => x.isDeleted);
             },
             (err: ErrorResponse) => {
                 this.alertService.error(err.message);
