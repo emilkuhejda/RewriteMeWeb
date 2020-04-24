@@ -1,4 +1,5 @@
 import { RecognitionAlternative } from '../_models/recognition-alternative';
+import { RecognitionWordInfoMapper } from './recognition-word-info-mapper';
 
 export class RecognitionAlternativeMapper {
     public static convertAll(data): RecognitionAlternative[] {
@@ -21,6 +22,7 @@ export class RecognitionAlternativeMapper {
         let recognitionAlternative = new RecognitionAlternative();
         recognitionAlternative.transcript = alternative.transcript;
         recognitionAlternative.confidence = alternative.confidence;
+        recognitionAlternative.words = RecognitionWordInfoMapper.convertAll(alternative.words);
 
         return recognitionAlternative;
     }

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using RewriteMe.Business.Extensions;
 using RewriteMe.Business.Polling;
-using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Polling;
@@ -40,20 +39,22 @@ namespace RewriteMe.Business.Services
         {
             _cache.Add(cacheItem.FileItemId, cacheItem);
 
-            await SendAsync(cacheItem.UserId, cacheItem.ToDto()).ConfigureAwait(false);
+            await SendRecognitionStateChangedAsync(cacheItem, cacheItem.RecognitionState).ConfigureAwait(false);
         }
 
         public async Task UpdateRecognitionStateAsync(Guid fileItemId, RecognitionState recognitionState)
         {
+            CacheItem cacheItem;
             lock (_lockUpdateRecognitionStateObject)
             {
                 if (!_cache.ContainsKey(fileItemId))
                     throw new InvalidOperationException(nameof(fileItemId));
 
-                _cache[fileItemId].RecognitionState = recognitionState;
+                cacheItem = _cache[fileItemId];
+                cacheItem.RecognitionState = recognitionState;
             }
 
-            await SendAsync(fileItemId).ConfigureAwait(false);
+            await SendRecognitionStateChangedAsync(cacheItem, recognitionState).ConfigureAwait(false);
         }
 
         public async Task UpdatePercentageAsync(Guid fileItemId, double percentage)
@@ -66,7 +67,7 @@ namespace RewriteMe.Business.Services
                 _cache[fileItemId].PercentageDone = percentage;
             }
 
-            await SendAsync(fileItemId).ConfigureAwait(false);
+            await SendProgressChangedAsync(fileItemId).ConfigureAwait(false);
         }
 
         public void RemoveItem(Guid fileItemId)
@@ -85,16 +86,15 @@ namespace RewriteMe.Business.Services
             return _cache[fileItemId];
         }
 
-        private async Task SendAsync(Guid fileItemId)
+        private async Task SendProgressChangedAsync(Guid fileItemId)
         {
             var cacheItem = GetCacheItem(fileItemId);
-            await SendAsync(cacheItem.UserId, cacheItem.ToDto()).ConfigureAwait(false);
+            await _cacheHub.Clients.All.SendAsync($"recognition-progress-{cacheItem.UserId}", cacheItem.ToDto()).ConfigureAwait(false);
         }
 
-        private async Task SendAsync(Guid userId, CacheItemDto cacheItemDto)
+        private async Task SendRecognitionStateChangedAsync(CacheItem cacheItem, RecognitionState recognitionState)
         {
-            await _cacheHub.Clients.All.SendAsync(userId.ToString(), cacheItemDto).ConfigureAwait(false);
+            await _cacheHub.Clients.All.SendAsync($"recognition-state-{cacheItem.UserId}", cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
         }
-
     }
 }
