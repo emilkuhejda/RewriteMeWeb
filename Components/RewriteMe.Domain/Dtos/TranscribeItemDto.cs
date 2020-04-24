@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using RewriteMe.Domain.Transcription;
 
 namespace RewriteMe.Domain.Dtos
 {
@@ -14,7 +13,7 @@ namespace RewriteMe.Domain.Dtos
         public Guid FileItemId { get; set; }
 
         [Required]
-        public IEnumerable<RecognitionAlternative> Alternatives { get; set; }
+        public IEnumerable<RecognitionAlternativeDto> Alternatives { get; set; }
 
         public string UserTranscript { get; set; }
 

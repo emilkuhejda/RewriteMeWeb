@@ -21,8 +21,8 @@ export class RecognitionWordInfoMapper {
 
         let recognitionWordInfo = new RecognitionWordInfo();
         recognitionWordInfo.word = wordInfo.word;
-        recognitionWordInfo.startTime = new TimeSpanWrapper(wordInfo.startTime.ticks);
-        recognitionWordInfo.endTime = new TimeSpanWrapper(wordInfo.endTime.ticks);
+        recognitionWordInfo.startTime = new TimeSpanWrapper(wordInfo.startTimeTicks);
+        recognitionWordInfo.endTime = new TimeSpanWrapper(wordInfo.endTimeTicks);
         recognitionWordInfo.speakerTag = wordInfo.speakerTag;
 
         return recognitionWordInfo;
