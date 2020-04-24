@@ -21,7 +21,7 @@ export class TranscribeItemMapper {
             return null;
 
         let alternatives = RecognitionAlternativeMapper.convertAll(data.alternatives);
-        let transcript = alternatives.length > 0 ? alternatives.map(x => x.transcript).join() : null;
+        let transcript = alternatives.length > 0 ? alternatives.map(x => x.transcript).join('') : null;
         let userTranscript = data.userTranscript === null ? transcript : data.userTranscript;
 
         let transcribeItem = new TranscribeItem();
