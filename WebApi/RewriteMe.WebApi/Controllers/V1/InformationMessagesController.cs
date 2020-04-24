@@ -40,8 +40,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetInformationMessages")]
         public async Task<IActionResult> GetAll(DateTime updatedAfter)
         {
+            _logger.Information($"Retrieve data for minimum date '{updatedAfter}'.");
+
             var userId = HttpContext.User.GetNameIdentifier();
-            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter.ToUniversalTime()).ConfigureAwait(false);
+            var informationMessages = await _informationMessageService.GetAllAsync(userId, updatedAfter).ConfigureAwait(false);
 
             return Ok(informationMessages.Select(x => x.ToDto()));
         }

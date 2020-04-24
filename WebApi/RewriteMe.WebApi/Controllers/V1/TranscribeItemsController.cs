@@ -41,8 +41,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetTranscribeItemsAll")]
         public async Task<ActionResult> GetAll(DateTime updatedAfter, Guid applicationId)
         {
+            _logger.Information($"Retrieve data for minimum date '{updatedAfter}'.");
+
             var userId = HttpContext.User.GetNameIdentifier();
-            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var transcribeItems = await _transcribeItemService.GetAllForUserAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
 
             return Ok(transcribeItems.Select(x => x.ToDto()));
         }
