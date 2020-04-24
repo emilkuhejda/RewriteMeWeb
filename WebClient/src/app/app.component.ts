@@ -28,7 +28,11 @@ export class AppComponent {
     }
 
     login(): void {
-        this.msalService.login();
+        if (this.msalService.isLoggedIn()) {
+            this.navigateToProfile();
+        } else {
+            this.msalService.login();
+        }
     }
 
     logout(): void {
