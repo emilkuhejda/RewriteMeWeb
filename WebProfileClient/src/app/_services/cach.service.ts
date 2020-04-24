@@ -22,11 +22,9 @@ export class CachService {
         this.hubConnection.start();
     }
 
-    addListener(action) {
+    addListener(method, action) {
         let identity = this.msalService.getIdentity();
-        this.hubConnection.on(identity.id, (cacheItem: CacheItem) => {
-            action(cacheItem);
-        });
+        this.hubConnection.on(`${method}-${identity.id}`, action);
     }
 
     getCacheItem(fileItemId: string): Observable<CacheItem> {
