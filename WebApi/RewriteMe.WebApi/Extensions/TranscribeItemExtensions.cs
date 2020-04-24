@@ -11,7 +11,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Id = transcribeItem.Id,
                 FileItemId = transcribeItem.FileItemId,
-                Alternatives = transcribeItem.Alternatives,
+                Alternatives = transcribeItem.Alternatives.ToDtos(),
                 UserTranscript = transcribeItem.UserTranscript,
                 StartTimeTicks = transcribeItem.StartTime.Ticks,
                 EndTimeTicks = transcribeItem.EndTime.Ticks,

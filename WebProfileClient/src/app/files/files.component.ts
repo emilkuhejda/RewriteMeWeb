@@ -30,18 +30,31 @@ export class FilesComponent implements OnInit {
 
     ngOnInit() {
         this.cachService.startConnection();
-        this.cachService.addListener(cacheItem => this.onMessageReceived(cacheItem, this.fileItems));
+        this.cachService.addListener(
+            "recognition-progress",
+            (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
+        this.cachService.addListener(
+            "recognition-state",
+            (fileItemId: string, recognitionState: RecognitionState) => this.onRecognitionStateChangedMessageReceived(fileItemId, recognitionState, this.fileItems));
 
         this.initialize();
     }
 
-    private onMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
+    private onRecognitionProgressChangedMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
         let fileItem = fileItems.find(fileItem => fileItem.id == cacheItem.fileItemId);
         if (fileItem === undefined)
             return;
 
-        fileItem.recognitionState = cacheItem.recognitionState;
+        fileItem.recognitionState = Number(RecognitionState[cacheItem.recognitionState]);
         fileItem.percentageDone = cacheItem.percentageDone;
+    }
+
+    private onRecognitionStateChangedMessageReceived(fileItemId: string, recognitionState: RecognitionState, fileItems: FileItem[]) {
+        let fileItem = fileItems.find(fileItem => fileItem.id == fileItemId);
+        if (fileItem === undefined)
+            return;
+
+        fileItem.recognitionState = Number(RecognitionState[recognitionState]);
     }
 
     download(fileItem: FileItem) {

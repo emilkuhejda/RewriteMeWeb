@@ -205,6 +205,13 @@ namespace RewriteMe.Business.Managers
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
             }
+            catch (Exception ex)
+            {
+                _logger.Error($"Exception occurred during recognition process. File ID = '{fileItem.Id}'.");
+                _logger.Error(ExceptionFormatter.FormatException(ex));
+
+                throw;
+            }
             finally
             {
                 DeleteTempFiles(files);
