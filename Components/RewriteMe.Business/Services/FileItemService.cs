@@ -130,7 +130,7 @@ namespace RewriteMe.Business.Services
                     Directory.Delete(directory, true);
                 }
 
-                await _storageService.DeleteFileItemDataAsync(userId, fileItemId).ConfigureAwait(false);
+                await _storageService.DeleteFileItemFolderDataAsync(userId, fileItemId).ConfigureAwait(false);
             }
 
             await _fileItemRepository.PermanentDeleteAllAsync(userId, ids, applicationId).ConfigureAwait(false);
