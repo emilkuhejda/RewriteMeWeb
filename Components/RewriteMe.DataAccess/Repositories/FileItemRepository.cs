@@ -141,23 +141,6 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var totalTicks = await context.FileItems
-                    .Where(x => x.IsDeleted)
-                    .Where(x => x.UserId == userId)
-                    .Where(x => x.RecognitionState > RecognitionState.Prepared)
-                    .AsNoTracking()
-                    .Select(x => x.TranscribedTime)
-                    .SumAsync(x => x.Ticks)
-                    .ConfigureAwait(false);
-
-                return TimeSpan.FromTicks(totalTicks);
-            }
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             using (var context = _contextFactory.Create())
@@ -276,14 +259,7 @@ namespace RewriteMe.DataAccess.Repositories
                 if (!entities.Any())
                     return;
 
-                foreach (var entity in entities)
-                {
-                    entity.ApplicationId = applicationId;
-                    entity.DateUpdatedUtc = DateTime.UtcNow;
-                    entity.IsDeleted = true;
-                    entity.IsPermanentlyDeleted = true;
-                }
-
+                context.RemoveRange(entities);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -447,22 +423,6 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.WasCleaned = true;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
-            }
-        }
-
-        public async Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId)
-        {
-            using (var context = _contextFactory.Create())
-            {
-                var totalTicks = await context.FileItems
-                    .Where(x => x.UserId == userId)
-                    .Where(x => x.RecognitionState > RecognitionState.Prepared)
-                    .AsNoTracking()
-                    .Select(x => x.TranscribedTime)
-                    .SumAsync(x => x.Ticks)
-                    .ConfigureAwait(false);
-
-                return TimeSpan.FromTicks(totalTicks);
             }
         }
 

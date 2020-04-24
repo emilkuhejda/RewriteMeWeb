@@ -40,7 +40,6 @@ export class FileItemMapper {
         fileItem.dateProcessed = new Date(data.dateProcessedUtc);
         fileItem.dateUpdated = new Date(data.dateUpdatedUtc);
         fileItem.isDeleted = data.isDeleted;
-        fileItem.isPermanentlyDeleted = data.isPermanentlyDeleted;
         fileItem.wasCleaned = data.wasCleaned;
 
         return fileItem;

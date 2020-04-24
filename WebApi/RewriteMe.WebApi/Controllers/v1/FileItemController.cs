@@ -240,7 +240,7 @@ namespace RewriteMe.WebApi.Controllers.V1
 
             var okDto = await _mediator.Send(canRunRecognitionCommand).ConfigureAwait(false);
 
-            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognition(userId, fileItemId));
+            BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognitionAsync(userId, fileItemId));
 
             return Ok(okDto);
         }

@@ -26,7 +26,6 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateProcessedUtc = fileItemEntity.DateProcessedUtc,
                 DateUpdatedUtc = fileItemEntity.DateUpdatedUtc,
                 IsDeleted = fileItemEntity.IsDeleted,
-                IsPermanentlyDeleted = fileItemEntity.IsPermanentlyDeleted,
                 WasCleaned = fileItemEntity.WasCleaned
             };
         }
@@ -52,7 +51,6 @@ namespace RewriteMe.DataAccess.DataAdapters
                 DateProcessedUtc = fileItem.DateProcessedUtc,
                 DateUpdatedUtc = fileItem.DateUpdatedUtc,
                 IsDeleted = fileItem.IsDeleted,
-                IsPermanentlyDeleted = fileItem.IsPermanentlyDeleted,
                 WasCleaned = fileItem.WasCleaned
             };
         }

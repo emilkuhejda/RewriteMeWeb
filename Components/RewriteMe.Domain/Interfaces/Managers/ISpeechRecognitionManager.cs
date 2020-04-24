@@ -7,6 +7,6 @@ namespace RewriteMe.Domain.Interfaces.Managers
     {
         Task<bool> CanRunRecognition(Guid userId);
 
-        void RunRecognition(Guid userId, Guid fileItemId);
+        Task RunRecognitionAsync(Guid userId, Guid fileItemId);
     }
 }
