@@ -115,7 +115,10 @@ namespace RewriteMe.Business.Services
             var longOperation = speech.LongRunningRecognize(new RecognitionConfig
             {
                 Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
-                LanguageCode = language
+                LanguageCode = language,
+                EnableAutomaticPunctuation = true,
+                UseEnhanced = true,
+                EnableWordTimeOffsets = true
             }, RecognitionAudio.FromFile(wavPartialFile.Path));
 
             longOperation = await longOperation.PollUntilCompletedAsync().ConfigureAwait(false);
@@ -123,7 +126,7 @@ namespace RewriteMe.Business.Services
 
             var alternatives = response.Results
                 .SelectMany(x => x.Alternatives)
-                .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence));
+                .Select(x => new RecognitionAlternative(x.Transcript, x.Confidence, x.Words.ToRecognitionWords()));
 
             string sourceFileName = null;
             if (storageSetting == StorageSetting.Disk)
