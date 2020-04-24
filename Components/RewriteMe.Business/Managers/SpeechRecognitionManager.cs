@@ -13,6 +13,7 @@ using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
+using RewriteMe.Domain.Polling;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using Serilog;
@@ -70,23 +71,31 @@ namespace RewriteMe.Business.Managers
             return subscriptionRemainingTime.TotalSeconds > 15;
         }
 
-        public void RunRecognition(Guid userId, Guid fileItemId)
+        public async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
             try
             {
-                RunRecognitionAsync(userId, fileItemId).RunSynchronously();
+                _cacheService.RemoveItem(fileItemId);
+
+                await RunRecognitionInternalAsync(userId, fileItemId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId).RunSynchronously();
+                await _fileItemService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItemId, RecognitionState.None).ConfigureAwait(false);
+
                 _logger.Error($"Exception occurred during recognition. File item ID = '{fileItemId}'.");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw;
             }
+            finally
+            {
+                _cacheService.RemoveItem(fileItemId);
+            }
         }
 
-        private async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
+        private async Task RunRecognitionInternalAsync(Guid userId, Guid fileItemId)
         {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             if (fileItem.RecognitionState > RecognitionState.Prepared)
@@ -96,7 +105,8 @@ namespace RewriteMe.Business.Managers
                 return;
             }
 
-            _cacheService.RemoveItem(fileItemId);
+            var cacheItem = new CacheItem(userId, fileItemId, fileItem.RecognitionState);
+            await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
 
             await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
 
@@ -161,15 +171,13 @@ namespace RewriteMe.Business.Managers
                 if (!isInPreparedState)
                     throw new FileItemIsNotInPreparedStateException();
 
-                fileItem.RecognitionState = RecognitionState.InProgress;
-                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, fileItem.RecognitionState, _appSettings.ApplicationId).ConfigureAwait(true);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress, _appSettings.ApplicationId).ConfigureAwait(true);
+                await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.InProgress).ConfigureAwait(false);
             }
             finally
             {
                 SemaphoreSlim.Release();
             }
-
-            await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, fileItem.RecognitionState).ConfigureAwait(false);
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
             var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
@@ -199,8 +207,6 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
-                _cacheService.RemoveItem(fileItem.Id);
-
                 DeleteTempFiles(files);
             }
         }

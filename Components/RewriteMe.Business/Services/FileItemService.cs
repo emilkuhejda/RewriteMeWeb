@@ -83,11 +83,6 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetAsAdminAsync(fileItemId).ConfigureAwait(false);
         }
 
-        public async Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId)
-        {
-            return await _fileItemRepository.GetDeletedFileItemsTotalTimeAsync(userId).ConfigureAwait(false);
-        }
-
         public async Task<DateTime> GetLastUpdateAsync(Guid userId)
         {
             return await _fileItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
@@ -126,7 +121,19 @@ namespace RewriteMe.Business.Services
 
         public async Task PermanentDeleteAllAsync(Guid userId, IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
-            await _fileItemRepository.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var ids = fileItemIds.ToList();
+            foreach (var fileItemId in ids)
+            {
+                var directory = _fileAccessService.GetFileItemRootDirectory(userId, fileItemId);
+                if (Directory.Exists(directory))
+                {
+                    Directory.Delete(directory, true);
+                }
+
+                await _storageService.DeleteFileItemFolderDataAsync(userId, fileItemId).ConfigureAwait(false);
+            }
+
+            await _fileItemRepository.PermanentDeleteAllAsync(userId, ids, applicationId).ConfigureAwait(false);
 
             _logger.Information($"File items '{fileItemIds}' was permanently deleted.");
         }

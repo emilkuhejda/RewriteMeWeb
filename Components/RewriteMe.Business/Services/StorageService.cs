@@ -99,6 +99,23 @@ namespace RewriteMe.Business.Services
             }
         }
 
+        public async Task DeleteFileItemFolderDataAsync(Guid userId, Guid fileItemId)
+        {
+            var container = await GetContainerClient(userId).ConfigureAwait(false);
+            var blobItems = container.GetBlobs().AsPages().SelectMany(x => x.Values).ToList();
+
+            foreach (var blobItem in blobItems)
+            {
+                if (blobItem.Name.Contains(fileItemId.ToString(), StringComparison.InvariantCulture))
+                {
+                    var client = container.GetBlobClient(blobItem.Name);
+                    await client.DeleteIfExistsAsync().ConfigureAwait(false);
+                }
+            }
+
+            _logger.Information($"File item folder data '{fileItemId}' was deleted.");
+        }
+
         public async Task DeleteFileItemSourceAsync(FileItem fileItem)
         {
             var path = GetSourceFilePath(fileItem);

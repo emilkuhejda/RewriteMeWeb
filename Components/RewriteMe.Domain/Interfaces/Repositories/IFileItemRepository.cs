@@ -27,8 +27,6 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<FileItem> GetAsAdminAsync(Guid fileItemId);
 
-        Task<TimeSpan> GetDeletedFileItemsTotalTimeAsync(Guid userId);
-
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
@@ -62,9 +60,7 @@ namespace RewriteMe.Domain.Interfaces.Repositories
         Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting);
 
         Task MarkAsCleanedAsync(Guid fileItemId);
-
-        Task<TimeSpan> GetTranscribedTotalSecondsAsync(Guid userId);
-
+        
         Task<IEnumerable<(Guid FileItemId, Guid UserId)>> GetFileItemsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp);
 
         Task<IEnumerable<FileItem>> GetFileItemsForMigrationAsync();

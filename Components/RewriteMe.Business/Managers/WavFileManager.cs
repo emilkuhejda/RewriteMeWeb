@@ -7,7 +7,6 @@ using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Polling;
 using RewriteMe.Domain.Settings;
 using RewriteMe.Domain.Transcription;
 using Serilog;
@@ -66,14 +65,11 @@ namespace RewriteMe.Business.Managers
         {
             _logger.Information($"Start conversion to wav file. File item ID = {fileItem.Id}, File name = {fileItem.FileName}.");
 
-            var convertingRecognitionState = RecognitionState.Converting;
-            await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, convertingRecognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
-
             var directoryPath = string.Empty;
             try
             {
-                var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, convertingRecognitionState);
-                await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Converting).ConfigureAwait(false);
 
                 directoryPath = _fileItemService.CreateUploadDirectoryIfNeeded(fileItem.UserId, fileItem.Id, fileItem.Storage == StorageSetting.Database);
                 var filePath = await _fileItemService.GetOriginalFileItemPathAsync(fileItem, directoryPath).ConfigureAwait(false);
@@ -86,6 +82,7 @@ namespace RewriteMe.Business.Managers
                 await _fileItemService.UpdateSourceFileNameAsync(fileItem.Id, sourceFile.fileName).ConfigureAwait(false);
                 await _fileItemSourceService.UpdateSourceAsync(fileItem.Id, source).ConfigureAwait(false);
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState, _appSettings.ApplicationId).ConfigureAwait(false);
+                await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, recognitionState).ConfigureAwait(false);
 
                 fileItem.RecognitionState = recognitionState;
                 fileItem.SourceFileName = sourceFile.fileName;
@@ -100,8 +97,6 @@ namespace RewriteMe.Business.Managers
             }
             finally
             {
-                _cacheService.RemoveItem(fileItem.Id);
-
                 if (fileItem.Storage == StorageSetting.Database)
                 {
                     _fileItemService.CleanUploadedData(directoryPath);

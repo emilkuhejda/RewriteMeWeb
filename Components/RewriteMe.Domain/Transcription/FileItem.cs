@@ -45,8 +45,6 @@ namespace RewriteMe.Domain.Transcription
 
         public bool IsDeleted { get; set; }
 
-        public bool IsPermanentlyDeleted { get; set; }
-
         public bool WasCleaned { get; set; }
 
         public bool CanMigrate => RecognitionState != RecognitionState.Converting ||

@@ -77,32 +77,6 @@
                     </ul>
                 </div>
             </mat-tab>
-
-            <mat-tab label="Permanently deleted files">
-                <div class="p-3">
-                    <ul class="list-group">
-                        <li *ngFor="let fileItem of permanentlyDeletedFileItems" class="list-group-item">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="mr-2">
-                                        <a [routerLink]="['/users/files', userId, fileItem.id]">
-                                            {{fileItem.name}} / {{fileItem.fileName}}
-                                        </a>
-                                    </label>
-                                    <span class="text-gray-500 text-xs">
-                                        ({{fileItem.dateUpdated|date:'dd.MM.yyy HH:mm:ss'}})
-                                    </span>
-                                </div>
-                                <div class="col-2 text-right">
-                                    <a (click)="restore(fileItem)">
-                                        <i class="fas fa-undo"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
