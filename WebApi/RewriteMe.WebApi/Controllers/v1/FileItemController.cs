@@ -51,8 +51,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetFileItems")]
         public async Task<IActionResult> Get(DateTime updatedAfter, Guid applicationId)
         {
+            _logger.Information($"Retrieve data for minimum date '{updatedAfter}'.");
+
             var userId = HttpContext.User.GetNameIdentifier();
-            var files = await _fileItemService.GetAllAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var files = await _fileItemService.GetAllAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
 
             return Ok(files.Select(x => x.ToDto()));
         }
@@ -64,8 +66,10 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "GetDeletedFileItemIds")]
         public async Task<IActionResult> GetDeletedFileItemIds(DateTime updatedAfter, Guid applicationId)
         {
+            _logger.Information($"Retrieve data for minimum date '{updatedAfter}'.");
+
             var userId = HttpContext.User.GetNameIdentifier();
-            var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter.ToUniversalTime(), applicationId).ConfigureAwait(false);
+            var ids = await _fileItemService.GetAllDeletedIdsAsync(userId, updatedAfter, applicationId).ConfigureAwait(false);
 
             return Ok(ids);
         }
