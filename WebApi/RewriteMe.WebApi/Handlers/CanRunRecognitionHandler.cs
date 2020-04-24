@@ -38,6 +38,13 @@ namespace RewriteMe.WebApi.Handlers
                 throw new OperationErrorException(ErrorCode.EC101);
             }
 
+            if (fileItem.UploadStatus != UploadStatus.Completed)
+            {
+                _logger.Error($"File item source '{request.FileItemId}' is not uploaded. Uploaded state is '{fileItem.UploadStatus}'.");
+
+                throw new OperationErrorException(ErrorCode.EC104);
+            }
+
             if (fileItem.RecognitionState != RecognitionState.None)
             {
                 _logger.Error($"File item '{request.FileItemId}' is in wrong recognition state. Recognition state is '{fileItem.RecognitionState}'.");

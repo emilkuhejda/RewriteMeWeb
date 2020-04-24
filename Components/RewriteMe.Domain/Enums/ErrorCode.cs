@@ -18,7 +18,10 @@ namespace RewriteMe.Domain.Enums
 
         // File in wrong recognition state
         EC103 = 103,
+
+        // File is not completely uploaded
         EC104 = 104,
+
         EC105 = 105,
         EC106 = 106,
         EC107 = 107,
