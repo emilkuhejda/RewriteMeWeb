@@ -86,7 +86,11 @@ export class FilesComponent implements OnInit {
                         this.initialize();
                     },
                     (err: ErrorResponse) => {
-                        this.alertService.error(err.message);
+                        let error = err.message;
+                        if (err.errorCode === ErrorCode.EC104)
+                            error = "File is not completely uploaded. Please try again later.";
+
+                        this.alertService.error(error);
                     }
                 ).add(() => {
                     dialogComponent.close();
@@ -128,7 +132,7 @@ export class FilesComponent implements OnInit {
                             error = "File is already processing";
 
                         if (err.errorCode === ErrorCode.EC104)
-                            error = "File is not completely uploaded. Please try again later."
+                            error = "File is not completely uploaded. Please try again later.";
 
                         if (err.errorCode === ErrorCode.EC200)
                             error = "Language is not supported";
