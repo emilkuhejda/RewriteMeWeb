@@ -171,17 +171,23 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [HttpDelete("delete")]
         [ProducesResponseType(typeof(OkDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorCode), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "DeleteFileItem")]
         public async Task<IActionResult> Delete(Guid fileItemId, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.DeleteAsync(userId, fileItemId, applicationId).ConfigureAwait(false);
+            var deleteFileItemCommand = new DeleteFileItemCommand
+            {
+                UserId = userId,
+                FileItemId = fileItemId,
+                ApplicationId = applicationId
+            };
 
-            _logger.Information($"File item '{fileItemId}' was deleted.");
+            var okDto = await _mediator.Send(deleteFileItemCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpDelete("delete-all")]
