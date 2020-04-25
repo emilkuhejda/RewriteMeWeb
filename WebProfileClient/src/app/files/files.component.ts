@@ -157,6 +157,9 @@ export class FilesComponent implements OnInit, OnDestroy {
                         if (err.errorCode === ErrorCode.EC300)
                             error = "Your subscription does not have enough free minutes";
 
+                        if (err.errorCode === ErrorCode.EC500)
+                            error = "System is under maintenance. Please try again later.";
+
                         this.alertService.error(error);
                     }
                 ).add(() => {
