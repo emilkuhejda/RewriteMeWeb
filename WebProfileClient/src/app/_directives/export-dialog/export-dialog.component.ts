@@ -9,15 +9,20 @@ import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-vie
     styleUrls: ['./export-dialog.component.css']
 })
 export class ExportDialogComponent implements OnInit {
-    fileName: string;
-    transcribeItems: TranscribeItemViewModel[];
-    
-    loading: boolean;
-    
-    exportAsConfig: ExportAsConfig = {
+    private exportAsPdfConfig: ExportAsConfig = {
+        type: 'pdf',
+        elementId: 'export-area'
+    };
+
+    private exportAsDocxConfig: ExportAsConfig = {
         type: 'docx',
         elementId: 'export-area'
     };
+
+    fileName: string;
+    transcribeItems: TranscribeItemViewModel[];
+
+    loading: boolean;
 
     constructor(
         @Inject(GECO_DATA_DIALOG) public data: any,
@@ -26,15 +31,24 @@ export class ExportDialogComponent implements OnInit {
         this.fileName = data.fileName;
         this.transcribeItems = data.transcribeItems;
     }
-    
+
     ngOnInit() { }
 
-    accept() {
+    saveAsPdf() {
         if (this.loading)
             return;
 
         this.loading = true;
-        this.exportAsService.save(this.exportAsConfig, this.fileName).subscribe();
+        this.exportAsService.save(this.exportAsPdfConfig, this.fileName).subscribe();
+        this.loading = false;
+    }
+
+    saveAsDocx() {
+        if (this.loading)
+            return;
+
+        this.loading = true;
+        this.exportAsService.save(this.exportAsDocxConfig, this.fileName).subscribe();
         this.loading = false;
     }
 
