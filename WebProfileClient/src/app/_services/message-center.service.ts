@@ -18,7 +18,11 @@ export class MessageCenterService {
         this.hubConnection.start();
     }
 
-    addListener(method, action) {
+    stopConnection() {
+        this.hubConnection.stop();
+    }
+
+    addListener(method: string, action: any) {
         let identity = this.msalService.getIdentity();
         this.hubConnection.on(`${method}-${identity.id}`, action);
     }

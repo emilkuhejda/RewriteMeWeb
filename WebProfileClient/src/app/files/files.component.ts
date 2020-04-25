@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FileItemService } from '../_services/file-item.service';
 import { ErrorResponse } from '../_models/error-response';
 import { AlertService } from '../_services/alert.service';
@@ -19,7 +19,7 @@ import { MessageCenterService } from '../_services/message-center.service';
     templateUrl: './files.component.html',
     styleUrls: ['./files.component.css']
 })
-export class FilesComponent implements OnInit {
+export class FilesComponent implements OnInit, OnDestroy {
     constructor(
         private messageCenterService: MessageCenterService,
         private fileItemService: FileItemService,
@@ -31,6 +31,7 @@ export class FilesComponent implements OnInit {
     fileItems: FileItem[];
 
     ngOnInit() {
+        this.messageCenterService.startConnection();
         this.messageCenterService.addListener(
             "recognition-progress",
             (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
@@ -39,6 +40,10 @@ export class FilesComponent implements OnInit {
             (fileItemId: string, recognitionState: RecognitionState) => this.onRecognitionStateChangedMessageReceived(fileItemId, recognitionState, this.fileItems));
 
         this.initialize();
+    }
+
+    ngOnDestroy() {
+        this.messageCenterService.stopConnection();
     }
 
     private onRecognitionProgressChangedMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {
