@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
 using RewriteMe.DataAccess.Entities;
+using RewriteMe.DataAccess.Extensions;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Repositories;
@@ -253,6 +254,7 @@ namespace RewriteMe.DataAccess.Repositories
             {
                 var entities = await context.FileItems
                     .Where(x => fileItemIds.Contains(x.Id) && x.UserId == userId)
+                    .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
 
@@ -260,6 +262,9 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 context.RemoveRange(entities);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+
+                await context.FileItems.AddRangeAsync(entities.Select(x => x.CreateDeletedEntity(applicationId))).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
@@ -281,7 +286,6 @@ namespace RewriteMe.DataAccess.Repositories
                     entity.ApplicationId = applicationId;
                     entity.DateUpdatedUtc = DateTime.UtcNow;
                     entity.IsDeleted = false;
-                    entity.IsPermanentlyDeleted = false;
                 }
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
