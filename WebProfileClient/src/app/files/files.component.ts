@@ -6,12 +6,13 @@ import { FileItem } from '../_models/file-item';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
 import { ErrorCode } from '../_enums/error-code';
-import { CachService } from '../_services/cach.service';
 import { CacheItem } from '../_models/cache-item';
 import { RecognitionState } from '../_enums/recognition-state';
 import { TranscribeItemService } from '../_services/transcribe-item.service';
 import { TranscribeItem } from '../_models/transcribe-item';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
+import { CacheService } from '../_services/cache.service';
+import { MessageCenterService } from '../_services/message-center.service';
 
 @Component({
     selector: 'app-files',
@@ -20,20 +21,21 @@ import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-
 })
 export class FilesComponent implements OnInit {
     constructor(
+        private messageCenterService: MessageCenterService,
         private fileItemService: FileItemService,
         private transcribeItemService: TranscribeItemService,
         private alertService: AlertService,
-        private cachService: CachService,
+        private cacheService: CacheService,
         private modal: GecoDialog) { }
 
     fileItems: FileItem[];
 
     ngOnInit() {
-        this.cachService.startConnection();
-        this.cachService.addListener(
+        this.messageCenterService.startConnection();
+        this.messageCenterService.addListener(
             "recognition-progress",
             (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
-        this.cachService.addListener(
+        this.messageCenterService.addListener(
             "recognition-state",
             (fileItemId: string, recognitionState: RecognitionState) => this.onRecognitionStateChangedMessageReceived(fileItemId, recognitionState, this.fileItems));
 
@@ -180,7 +182,7 @@ export class FilesComponent implements OnInit {
         for (let index in this.fileItems) {
             let fileItem = this.fileItems[index];
             if (fileItem.recognitionState == RecognitionState.InProgress) {
-                this.cachService.getCacheItem(fileItem.id).subscribe((cacheItem: CacheItem) => {
+                this.cacheService.getCacheItem(fileItem.id).subscribe((cacheItem: CacheItem) => {
                     fileItem.percentageDone = cacheItem.percentageDone;
                 });
             }
