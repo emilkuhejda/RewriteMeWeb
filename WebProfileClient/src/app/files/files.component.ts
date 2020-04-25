@@ -31,7 +31,6 @@ export class FilesComponent implements OnInit {
     fileItems: FileItem[];
 
     ngOnInit() {
-        this.messageCenterService.startConnection();
         this.messageCenterService.addListener(
             "recognition-progress",
             (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
