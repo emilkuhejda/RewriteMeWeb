@@ -19,6 +19,8 @@ namespace RewriteMe.Domain.Settings
 
         public NotificationSettings NotificationSettings { get; set; }
 
+        public MailConfiguration MailConfiguration { get; set; }
+
         public Authentication Authentication { get; set; }
 
         public string GoogleApiAuthUri { get; set; }

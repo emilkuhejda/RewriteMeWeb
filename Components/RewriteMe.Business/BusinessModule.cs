@@ -47,6 +47,7 @@ namespace RewriteMe.Business
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();
 
+            builder.RegisterType<MailService>().As<IMailService>().InstancePerLifetimeScope();
             builder.RegisterType<MessageCenterService>().As<IMessageCenterService>().InstancePerLifetimeScope();
 
             builder.RegisterType<CacheService>().As<ICacheService>().SingleInstance();
