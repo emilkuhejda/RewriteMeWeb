@@ -11,6 +11,7 @@ export enum ErrorCode {
     EC301 = 301,
     EC302 = 302,
     EC400 = 400,
+    EC500 = 500,
     EC800 = 800,
     Unauthorized = 900
 }
