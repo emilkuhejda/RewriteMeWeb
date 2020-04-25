@@ -20,6 +20,10 @@ import { MessageCenterService } from '../_services/message-center.service';
     styleUrls: ['./files.component.css']
 })
 export class FilesComponent implements OnInit, OnDestroy {
+    private recognitionProgressChangedMethod: string = "recognition-progress";
+    private recognitionStateChangedMethod: string = "recognition-state";
+    private filesListChangedMethod: string = "file-list";
+
     constructor(
         private messageCenterService: MessageCenterService,
         private fileItemService: FileItemService,
@@ -33,11 +37,14 @@ export class FilesComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.messageCenterService.startConnection();
         this.messageCenterService.addListener(
-            "recognition-progress",
+            this.recognitionProgressChangedMethod,
             (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
         this.messageCenterService.addListener(
-            "recognition-state",
+            this.recognitionStateChangedMethod,
             (fileItemId: string, recognitionState: RecognitionState) => this.onRecognitionStateChangedMessageReceived(fileItemId, recognitionState, this.fileItems));
+        this.messageCenterService.addListener(
+            this.filesListChangedMethod,
+            () => this.onFileListChangedMessageReceived());
 
         this.initialize();
     }
@@ -61,6 +68,10 @@ export class FilesComponent implements OnInit, OnDestroy {
             return;
 
         fileItem.recognitionState = Number(RecognitionState[recognitionState]);
+    }
+
+    private onFileListChangedMessageReceived() {
+        this.initialize();
     }
 
     download(fileItem: FileItem) {

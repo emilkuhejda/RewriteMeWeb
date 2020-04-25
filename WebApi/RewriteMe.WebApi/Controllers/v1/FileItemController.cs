@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
@@ -217,11 +216,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var permanentDeleteAllCommand = new PermanentDeleteAllCommand
+            {
+                UserId = userId,
+                FileItemIds = fileItemIds,
+                ApplicationId = applicationId
+            };
 
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were permanently deleted.");
+            var okDto = await _mediator.Send(permanentDeleteAllCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("restore-all")]
@@ -229,11 +233,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var restoreAllCommand = new RestoreAllCommand
+            {
+                UserId = userId,
+                FileItemIds = fileItemIds,
+                ApplicationId = applicationId
+            };
 
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were restored.");
+            var okDto = await _mediator.Send(restoreAllCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("transcribe")]
