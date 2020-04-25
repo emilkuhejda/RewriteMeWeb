@@ -4,17 +4,17 @@ namespace RewriteMe.Business.Utils
 {
     public static class HubMethodsHelper
     {
-        private const string RecognitionProgressMethod = "recognition-progress";
-        private const string RecognitionStateMethod = "recognition-state";
+        private const string RecognitionProgressChangedMethod = "recognition-progress";
+        private const string RecognitionStateChangedMethod = "recognition-state";
 
-        public static string GetRecognitionProgressMethod(Guid userId)
+        public static string GetRecognitionProgressChangedMethod(Guid userId)
         {
-            return $"{RecognitionProgressMethod}-{userId}";
+            return $"{RecognitionProgressChangedMethod}-{userId}";
         }
 
-        public static string GetRecognitionStateMethod(Guid userId)
+        public static string GetRecognitionStateChangedMethod(Guid userId)
         {
-            return $"{RecognitionStateMethod}-{userId}";
+            return $"{RecognitionStateChangedMethod}-{userId}";
         }
     }
 }

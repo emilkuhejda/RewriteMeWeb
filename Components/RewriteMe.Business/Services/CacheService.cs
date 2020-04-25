@@ -88,12 +88,12 @@ namespace RewriteMe.Business.Services
         private async Task SendProgressChangedAsync(Guid fileItemId)
         {
             var cacheItem = GetCacheItem(fileItemId);
-            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionProgressMethod(cacheItem.UserId), cacheItem.ToDto()).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionProgressChangedMethod(cacheItem.UserId), cacheItem.ToDto()).ConfigureAwait(false);
         }
 
         private async Task SendRecognitionStateChangedAsync(CacheItem cacheItem, RecognitionState recognitionState)
         {
-            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionStateMethod(cacheItem.UserId), cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionStateChangedMethod(cacheItem.UserId), cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
         }
     }
 }
