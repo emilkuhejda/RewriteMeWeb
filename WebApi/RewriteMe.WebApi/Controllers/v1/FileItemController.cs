@@ -129,6 +129,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
             var userId = HttpContext.User.GetNameIdentifier();
@@ -153,6 +154,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
             var userId = HttpContext.User.GetNameIdentifier();
