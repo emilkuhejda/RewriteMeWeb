@@ -98,14 +98,16 @@ namespace RewriteMe.Business.Services
             _logger.Information("Create speech recognition client.");
 
             var serializedCredentials = JsonConvert.SerializeObject(_appSettings.SpeechCredentials);
-            var credentials = GoogleCredential.FromJson(serializedCredentials);
-            if (credentials.IsCreateScopedRequired)
-            {
-                credentials = credentials.CreateScoped(_appSettings.GoogleApiAuthUri);
-            }
+            var credentials = GoogleCredential
+                .FromJson(serializedCredentials)
+                .CreateScoped(_appSettings.GoogleApiAuthUri);
 
-            var channel = new Grpc.Core.Channel(SpeechClient.DefaultEndpoint.Host, credentials.ToChannelCredentials());
-            return SpeechClient.Create(channel);
+            var builder = new SpeechClientBuilder
+            {
+                ChannelCredentials = credentials.ToChannelCredentials()
+            };
+
+            return builder.Build();
         }
 
         private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid userId, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
