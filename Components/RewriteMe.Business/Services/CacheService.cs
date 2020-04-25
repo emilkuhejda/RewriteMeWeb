@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using RewriteMe.Business.Extensions;
 using RewriteMe.Business.Polling;
+using RewriteMe.Business.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Polling;
@@ -89,12 +90,12 @@ namespace RewriteMe.Business.Services
         private async Task SendProgressChangedAsync(Guid fileItemId)
         {
             var cacheItem = GetCacheItem(fileItemId);
-            await _cacheHub.Clients.All.SendAsync($"recognition-progress-{cacheItem.UserId}", cacheItem.ToDto()).ConfigureAwait(false);
+            await _cacheHub.Clients.All.SendAsync(SendMethodHelper.GetRecognitionProgressMethod(cacheItem.UserId), cacheItem.ToDto()).ConfigureAwait(false);
         }
 
         private async Task SendRecognitionStateChangedAsync(CacheItem cacheItem, RecognitionState recognitionState)
         {
-            await _cacheHub.Clients.All.SendAsync($"recognition-state-{cacheItem.UserId}", cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
+            await _cacheHub.Clients.All.SendAsync(SendMethodHelper.GetRecognitionStateMethod(cacheItem.UserId), cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
         }
     }
 }
