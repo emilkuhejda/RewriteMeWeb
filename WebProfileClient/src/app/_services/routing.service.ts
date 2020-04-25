@@ -75,8 +75,8 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/cache/";
     }
 
-    getCacheHubUri(): string {
-        return this.getApiUri() + "api/cache-hub/";
+    getMessageHubUri(): string {
+        return this.getApiUri() + "api/message-hub/";
     }
 
     private getApiUri(): string {

@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RewriteMe.Business.Configuration;
+using RewriteMe.Business.Utils;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
@@ -23,17 +24,20 @@ namespace RewriteMe.WebApi.Handlers
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IInternalValueService _internalValueService;
+        private readonly IMessageCenterService _messageCenterService;
         private readonly ILogger _logger;
 
         public UploadFileSourceHandler(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
+            IMessageCenterService messageCenterService,
             ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
+            _messageCenterService = messageCenterService;
             _logger = logger.ForContext<UploadFileSourceHandler>();
         }
 
@@ -96,6 +100,7 @@ namespace RewriteMe.WebApi.Handlers
                 }
 
                 await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
+                await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId)).ConfigureAwait(false);
 
                 _logger.Information($"File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
 

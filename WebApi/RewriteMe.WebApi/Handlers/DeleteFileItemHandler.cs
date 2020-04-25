@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using RewriteMe.Business.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
@@ -13,13 +14,16 @@ namespace RewriteMe.WebApi.Handlers
     public class DeleteFileItemHandler : IRequestHandler<DeleteFileItemCommand, OkDto>
     {
         private readonly IFileItemService _fileItemService;
+        private readonly IMessageCenterService _messageCenterService;
         private readonly ILogger _logger;
 
         public DeleteFileItemHandler(
             IFileItemService fileItemService,
+            IMessageCenterService messageCenterService,
             ILogger logger)
         {
             _fileItemService = fileItemService;
+            _messageCenterService = messageCenterService;
             _logger = logger.ForContext<DeleteFileItemHandler>();
         }
 
@@ -34,6 +38,7 @@ namespace RewriteMe.WebApi.Handlers
             }
 
             await _fileItemService.DeleteAsync(request.UserId, request.FileItemId, request.ApplicationId).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId)).ConfigureAwait(false);
 
             _logger.Information($"File item '{request.FileItemId}' was deleted.");
 
