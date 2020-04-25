@@ -200,13 +200,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var deletedFileItems = fileItems.Select(x => x.ToDeletedFileItem()).ToList();
-            await _fileItemService.DeleteAllAsync(userId, deletedFileItems, applicationId).ConfigureAwait(false);
+            var deleteFileItemsCommand = new DeleteFileItemsCommand
+            {
+                UserId = userId,
+                FileItems = fileItems,
+                ApplicationId = applicationId
+            };
 
-            var fileItemIds = deletedFileItems.Select(x => x.Id).ToList();
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were deleted.");
+            var okDto = await _mediator.Send(deleteFileItemsCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("permanent-delete-all")]

@@ -52,7 +52,7 @@ namespace RewriteMe.WebApi.Handlers
             };
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
-            await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId), fileItem.Id).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId)).ConfigureAwait(false);
 
             _logger.Information($"File item '{fileItem.Id}' was updated. File item: {JsonConvert.SerializeObject(fileItem)}");
 

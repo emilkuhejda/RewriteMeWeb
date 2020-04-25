@@ -100,7 +100,7 @@ namespace RewriteMe.WebApi.Handlers
                 }
 
                 await _fileItemService.UpdateUploadStatusAsync(fileItem.Id, UploadStatus.Completed, request.ApplicationId).ConfigureAwait(false);
-                await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId), fileItem.Id).ConfigureAwait(false);
+                await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId)).ConfigureAwait(false);
 
                 _logger.Information($"File item '{fileItem.Id}' was created. File item: {JsonConvert.SerializeObject(fileItem)}");
 

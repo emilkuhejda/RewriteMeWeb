@@ -14,6 +14,11 @@ namespace RewriteMe.Business.Services
             _messageHub = messageHub;
         }
 
+        public async Task SendAsync(string method)
+        {
+            await _messageHub.Clients.All.SendAsync(method).ConfigureAwait(false);
+        }
+
         public async Task SendAsync(string method, object arg1)
         {
             await _messageHub.Clients.All.SendAsync(method, arg1).ConfigureAwait(false);
