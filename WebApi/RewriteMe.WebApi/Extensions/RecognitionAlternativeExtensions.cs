@@ -13,7 +13,7 @@ namespace RewriteMe.WebApi.Extensions
             {
                 Transcript = x.Transcript,
                 Confidence = x.Confidence,
-                Words = x.Words.Select(x => x.ToDto())
+                Words = x.Words?.Select(w => w.ToDto()) ?? Enumerable.Empty<RecognitionWordInfoDto>()
             });
         }
     }

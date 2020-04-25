@@ -11,7 +11,6 @@ namespace RewriteMe.Domain.Dtos
         [Required]
         public float Confidence { get; set; }
 
-        [Required]
         public IEnumerable<RecognitionWordInfoDto> Words { get; set; }
     }
 }
