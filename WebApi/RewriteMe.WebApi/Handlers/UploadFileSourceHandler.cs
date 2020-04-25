@@ -23,17 +23,20 @@ namespace RewriteMe.WebApi.Handlers
         private readonly IFileItemService _fileItemService;
         private readonly IFileItemSourceService _fileItemSourceService;
         private readonly IInternalValueService _internalValueService;
+        private readonly IMessageCenterService _messageCenterService;
         private readonly ILogger _logger;
 
         public UploadFileSourceHandler(
             IFileItemService fileItemService,
             IFileItemSourceService fileItemSourceService,
             IInternalValueService internalValueService,
+            IMessageCenterService messageCenterService,
             ILogger logger)
         {
             _fileItemService = fileItemService;
             _fileItemSourceService = fileItemSourceService;
             _internalValueService = internalValueService;
+            _messageCenterService = messageCenterService;
             _logger = logger.ForContext<UploadFileSourceHandler>();
         }
 

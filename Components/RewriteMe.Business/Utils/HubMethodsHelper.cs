@@ -2,7 +2,7 @@
 
 namespace RewriteMe.Business.Utils
 {
-    public static class SendMethodHelper
+    public static class HubMethodsHelper
     {
         private const string RecognitionProgressMethod = "recognition-progress";
         private const string RecognitionStateMethod = "recognition-state";

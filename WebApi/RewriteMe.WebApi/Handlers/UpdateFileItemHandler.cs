@@ -18,13 +18,16 @@ namespace RewriteMe.WebApi.Handlers
     public class UpdateFileItemHandler : IRequestHandler<UpdateFileItemCommand, FileItemDto>
     {
         private readonly IFileItemService _fileItemService;
+        private readonly IMessageCenterService _messageCenterService;
         private readonly ILogger _logger;
 
         public UpdateFileItemHandler(
             IFileItemService fileItemService,
+            IMessageCenterService messageCenterService,
             ILogger logger)
         {
             _fileItemService = fileItemService;
+            _messageCenterService = messageCenterService;
             _logger = logger.ForContext<UpdateFileItemHandler>();
         }
 
