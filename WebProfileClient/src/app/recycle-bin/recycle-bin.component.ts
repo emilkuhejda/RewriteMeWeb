@@ -5,6 +5,7 @@ import { AlertService } from '../_services/alert.service';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { ErrorResponse } from '../_models/error-response';
 import { DialogComponent } from '../_directives/dialog/dialog.component';
+import { ErrorCode } from '../_enums/error-code';
 
 @Component({
     selector: 'app-recycle-bin',
@@ -93,7 +94,11 @@ export class RecycleBinComponent implements OnInit {
                     this.initialize();
                 },
                 (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
+                    let error = err.message;
+                    if (err.errorCode === ErrorCode.EC500)
+                        error = "System is under maintenance. Please try again later.";
+
+                    this.alertService.error(error);
                 })
                 .add(() => dialogComponent.close());
         };
@@ -128,7 +133,11 @@ export class RecycleBinComponent implements OnInit {
                     this.initialize();
                 },
                 (err: ErrorResponse) => {
-                    this.alertService.error(err.message);
+                    let error = err.message;
+                    if (err.errorCode === ErrorCode.EC500)
+                        error = "System is under maintenance. Please try again later.";
+
+                    this.alertService.error(error);
                 })
                 .add(() => dialogComponent.close());
         };

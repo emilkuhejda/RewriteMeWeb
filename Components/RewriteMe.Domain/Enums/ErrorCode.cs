@@ -77,7 +77,9 @@ namespace RewriteMe.Domain.Enums
         EC409 = 409,
         EC410 = 410,
 
+        // Migration in progress error
         EC500 = 500,
+
         EC501 = 501,
         EC502 = 502,
         EC503 = 503,
@@ -115,6 +117,17 @@ namespace RewriteMe.Domain.Enums
 
         // Operation cancelled
         EC800 = 800,
+
+        EC801 = 801,
+        EC802 = 802,
+        EC803 = 803,
+        EC804 = 804,
+        EC805 = 805,
+        EC806 = 806,
+        EC807 = 807,
+        EC808 = 808,
+        EC809 = 809,
+        EC810 = 810,
 
         // Unauthorized
         Unauthorized = 900
