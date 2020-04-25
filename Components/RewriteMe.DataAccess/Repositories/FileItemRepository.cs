@@ -262,6 +262,7 @@ namespace RewriteMe.DataAccess.Repositories
                     return;
 
                 context.RemoveRange(entities);
+                await context.SaveChangesAsync().ConfigureAwait(false);
 
                 await context.FileItems.AddRangeAsync(entities.Select(x => x.CreateDeletedEntity(applicationId))).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
