@@ -2,7 +2,7 @@
 
 namespace RewriteMe.Business.Polling
 {
-    public class CacheHub : Hub
+    public class MessageHub : Hub
     {
     }
 }

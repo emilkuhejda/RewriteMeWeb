@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using RewriteMe.Business.Extensions;
-using RewriteMe.Business.Polling;
+using RewriteMe.Business.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Polling;
@@ -12,15 +11,15 @@ namespace RewriteMe.Business.Services
 {
     public class CacheService : ICacheService
     {
-        private readonly IHubContext<CacheHub> _cacheHub;
+        private readonly IMessageCenterService _messageCenterService;
 
         private readonly Dictionary<Guid, CacheItem> _cache = new Dictionary<Guid, CacheItem>();
         private readonly object _lockUpdateRecognitionStateObject = new object();
         private readonly object _lockUpdatePercentageObject = new object();
 
-        public CacheService(IHubContext<CacheHub> cacheHub)
+        public CacheService(IMessageCenterService messageCenterService)
         {
-            _cacheHub = cacheHub;
+            _messageCenterService = messageCenterService;
         }
 
         public CacheItem GetItem(Guid fileItemId)
@@ -89,12 +88,12 @@ namespace RewriteMe.Business.Services
         private async Task SendProgressChangedAsync(Guid fileItemId)
         {
             var cacheItem = GetCacheItem(fileItemId);
-            await _cacheHub.Clients.All.SendAsync($"recognition-progress-{cacheItem.UserId}", cacheItem.ToDto()).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionProgressChangedMethod(cacheItem.UserId), cacheItem.ToDto()).ConfigureAwait(false);
         }
 
         private async Task SendRecognitionStateChangedAsync(CacheItem cacheItem, RecognitionState recognitionState)
         {
-            await _cacheHub.Clients.All.SendAsync($"recognition-state-{cacheItem.UserId}", cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionStateChangedMethod(cacheItem.UserId), cacheItem.FileItemId, recognitionState.ToString()).ConfigureAwait(false);
         }
     }
 }

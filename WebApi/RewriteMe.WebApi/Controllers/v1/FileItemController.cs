@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Managers;
@@ -129,6 +128,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [SwaggerOperation(OperationId = "UploadFileItem")]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
         [RequestSizeLimit(int.MaxValue)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Upload(string name, string language, string fileName, DateTime dateCreated, Guid applicationId, IFormFile file)
         {
             var userId = HttpContext.User.GetNameIdentifier();
@@ -153,6 +153,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
         {
             var userId = HttpContext.User.GetNameIdentifier();
@@ -198,13 +199,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> DeleteAll(IEnumerable<DeletedFileItemModel> fileItems, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            var deletedFileItems = fileItems.Select(x => x.ToDeletedFileItem()).ToList();
-            await _fileItemService.DeleteAllAsync(userId, deletedFileItems, applicationId).ConfigureAwait(false);
+            var deleteFileItemsCommand = new DeleteFileItemsCommand
+            {
+                UserId = userId,
+                FileItems = fileItems,
+                ApplicationId = applicationId
+            };
 
-            var fileItemIds = deletedFileItems.Select(x => x.Id).ToList();
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were deleted.");
+            var okDto = await _mediator.Send(deleteFileItemsCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("permanent-delete-all")]
@@ -212,11 +216,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> PermanentDeleteAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.PermanentDeleteAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var permanentDeleteAllCommand = new PermanentDeleteAllCommand
+            {
+                UserId = userId,
+                FileItemIds = fileItemIds,
+                ApplicationId = applicationId
+            };
 
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were permanently deleted.");
+            var okDto = await _mediator.Send(permanentDeleteAllCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("restore-all")]
@@ -224,11 +233,16 @@ namespace RewriteMe.WebApi.Controllers.V1
         public async Task<IActionResult> RestoreAll(IEnumerable<Guid> fileItemIds, Guid applicationId)
         {
             var userId = HttpContext.User.GetNameIdentifier();
-            await _fileItemService.RestoreAllAsync(userId, fileItemIds, applicationId).ConfigureAwait(false);
+            var restoreAllCommand = new RestoreAllCommand
+            {
+                UserId = userId,
+                FileItemIds = fileItemIds,
+                ApplicationId = applicationId
+            };
 
-            _logger.Information($"File items '{JsonConvert.SerializeObject(fileItemIds)}' were restored.");
+            var okDto = await _mediator.Send(restoreAllCommand).ConfigureAwait(false);
 
-            return Ok(new OkDto());
+            return Ok(okDto);
         }
 
         [HttpPut("transcribe")]
