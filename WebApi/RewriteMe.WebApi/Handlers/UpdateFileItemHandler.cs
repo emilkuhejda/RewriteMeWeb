@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Newtonsoft.Json;
+using RewriteMe.Business.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
@@ -51,6 +52,7 @@ namespace RewriteMe.WebApi.Handlers
             };
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
+            await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId), fileItem.Id).ConfigureAwait(false);
 
             _logger.Information($"File item '{fileItem.Id}' was updated. File item: {JsonConvert.SerializeObject(fileItem)}");
 
