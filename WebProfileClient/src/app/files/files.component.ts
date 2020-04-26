@@ -13,6 +13,7 @@ import { TranscribeItem } from '../_models/transcribe-item';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 import { CacheService } from '../_services/cache.service';
 import { MessageCenterService } from '../_services/message-center.service';
+import { SendToMailDialogComponent } from '../_directives/send-to-mail-dialog/send-to-mail-dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -75,6 +76,8 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
 
     download(fileItem: FileItem) {
+        return;
+
         this.transcribeItemService.getAll(fileItem.id).subscribe(
             (transcribeItems: TranscribeItem[]) => {
                 let modal = this.modal.openDialog(ExportDialogComponent, {
@@ -91,6 +94,20 @@ export class FilesComponent implements OnInit, OnDestroy {
                 this.alertService.error(err.message);
             }
         );
+    }
+
+    sendToMail(fileItem: FileItem) {
+        if (fileItem === undefined)
+            return;
+
+        let modal = this.modal.openDialog(SendToMailDialogComponent, {
+            data: {
+                fileItemId: fileItem.id
+            },
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
     }
 
     delete(fileItem: FileItem) {

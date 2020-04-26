@@ -3,12 +3,11 @@
 	<h1 *ngIf="fileItem" class="h3 mb-0 text-gray-800">{{fileItem.name}}</h1>
 </div>
 
-<div class="mb-4">
+<div *ngIf="fileItem" class="mb-4">
 	<div class="card border-left-primary shadow h-100 py-2">
 		<div class="card-body">
 			<div class="row no-gutters align-items-center">
-				<button *ngIf="fileItem" (click)="sendMail()" class="btn btn-success mr-2">Send mail</button>
-				<button (click)="export()" class="btn btn-success mr-2">Export</button>
+				<button (click)="sendToMail()" class="btn btn-success mr-2">Send to email</button>
 			</div>
 		</div>
 	</div>
