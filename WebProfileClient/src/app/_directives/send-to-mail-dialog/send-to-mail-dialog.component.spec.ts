@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SendMailDialogComponent } from './send-mail-dialog.component';
+import { SendToMailDialogComponent } from './send-to-mail-dialog.component';
 
-describe('SendMailDialogComponent', () => {
-  let component: SendMailDialogComponent;
-  let fixture: ComponentFixture<SendMailDialogComponent>;
+describe('SendToMailDialogComponent', () => {
+  let component: SendToMailDialogComponent;
+  let fixture: ComponentFixture<SendToMailDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SendMailDialogComponent ]
+      declarations: [ SendToMailDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SendMailDialogComponent);
+    fixture = TestBed.createComponent(SendToMailDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
