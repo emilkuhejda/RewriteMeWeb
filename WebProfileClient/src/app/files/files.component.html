@@ -34,7 +34,7 @@
                             <label *ngIf="fileItem.recognitionState >= 1 && fileItem.recognitionState <= 3"
                                 class="text-primary text-right col-md-4">{{fileItem.percentageDone}}%</label>
                         </td>
-                        <td>
+                        <td class="actions">
                             <a *ngIf="fileItem.CanTranscribe" (click)="transcribe(fileItem)">Transcribe</a>
                             <span *ngIf="fileItem.CanTranscribe"> | </span>
                             <a *ngIf="fileItem.CanTranscribe" [class.disabled]="fileItem.IsInProgress"
