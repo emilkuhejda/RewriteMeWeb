@@ -13,7 +13,7 @@ import { TranscribeItem } from '../_models/transcribe-item';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 import { CacheService } from '../_services/cache.service';
 import { MessageCenterService } from '../_services/message-center.service';
-import { SendMailDialogComponent } from '../_directives/send-mail-dialog/send-mail-dialog.component';
+import { SendToMailDialogComponent } from '../_directives/send-to-mail-dialog/send-to-mail-dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -98,7 +98,7 @@ export class FilesComponent implements OnInit, OnDestroy {
         if (fileItem === undefined)
             return;
 
-        let modal = this.modal.openDialog(SendMailDialogComponent, {
+        let modal = this.modal.openDialog(SendToMailDialogComponent, {
             data: {
                 fileItemId: fileItem.id
             },

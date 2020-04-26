@@ -11,7 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
-import { SendMailDialogComponent } from 'src/app/_directives/send-mail-dialog/send-mail-dialog.component';
+import { SendToMailDialogComponent } from 'src/app/_directives/send-to-mail-dialog/send-to-mail-dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -125,7 +125,7 @@ export class DetailFileComponent implements OnInit {
         if (this.fileItem === undefined)
             return;
 
-        let modal = this.modal.openDialog(SendMailDialogComponent, {
+        let modal = this.modal.openDialog(SendToMailDialogComponent, {
             data: {
                 fileItemId: this.fileItem.id
             },

@@ -1,17 +1,17 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { GECO_DATA_DIALOG, GecoDialogRef, GECO_DIALOG_REF } from 'angular-dynamic-dialog';
+import { GECO_DATA_DIALOG, GECO_DIALOG_REF, GecoDialogRef } from 'angular-dynamic-dialog';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MailService } from 'src/app/_services/mail.service';
-import { ErrorResponse } from 'src/app/_models/error-response';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ErrorCode } from 'src/app/_enums/error-code';
 import { AlertService } from 'src/app/_services/alert.service';
+import { ErrorResponse } from 'src/app/_models/error-response';
+import { ErrorCode } from 'src/app/_enums/error-code';
 
 @Component({
-    selector: 'app-send-mail-dialog',
-    templateUrl: './send-mail-dialog.component.html',
-    styleUrls: ['./send-mail-dialog.component.css']
+    selector: 'app-send-to-mail-dialog',
+    templateUrl: './send-to-mail-dialog.component.html',
+    styleUrls: ['./send-to-mail-dialog.component.css']
 })
-export class SendMailDialogComponent implements OnInit {
+export class SendToMailDialogComponent implements OnInit {
     sendMailForm: FormGroup;
     fileItemId: string;
     submitted: boolean;
