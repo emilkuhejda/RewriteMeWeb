@@ -35,7 +35,7 @@ namespace RewriteMe.Business.Services
 
                     using (MailMessage mailMessage = new MailMessage())
                     {
-                        mailMessage.From = new MailAddress(mailConfiguration.From);
+                        mailMessage.From = new MailAddress(mailConfiguration.From, mailConfiguration.DisplayName);
                         mailMessage.To.Add(recipient);
                         mailMessage.Body = body;
                         mailMessage.Subject = subject;
