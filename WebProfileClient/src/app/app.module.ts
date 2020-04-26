@@ -19,6 +19,7 @@ import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.co
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 import { SendMailDialogComponent } from './_directives/send-mail-dialog/send-mail-dialog.component';
+import { RoundConfidencePipe } from './_pipes/round-confidence.pipe';
 
 @NgModule({
     declarations: [
@@ -27,11 +28,12 @@ import { SendMailDialogComponent } from './_directives/send-mail-dialog/send-mai
         SidebarComponent,
         TopbarComponent,
         RecognitionStatePipe,
-        routingComponents,
+        RoundConfidencePipe,
         ExportDialogComponent,
         DialogComponent,
         ProgressBarComponent,
-        SendMailDialogComponent
+        SendMailDialogComponent,
+        routingComponents,
     ],
     imports: [
         BrowserModule,
