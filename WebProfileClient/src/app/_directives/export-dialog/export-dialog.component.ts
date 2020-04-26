@@ -9,11 +9,6 @@ import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-vie
     styleUrls: ['./export-dialog.component.css']
 })
 export class ExportDialogComponent implements OnInit {
-    private exportAsPdfConfig: ExportAsConfig = {
-        type: 'pdf',
-        elementId: 'export-area'
-    };
-
     private exportAsDocxConfig: ExportAsConfig = {
         type: 'docx',
         elementId: 'export-area'
@@ -33,15 +28,6 @@ export class ExportDialogComponent implements OnInit {
     }
 
     ngOnInit() { }
-
-    saveAsPdf() {
-        if (this.loading)
-            return;
-
-        this.loading = true;
-        this.exportAsService.save(this.exportAsPdfConfig, this.fileName).subscribe();
-        this.loading = false;
-    }
 
     saveAsDocx() {
         if (this.loading)

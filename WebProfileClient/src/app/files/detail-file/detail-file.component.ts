@@ -121,7 +121,7 @@ export class DetailFileComponent implements OnInit {
         transcribeItem.updateUserTranscript();
     }
 
-    sendMail() {
+    sendToMail() {
         if (this.fileItem === undefined)
             return;
 

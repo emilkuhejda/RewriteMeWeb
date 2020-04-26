@@ -46,6 +46,9 @@
                             <a *ngIf="fileItem.IsCompleted" [class.disabled]="fileItem.IsInProgress"
                                 class="btn btn-link" (click)="download(fileItem)">Download</a>
                             <span *ngIf="fileItem.IsCompleted"> | </span>
+                            <a *ngIf="fileItem.IsCompleted" [class.disabled]="fileItem.IsInProgress"
+                                class="btn btn-link" (click)="sendToMail(fileItem)">Send to email</a>
+                            <span *ngIf="fileItem.IsCompleted"> | </span>
                             <a [class.disabled]="fileItem.IsInProgress" class="btn btn-link"
                                 (click)="delete(fileItem)">Delete</a>
                         </td>
