@@ -18,6 +18,7 @@ import { DialogComponent } from './_directives/dialog/dialog.component';
 import { ProgressBarComponent } from './_directives/progress-bar/progress-bar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
+import { SendMailDialogComponent } from './_directives/send-mail-dialog/send-mail-dialog.component';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
         routingComponents,
         ExportDialogComponent,
         DialogComponent,
-        ProgressBarComponent
+        ProgressBarComponent,
+        SendMailDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -53,6 +55,6 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
         multi: true
     }],
     bootstrap: [AppComponent],
-    entryComponents: [ExportDialogComponent, DialogComponent]
+    entryComponents: [ExportDialogComponent, DialogComponent, SendMailDialogComponent]
 })
 export class AppModule { }

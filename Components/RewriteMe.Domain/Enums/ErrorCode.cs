@@ -35,6 +35,7 @@ namespace RewriteMe.Domain.Enums
         // File not supported
         EC201 = 201,
 
+        // Email address is invalid
         EC202 = 202,
         EC203 = 203,
         EC204 = 204,
