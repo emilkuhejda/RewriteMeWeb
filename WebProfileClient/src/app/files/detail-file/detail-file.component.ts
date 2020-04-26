@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
+import { SendMailDialogComponent } from 'src/app/_directives/send-mail-dialog/send-mail-dialog.component';
 
 @Component({
     selector: 'app-detail-file',
@@ -18,7 +19,7 @@ import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-
     styleUrls: ['./detail-file.component.css']
 })
 export class DetailFileComponent implements OnInit {
-    fileItemName: string;
+    fileItem: FileItem;
     transcribeItems: TranscribeItemViewModel[] = [];
 
     constructor(
@@ -31,7 +32,7 @@ export class DetailFileComponent implements OnInit {
 
     ngOnInit() {
         this.initializeFileItem().then((fileItem: FileItem) => {
-            this.fileItemName = fileItem.name;
+            this.fileItem = fileItem;
             this.initializeTranscribeItems(fileItem.id);
         });
     }
@@ -120,10 +121,24 @@ export class DetailFileComponent implements OnInit {
         transcribeItem.updateUserTranscript();
     }
 
+    sendMail() {
+        if (this.fileItem === undefined)
+            return;
+
+        let modal = this.modal.openDialog(SendMailDialogComponent, {
+            data: {
+                fileItemId: this.fileItem.id
+            },
+            useStyles: 'none'
+        });
+
+        modal.onClosedModal().subscribe();
+    }
+
     export() {
         let modal = this.modal.openDialog(ExportDialogComponent, {
             data: {
-                fileName: this.fileItemName,
+                fileName: this.fileItem.name,
                 transcribeItems: this.transcribeItems
             },
             useStyles: 'none'

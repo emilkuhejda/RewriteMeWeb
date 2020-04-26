@@ -71,6 +71,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/information-messages/mark-as-opened/";
     }
 
+    getMailUri(): string {
+        return this.getApiUri() + "api/v1/mail/";
+    }
+
     getCacheItemUri(): string {
         return this.getApiUri() + "api/v1/cache/";
     }
