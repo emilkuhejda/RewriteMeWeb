@@ -35,7 +35,7 @@ export class ExportDialogComponent implements OnInit {
 
         this.loading = true;
         this.exportAsService.save(this.exportAsDocxConfig, this.fileName).subscribe();
-        this.loading = false;
+        this.close();
     }
 
     close() {
