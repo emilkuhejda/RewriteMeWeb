@@ -76,6 +76,8 @@ export class FilesComponent implements OnInit, OnDestroy {
     }
 
     download(fileItem: FileItem) {
+        return;
+
         this.transcribeItemService.getAll(fileItem.id).subscribe(
             (transcribeItems: TranscribeItem[]) => {
                 let modal = this.modal.openDialog(ExportDialogComponent, {

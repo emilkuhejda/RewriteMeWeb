@@ -136,6 +136,8 @@ export class DetailFileComponent implements OnInit {
     }
 
     export() {
+        return;
+
         let modal = this.modal.openDialog(ExportDialogComponent, {
             data: {
                 fileName: this.fileItem.name,
