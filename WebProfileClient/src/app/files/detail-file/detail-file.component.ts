@@ -11,7 +11,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
-import { MailService } from 'src/app/_services/mail.service';
 import { SendMailDialogComponent } from 'src/app/_directives/send-mail-dialog/send-mail-dialog.component';
 
 @Component({
@@ -27,7 +26,6 @@ export class DetailFileComponent implements OnInit {
         private route: ActivatedRoute,
         private fileItemService: FileItemService,
         private transcribeItemService: TranscribeItemService,
-        private mailService: MailService,
         private alertService: AlertService,
         private modal: GecoDialog,
         private sanitizer: DomSanitizer) { }
