@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hangfire;
 using MediatR;
-using RewriteMe.Business.Extensions;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
@@ -58,12 +57,10 @@ namespace RewriteMe.WebApi.Handlers
             var body = new StringBuilder();
             foreach (var transcribeItem in transcribeItems)
             {
-                var header = $"{transcribeItem.StartTime}-{transcribeItem.EndTime} ({transcribeItem.ToAverageConfidence()}% accuracy)";
                 var transcript = string.IsNullOrWhiteSpace(transcribeItem.UserTranscript)
                     ? string.Join(string.Empty, transcribeItem.Alternatives.Select(x => x.Transcript))
                     : transcribeItem.UserTranscript;
 
-                body.AppendLine(header);
                 body.AppendLine(transcript);
                 body.AppendLine();
             }
