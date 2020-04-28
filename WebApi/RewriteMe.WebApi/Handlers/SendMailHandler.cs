@@ -17,7 +17,7 @@ namespace RewriteMe.WebApi.Handlers
 {
     public class SendMailHandler : IRequestHandler<SendMailCommand, OkDto>
     {
-        private const string Transcript = "Transcript";
+        private const string Transcription = "Transcription";
 
         private readonly IFileItemService _fileItemService;
         private readonly ITranscribeItemService _transcribeItemService;
@@ -70,7 +70,8 @@ namespace RewriteMe.WebApi.Handlers
 
             _logger.Information($"Email for user '{request.UserId}' was sent to queue.");
 
-            BackgroundJob.Enqueue(() => _mailService.SendAsync(request.Recipient, Transcript, body.ToString()));
+            var subject = $"{Transcription}: {fileItem.Name}";
+            BackgroundJob.Enqueue(() => _mailService.SendAsync(request.Recipient, subject, body.ToString()));
 
             return new OkDto();
         }
