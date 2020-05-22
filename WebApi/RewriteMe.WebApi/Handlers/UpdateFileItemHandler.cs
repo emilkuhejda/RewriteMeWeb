@@ -9,7 +9,6 @@ using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
 using RewriteMe.Domain.Interfaces.Services;
-using RewriteMe.Domain.Transcription;
 using RewriteMe.WebApi.Commands;
 using RewriteMe.WebApi.Extensions;
 using Serilog;
@@ -41,15 +40,18 @@ namespace RewriteMe.WebApi.Handlers
                 throw new OperationErrorException(ErrorCode.EC200);
             }
 
-            var fileItem = new FileItem
+            var fileItem = await _fileItemService.GetAsync(request.UserId, request.FileItemId).ConfigureAwait(false);
+            if (fileItem == null)
             {
-                Id = request.FileItemId,
-                UserId = request.UserId,
-                ApplicationId = request.ApplicationId,
-                Name = request.Name,
-                Language = request.Language,
-                DateUpdatedUtc = DateTime.UtcNow
-            };
+                _logger.Error($"File item '{request.FileItemId}' was not found. [{request.UserId}]");
+
+                throw new OperationErrorException(ErrorCode.EC101);
+            }
+
+            fileItem.ApplicationId = request.ApplicationId;
+            fileItem.Name = request.Name;
+            fileItem.Language = request.Language;
+            fileItem.DateUpdatedUtc = DateTime.UtcNow;
 
             await _fileItemService.UpdateAsync(fileItem).ConfigureAwait(false);
             await _messageCenterService.SendAsync(HubMethodsHelper.GetFilesListChangedMethod(request.UserId)).ConfigureAwait(false);

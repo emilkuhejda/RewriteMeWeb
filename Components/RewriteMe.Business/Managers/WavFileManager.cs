@@ -44,25 +44,6 @@ namespace RewriteMe.Business.Managers
             if (convertedFileItemSourceExists)
                 return;
 
-            try
-            {
-                _logger.Information($"File WAV conversion is started for file ID: {fileItem.Id}. [{userId}]");
-
-                await RunConversionToWavAsync(fileItem).ConfigureAwait(false);
-
-                _logger.Information($"File WAV conversion is completed for file ID: {fileItem.Id}. [{userId}]");
-            }
-            catch
-            {
-                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.None, _appSettings.ApplicationId).ConfigureAwait(false);
-                _logger.Warning($"File WAV conversion is not successful for file ID: {fileItem.Id}. [{userId}]");
-
-                throw;
-            }
-        }
-
-        private async Task RunConversionToWavAsync(FileItem fileItem)
-        {
             _logger.Information($"Start conversion to wav file. File item ID = {fileItem.Id}, File name = {fileItem.FileName}.");
 
             var directoryPath = string.Empty;
