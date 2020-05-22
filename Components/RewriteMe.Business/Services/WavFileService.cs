@@ -115,6 +115,7 @@ namespace RewriteMe.Business.Services
                 {
                     Id = Guid.NewGuid(),
                     Path = outputFileName,
+                    AudioChannels = reader.WaveFormat.Channels,
                     StartTime = start,
                     EndTime = end,
                     TotalTime = writer.TotalTime

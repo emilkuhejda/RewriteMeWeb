@@ -120,7 +120,9 @@ namespace RewriteMe.Business.Services
                 LanguageCode = language,
                 EnableAutomaticPunctuation = true,
                 UseEnhanced = true,
-                EnableWordTimeOffsets = true
+                EnableWordTimeOffsets = true,
+                AudioChannelCount = wavPartialFile.AudioChannels,
+                EnableSeparateRecognitionPerChannel = true
             }, RecognitionAudio.FromFile(wavPartialFile.Path));
 
             longOperation = await longOperation.PollUntilCompletedAsync().ConfigureAwait(false);
