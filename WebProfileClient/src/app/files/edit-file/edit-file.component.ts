@@ -74,6 +74,9 @@ export class EditFileComponent implements OnInit {
             },
             (err: ErrorResponse) => {
                 let error = err.message;
+                if (err.errorCode === ErrorCode.EC101)
+                    error = "File was not found";
+
                 if (err.errorCode === ErrorCode.EC200)
                     error = "Language is not supported";
 

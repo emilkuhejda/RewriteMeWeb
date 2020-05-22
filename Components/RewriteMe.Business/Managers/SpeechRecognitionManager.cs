@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Rest;
 using RewriteMe.Business.Configuration;
 using RewriteMe.Business.InformationMessages;
+using RewriteMe.Business.Utils;
 using RewriteMe.Common.Utils;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Exceptions;
@@ -34,6 +35,7 @@ namespace RewriteMe.Business.Managers
         private readonly IPushNotificationsService _pushNotificationsService;
         private readonly ICacheService _cacheService;
         private readonly IWavFileManager _wavFileManager;
+        private readonly IMessageCenterService _messageCenterService;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
@@ -48,6 +50,7 @@ namespace RewriteMe.Business.Managers
             IPushNotificationsService pushNotificationsService,
             ICacheService cacheService,
             IWavFileManager wavFileManager,
+            IMessageCenterService messageCenterService,
             IOptions<AppSettings> options,
             ILogger logger)
         {
@@ -61,6 +64,7 @@ namespace RewriteMe.Business.Managers
             _pushNotificationsService = pushNotificationsService;
             _cacheService = cacheService;
             _wavFileManager = wavFileManager;
+            _messageCenterService = messageCenterService;
             _appSettings = options.Value;
             _logger = logger.ForContext<SpeechRecognitionManager>();
         }
@@ -73,11 +77,12 @@ namespace RewriteMe.Business.Managers
 
         public async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
+            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             try
             {
                 _cacheService.RemoveItem(fileItemId);
 
-                await RunRecognitionInternalAsync(userId, fileItemId).ConfigureAwait(false);
+                await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -87,6 +92,8 @@ namespace RewriteMe.Business.Managers
                 _logger.Error($"Exception occurred during recognition. File item ID = '{fileItemId}'.");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
+                await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionErrorMethod(userId), fileItem.Name).ConfigureAwait(false);
+
                 throw;
             }
             finally
@@ -95,25 +102,24 @@ namespace RewriteMe.Business.Managers
             }
         }
 
-        private async Task RunRecognitionInternalAsync(Guid userId, Guid fileItemId)
+        private async Task RunRecognitionInternalAsync(FileItem fileItem)
         {
-            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             if (fileItem.RecognitionState > RecognitionState.Prepared)
             {
-                _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{userId}]");
+                _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{fileItem.UserId}]");
 
                 return;
             }
 
-            var cacheItem = new CacheItem(userId, fileItemId, fileItem.RecognitionState);
+            var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
             await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
 
-            await _wavFileManager.RunConversionToWavAsync(fileItem, userId).ConfigureAwait(false);
+            await _wavFileManager.RunConversionToWavAsync(fileItem, fileItem.UserId).ConfigureAwait(false);
 
-            _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{userId}]");
+            _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
             if (fileItem.RecognitionState < RecognitionState.Prepared)
             {
-                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{userId}]";
+                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{fileItem.UserId}]";
                 _logger.Warning(message);
 
                 throw new InvalidOperationException(message);
@@ -122,7 +128,7 @@ namespace RewriteMe.Business.Managers
             var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
             if (!canRunRecognition)
             {
-                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{userId}]";
+                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{fileItem.UserId}]";
                 _logger.Warning(message);
 
                 throw new InvalidOperationException(message);
@@ -133,33 +139,33 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                _logger.Information($"Speech recognition is started for file ID: '{fileItem.Id}'. [{userId}]");
-                await RunRecognitionInternalAsync(userId, fileItem).ConfigureAwait(false);
-                _logger.Information($"Speech recognition is completed for file ID: '{fileItem.Id}'. [{userId}]");
+                _logger.Information($"Speech recognition is started for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
+                await RunRecognitionInternalAsync(fileItem.UserId, fileItem).ConfigureAwait(false);
+                _logger.Information($"Speech recognition is completed for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
 
                 await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
             }
             catch (FileItemNotExistsException)
             {
-                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not found. [{userId}]");
+                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not found. [{fileItem.UserId}]");
 
                 return;
             }
             catch (FileItemIsNotInPreparedStateException)
             {
-                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not in PREPARED state. [{userId}]");
+                _logger.Warning($"Speech recognition is stopped because file with ID: '{fileItem.Id}' is not in PREPARED state. [{fileItem.UserId}]");
 
                 return;
             }
             catch (Exception ex)
             {
-                _logger.Error($"Speech recognition is not successful for file ID: '{fileItem.Id}'. [{userId}]");
+                _logger.Error($"Speech recognition is not successful for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 throw;
             }
 
-            await SendNotificationsAsync(userId, fileItemId).ConfigureAwait(false);
+            await SendNotificationsAsync(fileItem.UserId, fileItem.Id).ConfigureAwait(false);
         }
 
         private async Task RunRecognitionInternalAsync(Guid userId, FileItem fileItem)

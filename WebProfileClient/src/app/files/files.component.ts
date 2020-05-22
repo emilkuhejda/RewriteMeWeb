@@ -36,7 +36,6 @@ export class FilesComponent implements OnInit, OnDestroy {
     fileItems: FileItem[];
 
     ngOnInit() {
-        this.messageCenterService.startConnection();
         this.messageCenterService.addListener(
             this.recognitionProgressChangedMethod,
             (cacheItem: CacheItem) => this.onRecognitionProgressChangedMessageReceived(cacheItem, this.fileItems));
@@ -50,8 +49,10 @@ export class FilesComponent implements OnInit, OnDestroy {
         this.initialize();
     }
 
-    ngOnDestroy() {
-        this.messageCenterService.stopConnection();
+    ngOnDestroy(): void {
+        this.messageCenterService.removeListener(this.recognitionProgressChangedMethod);
+        this.messageCenterService.removeListener(this.recognitionStateChangedMethod);
+        this.messageCenterService.removeListener(this.filesListChangedMethod);
     }
 
     private onRecognitionProgressChangedMessageReceived(cacheItem: CacheItem, fileItems: FileItem[]) {

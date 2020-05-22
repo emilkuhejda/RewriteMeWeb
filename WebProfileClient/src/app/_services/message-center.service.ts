@@ -26,4 +26,9 @@ export class MessageCenterService {
         let identity = this.msalService.getIdentity();
         this.hubConnection.on(`${method}-${identity.id}`, action);
     }
+
+    removeListener(method: string) {
+        let identity = this.msalService.getIdentity();
+        this.hubConnection.off(`${method}-${identity.id}`);
+    }
 }
