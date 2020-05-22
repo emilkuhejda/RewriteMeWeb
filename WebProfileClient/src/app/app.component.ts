@@ -22,7 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     private handleRecognitionErrorMethod(fileName: string, alertService) {
-        alertService.error(`File '${fileName}' was not successfully transcripted. Please try it again or contact us.`);
+        alertService.error(`File '${fileName}' was not successfully transcribed. Please try it again or contact us.`);
     }
 
     ngOnDestroy(): void {
