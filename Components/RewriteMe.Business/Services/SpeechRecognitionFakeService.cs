@@ -112,7 +112,7 @@ namespace RewriteMe.Business.Services
 
         private async Task<TranscribeItem> RecognizeSpeech(SpeechClient speech, Guid userId, Guid fileItemId, string language, WavPartialFile wavPartialFile, StorageSetting storageSetting)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromSeconds(6)).ConfigureAwait(false);
             _logger.Information($"Start recognition for file {wavPartialFile.Path}.");
 
             var client = speech;

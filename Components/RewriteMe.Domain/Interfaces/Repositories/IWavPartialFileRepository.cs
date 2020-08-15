@@ -7,8 +7,10 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 {
     public interface IWavPartialFileRepository
     {
-        Task AddAsync(IEnumerable<WavPartialFile> wavPartialFiles);
+        Task AddAsync(WavPartialFile wavPartialFile);
 
         Task<IEnumerable<WavPartialFile>> GetAsync(Guid fileItemId);
+
+        Task DeleteAsync(Guid partialFileId);
     }
 }

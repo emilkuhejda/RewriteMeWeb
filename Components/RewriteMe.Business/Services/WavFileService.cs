@@ -13,10 +13,17 @@ namespace RewriteMe.Business.Services
     {
         private const int FileLengthInSeconds = 59;
 
+        private readonly IWavPartialFileService _wavPartialFileService;
+        private readonly IFileAccessService _fileAccessService;
         private readonly ILogger _logger;
 
-        public WavFileService(ILogger logger)
+        public WavFileService(
+            IWavPartialFileService wavPartialFileService,
+            IFileAccessService fileAccessService,
+            ILogger logger)
         {
+            _wavPartialFileService = wavPartialFileService;
+            _fileAccessService = fileAccessService;
             _logger = logger.ForContext<WavFileService>();
         }
 
@@ -37,12 +44,12 @@ namespace RewriteMe.Business.Services
             return (outputFilePath, fileName);
         }
 
-        public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime)
+        public async Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime, Guid fileItemId, Guid userId)
         {
-            return await Task.Run(() => SplitWavFileInternal(inputFile, remainingTime)).ConfigureAwait(false);
+            return await SplitWavFileInternalAsync(inputFile, remainingTime, fileItemId, userId).ConfigureAwait(false);
         }
 
-        private IEnumerable<WavPartialFile> SplitWavFileInternal(byte[] inputFile, TimeSpan remainingTime)
+        private async Task<IEnumerable<WavPartialFile>> SplitWavFileInternalAsync(byte[] inputFile, TimeSpan remainingTime, Guid fileItemId, Guid userId)
         {
             var files = new List<WavPartialFile>();
             var totalTime = TimeSpan.Zero;
@@ -54,14 +61,14 @@ namespace RewriteMe.Business.Services
 
                 for (var i = 0; i < countItems; i++)
                 {
-                    var sampleDuration = ProcessSampleAudio(reader, remainingTime, totalTime, files);
+                    var sampleDuration = await ProcessSampleAudioAsync(reader, remainingTime, totalTime, files, fileItemId, userId).ConfigureAwait(false);
                     if (sampleDuration.Ticks <= 0)
                         return files;
 
                     totalTime = totalTime.Add(sampleDuration);
                 }
 
-                ProcessSampleAudio(reader, remainingTime, totalTime, files);
+                await ProcessSampleAudioAsync(reader, remainingTime, totalTime, files, fileItemId, userId).ConfigureAwait(false);
 
                 _logger.Information($"Wav file was split to {files.Count} parts.");
 
@@ -69,7 +76,7 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        private TimeSpan ProcessSampleAudio(WaveFileReader reader, TimeSpan remainingTime, TimeSpan totalTime, IList<WavPartialFile> files)
+        private async Task<TimeSpan> ProcessSampleAudioAsync(WaveFileReader reader, TimeSpan remainingTime, TimeSpan totalTime, IList<WavPartialFile> files, Guid fileItemId, Guid userId)
         {
             var remainingTimeSpan = remainingTime.Subtract(totalTime);
             if (remainingTimeSpan.Ticks <= 0)
@@ -83,21 +90,21 @@ namespace RewriteMe.Business.Services
             var end = totalTime.Add(sampleDuration);
             var endTime = end > audioTotalTime ? audioTotalTime : end;
 
-            TrimWavFile(reader, totalTime, endTime, files);
+            await TrimWavFileAsync(reader, totalTime, endTime, files, fileItemId, userId).ConfigureAwait(false);
 
             return sampleDuration;
         }
 
-        private void TrimWavFile(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavPartialFile> files)
+        private async Task TrimWavFileAsync(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavPartialFile> files, Guid fileItemId, Guid userId)
         {
-            var outputFileName = GetTempFullPath();
-            var fileItem = TrimWavFile(reader, outputFileName, start, end);
+            var outputFileName = GetDirectoryPath(userId, fileItemId);
+            var fileItem = await TrimWavFileAsync(reader, outputFileName, start, end, fileItemId).ConfigureAwait(false);
             files.Add(fileItem);
 
             _logger.Information($"Partial wav file was created. File path = {outputFileName}.");
         }
 
-        private WavPartialFile TrimWavFile(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end)
+        private async Task<WavPartialFile> TrimWavFileAsync(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end, Guid fileItemId)
         {
             using (var writer = new WaveFileWriter(outputFileName, reader.WaveFormat))
             {
@@ -111,15 +118,20 @@ namespace RewriteMe.Business.Services
 
                 TrimWavFile(reader, writer, startPosition, endPosition);
 
-                return new WavPartialFile
+                var wavPartialFile = new WavPartialFile
                 {
                     Id = Guid.NewGuid(),
+                    FileItemId = fileItemId,
                     Path = outputFileName,
                     AudioChannels = reader.WaveFormat.Channels,
                     StartTime = start,
                     EndTime = end,
                     TotalTime = writer.TotalTime
                 };
+
+                await _wavPartialFileService.AddAsync(wavPartialFile).ConfigureAwait(false);
+
+                return wavPartialFile;
             }
         }
 
@@ -143,9 +155,10 @@ namespace RewriteMe.Business.Services
             }
         }
 
-        private string GetTempFullPath()
+        private string GetDirectoryPath(Guid userId, Guid fileItemId)
         {
-            return Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.wav");
+            var partialFilesDirectoryPath = _fileAccessService.GetPartialFilesDirectoryPath(userId, fileItemId);
+            return Path.Combine(partialFilesDirectoryPath, $"{Guid.NewGuid()}.wav");
         }
     }
 }
