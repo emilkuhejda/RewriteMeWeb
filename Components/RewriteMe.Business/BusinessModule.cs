@@ -22,6 +22,7 @@ namespace RewriteMe.Business
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemService>().As<IFileItemService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemSourceService>().As<IFileItemSourceService>().InstancePerLifetimeScope();
+            builder.RegisterType<WavPartialFileService>().As<IWavPartialFileService>().InstancePerLifetimeScope();
             builder.RegisterType<UploadedChunkService>().As<IUploadedChunkService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemService>().As<ITranscribeItemService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemSourceService>().As<ITranscribeItemSourceService>().InstancePerLifetimeScope();
