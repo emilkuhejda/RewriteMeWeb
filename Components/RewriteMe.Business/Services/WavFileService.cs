@@ -98,13 +98,28 @@ namespace RewriteMe.Business.Services
         private async Task TrimWavFileAsync(WaveFileReader reader, TimeSpan start, TimeSpan end, IList<WavPartialFile> files, Guid fileItemId, Guid userId)
         {
             var outputFileName = GetDirectoryPath(userId, fileItemId);
-            var fileItem = await TrimWavFileAsync(reader, outputFileName, start, end, fileItemId).ConfigureAwait(false);
+            var fileItem = TrimWavFile(reader, outputFileName, start, end, fileItemId);
+
+            try
+            {
+                await _wavPartialFileService.AddAsync(fileItem).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                if (File.Exists(fileItem.Path))
+                {
+                    File.Delete(fileItem.Path);
+                }
+
+                throw;
+            }
+
             files.Add(fileItem);
 
             _logger.Information($"Partial wav file was created. File path = {outputFileName}.");
         }
 
-        private async Task<WavPartialFile> TrimWavFileAsync(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end, Guid fileItemId)
+        private WavPartialFile TrimWavFile(WaveFileReader reader, string outputFileName, TimeSpan start, TimeSpan end, Guid fileItemId)
         {
             using (var writer = new WaveFileWriter(outputFileName, reader.WaveFormat))
             {
@@ -128,8 +143,6 @@ namespace RewriteMe.Business.Services
                     EndTime = end,
                     TotalTime = writer.TotalTime
                 };
-
-                await _wavPartialFileService.AddAsync(wavPartialFile).ConfigureAwait(false);
 
                 return wavPartialFile;
             }

@@ -27,7 +27,6 @@ namespace RewriteMe.Business.Managers
 
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
-        private readonly ITranscribeItemService _transcribeItemService;
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ITranscribeItemSourceService _transcribeItemSourceService;
         private readonly IInformationMessageService _informationMessageService;
@@ -42,7 +41,6 @@ namespace RewriteMe.Business.Managers
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
-            ITranscribeItemService transcribeItemService,
             IUserSubscriptionService userSubscriptionService,
             ITranscribeItemSourceService transcribeItemSourceService,
             IInformationMessageService informationMessageService,
@@ -56,7 +54,6 @@ namespace RewriteMe.Business.Managers
         {
             _speechRecognitionService = speechRecognitionService;
             _fileItemService = fileItemService;
-            _transcribeItemService = transcribeItemService;
             _userSubscriptionService = userSubscriptionService;
             _transcribeItemSourceService = transcribeItemSourceService;
             _informationMessageService = informationMessageService;
@@ -200,8 +197,7 @@ namespace RewriteMe.Business.Managers
 
             try
             {
-                var transcribeItems = await _speechRecognitionService.RecognizeAsync(fileItem, files).ConfigureAwait(false);
-                await _transcribeItemService.AddAsync(transcribeItems).ConfigureAwait(false);
+                await _speechRecognitionService.RecognizeAsync(fileItem, files).ConfigureAwait(false);
 
                 var transcriptionTimeTicks = files.Sum(x => x.TotalTime.Ticks);
                 var transcriptionTime = TimeSpan.FromTicks(transcriptionTimeTicks);

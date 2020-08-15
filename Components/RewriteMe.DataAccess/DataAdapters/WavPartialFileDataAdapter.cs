@@ -24,7 +24,7 @@ namespace RewriteMe.DataAccess.DataAdapters
             return new WavPartialFileEntity
             {
                 Id = partialFile.Id,
-                FileItemId = partialFile.Id,
+                FileItemId = partialFile.FileItemId,
                 Path = partialFile.Path,
                 AudioChannels = partialFile.AudioChannels,
                 StartTime = partialFile.StartTime,

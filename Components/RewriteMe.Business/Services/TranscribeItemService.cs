@@ -81,7 +81,7 @@ namespace RewriteMe.Business.Services
         {
             await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
 
-            _logger.Information($"Transcribe item ID = '{transcribeItem.Id}' were created.");
+            _logger.Information($"Transcribe item ID = '{transcribeItem.Id}' was created.");
         }
 
         public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItems)

@@ -36,12 +36,7 @@ namespace RewriteMe.Business
             builder.RegisterType<DeletedAccountService>().As<IDeletedAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<InternalValueService>().As<IInternalValueService>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseService>().As<IDatabaseService>().InstancePerLifetimeScope();
-
-#if DEBUG
-            builder.RegisterType<SpeechRecognitionFakeService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
-#else
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
-#endif
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseService>().As<IBillingPurchaseService>().InstancePerLifetimeScope();
             builder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();

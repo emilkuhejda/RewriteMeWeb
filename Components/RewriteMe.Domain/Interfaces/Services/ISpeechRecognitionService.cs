@@ -8,6 +8,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         bool CanCreateSpeechClientAsync();
 
-        Task<IEnumerable<TranscribeItem>> RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files);
+        Task RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files);
     }
 }
