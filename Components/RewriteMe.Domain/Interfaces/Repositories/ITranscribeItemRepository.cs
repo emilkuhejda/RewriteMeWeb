@@ -16,7 +16,9 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<DateTime> GetLastUpdateAsync(Guid userId);
 
-        Task AddAsync(IEnumerable<TranscribeItem> transcribeItem);
+        Task AddAsync(TranscribeItem transcribeItem);
+
+        Task AddAsync(IEnumerable<TranscribeItem> transcribeItems);
 
         Task UpdateUserTranscriptAsync(Guid transcribeItemId, string transcript, DateTime dateUpdated, Guid applicationId);
 

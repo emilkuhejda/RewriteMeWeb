@@ -77,9 +77,16 @@ namespace RewriteMe.Business.Services
             return await _transcribeItemRepository.GetLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
-        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
+        public async Task AddAsync(TranscribeItem transcribeItem)
         {
             await _transcribeItemRepository.AddAsync(transcribeItem).ConfigureAwait(false);
+
+            _logger.Information($"Transcribe item ID = '{transcribeItem.Id}' were created.");
+        }
+
+        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItems)
+        {
+            await _transcribeItemRepository.AddAsync(transcribeItems).ConfigureAwait(false);
 
             _logger.Information("Transcribe items were created.");
         }
