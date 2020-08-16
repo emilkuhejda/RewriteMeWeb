@@ -93,6 +93,11 @@ namespace RewriteMe.Business.Services
             return await _fileItemRepository.GetDeletedLastUpdateAsync(userId).ConfigureAwait(false);
         }
 
+        public async Task<IEnumerable<FileItem>> GetFileItemsInProgressAsync()
+        {
+            return await _fileItemRepository.GetFileItemsInProgressAsync().ConfigureAwait(false);
+        }
+
         public async Task<bool> IsInPreparedStateAsync(Guid fileItemId)
         {
             return await _fileItemRepository.IsInPreparedStateAsync(fileItemId).ConfigureAwait(false);
@@ -170,7 +175,7 @@ namespace RewriteMe.Business.Services
         {
             await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
 
-            _logger.Information($"Recognition state for file item '{fileItemId}' was updated.");
+            _logger.Information($"Recognition state for file item '{fileItemId}' was updated to '{recognitionState}'.");
         }
 
         public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)
@@ -192,6 +197,11 @@ namespace RewriteMe.Business.Services
             await _fileItemRepository.UpdateUploadStatusAsync(fileItemId, uploadStatus, applicationId).ConfigureAwait(false);
 
             _logger.Information($"Upload status for file item '{fileItemId}' was updated.");
+        }
+
+        public async Task<bool> HasTranscribeItems(Guid fileItemId)
+        {
+            return await _fileItemRepository.HasTranscribeItems(fileItemId).ConfigureAwait(false);
         }
 
         public async Task RemoveSourceFileAsync(FileItem fileItem)

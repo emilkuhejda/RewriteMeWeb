@@ -20,6 +20,7 @@ namespace RewriteMe.DataAccess
             builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemRepository>().As<IFileItemRepository>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemSourceRepository>().As<IFileItemSourceRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<WavPartialFileRepository>().As<IWavPartialFileRepository>().InstancePerLifetimeScope();
             builder.RegisterType<UploadedChunkRepository>().As<IUploadedChunkRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemRepository>().As<ITranscribeItemRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemSourceRepository>().As<ITranscribeItemSourceRepository>().InstancePerLifetimeScope();

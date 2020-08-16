@@ -22,5 +22,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         string GetChunksFileItemStoragePath(Guid fileItemId);
 
         string GetChunksStoragePath();
+
+        string GetPartialFilesDirectoryPath(Guid userId, Guid fileItemId);
     }
 }

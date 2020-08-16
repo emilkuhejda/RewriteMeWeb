@@ -23,6 +23,8 @@ namespace RewriteMe.Business.Services
     public class SpeechRecognitionService : ISpeechRecognitionService
     {
         private readonly ICacheService _cacheService;
+        private readonly ITranscribeItemService _transcribeItemService;
+        private readonly IWavPartialFileService _wavPartialFileService;
         private readonly IInternalValueService _internalValueService;
         private readonly IFileAccessService _fileAccessService;
         private readonly AppSettings _appSettings;
@@ -33,12 +35,16 @@ namespace RewriteMe.Business.Services
 
         public SpeechRecognitionService(
             ICacheService cacheService,
+            ITranscribeItemService transcribeItemService,
+            IWavPartialFileService wavPartialFileService,
             IInternalValueService internalValueService,
             IFileAccessService fileAccessService,
             IOptions<AppSettings> options,
             ILogger logger)
         {
             _cacheService = cacheService;
+            _transcribeItemService = transcribeItemService;
+            _wavPartialFileService = wavPartialFileService;
             _internalValueService = internalValueService;
             _fileAccessService = fileAccessService;
             _appSettings = options.Value;
@@ -61,7 +67,7 @@ namespace RewriteMe.Business.Services
             return false;
         }
 
-        public async Task<IEnumerable<TranscribeItem>> RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files)
+        public async Task RecognizeAsync(FileItem fileItem, IEnumerable<WavPartialFile> files)
         {
             var speechClient = CreateSpeechClient();
             var storageSetting = await _internalValueService.GetValueAsync(InternalValues.StorageSetting).ConfigureAwait(false);
@@ -75,15 +81,11 @@ namespace RewriteMe.Business.Services
             _totalTasks = updateMethods.Count;
             _tasksDone = 0;
 
-            var transcribeItems = new List<TranscribeItem>();
             foreach (var enumerable in updateMethods.Split(10))
             {
                 var tasks = enumerable.WhenTaskDone(async () => await UpdateCache(fileItem.Id).ConfigureAwait(false)).Select(x => x());
-                var items = await Task.WhenAll(tasks).ConfigureAwait(false);
-                transcribeItems.AddRange(items);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
             }
-
-            return transcribeItems;
         }
 
         private async Task UpdateCache(Guid fileItemId)
@@ -114,6 +116,27 @@ namespace RewriteMe.Business.Services
         {
             _logger.Information($"Start recognition for file {wavPartialFile.Path}.");
 
+#if DEBUG
+            var client = speech;
+            var lang = language;
+            var response = new LongRunningRecognizeResponse
+            {
+                Results =
+                {
+                    new SpeechRecognitionResult
+                    {
+                        Alternatives =
+                        {
+                            new SpeechRecognitionAlternative
+                            {
+                                Confidence = 0.99f,
+                                Transcript = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                            }
+                        }
+                    }
+                }
+            };
+#else
             var longOperation = speech.LongRunningRecognize(new RecognitionConfig
             {
                 Encoding = RecognitionConfig.Types.AudioEncoding.Linear16,
@@ -127,6 +150,7 @@ namespace RewriteMe.Business.Services
 
             longOperation = await longOperation.PollUntilCompletedAsync().ConfigureAwait(false);
             var response = longOperation.Result;
+#endif
 
             var alternatives = response.Results
                 .SelectMany(x => x.Alternatives)
@@ -155,6 +179,9 @@ namespace RewriteMe.Business.Services
             };
 
             _logger.Information($"Partial file '{wavPartialFile.Path}' was recognized.");
+
+            await _transcribeItemService.AddAsync(transcribeItem).ConfigureAwait(false);
+            await _wavPartialFileService.DeleteAsync(wavPartialFile).ConfigureAwait(false);
 
             return transcribeItem;
         }

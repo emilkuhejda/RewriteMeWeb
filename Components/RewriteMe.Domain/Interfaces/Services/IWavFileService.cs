@@ -9,6 +9,6 @@ namespace RewriteMe.Domain.Interfaces.Services
     {
         Task<(string outputFilePath, string fileName)> ConvertToWavAsync(string directoryPath, string inputFilePath);
 
-        Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime);
+        Task<IEnumerable<WavPartialFile>> SplitWavFileAsync(byte[] inputFile, TimeSpan remainingTime, Guid fileItemId, Guid userId);
     }
 }

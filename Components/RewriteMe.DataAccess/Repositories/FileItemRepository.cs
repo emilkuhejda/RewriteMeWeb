@@ -172,6 +172,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
+        public async Task<IEnumerable<FileItem>> GetFileItemsInProgressAsync()
+        {
+            using (var context = _contextFactory.Create())
+            {
+                var entities = await context.FileItems
+                    .Where(x => x.RecognitionState >= RecognitionState.Converting && x.RecognitionState <= RecognitionState.InProgress)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                return entities.Select(x => x.ToFileItem());
+            }
+        }
+
         public async Task<bool> IsInPreparedStateAsync(Guid fileItemId)
         {
             using (var context = _contextFactory.Create())
@@ -413,6 +427,17 @@ namespace RewriteMe.DataAccess.Repositories
                 entity.Storage = storageSetting;
 
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task<bool> HasTranscribeItems(Guid fileItemId)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                return await context.TranscribeItems
+                    .Where(x => x.FileItemId == fileItemId)
+                    .AnyAsync()
+                    .ConfigureAwait(false);
             }
         }
 

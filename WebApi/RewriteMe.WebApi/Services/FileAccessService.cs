@@ -12,6 +12,7 @@ namespace RewriteMe.WebApi.Services
         private const string SourceDirectory = "source";
         private const string TranscriptionsDirectory = "transcriptions";
         private const string ChunksDirectory = "chunks";
+        private const string PartialFilesDirectory = "partial-files";
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -83,6 +84,16 @@ namespace RewriteMe.WebApi.Services
         {
             var rootDirectory = GetRootPath();
             var directoryPath = Path.Combine(rootDirectory, ChunksDirectory);
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            return directoryPath;
+        }
+
+        public string GetPartialFilesDirectoryPath(Guid userId, Guid fileItemId)
+        {
+            var rootDirectory = GetRootPath(userId);
+            var directoryPath = Path.Combine(rootDirectory, fileItemId.ToString(), PartialFilesDirectory);
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
