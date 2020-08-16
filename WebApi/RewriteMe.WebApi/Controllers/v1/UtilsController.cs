@@ -69,8 +69,10 @@ namespace RewriteMe.WebApi.Controllers.V1
 
         [AllowAnonymous]
         [HttpPost("generate-token")]
+#if !DEBUG
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> CreateToken([FromForm]CreateTokenModel createTokenModel)
+#endif
+        public async Task<IActionResult> CreateToken([FromForm] CreateTokenModel createTokenModel)
         {
             var administrator = await _authenticationService.AuthenticateAsync(createTokenModel.Username, createTokenModel.Password).ConfigureAwait(false);
             if (administrator == null)

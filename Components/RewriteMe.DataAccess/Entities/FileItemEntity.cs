@@ -51,5 +51,7 @@ namespace RewriteMe.DataAccess.Entities
         public virtual IList<TranscribeItemEntity> TranscribeItems { get; set; }
 
         public virtual IList<TranscribeItemSourceEntity> TranscribeItemSources { get; set; }
+
+        public virtual IList<WavPartialFileEntity> WavPartialFiles { get; set; }
     }
 }

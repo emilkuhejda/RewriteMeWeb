@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace RewriteMe.Domain.Transcription
+namespace RewriteMe.DataAccess.Entities
 {
-    public class WavPartialFile
+    public class WavPartialFileEntity
     {
         public Guid Id { get; set; }
 
@@ -17,5 +17,7 @@ namespace RewriteMe.Domain.Transcription
         public TimeSpan EndTime { get; set; }
 
         public TimeSpan TotalTime { get; set; }
+
+        public virtual FileItemEntity FileItem { get; set; }
     }
 }

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RewriteMe.Business.Polling;
 using RewriteMe.DataAccess;
+using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
 using RewriteMe.WebApi.Extensions;
 using RewriteMe.WebApi.Filters;
@@ -223,7 +224,14 @@ namespace RewriteMe.WebApi
                 Authorization = new[] { new RewriteMeHangfireAuthorizationFilter(appSettings.HangfireSecretKey) }
             });
 
+            ScheduleHangfire();
+
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
+        }
+
+        private void ScheduleHangfire()
+        {
+            BackgroundJob.Enqueue<IRestoreService>(x => x.RunAsync());
         }
     }
 }

@@ -22,6 +22,7 @@ namespace RewriteMe.Business
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemService>().As<IFileItemService>().InstancePerLifetimeScope();
             builder.RegisterType<FileItemSourceService>().As<IFileItemSourceService>().InstancePerLifetimeScope();
+            builder.RegisterType<WavPartialFileService>().As<IWavPartialFileService>().InstancePerLifetimeScope();
             builder.RegisterType<UploadedChunkService>().As<IUploadedChunkService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemService>().As<ITranscribeItemService>().InstancePerLifetimeScope();
             builder.RegisterType<TranscribeItemSourceService>().As<ITranscribeItemSourceService>().InstancePerLifetimeScope();
@@ -35,7 +36,6 @@ namespace RewriteMe.Business
             builder.RegisterType<DeletedAccountService>().As<IDeletedAccountService>().InstancePerLifetimeScope();
             builder.RegisterType<InternalValueService>().As<IInternalValueService>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseService>().As<IDatabaseService>().InstancePerLifetimeScope();
-
             builder.RegisterType<SpeechRecognitionService>().As<ISpeechRecognitionService>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileService>().As<IWavFileService>().InstancePerLifetimeScope();
             builder.RegisterType<BillingPurchaseService>().As<IBillingPurchaseService>().InstancePerLifetimeScope();
@@ -43,6 +43,7 @@ namespace RewriteMe.Business
             builder.RegisterType<PushNotificationsService>().As<IPushNotificationsService>().InstancePerLifetimeScope();
             builder.RegisterType<CleanUpService>().As<ICleanUpService>().InstancePerLifetimeScope();
             builder.RegisterType<StorageService>().As<IStorageService>().InstancePerLifetimeScope();
+            builder.RegisterType<RestoreService>().As<IRestoreService>().InstancePerLifetimeScope();
 
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();

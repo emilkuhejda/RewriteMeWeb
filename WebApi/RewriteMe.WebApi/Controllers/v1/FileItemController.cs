@@ -154,7 +154,7 @@ namespace RewriteMe.WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(OperationId = "UpdateFileItem")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> Update([FromForm]UpdateFileItemModel updateFileItemModel)
+        public async Task<IActionResult> Update([FromForm] UpdateFileItemModel updateFileItemModel)
         {
             var userId = HttpContext.User.GetNameIdentifier();
             var updateFileItemCommand = new UpdateFileItemCommand

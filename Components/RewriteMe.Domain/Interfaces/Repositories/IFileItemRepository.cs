@@ -31,6 +31,8 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
 
+        Task<IEnumerable<FileItem>> GetFileItemsInProgressAsync();
+
         Task<bool> IsInPreparedStateAsync(Guid fileItemId);
 
         Task AddAsync(FileItem fileItem);
@@ -59,8 +61,10 @@ namespace RewriteMe.Domain.Interfaces.Repositories
 
         Task UpdateStorageAsync(Guid fileItemId, StorageSetting storageSetting);
 
+        Task<bool> HasTranscribeItems(Guid fileItemId);
+
         Task MarkAsCleanedAsync(Guid fileItemId);
-        
+
         Task<IEnumerable<(Guid FileItemId, Guid UserId)>> GetFileItemsForCleaningAsync(DateTime deleteBefore, bool forceCleanUp);
 
         Task<IEnumerable<FileItem>> GetFileItemsForMigrationAsync();

@@ -76,11 +76,20 @@ namespace RewriteMe.DataAccess.Repositories
             }
         }
 
-        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItem)
+        public async Task AddAsync(TranscribeItem transcribeItem)
         {
             using (var context = _contextFactory.Create())
             {
-                await context.TranscribeItems.AddRangeAsync(transcribeItem.Select(x => x.ToTranscribeItemEntity())).ConfigureAwait(false);
+                await context.TranscribeItems.AddAsync(transcribeItem.ToTranscribeItemEntity()).ConfigureAwait(false);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+        }
+
+        public async Task AddAsync(IEnumerable<TranscribeItem> transcribeItems)
+        {
+            using (var context = _contextFactory.Create())
+            {
+                await context.TranscribeItems.AddRangeAsync(transcribeItems.Select(x => x.ToTranscribeItemEntity())).ConfigureAwait(false);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
         }

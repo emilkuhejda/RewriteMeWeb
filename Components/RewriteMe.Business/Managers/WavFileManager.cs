@@ -88,7 +88,7 @@ namespace RewriteMe.Business.Managers
         public async Task<IEnumerable<WavPartialFile>> SplitFileItemSourceAsync(FileItem fileItem, TimeSpan remainingTime)
         {
             var audioSource = await _fileItemService.GetAudioSourceAsync(fileItem).ConfigureAwait(false);
-            return await _wavFileService.SplitWavFileAsync(audioSource, remainingTime).ConfigureAwait(false);
+            return await _wavFileService.SplitWavFileAsync(audioSource, remainingTime, fileItem.Id, fileItem.UserId).ConfigureAwait(false);
         }
     }
 }
