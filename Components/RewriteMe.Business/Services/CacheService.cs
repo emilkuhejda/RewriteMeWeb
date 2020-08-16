@@ -22,6 +22,11 @@ namespace RewriteMe.Business.Services
             _messageCenterService = messageCenterService;
         }
 
+        public bool Exists(Guid fileItemId)
+        {
+            return _cache.ContainsKey(fileItemId);
+        }
+
         public CacheItem GetItem(Guid fileItemId)
         {
             try

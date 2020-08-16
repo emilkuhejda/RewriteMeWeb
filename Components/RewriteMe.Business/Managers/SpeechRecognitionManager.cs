@@ -39,6 +39,8 @@ namespace RewriteMe.Business.Managers
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
+        private readonly object _lockObject = new object();
+
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
             IFileItemService fileItemService,
@@ -116,8 +118,15 @@ namespace RewriteMe.Business.Managers
                 return;
             }
 
-            var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
-            await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
+            lock (_lockObject)
+            {
+                if (_cacheService.Exists(fileItem.Id))
+                    return;
+
+                var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
+                _cacheService.AddItemAsync(cacheItem).GetAwaiter().GetResult();
+
+            }
 
             if (!isRestarted || fileItem.RecognitionState == RecognitionState.Converting)
             {
@@ -206,7 +215,7 @@ namespace RewriteMe.Business.Managers
             {
                 var partialFiles = (await _wavPartialFileService.GetAsync(fileItem.Id).ConfigureAwait(false)).ToList();
                 var allExists = partialFiles.All(x => File.Exists(x.Path));
-                files = allExists
+                files = partialFiles.Any() && allExists
                     ? partialFiles
                     : (await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false)).ToList();
             }

@@ -7,6 +7,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 {
     public interface ICacheService
     {
+        bool Exists(Guid fileItemId);
+
         CacheItem GetItem(Guid fileItemId);
 
         Task AddItemAsync(CacheItem cacheItem);
