@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RewriteMe.DataAccess.Migrations
 {
-    public partial class AddPartialFileEntity : Migration
+    public partial class Release02 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

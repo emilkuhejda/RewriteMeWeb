@@ -10,8 +10,8 @@ using RewriteMe.DataAccess;
 namespace RewriteMe.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200815143004_AddPartialFileEntity")]
-    partial class AddPartialFileEntity
+    [Migration("20200816121526_Release02")]
+    partial class Release02
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
