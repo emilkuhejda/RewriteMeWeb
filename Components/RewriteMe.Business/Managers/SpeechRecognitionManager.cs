@@ -200,11 +200,20 @@ namespace RewriteMe.Business.Managers
             }
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
-            var hasTranscribeItems = await _fileItemService.HasTranscribeItems(fileItem.Id).ConfigureAwait(false);
-            var wavFiles = isRestarted && hasTranscribeItems
-                ? await _wavPartialFileService.GetAsync(fileItem.Id).ConfigureAwait(false)
-                : await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
-            var files = wavFiles.ToList();
+
+            IList<WavPartialFile> files;
+            if (isRestarted)
+            {
+                var partialFiles = (await _wavPartialFileService.GetAsync(fileItem.Id).ConfigureAwait(false)).ToList();
+                var allExists = partialFiles.All(x => File.Exists(x.Path));
+                files = allExists
+                    ? partialFiles
+                    : (await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false)).ToList();
+            }
+            else
+            {
+                files = (await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false)).ToList();
+            }
 
             if (fileItem.Storage == StorageSetting.Database ||
                 await _internalValueService.GetValueAsync(InternalValues.IsDatabaseBackupEnabled).ConfigureAwait(false))
@@ -235,21 +244,6 @@ namespace RewriteMe.Business.Managers
 
                 throw;
             }
-            finally
-            {
-                DeleteTempFiles(files);
-            }
-        }
-
-        private void DeleteTempFiles(IEnumerable<WavPartialFile> files)
-        {
-            foreach (var file in files)
-            {
-                if (File.Exists(file.Path))
-                    File.Delete(file.Path);
-            }
-
-            _logger.Information("Partial files after recognition were deleted.");
         }
 
         private async Task SendNotificationsAsync(Guid userId, Guid fileItemId)

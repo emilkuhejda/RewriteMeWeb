@@ -175,7 +175,7 @@ namespace RewriteMe.Business.Services
         {
             await _fileItemRepository.UpdateRecognitionStateAsync(fileItemId, recognitionState, applicationId).ConfigureAwait(false);
 
-            _logger.Information($"Recognition state for file item '{fileItemId}' was updated.");
+            _logger.Information($"Recognition state for file item '{fileItemId}' was updated to '{recognitionState}'.");
         }
 
         public async Task UpdateDateProcessedAsync(Guid fileItemId, Guid applicationId)

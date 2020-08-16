@@ -50,7 +50,9 @@ namespace RewriteMe.Business.Services
         public void DeleteDirectory(Guid userId, Guid fileItemId)
         {
             var directoryPath = _fileAccessService.GetPartialFilesDirectoryPath(userId, fileItemId);
-            Directory.Delete(directoryPath);
+            Directory.Delete(directoryPath, true);
+
+            _logger.Information("Delete directory for partial files.");
         }
     }
 }
