@@ -10,6 +10,7 @@ import * as $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-bs4';
 import { Location } from '@angular/common';
+import { TimeSpanWrapper } from 'src/app/_models/time-span-wrapper';
 
 @Component({
     selector: 'app-subscriptions',
@@ -19,6 +20,7 @@ import { Location } from '@angular/common';
 export class SubscriptionsComponent implements OnInit {
     private tableWidget: any;
     private userId: string;
+    remainingTime: string;
     userSubscriptions: UserSubscription[];
 
     constructor(
@@ -67,6 +69,11 @@ export class SubscriptionsComponent implements OnInit {
     }
 
     private initialize() {
+        this.subscriptionsService.getSubscriptionRemainingTime(this.userId).subscribe(
+            (timeSpanWrapper: TimeSpanWrapper) => {
+                this.remainingTime = timeSpanWrapper.getTime();
+            });
+
         this.subscriptionsService.getAll(this.userId).subscribe(
             (userSubscriptions: UserSubscription[]) => {
                 this.userSubscriptions = userSubscriptions.sort((a, b) => {
