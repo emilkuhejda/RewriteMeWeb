@@ -1,3 +1,5 @@
+import { DatePipe, formatDate } from '@angular/common';
+
 export class TimeSpanWrapper {
     ticks: number = 0;
 
@@ -6,7 +8,7 @@ export class TimeSpanWrapper {
     }
 
     getTime(): string {
-        return this.getDate().toLocaleTimeString();
+        return formatDate(this.getDate(), 'HH:mm:ss', 'en-US');
     }
 
     getDate(): Date {
