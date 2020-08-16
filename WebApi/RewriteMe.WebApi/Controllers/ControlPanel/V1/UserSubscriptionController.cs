@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
 using RewriteMe.Domain.Interfaces.Services;
 using RewriteMe.Domain.Settings;
@@ -25,7 +26,7 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromForm]CreateSubscriptionModel createSubscriptionModel)
+        public async Task<IActionResult> Create([FromForm] CreateSubscriptionModel createSubscriptionModel)
         {
             var userSubscription = new UserSubscription
             {
@@ -48,6 +49,15 @@ namespace RewriteMe.WebApi.Controllers.ControlPanel.V1
             var userSubscriptions = await _userSubscriptionService.GetAllAsync(userId).ConfigureAwait(false);
 
             return Ok(userSubscriptions);
+        }
+
+        [HttpGet("remaining-time/{userId}")]
+        public async Task<IActionResult> GetSubscriptionRemainingTime(Guid userId)
+        {
+            var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
+            var timeSpanWrapperDto = new TimeSpanWrapperDto { Ticks = remainingTime.Ticks };
+
+            return Ok(timeSpanWrapperDto);
         }
     }
 }

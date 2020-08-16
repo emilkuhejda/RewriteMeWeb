@@ -1,4 +1,4 @@
-import { DatePipe, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 
 export class TimeSpanWrapper {
     ticks: number = 0;
