@@ -39,6 +39,10 @@ export class RoutingService {
         return this.getApiUri() + "api/v1/control-panel/subscriptions/";
     }
 
+    getSubscriptionRemainingTimeUri(): string {
+        return this.getApiUri() + "api/v1/control-panel/subscriptions/remaining-time/";
+    }
+
     getCreateSubscriptionUri(): string {
         return this.getApiUri() + "api/v1/control-panel/subscriptions/create/";
     }
