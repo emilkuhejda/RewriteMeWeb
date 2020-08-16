@@ -6,16 +6,16 @@ import { RecognitionState } from '../_enums/recognition-state';
 })
 export class RecognitionStatePipe implements PipeTransform {
     transform(value: RecognitionState): any {
-        if (value == RecognitionState.Converting)
+        if (RecognitionState[value] == RecognitionState.Converting.toString())
             return "Converting";
 
-        if (value == RecognitionState.Prepared)
+        if (RecognitionState[value] == RecognitionState.Prepared.toString())
             return "Prepared";
 
-        if (value == RecognitionState.InProgress)
+        if (RecognitionState[value] == RecognitionState.InProgress.toString())
             return "In progress";
 
-        if (value == RecognitionState.Completed)
+        if (RecognitionState[value] == RecognitionState.Completed.toString())
             return "Completed";
 
         return "None";
