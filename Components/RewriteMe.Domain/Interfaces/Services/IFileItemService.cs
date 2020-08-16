@@ -29,6 +29,8 @@ namespace RewriteMe.Domain.Interfaces.Services
 
         Task<DateTime> GetDeletedLastUpdateAsync(Guid userId);
 
+        Task<IEnumerable<FileItem>> GetFileItemsInProgressAsync();
+
         Task<bool> IsInPreparedStateAsync(Guid fileItemId);
 
         Task AddAsync(FileItem fileItem);
@@ -54,6 +56,8 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task UpdateTranscribedTimeAsync(Guid fileItemId, TimeSpan transcribedTime);
 
         Task UpdateUploadStatusAsync(Guid fileItemId, UploadStatus uploadStatus, Guid applicationId);
+
+        Task<bool> HasTranscribeItems(Guid fileItemId);
 
         Task RemoveSourceFileAsync(FileItem fileItem);
 

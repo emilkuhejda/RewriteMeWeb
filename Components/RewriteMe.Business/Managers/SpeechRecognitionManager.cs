@@ -30,6 +30,7 @@ namespace RewriteMe.Business.Managers
         private readonly IUserSubscriptionService _userSubscriptionService;
         private readonly ITranscribeItemSourceService _transcribeItemSourceService;
         private readonly IInformationMessageService _informationMessageService;
+        private readonly IWavPartialFileService _wavPartialFileService;
         private readonly IInternalValueService _internalValueService;
         private readonly IPushNotificationsService _pushNotificationsService;
         private readonly ICacheService _cacheService;
@@ -44,6 +45,7 @@ namespace RewriteMe.Business.Managers
             IUserSubscriptionService userSubscriptionService,
             ITranscribeItemSourceService transcribeItemSourceService,
             IInformationMessageService informationMessageService,
+            IWavPartialFileService wavPartialFileService,
             IInternalValueService internalValueService,
             IPushNotificationsService pushNotificationsService,
             ICacheService cacheService,
@@ -57,6 +59,7 @@ namespace RewriteMe.Business.Managers
             _userSubscriptionService = userSubscriptionService;
             _transcribeItemSourceService = transcribeItemSourceService;
             _informationMessageService = informationMessageService;
+            _wavPartialFileService = wavPartialFileService;
             _internalValueService = internalValueService;
             _pushNotificationsService = pushNotificationsService;
             _cacheService = cacheService;
@@ -74,12 +77,17 @@ namespace RewriteMe.Business.Managers
 
         public async Task RunRecognitionAsync(Guid userId, Guid fileItemId)
         {
+            await RunRecognitionAsync(userId, fileItemId, false).ConfigureAwait(false);
+        }
+
+        public async Task RunRecognitionAsync(Guid userId, Guid fileItemId, bool isRestarted)
+        {
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             try
             {
                 _cacheService.RemoveItem(fileItemId);
 
-                await RunRecognitionInternalAsync(fileItem).ConfigureAwait(false);
+                await RunRecognitionInternalAsync(fileItem, isRestarted).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -99,9 +107,9 @@ namespace RewriteMe.Business.Managers
             }
         }
 
-        private async Task RunRecognitionInternalAsync(FileItem fileItem)
+        private async Task RunRecognitionInternalAsync(FileItem fileItem, bool isRestarted)
         {
-            if (fileItem.RecognitionState > RecognitionState.Prepared)
+            if (!isRestarted && fileItem.RecognitionState > RecognitionState.Prepared)
             {
                 _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{fileItem.UserId}]");
 
@@ -111,33 +119,42 @@ namespace RewriteMe.Business.Managers
             var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
             await _cacheService.AddItemAsync(cacheItem).ConfigureAwait(false);
 
-            await _wavFileManager.RunConversionToWavAsync(fileItem, fileItem.UserId).ConfigureAwait(false);
-
-            _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
-            if (fileItem.RecognitionState < RecognitionState.Prepared)
+            if (!isRestarted || fileItem.RecognitionState == RecognitionState.Converting)
             {
-                var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{fileItem.UserId}]";
-                _logger.Warning(message);
+                await _wavFileManager.RunConversionToWavAsync(fileItem, fileItem.UserId).ConfigureAwait(false);
 
-                throw new InvalidOperationException(message);
+                _logger.Information($"Attempt to start Speech recognition for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
+                if (fileItem.RecognitionState < RecognitionState.Prepared)
+                {
+                    var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{fileItem.UserId}]";
+                    _logger.Warning(message);
+
+                    throw new InvalidOperationException(message);
+                }
+
+                var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
+                if (!canRunRecognition)
+                {
+                    var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{fileItem.UserId}]";
+                    _logger.Warning(message);
+
+                    throw new InvalidOperationException(message);
+                }
+
+                if (fileItem.RecognitionState != RecognitionState.Prepared)
+                    return;
             }
-
-            var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
-            if (!canRunRecognition)
+            else
             {
-                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{fileItem.UserId}]";
-                _logger.Warning(message);
+                _logger.Information($"Attempt to restart Speech recognition for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
 
-                throw new InvalidOperationException(message);
+                await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Prepared, _appSettings.ApplicationId).ConfigureAwait(true);
             }
-
-            if (fileItem.RecognitionState != RecognitionState.Prepared)
-                return;
 
             try
             {
                 _logger.Information($"Speech recognition is started for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
-                await RunRecognitionInternalAsync(fileItem.UserId, fileItem).ConfigureAwait(false);
+                await RunRecognitionInternalAsync(fileItem.UserId, fileItem, isRestarted).ConfigureAwait(false);
                 _logger.Information($"Speech recognition is completed for file ID: '{fileItem.Id}'. [{fileItem.UserId}]");
 
                 await _fileItemService.RemoveSourceFileAsync(fileItem).ConfigureAwait(false);
@@ -165,7 +182,7 @@ namespace RewriteMe.Business.Managers
             await SendNotificationsAsync(fileItem.UserId, fileItem.Id).ConfigureAwait(false);
         }
 
-        private async Task RunRecognitionInternalAsync(Guid userId, FileItem fileItem)
+        private async Task RunRecognitionInternalAsync(Guid userId, FileItem fileItem, bool isRestarted)
         {
             await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
             try
@@ -183,7 +200,10 @@ namespace RewriteMe.Business.Managers
             }
 
             var remainingTime = await _userSubscriptionService.GetRemainingTimeAsync(fileItem.UserId).ConfigureAwait(false);
-            var wavFiles = await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
+            var hasTranscribeItems = await _fileItemService.HasTranscribeItems(fileItem.Id).ConfigureAwait(false);
+            var wavFiles = isRestarted && hasTranscribeItems
+                ? await _wavPartialFileService.GetAsync(fileItem.Id).ConfigureAwait(false)
+                : await _wavFileManager.SplitFileItemSourceAsync(fileItem, remainingTime).ConfigureAwait(false);
             var files = wavFiles.ToList();
 
             if (fileItem.Storage == StorageSetting.Database ||
@@ -206,6 +226,7 @@ namespace RewriteMe.Business.Managers
                 await _fileItemService.UpdateDateProcessedAsync(fileItem.Id, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _fileItemService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed, _appSettings.ApplicationId).ConfigureAwait(false);
                 await _cacheService.UpdateRecognitionStateAsync(fileItem.Id, RecognitionState.Completed).ConfigureAwait(false);
+                _wavPartialFileService.DeleteDirectory(userId, fileItem.Id);
             }
             catch (Exception ex)
             {

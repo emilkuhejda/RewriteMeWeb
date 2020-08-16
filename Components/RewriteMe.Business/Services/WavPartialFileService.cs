@@ -12,13 +12,16 @@ namespace RewriteMe.Business.Services
     public class WavPartialFileService : IWavPartialFileService
     {
         private readonly IWavPartialFileRepository _wavPartialFileRepository;
+        private readonly IFileAccessService _fileAccessService;
         private readonly ILogger _logger;
 
         public WavPartialFileService(
             IWavPartialFileRepository wavPartialFileRepository,
+            IFileAccessService fileAccessService,
             ILogger logger)
         {
             _wavPartialFileRepository = wavPartialFileRepository;
+            _fileAccessService = fileAccessService;
             _logger = logger.ForContext<WavPartialFileService>();
         }
 
@@ -42,6 +45,12 @@ namespace RewriteMe.Business.Services
             await _wavPartialFileRepository.DeleteAsync(partialFile.Id).ConfigureAwait(false);
 
             _logger.Information($"Wav partial file '{partialFile.Path}' was deleted.");
+        }
+
+        public void DeleteDirectory(Guid userId, Guid fileItemId)
+        {
+            var directoryPath = _fileAccessService.GetPartialFilesDirectoryPath(userId, fileItemId);
+            Directory.Delete(directoryPath);
         }
     }
 }

@@ -43,6 +43,7 @@ namespace RewriteMe.Business
             builder.RegisterType<PushNotificationsService>().As<IPushNotificationsService>().InstancePerLifetimeScope();
             builder.RegisterType<CleanUpService>().As<ICleanUpService>().InstancePerLifetimeScope();
             builder.RegisterType<StorageService>().As<IStorageService>().InstancePerLifetimeScope();
+            builder.RegisterType<RestoreService>().As<IRestoreService>().InstancePerLifetimeScope();
 
             builder.RegisterType<SpeechRecognitionManager>().As<ISpeechRecognitionManager>().InstancePerLifetimeScope();
             builder.RegisterType<WavFileManager>().As<IWavFileManager>().InstancePerLifetimeScope();

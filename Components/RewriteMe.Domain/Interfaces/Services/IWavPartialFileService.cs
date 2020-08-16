@@ -12,5 +12,7 @@ namespace RewriteMe.Domain.Interfaces.Services
         Task<IEnumerable<WavPartialFile>> GetAsync(Guid fileItemId);
 
         Task DeleteAsync(WavPartialFile partialFile);
+
+        void DeleteDirectory(Guid userId, Guid fileItemId);
     }
 }
