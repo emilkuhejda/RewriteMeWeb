@@ -161,22 +161,22 @@ export class FilesComponent implements OnInit, OnDestroy {
                     (err: ErrorResponse) => {
                         let error = err.message;
                         if (err.errorCode === ErrorCode.EC101)
-                            error = "Audio file was not found";
+                            error = "Audio file was not found.";
 
                         if (err.errorCode === ErrorCode.EC103)
-                            error = "File is already processing";
+                            error = "File is already processing.";
 
                         if (err.errorCode === ErrorCode.EC104)
                             error = "File is not completely uploaded. Please try again later.";
 
                         if (err.errorCode === ErrorCode.EC200)
-                            error = "Language is not supported";
+                            error = "Language is not supported.";
 
                         if (err.errorCode === ErrorCode.EC300)
-                            error = "Your subscription does not have enough free minutes";
+                            error = "Your subscription does not have enough free minutes.";
 
                         if (err.errorCode === ErrorCode.EC303)
-                            error = "Only one file can be processed";
+                            error = "It's only possible to transcribe one file at a time. Please wait till your transcription will be finished.";
 
                         if (err.errorCode === ErrorCode.EC500)
                             error = "System is under maintenance. Please try again later.";
