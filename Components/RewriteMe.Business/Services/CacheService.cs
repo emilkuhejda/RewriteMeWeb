@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using RewriteMe.Business.Extensions;
 using RewriteMe.Business.Utils;
@@ -13,7 +13,7 @@ namespace RewriteMe.Business.Services
     {
         private readonly IMessageCenterService _messageCenterService;
 
-        private readonly Dictionary<Guid, CacheItem> _cache = new Dictionary<Guid, CacheItem>();
+        private readonly ConcurrentDictionary<Guid, CacheItem> _cache = new ConcurrentDictionary<Guid, CacheItem>();
         private readonly object _lockUpdateRecognitionStateObject = new object();
         private readonly object _lockUpdatePercentageObject = new object();
 
@@ -36,7 +36,7 @@ namespace RewriteMe.Business.Services
 
         public async Task AddItemAsync(CacheItem cacheItem)
         {
-            _cache.Add(cacheItem.FileItemId, cacheItem);
+            _cache.TryAdd(cacheItem.FileItemId, cacheItem);
 
             await SendRecognitionStateChangedAsync(cacheItem, cacheItem.RecognitionState).ConfigureAwait(false);
         }
@@ -73,7 +73,7 @@ namespace RewriteMe.Business.Services
         {
             if (_cache.ContainsKey(fileItemId))
             {
-                _cache.Remove(fileItemId);
+                _cache.TryRemove(fileItemId, out _);
             }
         }
 

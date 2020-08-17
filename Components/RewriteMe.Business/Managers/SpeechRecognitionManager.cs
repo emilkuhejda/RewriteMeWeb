@@ -24,6 +24,7 @@ namespace RewriteMe.Business.Managers
     public class SpeechRecognitionManager : ISpeechRecognitionManager
     {
         private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+        private static readonly HashSet<Guid> ProcessingJobIds = new HashSet<Guid>();
 
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
@@ -38,8 +39,6 @@ namespace RewriteMe.Business.Managers
         private readonly IMessageCenterService _messageCenterService;
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
-
-        private static readonly object LockObject = new object();
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
@@ -71,8 +70,6 @@ namespace RewriteMe.Business.Managers
             _logger = logger.ForContext<SpeechRecognitionManager>();
         }
 
-        private static bool IsRunning { get; set; }
-
         public async Task<bool> CanRunRecognition(Guid userId)
         {
             var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
@@ -86,15 +83,32 @@ namespace RewriteMe.Business.Managers
 
         public async Task RunRecognitionAsync(Guid userId, Guid fileItemId, bool isRestarted)
         {
-            lock (LockObject)
+            FileItem fileItem;
+
+            await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
+            try
             {
-                if (IsRunning)
+                if (ProcessingJobIds.Contains(fileItemId))
                     return;
 
-                IsRunning = true;
+                fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
+                if (fileItem == null)
+                    return;
+
+                if (!isRestarted && fileItem.RecognitionState > RecognitionState.Prepared)
+                {
+                    _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{fileItem.UserId}]");
+
+                    return;
+                }
+
+                ProcessingJobIds.Add(fileItemId);
+            }
+            finally
+            {
+                SemaphoreSlim.Release();
             }
 
-            var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             try
             {
                 _cacheService.RemoveItem(fileItemId);
@@ -115,19 +129,13 @@ namespace RewriteMe.Business.Managers
             {
                 _cacheService.RemoveItem(fileItemId);
 
-                IsRunning = false;
+                if (ProcessingJobIds.Contains(fileItemId))
+                    ProcessingJobIds.Remove(fileItemId);
             }
         }
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem, bool isRestarted)
         {
-            if (!isRestarted && fileItem.RecognitionState > RecognitionState.Prepared)
-            {
-                _logger.Warning($"File with ID: '{fileItem.Id}' is already recognized. [{fileItem.UserId}]");
-
-                return;
-            }
-
             var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
             _cacheService.AddItemAsync(cacheItem).GetAwaiter().GetResult();
 
