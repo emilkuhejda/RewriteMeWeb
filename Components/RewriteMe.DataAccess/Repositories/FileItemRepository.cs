@@ -78,6 +78,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.FileItems
+                    .Where(x => x.UserId == userId)
                     .Where(x => x.IsDeleted && !x.IsPermanentlyDeleted)
                     .AsNoTracking()
                     .ToListAsync()
