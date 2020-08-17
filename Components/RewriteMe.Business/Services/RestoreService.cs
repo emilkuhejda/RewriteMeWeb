@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using RewriteMe.Domain.Interfaces.Managers;
 using RewriteMe.Domain.Interfaces.Services;
 
@@ -35,9 +34,16 @@ namespace RewriteMe.Business.Services
             if (!fileItemsToRestore.Any())
                 return;
 
-            foreach (var fileItemToRestore in fileItemsToRestore)
+            var groupedFileItems = fileItemsToRestore.GroupBy(x => x.UserId);
+            foreach (var group in groupedFileItems)
             {
-                BackgroundJob.Enqueue(() => _speechRecognitionManager.RunRecognitionAsync(fileItemToRestore.UserId, fileItemToRestore.Id, true));
+                await Task.Run(async () =>
+                {
+                    foreach (var fileItemToRestore in group)
+                    {
+                        await _speechRecognitionManager.RunRecognitionAsync(fileItemToRestore.UserId, fileItemToRestore.Id, true).ConfigureAwait(false);
+                    }
+                }).ConfigureAwait(false);
             }
 
             IsRunning = false;

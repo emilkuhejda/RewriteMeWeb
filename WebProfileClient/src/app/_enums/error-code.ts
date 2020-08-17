@@ -9,6 +9,7 @@ export enum ErrorCode {
     EC201 = 201,
     EC202 = 202,
     EC300 = 300,
+    EC303 = 303,
     EC301 = 301,
     EC302 = 302,
     EC400 = 400,

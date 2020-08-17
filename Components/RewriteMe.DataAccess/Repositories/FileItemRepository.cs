@@ -178,7 +178,7 @@ namespace RewriteMe.DataAccess.Repositories
             using (var context = _contextFactory.Create())
             {
                 var entities = await context.FileItems
-                    .Where(x => x.RecognitionState >= RecognitionState.Converting && x.RecognitionState <= RecognitionState.InProgress)
+                    .Where(x => !x.IsDeleted && x.RecognitionState >= RecognitionState.Converting && x.RecognitionState <= RecognitionState.InProgress)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
