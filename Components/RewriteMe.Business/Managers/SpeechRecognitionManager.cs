@@ -39,7 +39,7 @@ namespace RewriteMe.Business.Managers
         private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
-        private readonly object _lockObject = new object();
+        private static readonly object LockObject = new object();
 
         public SpeechRecognitionManager(
             ISpeechRecognitionService speechRecognitionService,
@@ -71,6 +71,8 @@ namespace RewriteMe.Business.Managers
             _logger = logger.ForContext<SpeechRecognitionManager>();
         }
 
+        private static bool IsRunning { get; set; }
+
         public async Task<bool> CanRunRecognition(Guid userId)
         {
             var subscriptionRemainingTime = await _userSubscriptionService.GetRemainingTimeAsync(userId).ConfigureAwait(false);
@@ -84,6 +86,14 @@ namespace RewriteMe.Business.Managers
 
         public async Task RunRecognitionAsync(Guid userId, Guid fileItemId, bool isRestarted)
         {
+            lock (LockObject)
+            {
+                if (IsRunning)
+                    return;
+
+                IsRunning = true;
+            }
+
             var fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
             try
             {
@@ -100,12 +110,12 @@ namespace RewriteMe.Business.Managers
                 _logger.Error(ExceptionFormatter.FormatException(ex));
 
                 await _messageCenterService.SendAsync(HubMethodsHelper.GetRecognitionErrorMethod(userId), fileItem.Name).ConfigureAwait(false);
-
-                throw;
             }
             finally
             {
                 _cacheService.RemoveItem(fileItemId);
+
+                IsRunning = false;
             }
         }
 
@@ -118,15 +128,8 @@ namespace RewriteMe.Business.Managers
                 return;
             }
 
-            lock (_lockObject)
-            {
-                if (_cacheService.Exists(fileItem.Id))
-                    return;
-
-                var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
-                _cacheService.AddItemAsync(cacheItem).GetAwaiter().GetResult();
-
-            }
+            var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
+            _cacheService.AddItemAsync(cacheItem).GetAwaiter().GetResult();
 
             if (!isRestarted || fileItem.RecognitionState == RecognitionState.Converting)
             {
