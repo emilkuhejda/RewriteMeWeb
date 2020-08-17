@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using RewriteMe.Business.Utils;
 using RewriteMe.Domain;
 using RewriteMe.Domain.Dtos;
 using RewriteMe.Domain.Enums;
@@ -36,6 +37,13 @@ namespace RewriteMe.WebApi.Handlers
                 _logger.Error($"File item '{request.FileItemId}' not exists.");
 
                 throw new OperationErrorException(ErrorCode.EC101);
+            }
+
+            if (ProcessingJobs.AnyJob(request.UserId))
+            {
+                _logger.Error($"User try to run more then one file recognition.");
+
+                throw new OperationErrorException(ErrorCode.EC303);
             }
 
             if (fileItem.UploadStatus != UploadStatus.Completed)

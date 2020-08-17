@@ -55,7 +55,9 @@ namespace RewriteMe.Domain.Enums
         // Invalid subscription type
         EC302 = 302,
 
+        // Only one file recognition at a time
         EC303 = 303,
+
         EC304 = 304,
         EC305 = 305,
         EC306 = 306,

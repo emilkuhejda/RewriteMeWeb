@@ -24,7 +24,6 @@ namespace RewriteMe.Business.Managers
     public class SpeechRecognitionManager : ISpeechRecognitionManager
     {
         private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
-        private static readonly HashSet<Guid> ProcessingJobIds = new HashSet<Guid>();
 
         private readonly ISpeechRecognitionService _speechRecognitionService;
         private readonly IFileItemService _fileItemService;
@@ -88,7 +87,7 @@ namespace RewriteMe.Business.Managers
             await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
             try
             {
-                if (ProcessingJobIds.Contains(fileItemId))
+                if (ProcessingJobs.AnyJob(userId))
                     return;
 
                 fileItem = await _fileItemService.GetAsync(userId, fileItemId).ConfigureAwait(false);
@@ -102,7 +101,7 @@ namespace RewriteMe.Business.Managers
                     return;
                 }
 
-                ProcessingJobIds.Add(fileItemId);
+                ProcessingJobs.Add(userId, fileItemId);
             }
             finally
             {
@@ -129,13 +128,21 @@ namespace RewriteMe.Business.Managers
             {
                 _cacheService.RemoveItem(fileItemId);
 
-                if (ProcessingJobIds.Contains(fileItemId))
-                    ProcessingJobIds.Remove(fileItemId);
+                ProcessingJobs.Remove(fileItemId);
             }
         }
 
         private async Task RunRecognitionInternalAsync(FileItem fileItem, bool isRestarted)
         {
+            var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
+            if (!canRunRecognition)
+            {
+                var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{fileItem.UserId}]";
+                _logger.Warning(message);
+
+                throw new InvalidOperationException(message);
+            }
+
             var cacheItem = new CacheItem(fileItem.UserId, fileItem.Id, fileItem.RecognitionState);
             _cacheService.AddItemAsync(cacheItem).GetAwaiter().GetResult();
 
@@ -147,15 +154,6 @@ namespace RewriteMe.Business.Managers
                 if (fileItem.RecognitionState < RecognitionState.Prepared)
                 {
                     var message = $"File with ID: '{fileItem.Id}' is still converting. Speech recognition is stopped. [{fileItem.UserId}]";
-                    _logger.Warning(message);
-
-                    throw new InvalidOperationException(message);
-                }
-
-                var canRunRecognition = await CanRunRecognition(fileItem.UserId).ConfigureAwait(false);
-                if (!canRunRecognition)
-                {
-                    var message = $"User ID = '{fileItem.UserId}' does not have enough free minutes in the subscription. [{fileItem.UserId}]";
                     _logger.Warning(message);
 
                     throw new InvalidOperationException(message);
