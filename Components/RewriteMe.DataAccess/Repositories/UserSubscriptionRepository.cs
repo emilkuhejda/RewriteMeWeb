@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RewriteMe.DataAccess.DataAdapters;
@@ -13,6 +14,8 @@ namespace RewriteMe.DataAccess.Repositories
 {
     public class UserSubscriptionRepository : IUserSubscriptionRepository
     {
+        private static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
+
         private readonly IDbContextFactory _contextFactory;
 
         public UserSubscriptionRepository(IDbContextFactory contextFactory)
@@ -49,11 +52,20 @@ namespace RewriteMe.DataAccess.Repositories
 
         public async Task AddAndRecalculateUserSubscriptionAsync(UserSubscription userSubscription)
         {
-            using (var context = _contextFactory.Create())
+            await SemaphoreSlim.WaitAsync().ConfigureAwait(true);
+            try
             {
-                await RecalculateUserSubscription(context, userSubscription).ConfigureAwait(false);
-                await context.UserSubscriptions.AddAsync(userSubscription.ToUserSubscriptionEntity()).ConfigureAwait(false);
-                await context.SaveChangesAsync().ConfigureAwait(false);
+                using (var context = _contextFactory.Create())
+                {
+                    await RecalculateUserSubscription(context, userSubscription).ConfigureAwait(false);
+                    await context.UserSubscriptions.AddAsync(userSubscription.ToUserSubscriptionEntity())
+                        .ConfigureAwait(false);
+                    await context.SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                SemaphoreSlim.Release();
             }
         }
 
