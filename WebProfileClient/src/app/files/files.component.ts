@@ -156,7 +156,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.fileItemService.transcribe(fileItem.id, fileItem.language)
                 .subscribe(
                     () => {
-                        this.alertService.success(`The file '${fileItem.name}' started processing`);
+                        this.alertService.success(`The file ${fileItem.name} started processing`);
                     },
                     (err: ErrorResponse) => {
                         let error = err.message;
