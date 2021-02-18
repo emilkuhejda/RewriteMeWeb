@@ -176,7 +176,10 @@ export class FilesComponent implements OnInit, OnDestroy {
                             error = "Your subscription does not have enough free minutes.";
 
                         if (err.errorCode === ErrorCode.EC303)
-                            error = "It's only possible to transcribe one file at a time. Please wait till your transcription will be finished.";
+                            error = "It's only possible to transcribe one file at a time. Please wait until your transcription will be finished.";
+
+                        if (err.errorCode === ErrorCode.EC304)
+                            error = "Too many attempts to start transcription. Please contact us.";
 
                         if (err.errorCode === ErrorCode.EC500)
                             error = "System is under maintenance. Please try again later.";
