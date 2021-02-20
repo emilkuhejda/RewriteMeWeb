@@ -31,7 +31,8 @@ export class CreateFileComponent implements OnInit {
     ngOnInit() {
         this.createFileForm = this.formBuilder.group({
             name: ['', Validators.required],
-            language: ['', Validators.required]
+            language: ['', Validators.required],
+            audioType: ['', Validators.required]
         });
     }
 
@@ -59,6 +60,11 @@ export class CreateFileComponent implements OnInit {
             return;
         }
 
+        if (this.controls.audioType.value === "") {
+            this.alertService.error("Audio type is required")
+            return;
+        }
+
         this.submitted = true;
         if (this.createFileForm.invalid)
             return;
@@ -70,6 +76,7 @@ export class CreateFileComponent implements OnInit {
         params = params.append("name", this.controls.name.value);
         params = params.append("language", this.controls.language.value);
         params = params.append("fileName", file.name);
+        params = params.append("isPhoneCall", String(this.controls.audioType.value == 1));
         params = params.append("dateCreated", new Date().toISOString());
         params = params.append("applicationId", CommonVariables.ApplicationId);
 
