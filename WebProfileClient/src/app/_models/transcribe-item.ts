@@ -9,6 +9,7 @@ export class TranscribeItem {
     public startTimeString: string;
     public endTimeString: string;
     public totalTimeString: string;
+    public isIncomplete: boolean;
     public dateCreated: Date;
     public dateUpdated: Date;
 
