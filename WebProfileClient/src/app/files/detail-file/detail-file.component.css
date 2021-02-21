@@ -2,3 +2,7 @@ textarea.form-control {
     border: none;
     border-bottom: 1px solid #d1d3e2;
 }
+
+.error-message > label {
+    padding-right: 5px;
+}

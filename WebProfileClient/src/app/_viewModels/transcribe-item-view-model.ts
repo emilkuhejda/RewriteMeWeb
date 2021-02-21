@@ -6,6 +6,7 @@ export class TranscribeItemViewModel {
     readonly transcript: string;
     public userTranscript: string;
     public time: string;
+    public isIncomplete: boolean;
     public confidence: number;
     public source: any;
     public isDirty: boolean;
@@ -16,10 +17,14 @@ export class TranscribeItemViewModel {
         this.transcript = transcribeItem.transcript;
         this.userTranscript = transcribeItem.userTranscript;
         this.time = `${transcribeItem.startTimeString} - ${transcribeItem.endTimeString}`;
+        this.isIncomplete = transcribeItem.isIncomplete;
         this.confidence = this.calculateAverageConfidence(transcribeItem.alternatives);
     }
 
     private calculateAverageConfidence(alternatives: RecognitionAlternative[]): number {
+        if (alternatives.length <= 0)
+            return 0;
+
         let map = alternatives.map(x => x.confidence);
         let total = map.reduce((previousValue, currentValue) => previousValue + currentValue);
         return total / map.length;
