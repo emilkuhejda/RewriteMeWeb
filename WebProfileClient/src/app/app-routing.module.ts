@@ -10,11 +10,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { DetailMessageComponent } from './messages/detail-message/detail-message.component';
 import { MessagesComponent } from './messages/messages.component';
 import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
+import { DeactivateCreateFileGuard } from './_guards/deactivate-create-file.guard';
 
 const routes: Routes = [
     { path: '', redirectTo: 'files', pathMatch: 'full' },
     { path: 'files', component: FilesComponent, canActivate: [AuthGuard] },
-    { path: 'files/create', component: CreateFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+    { path: 'files/create', component: CreateFileComponent, pathMatch: 'full', canActivate: [AuthGuard], canDeactivate: [DeactivateCreateFileGuard] },
     { path: 'files/edit/:fileId', component: EditFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'files/:fileId', component: DetailFileComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     { path: 'account', component: AccountComponent, pathMatch: 'full', canActivate: [AuthGuard] },

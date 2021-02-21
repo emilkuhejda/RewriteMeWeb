@@ -90,6 +90,10 @@ export class CreateFileComponent implements OnInit {
                         this.progress = Math.round(100 * event.loaded / event.total);
                     } else if (event instanceof HttpResponse) {
                         this.alertService.success("File was successfully created", true);
+                        
+                        this.submitted = false;
+                        this.loading = false;
+                        
                         this.router.navigate(["/files"]);
                     }
                 },
