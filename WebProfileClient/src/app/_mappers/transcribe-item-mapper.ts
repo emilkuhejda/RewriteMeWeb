@@ -33,6 +33,7 @@ export class TranscribeItemMapper {
         transcribeItem.startTimeString = new TimeSpanWrapper(data.startTimeTicks).getTime();
         transcribeItem.endTimeString = new TimeSpanWrapper(data.endTimeTicks).getTime();
         transcribeItem.totalTimeString = new TimeSpanWrapper(data.totalTimeTicks).getTime();
+        transcribeItem.isIncomplete = data.isIncomplete;
         transcribeItem.dateCreated = new Date(data.dateCreatedUtc);
         transcribeItem.dateUpdated = new Date(data.dateUpdatedUtc);
 
