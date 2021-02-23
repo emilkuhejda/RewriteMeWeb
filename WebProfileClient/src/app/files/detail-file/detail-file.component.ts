@@ -10,9 +10,7 @@ import { CommonVariables } from 'src/app/_config/common-variables';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-view-model';
 import { GecoDialog } from 'angular-dynamic-dialog';
-import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 import { SendToMailDialogComponent } from 'src/app/_directives/send-to-mail-dialog/send-to-mail-dialog.component';
-import { read } from 'fs';
 
 @Component({
     selector: 'app-detail-file',
