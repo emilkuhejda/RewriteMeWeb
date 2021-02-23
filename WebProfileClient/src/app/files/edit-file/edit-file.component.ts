@@ -99,6 +99,9 @@ export class EditFileComponent implements OnInit {
                 if (err.errorCode === ErrorCode.EC200)
                     error = "Language is not supported";
 
+                if (err.errorCode === ErrorCode.EC203)
+                    error = "Audio type is not supported";
+
                 if (err.errorCode === ErrorCode.EC500)
                     error = "System is under maintenance. Please try again later.";
 

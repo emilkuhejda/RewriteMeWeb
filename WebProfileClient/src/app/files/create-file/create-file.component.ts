@@ -118,6 +118,9 @@ export class CreateFileComponent implements OnInit {
                     if (err.errorCode === ErrorCode.EC201)
                         error = "Audio file is not supported";
 
+                    if (err.errorCode === ErrorCode.EC203)
+                        error = "Audio type is not supported";
+
                     if (err.errorCode === ErrorCode.EC500)
                         error = "System is under maintenance. Please try again later.";
 
