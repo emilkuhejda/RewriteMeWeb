@@ -12,6 +12,7 @@ import { TranscribeItemViewModel } from 'src/app/_viewModels/transcribe-item-vie
 import { GecoDialog } from 'angular-dynamic-dialog';
 import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-dialog.component';
 import { SendToMailDialogComponent } from 'src/app/_directives/send-to-mail-dialog/send-to-mail-dialog.component';
+import { read } from 'fs';
 
 @Component({
     selector: 'app-detail-file',
@@ -95,8 +96,39 @@ export class DetailFileComponent implements OnInit {
         this.alertService.clear();
         transcribeItem.isLoading = true;
 
+        let item = JSON.parse(localStorage.getItem(transcribeItem.transcribeItemId));
+        if (item != null) {
+            fetch(item.src)
+                .then(res => res.blob())
+                .then(
+                    blob => {
+                        transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
+                    }
+                )
+                .finally(() => {
+                    transcribeItem.isLoading = false;
+                });
+        } else {
+            this.loadAudioFromServer(transcribeItem);
+        }
+    }
+
+    private loadAudioFromServer(transcribeItem: TranscribeItemViewModel): void {
         this.transcribeItemService.getAudio(transcribeItem.transcribeItemId).subscribe(
             data => {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    var base64FileData = reader.result.toString();
+                    var mediaFile = {
+                        size: data.size,
+                        type: data.type,
+                        src: base64FileData
+                    };
+
+                    localStorage.setItem(transcribeItem.transcribeItemId, JSON.stringify(mediaFile));
+                };
+                reader.readAsDataURL(data);
+
                 transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
             },
             (err: ErrorResponse) => {
@@ -128,20 +160,6 @@ export class DetailFileComponent implements OnInit {
         let modal = this.modal.openDialog(SendToMailDialogComponent, {
             data: {
                 fileItemId: this.fileItem.id
-            },
-            useStyles: 'none'
-        });
-
-        modal.onClosedModal().subscribe();
-    }
-
-    export() {
-        return;
-
-        let modal = this.modal.openDialog(ExportDialogComponent, {
-            data: {
-                fileName: this.fileItem.name,
-                transcribeItems: this.transcribeItems
             },
             useStyles: 'none'
         });
