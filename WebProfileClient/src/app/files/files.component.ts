@@ -172,6 +172,9 @@ export class FilesComponent implements OnInit, OnDestroy {
                         if (err.errorCode === ErrorCode.EC200)
                             error = "Language is not supported.";
 
+                        if (err.errorCode === ErrorCode.EC203)
+                            error = "Audio type is not supported";
+
                         if (err.errorCode === ErrorCode.EC300)
                             error = "Your subscription does not have enough free minutes.";
 

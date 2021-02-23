@@ -26,6 +26,7 @@ export class FileItemMapper {
         fileItem.name = data.name;
         fileItem.fileName = data.fileName;
         fileItem.language = data.language;
+        fileItem.isPhoneCall = data.isPhoneCall;
         fileItem.recognitionState = <RecognitionState>RecognitionState[<string>data.recognitionStateString];
         fileItem.uploadStatus = <UploadStatus>data.uploadStatus;
         fileItem.totalTime = new TimeSpanWrapper(data.totalTimeTicks).getTime();
