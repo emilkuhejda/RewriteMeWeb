@@ -7,6 +7,7 @@ import { HttpEventType, HttpResponse, HttpParams } from '@angular/common/http';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { CommonVariables } from 'src/app/_config/common-variables';
 import { ErrorCode } from 'src/app/_enums/error-code';
+import { LanguageHelper } from 'src/app/_helpers/language-helper';
 
 @Component({
     selector: 'app-create-file',
@@ -19,8 +20,10 @@ export class CreateFileComponent implements OnInit {
     createFileForm: FormGroup;
     progress: number;
     selectedFileName: string = 'Choose file';
+    selectedLanguage: string = '';
     submitted: boolean;
     loading: boolean;
+    isModelSupported: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -32,7 +35,7 @@ export class CreateFileComponent implements OnInit {
         this.createFileForm = this.formBuilder.group({
             name: ['', Validators.required],
             language: ['', Validators.required],
-            audioType: ['', Validators.required]
+            audioType: ['0', Validators.required]
         });
     }
 
@@ -46,6 +49,10 @@ export class CreateFileComponent implements OnInit {
 
         this.selectedFileName = "";
         this.selectedFileName = files[0].name;
+    }
+
+    onSelectChange() {
+        this.isModelSupported = LanguageHelper.isPhoneCallModelSupported(this.controls.language.value);
     }
 
     onSubmit(files) {
@@ -71,12 +78,15 @@ export class CreateFileComponent implements OnInit {
 
         this.loading = true;
 
+        let language = this.controls.language.value;
+        let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
+
         let file = files[0];
         let params = new HttpParams();
         params = params.append("name", this.controls.name.value);
-        params = params.append("language", this.controls.language.value);
+        params = params.append("language", language);
         params = params.append("fileName", file.name);
-        params = params.append("isPhoneCall", String(this.controls.audioType.value == 1));
+        params = params.append("isPhoneCall", String(audioType == 1));
         params = params.append("dateCreated", new Date().toISOString());
         params = params.append("applicationId", CommonVariables.ApplicationId);
 
@@ -90,10 +100,10 @@ export class CreateFileComponent implements OnInit {
                         this.progress = Math.round(100 * event.loaded / event.total);
                     } else if (event instanceof HttpResponse) {
                         this.alertService.success("File was successfully created", true);
-                        
+
                         this.submitted = false;
                         this.loading = false;
-                        
+
                         this.router.navigate(["/files"]);
                     }
                 },

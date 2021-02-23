@@ -6,6 +6,7 @@ export class FileItem {
     public name: string;
     public fileName: string;
     public language: string;
+    public isPhoneCall: boolean;
     public recognitionState: RecognitionState;
     public uploadStatus: UploadStatus;
     public totalTime: string;

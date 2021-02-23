@@ -21,7 +21,7 @@
             <h4>Language</h4>
 
             <div class="form-group mb-3">
-                <select formControlName="language" class="form-control">
+                <select formControlName="language" class="form-control" (change)="onSelectChange($event)">
                     <option value="" selected>-Select-</option>
                     <option value="en-AU">English (Australia)</option>
                     <option value="en-GB">English (United Kingdom)</option>
@@ -51,9 +51,9 @@
                 </div>
             </div>
 
-            <h4>Audio type</h4>
+            <h4 *ngIf="isModelSupported">Audio type</h4>
 
-            <div class="check-container mb-5">
+            <div *ngIf="isModelSupported" class="check-container mb-5">
                 <div class="form-check">
                     <input type="radio" id="isBasicRecording" formControlName="audioType" class="form-check-input"
                         value="0" />

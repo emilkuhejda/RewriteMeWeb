@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/_services/alert.service';
 import { FileItem } from 'src/app/_models/file-item';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { ErrorCode } from 'src/app/_enums/error-code';
+import { LanguageHelper } from 'src/app/_helpers/language-helper';
 
 @Component({
     selector: 'app-edit-file',
@@ -13,10 +14,12 @@ import { ErrorCode } from 'src/app/_enums/error-code';
     styleUrls: ['./edit-file.component.css']
 })
 export class EditFileComponent implements OnInit {
+    selectedLanguage: string = '';
     fileItem: FileItem;
     editFileForm: FormGroup;
     submitted: boolean;
     loading: boolean;
+    isModelSupported: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -28,7 +31,8 @@ export class EditFileComponent implements OnInit {
     ngOnInit() {
         this.editFileForm = this.formBuilder.group({
             name: ['', Validators.required],
-            language: ['', Validators.required]
+            language: ['', Validators.required],
+            audioType: ['', Validators.required]
         });
 
         this.route.paramMap.subscribe(paramMap => {
@@ -38,11 +42,17 @@ export class EditFileComponent implements OnInit {
                     this.fileItem = fileItem;
                     this.editFileForm.controls.name.setValue(fileItem.name);
                     this.editFileForm.controls.language.setValue(fileItem.language);
+                    this.editFileForm.controls.audioType.setValue(fileItem.isPhoneCall ? '1' : '0');
+                    this.isModelSupported = LanguageHelper.isPhoneCallModelSupported(this.controls.language.value);
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
                 });
         });
+    }
+
+    onSelectChange() {
+        this.isModelSupported = LanguageHelper.isPhoneCallModelSupported(this.controls.language.value);
     }
 
     get controls() {
@@ -56,16 +66,25 @@ export class EditFileComponent implements OnInit {
             return;
         }
 
+        if (this.controls.audioType.value === "") {
+            this.alertService.error("Audio type is required")
+            return;
+        }
+
         this.submitted = true;
         if (this.editFileForm.invalid)
             return;
 
         this.loading = true;
 
+        let language = this.controls.language.value;
+        let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
+
         let formData = new FormData();
         formData.append("fileItemId", this.fileItem.id);
         formData.append("name", this.controls.name.value);
-        formData.append("language", this.controls.language.value);
+        formData.append("language", language);
+        formData.append("isPhoneCall", String(audioType == 1));
 
         this.fileItemService.update(formData).subscribe(
             () => {
