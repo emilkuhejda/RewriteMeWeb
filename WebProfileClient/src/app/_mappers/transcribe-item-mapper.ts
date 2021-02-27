@@ -36,6 +36,7 @@ export class TranscribeItemMapper {
         transcribeItem.isIncomplete = data.isIncomplete;
         transcribeItem.dateCreated = new Date(data.dateCreatedUtc);
         transcribeItem.dateUpdated = new Date(data.dateUpdatedUtc);
+        transcribeItem.wasCleaned = data.wasCleaned;
 
         return transcribeItem;
     }
