@@ -92,48 +92,15 @@ export class DetailFileComponent implements OnInit {
             return;
 
         this.alertService.clear();
+        if (transcribeItem.wasCleaned) {
+            this.alertService.error('Audio file is not available, please use mobile application.');
+            return;
+        }
+
         transcribeItem.isLoading = true;
 
-        let item = JSON.parse(localStorage.getItem(transcribeItem.transcribeItemId));
-        if (item != null) {
-            fetch(item.src)
-                .then(res => res.blob())
-                .then(
-                    blob => {
-                        transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
-                    }
-                )
-                .catch(() => this.alertService.error(`Audio file is not available, please use mobile application.`))
-                .finally(() => {
-                    transcribeItem.isLoading = false;
-                });
-        } else {
-            if (transcribeItem.wasCleaned) {
-                this.alertService.error(`Audio file is not available, please use mobile application.`);
-                transcribeItem.isLoading = false;
-            }
-            else {
-                this.loadAudioFromServer(transcribeItem);
-            }
-        }
-    }
-
-    private loadAudioFromServer(transcribeItem: TranscribeItemViewModel): void {
         this.transcribeItemService.getAudio(transcribeItem.transcribeItemId).subscribe(
             data => {
-                let reader = new FileReader();
-                reader.onload = function (e) {
-                    var base64FileData = reader.result.toString();
-                    var mediaFile = {
-                        size: data.size,
-                        type: data.type,
-                        src: base64FileData
-                    };
-
-                    localStorage.setItem(transcribeItem.transcribeItemId, JSON.stringify(mediaFile));
-                };
-                reader.readAsDataURL(data);
-
                 transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(data));
             },
             (err: ErrorResponse) => {
