@@ -103,11 +103,18 @@ export class DetailFileComponent implements OnInit {
                         transcribeItem.source = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
                     }
                 )
+                .catch(() => this.alertService.error(`Audio file is not available, please use mobile application.`))
                 .finally(() => {
                     transcribeItem.isLoading = false;
                 });
         } else {
-            this.loadAudioFromServer(transcribeItem);
+            if (transcribeItem.wasCleaned) {
+                this.alertService.error(`Audio file is not available, please use mobile application.`);
+                transcribeItem.isLoading = false;
+            }
+            else {
+                this.loadAudioFromServer(transcribeItem);
+            }
         }
     }
 

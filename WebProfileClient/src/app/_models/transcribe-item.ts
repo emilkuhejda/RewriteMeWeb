@@ -12,6 +12,7 @@ export class TranscribeItem {
     public isIncomplete: boolean;
     public dateCreated: Date;
     public dateUpdated: Date;
+    public wasCleaned: boolean;
 
     isUserTranscriptChanged(): boolean {
         return this.transcript !== this.userTranscript;

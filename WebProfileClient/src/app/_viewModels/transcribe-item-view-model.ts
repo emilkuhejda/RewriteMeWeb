@@ -7,6 +7,7 @@ export class TranscribeItemViewModel {
     public userTranscript: string;
     public time: string;
     public isIncomplete: boolean;
+    public wasCleaned: boolean;
     public confidence: number;
     public source: any;
     public isDirty: boolean;
@@ -18,6 +19,7 @@ export class TranscribeItemViewModel {
         this.userTranscript = transcribeItem.userTranscript;
         this.time = `${transcribeItem.startTimeString} - ${transcribeItem.endTimeString}`;
         this.isIncomplete = transcribeItem.isIncomplete;
+        this.wasCleaned = transcribeItem.wasCleaned;
         this.confidence = this.calculateAverageConfidence(transcribeItem.alternatives);
     }
 
