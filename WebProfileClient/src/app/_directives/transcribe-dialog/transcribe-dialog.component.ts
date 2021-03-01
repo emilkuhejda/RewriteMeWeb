@@ -46,6 +46,14 @@ export class TranscribeDialogComponent implements OnInit {
         this.dialogRef.closeModal();
     }
 
+    public getStartTimeSeconds(): number {
+        return this.convertToSeconds(this.startTime);
+    }
+
+    public getEndTimeSeconds(): number {
+        return this.convertToSeconds(this.endTime);
+    }
+
     private parseTime(time: string): NgbTimeStruct {
         var timeArr = time.split(':');
         if (timeArr.length < 2)
