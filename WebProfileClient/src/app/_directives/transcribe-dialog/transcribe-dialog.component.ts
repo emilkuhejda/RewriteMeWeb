@@ -29,8 +29,6 @@ export class TranscribeDialogComponent implements OnInit {
     public ngOnInit() { }
 
     public onTimeChange() {
-        console.log(this.startTime);
-        console.log(this.endTime);
         this.validateTimes();
     }
 
