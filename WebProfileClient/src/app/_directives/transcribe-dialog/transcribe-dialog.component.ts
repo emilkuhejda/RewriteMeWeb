@@ -8,30 +8,14 @@ import { GecoDialogRef, GECO_DATA_DIALOG, GECO_DIALOG_REF } from 'angular-dynami
     styleUrls: ['./transcribe-dialog.component.css']
 })
 export class TranscribeDialogComponent implements OnInit {
-    private _startTime: NgbTimeStruct;
-    private _endTime: NgbTimeStruct;
     private onAccept: Function;
 
-    title: string;
-    message: string;
-    loading: boolean;
-    model = 0;
-
-    public get startTime(): NgbTimeStruct {
-        return this._startTime;
-    }
-
-    public set startTime(startTime: NgbTimeStruct) {
-        this._startTime = startTime;
-    }
-
-    public get endTime(): NgbTimeStruct {
-        return this._startTime;
-    }
-
-    public set endTime(startTime: NgbTimeStruct) {
-        this._startTime = startTime;
-    }
+    public startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    public endTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    public title: string;
+    public message: string;
+    public loading: boolean;
+    public model = 0;
 
     public constructor(
         @Inject(GECO_DATA_DIALOG) public data: any,
@@ -43,6 +27,12 @@ export class TranscribeDialogComponent implements OnInit {
     }
 
     public ngOnInit() { }
+
+    public onTimeChange() {
+        console.log(this.startTime);
+        console.log(this.endTime);
+        this.validateTimes();
+    }
 
     public accept() {
         if (this.loading)
@@ -68,5 +58,22 @@ export class TranscribeDialogComponent implements OnInit {
             minute: Number(timeArr[1]),
             second: Number(timeArr[2])
         }
+    }
+
+    private validateTimes(): void {
+        var startTimeSeconds = this.convertToSeconds(this.startTime);
+        var endTimeSeconds = this.convertToSeconds(this.endTime);
+
+        if (startTimeSeconds > endTimeSeconds) {
+            this.startTime = {
+                hour: this.endTime.hour,
+                minute: this.endTime.minute,
+                second: this.endTime.second
+            };
+        }
+    }
+
+    private convertToSeconds(timeStruct: NgbTimeStruct): number {
+        return (timeStruct.hour * 3600) + (timeStruct.minute * 60) + timeStruct.second;
     }
 }

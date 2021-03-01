@@ -18,12 +18,12 @@
     <div *ngIf="model == 1" class="timer mb-3">
         <div>
             <p>Time start</p>
-            <ngb-timepicker [(ngModel)]="startTime" seconds="true"></ngb-timepicker>
+            <ngb-timepicker [(ngModel)]="startTime" seconds="true" (ngModelChange)="onTimeChange()"></ngb-timepicker>
         </div>
 
         <div>
             <p>Time end</p>
-            <ngb-timepicker [(ngModel)]="endTime" seconds="true"></ngb-timepicker>
+            <ngb-timepicker [(ngModel)]="endTime" seconds="true" (ngModelChange)="onTimeChange()"></ngb-timepicker>
         </div>
     </div>
 
