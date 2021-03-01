@@ -5,6 +5,28 @@
     </button>
 </div>
 <div class="modal-body">
+
+    <div class="btn-group btn-group-toggle mb-3" ngbRadioGroup name="radioBasic" [(ngModel)]="model">
+        <label ngbButtonLabel [ngClass]="{ 'btn-light': model == 1, 'btn-primary': model == 0 }">
+            <input ngbButton type="radio" [value]="0"> Transcribe full audio
+        </label>
+        <label ngbButtonLabel [ngClass]="{ 'btn-primary': model == 1, 'btn-light': model == 0 }">
+            <input ngbButton type="radio" [value]="1"> Transcribe a part of the audio
+        </label>
+    </div>
+
+    <div *ngIf="model == 1" class="timer mb-3">
+        <div>
+            <p>Time start</p>
+            <ngb-timepicker [(ngModel)]="startTime" seconds="true"></ngb-timepicker>
+        </div>
+
+        <div>
+            <p>Time end</p>
+            <ngb-timepicker [(ngModel)]="endTime" seconds="true"></ngb-timepicker>
+        </div>
+    </div>
+
     <p>{{message}}</p>
 </div>
 <div class="modal-footer">

@@ -154,6 +154,9 @@ export class FilesComponent implements OnInit, OnDestroy {
         }
 
         let onAccept = (dialogComponent: TranscribeDialogComponent) => {
+            console.log(dialogComponent);
+            dialogComponent.close();
+            return;
             this.fileItemService.transcribe(fileItem.id, fileItem.language)
                 .subscribe(
                     () => {
@@ -198,6 +201,7 @@ export class FilesComponent implements OnInit, OnDestroy {
         let data = {
             title: `Transcribe ${fileItem.name}`,
             message: `Do you really want to transcribe file '${fileItem.name}'?`,
+            totalTime: fileItem.totalTime,
             onAccept: onAccept
         };
 
