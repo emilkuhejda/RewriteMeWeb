@@ -14,6 +14,7 @@ import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-
 import { CacheService } from '../_services/cache.service';
 import { MessageCenterService } from '../_services/message-center.service';
 import { SendToMailDialogComponent } from '../_directives/send-to-mail-dialog/send-to-mail-dialog.component';
+import { TranscribeDialogComponent } from '../_directives/transcribe-dialog/transcribe-dialog.component';
 
 @Component({
     selector: 'app-files',
@@ -152,7 +153,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.alertService.error("File is already processing");
         }
 
-        let onAccept = (dialogComponent: DialogComponent) => {
+        let onAccept = (dialogComponent: TranscribeDialogComponent) => {
             this.fileItemService.transcribe(fileItem.id, fileItem.language)
                 .subscribe(
                     () => {
@@ -200,7 +201,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             onAccept: onAccept
         };
 
-        let modal = this.modal.openDialog(DialogComponent, {
+        let modal = this.modal.openDialog(TranscribeDialogComponent, {
             data: data,
             useStyles: 'none'
         });
