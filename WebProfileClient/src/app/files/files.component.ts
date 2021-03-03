@@ -154,11 +154,11 @@ export class FilesComponent implements OnInit, OnDestroy {
         }
 
         let onAccept = (dialogComponent: TranscribeDialogComponent) => {
-            console.log(dialogComponent.isTimeFrame);
-            console.log(dialogComponent.getStartTimeSeconds());
-            console.log(dialogComponent.getEndTimeSeconds());
-            dialogComponent.close();
-            return;
+            // console.log(dialogComponent.isTimeFrame);
+            // console.log(dialogComponent.getStartTimeSeconds());
+            // console.log(dialogComponent.getEndTimeSeconds());
+            // dialogComponent.close();
+            // return;
             this.fileItemService.transcribe(fileItem.id, fileItem.language)
                 .subscribe(
                     () => {
