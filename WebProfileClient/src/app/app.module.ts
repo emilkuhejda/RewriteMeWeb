@@ -20,6 +20,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 import { RoundConfidencePipe } from './_pipes/round-confidence.pipe';
 import { SendToMailDialogComponent } from './_directives/send-to-mail-dialog/send-to-mail-dialog.component';
+import { TranscribeDialogComponent } from './_directives/transcribe-dialog/transcribe-dialog.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +34,7 @@ import { SendToMailDialogComponent } from './_directives/send-to-mail-dialog/sen
         DialogComponent,
         ProgressBarComponent,
         SendToMailDialogComponent,
+        TranscribeDialogComponent,
         routingComponents
     ],
     imports: [
@@ -57,6 +59,6 @@ import { SendToMailDialogComponent } from './_directives/send-to-mail-dialog/sen
         multi: true
     }],
     bootstrap: [AppComponent],
-    entryComponents: [ExportDialogComponent, DialogComponent, SendToMailDialogComponent]
+    entryComponents: [ExportDialogComponent, DialogComponent, SendToMailDialogComponent, TranscribeDialogComponent]
 })
 export class AppModule { }

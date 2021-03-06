@@ -24,7 +24,7 @@
 	<div class="card-body">
 		<div *ngFor="let transcribeItem of transcribeItems">
 			<div class="row no-gutters align-items-center mb-4" *ngIf="transcribeItem.source">
-				<audio controls="controls" [src]="transcribeItem.source"></audio>
+				<audio #audio controls="controls" [src]="transcribeItem.source" (timeupdate)="restrictAudio(audio)"></audio>
 			</div>
 
 			<div class="row mb-2">

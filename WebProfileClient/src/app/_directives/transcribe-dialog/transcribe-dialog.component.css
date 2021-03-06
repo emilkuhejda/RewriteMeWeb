@@ -1,0 +1,8 @@
+.timer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.timer p {
+    text-align: center;
+}

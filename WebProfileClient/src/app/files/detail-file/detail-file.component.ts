@@ -138,4 +138,12 @@ export class DetailFileComponent implements OnInit {
 
         modal.onClosedModal().subscribe();
     }
+
+    restrictAudio(event) {
+        const stopAudioAfter: number = 57.8;
+        if (event.currentTime >= stopAudioAfter) {
+            event.pause();
+            event.currentTime = 0;
+        }
+    }
 }
