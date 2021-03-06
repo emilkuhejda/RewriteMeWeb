@@ -15,7 +15,7 @@ export class TranscribeDialogComponent implements OnInit {
     public title: string;
     public message: string;
     public loading: boolean;
-    public isTimeFrame = 0;
+    public isTimeFrame: number = 0;
 
     public constructor(
         @Inject(GECO_DATA_DIALOG) public data: any,

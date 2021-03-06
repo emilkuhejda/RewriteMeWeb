@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { FileItemMapper } from '../_mappers/file-item-mapper';
 import { RoutingService } from './routing.service';
 import { Observable } from 'rxjs';
+import { TranscribeModel } from '../_models/transcribe-model';
 
 @Injectable({
     providedIn: 'root'
@@ -64,11 +65,16 @@ export class FileItemService {
         return this.http.put(this.routingService.getRestoreAllUri(), fileItemIds, { params: params });
     }
 
-    transcribe(fileItemId: string, language: string) {
+    transcribe(transcribeModel: TranscribeModel) {
         let params = new HttpParams();
-        params = params.append('fileItemId', fileItemId);
-        params = params.append('language', language);
+        params = params.append('fileItemId', transcribeModel.fileItemId);
+        params = params.append('language', transcribeModel.language);
         params = params.append('applicationId', CommonVariables.ApplicationId);
+        if (transcribeModel.isTimeFrame) {
+            params = params.append('startTimeSeconds', transcribeModel.startTime.toString());
+            params = params.append('endTimeSeconds', transcribeModel.endTime.toString());
+        }
+
         return this.http.put(this.routingService.getTranscribeFileItemUri(), null, { params: params });
     }
 }

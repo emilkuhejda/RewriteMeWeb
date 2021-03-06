@@ -15,6 +15,7 @@ import { CacheService } from '../_services/cache.service';
 import { MessageCenterService } from '../_services/message-center.service';
 import { SendToMailDialogComponent } from '../_directives/send-to-mail-dialog/send-to-mail-dialog.component';
 import { TranscribeDialogComponent } from '../_directives/transcribe-dialog/transcribe-dialog.component';
+import { TranscribeModel } from '../_models/transcribe-model';
 
 @Component({
     selector: 'app-files',
@@ -154,12 +155,15 @@ export class FilesComponent implements OnInit, OnDestroy {
         }
 
         let onAccept = (dialogComponent: TranscribeDialogComponent) => {
-            // console.log(dialogComponent.isTimeFrame);
-            // console.log(dialogComponent.getStartTimeSeconds());
-            // console.log(dialogComponent.getEndTimeSeconds());
-            // dialogComponent.close();
-            // return;
-            this.fileItemService.transcribe(fileItem.id, fileItem.language)
+            let transcribeModel: TranscribeModel = {
+                fileItemId: fileItem.id,
+                language: fileItem.language,
+                isTimeFrame: dialogComponent.isTimeFrame === 1,
+                startTime: dialogComponent.getStartTimeSeconds(),
+                endTime: dialogComponent.getEndTimeSeconds()
+            };
+
+            this.fileItemService.transcribe(transcribeModel)
                 .subscribe(
                     () => {
                         this.alertService.success(`The file ${fileItem.name} started processing`);
