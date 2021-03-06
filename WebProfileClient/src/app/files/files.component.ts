@@ -14,6 +14,8 @@ import { ExportDialogComponent } from 'src/app/_directives/export-dialog/export-
 import { CacheService } from '../_services/cache.service';
 import { MessageCenterService } from '../_services/message-center.service';
 import { SendToMailDialogComponent } from '../_directives/send-to-mail-dialog/send-to-mail-dialog.component';
+import { TranscribeDialogComponent } from '../_directives/transcribe-dialog/transcribe-dialog.component';
+import { TranscribeModel } from '../_models/transcribe-model';
 
 @Component({
     selector: 'app-files',
@@ -152,8 +154,24 @@ export class FilesComponent implements OnInit, OnDestroy {
             this.alertService.error("File is already processing");
         }
 
-        let onAccept = (dialogComponent: DialogComponent) => {
-            this.fileItemService.transcribe(fileItem.id, fileItem.language)
+        let onAccept = (dialogComponent: TranscribeDialogComponent) => {
+            let transcribeModel: TranscribeModel = {
+                fileItemId: fileItem.id,
+                language: fileItem.language,
+                isTimeFrame: dialogComponent.isTimeFrame === 1,
+                startTime: dialogComponent.getStartTimeSeconds(),
+                endTime: dialogComponent.getEndTimeSeconds()
+            };
+
+            if (transcribeModel.isTimeFrame) {
+                if (transcribeModel.startTime >= transcribeModel.endTime) {
+                    this.alertService.error('Start time must be less than end time');
+                    dialogComponent.close();
+                    return;
+                }
+            }
+
+            this.fileItemService.transcribe(transcribeModel)
                 .subscribe(
                     () => {
                         this.alertService.success(`The file ${fileItem.name} started processing`);
@@ -197,10 +215,11 @@ export class FilesComponent implements OnInit, OnDestroy {
         let data = {
             title: `Transcribe ${fileItem.name}`,
             message: `Do you really want to transcribe file '${fileItem.name}'?`,
+            totalTime: fileItem.totalTime,
             onAccept: onAccept
         };
 
-        let modal = this.modal.openDialog(DialogComponent, {
+        let modal = this.modal.openDialog(TranscribeDialogComponent, {
             data: data,
             useStyles: 'none'
         });
