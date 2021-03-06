@@ -9,6 +9,8 @@ import { GecoDialogRef, GECO_DATA_DIALOG, GECO_DIALOG_REF } from 'angular-dynami
 })
 export class TranscribeDialogComponent implements OnInit {
     private onAccept: Function;
+    private totalTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    private totalTimeSeconds: number = 0;
 
     public startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
     public endTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
@@ -23,7 +25,11 @@ export class TranscribeDialogComponent implements OnInit {
         this.title = data.title;
         this.message = data.message;
         this.onAccept = data.onAccept;
-        this.endTime = this.parseTime(data.totalTime);
+
+        let endTime = this.parseTime(data.totalTime);
+        this.endTime = endTime;
+        this.totalTime = endTime;
+        this.totalTimeSeconds = this.convertToSeconds(this.totalTime);
     }
 
     public ngOnInit() { }
@@ -70,12 +76,13 @@ export class TranscribeDialogComponent implements OnInit {
         var startTimeSeconds = this.convertToSeconds(this.startTime);
         var endTimeSeconds = this.convertToSeconds(this.endTime);
 
+        if (endTimeSeconds > this.totalTimeSeconds) {
+            this.endTime = { ...this.totalTime };
+            endTimeSeconds = this.totalTimeSeconds;
+        }
+
         if (startTimeSeconds > endTimeSeconds) {
-            this.startTime = {
-                hour: this.endTime.hour,
-                minute: this.endTime.minute,
-                second: this.endTime.second
-            };
+            this.startTime = { ...this.endTime };
         }
     }
 
