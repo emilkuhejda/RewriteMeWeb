@@ -82,11 +82,27 @@ export class TranscribeDialogComponent implements OnInit {
         }
 
         if (startTimeSeconds > endTimeSeconds) {
-            this.startTime = { ...this.endTime };
+            if (endTimeSeconds > 0) {
+                this.startTime = this.convertToModel(endTimeSeconds - 1);
+            } else {
+                this.startTime = { ...this.endTime };
+            }
         }
     }
 
     private convertToSeconds(timeStruct: NgbTimeStruct): number {
         return (timeStruct.hour * 3600) + (timeStruct.minute * 60) + timeStruct.second;
+    }
+
+    private convertToModel(seconds: number): NgbTimeStruct {
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor((seconds - (hours * 3600)) / 60);
+        let second = seconds - (hours * 3600) - (minutes * 60);
+
+        return {
+            hour: hours,
+            minute: minutes,
+            second: second
+        }
     }
 }

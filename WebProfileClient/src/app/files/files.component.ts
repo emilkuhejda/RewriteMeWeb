@@ -163,7 +163,7 @@ export class FilesComponent implements OnInit, OnDestroy {
                 endTime: dialogComponent.getEndTimeSeconds()
             };
 
-            if (transcribeModel.isTimeFrame && transcribeModel.startTime !== 0 && transcribeModel.endTime !== 0) {
+            if (transcribeModel.isTimeFrame) {
                 if (transcribeModel.startTime >= transcribeModel.endTime) {
                     this.alertService.error('Start time must be less than end time');
                     dialogComponent.close();
