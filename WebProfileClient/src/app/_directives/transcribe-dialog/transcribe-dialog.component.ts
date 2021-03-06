@@ -9,11 +9,11 @@ import { GecoDialogRef, GECO_DATA_DIALOG, GECO_DIALOG_REF } from 'angular-dynami
 })
 export class TranscribeDialogComponent implements OnInit {
     private onAccept: Function;
-    private totalTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    private totalTime: NgbTimeStruct;
     private totalTimeSeconds: number = 0;
 
-    public startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
-    public endTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    public startTime: NgbTimeStruct;
+    public endTime: NgbTimeStruct;
     public title: string;
     public message: string;
     public loading: boolean;
@@ -27,6 +27,8 @@ export class TranscribeDialogComponent implements OnInit {
         this.onAccept = data.onAccept;
 
         let endTime = this.parseTime(data.totalTime);
+
+        this.startTime = this.createEmpty();
         this.endTime = endTime;
         this.totalTime = endTime;
         this.totalTimeSeconds = this.convertToSeconds(this.totalTime);
@@ -63,7 +65,7 @@ export class TranscribeDialogComponent implements OnInit {
     private parseTime(time: string): NgbTimeStruct {
         var timeArr = time.split(':');
         if (timeArr.length < 2)
-            return {} as NgbTimeStruct;
+            return this.createEmpty();
 
         return {
             hour: Number(timeArr[0]),
@@ -73,6 +75,14 @@ export class TranscribeDialogComponent implements OnInit {
     }
 
     private validateTimes(): void {
+        if (!this.startTime) {
+            this.startTime = this.createEmpty();
+        }
+
+        if (!this.endTime) {
+            this.endTime = { ...this.totalTime };
+        }
+
         var startTimeSeconds = this.convertToSeconds(this.startTime);
         var endTimeSeconds = this.convertToSeconds(this.endTime);
 
@@ -104,5 +114,9 @@ export class TranscribeDialogComponent implements OnInit {
             minute: minutes,
             second: second
         }
+    }
+
+    private createEmpty(): NgbTimeStruct {
+        return { hour: 0, minute: 0, second: 0 };
     }
 }
