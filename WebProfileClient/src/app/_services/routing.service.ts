@@ -8,7 +8,7 @@ export class RoutingService {
     constructor() { }
 
     getHomeUri(): string {
-        return this.getApiUri() + "home/";
+        return "https://voicipher.com/home/";
     }
 
     getFileItemsUri(): string {
