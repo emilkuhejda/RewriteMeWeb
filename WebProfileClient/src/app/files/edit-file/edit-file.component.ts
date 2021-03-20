@@ -58,6 +58,7 @@ export class EditFileComponent implements OnInit, OnDestroy {
                     const isTimeFrame = fileItem.transcriptionStartTime.ticks > 0 || fileItem.transcriptionEndTime.ticks > 0;
 
                     this.fileItem = fileItem;
+                    this.selectedFileName = fileItem.fileName;
                     this.editFileForm.controls.name.setValue(fileItem.name);
                     this.editFileForm.controls.language.setValue(fileItem.language);
                     this.editFileForm.controls.audioType.setValue(fileItem.isPhoneCall ? '1' : '0');
