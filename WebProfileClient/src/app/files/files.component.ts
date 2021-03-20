@@ -215,6 +215,8 @@ export class FilesComponent implements OnInit, OnDestroy {
         let data = {
             title: `Transcribe ${fileItem.name}`,
             message: `Do you really want to transcribe file '${fileItem.name}'?`,
+            transcriptionStartTime: fileItem.transcriptionStartTime,
+            transcriptionEndTime: fileItem.transcriptionEndTime,
             totalTime: fileItem.totalTime,
             onAccept: onAccept
         };

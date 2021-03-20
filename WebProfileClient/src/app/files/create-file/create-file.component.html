@@ -53,7 +53,7 @@
 
             <h4 *ngIf="isModelSupported">Audio type</h4>
 
-            <div *ngIf="isModelSupported" class="check-container mb-5">
+            <div *ngIf="isModelSupported" class="check-container mb-3">
                 <div class="form-check">
                     <input type="radio" id="isBasicRecording" formControlName="audioType" class="form-check-input"
                         value="0" />
@@ -64,6 +64,29 @@
                     <input type="radio" id="isPhoneCall" formControlName="audioType" class="form-check-input"
                         value="1" />
                     <label for="isPhoneCall">Phone / video call</label>
+                </div>
+            </div>
+
+            <div class="btn-group btn-group-toggle mb-5" ngbRadioGroup name="radioBasic" formControlName="isTimeFrame">
+                <label ngbButtonLabel [ngClass]="{ 'btn-light': isTimeFrame, 'btn-primary': !isTimeFrame }">
+                    <input ngbButton type="radio" [value]="0"> Transcribe full audio
+                </label>
+                <label ngbButtonLabel [ngClass]="{ 'btn-primary': isTimeFrame, 'btn-light': !isTimeFrame }">
+                    <input ngbButton type="radio" [value]="1"> Transcribe a part of the audio
+                </label>
+            </div>
+
+            <div *ngIf="isTimeFrame" class="timer">
+                <div class="mr-5">
+                    <p>Time start</p>
+                    <ngb-timepicker formControlName="startTime" seconds="true" (ngModelChange)="onTimeChange()">
+                    </ngb-timepicker>
+                </div>
+
+                <div>
+                    <p>Time end</p>
+                    <ngb-timepicker formControlName="endTime" seconds="true" (ngModelChange)="onTimeChange()">
+                    </ngb-timepicker>
                 </div>
             </div>
 

@@ -30,6 +30,8 @@ export class FileItemMapper {
         fileItem.recognitionState = <RecognitionState>RecognitionState[<string>data.recognitionStateString];
         fileItem.uploadStatus = <UploadStatus>data.uploadStatus;
         fileItem.totalTime = new TimeSpanWrapper(data.totalTimeTicks).getTime();
+        fileItem.transcriptionStartTime = new TimeSpanWrapper(data.transcriptionStartTimeTicks);
+        fileItem.transcriptionEndTime = new TimeSpanWrapper(data.transcriptionEndTimeTicks);
         fileItem.transcribedTime = new TimeSpanWrapper(data.transcribedTimeTicks).getTime();
         fileItem.dateCreated = new Date(data.dateCreated);
         fileItem.dateProcessed = new Date(data.dateProcessedUtc);
