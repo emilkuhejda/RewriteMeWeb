@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FileItemService } from 'src/app/_services/file-item.service';
@@ -7,19 +7,25 @@ import { FileItem } from 'src/app/_models/file-item';
 import { ErrorResponse } from 'src/app/_models/error-response';
 import { ErrorCode } from 'src/app/_enums/error-code';
 import { LanguageHelper } from 'src/app/_helpers/language-helper';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-edit-file',
     templateUrl: './edit-file.component.html',
     styleUrls: ['./edit-file.component.css']
 })
-export class EditFileComponent implements OnInit {
+export class EditFileComponent implements OnInit, OnDestroy {
+    private destroy$: Subject<void> = new Subject<void>();
+
     selectedLanguage: string = '';
     fileItem: FileItem;
     editFileForm: FormGroup;
     submitted: boolean;
     loading: boolean;
     isModelSupported: boolean = false;
+    isTimeFrame: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -32,10 +38,17 @@ export class EditFileComponent implements OnInit {
         this.editFileForm = this.formBuilder.group({
             name: ['', Validators.required],
             language: ['', Validators.required],
-            audioType: ['', Validators.required]
+            audioType: ['', Validators.required],
+            isTimeFrame: [0],
+            startTime: [{ hour: 0, minute: 0, second: 0 }],
+            endTime: [{ hour: 0, minute: 0, second: 0 }]
         });
 
-        this.route.paramMap.subscribe(paramMap => {
+        this.editFileForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(changes => {
+            this.isTimeFrame = changes.isTimeFrame;
+        });
+
+        this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(paramMap => {
             let fileId = paramMap.get("fileId");
             this.fileItemService.get(fileId).subscribe(
                 (fileItem: FileItem) => {
@@ -49,6 +62,11 @@ export class EditFileComponent implements OnInit {
                     this.alertService.error(err.message);
                 });
         });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.unsubscribe();
     }
 
     onSelectChange() {
@@ -80,11 +98,23 @@ export class EditFileComponent implements OnInit {
         let language = this.controls.language.value;
         let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
 
+        const isTimeFrame = this.controls.isTimeFrame.value;
+        const startTime = this.convertToSeconds(this.controls.startTime.value);
+        const endTime = this.convertToSeconds(this.controls.endTime.value);
+        if (isTimeFrame) {
+            if (startTime >= endTime) {
+                this.alertService.error('Start time must be less than end time');
+                return;
+            }
+        }
+
         let formData = new FormData();
         formData.append("fileItemId", this.fileItem.id);
         formData.append("name", this.controls.name.value);
         formData.append("language", language);
         formData.append("isPhoneCall", String(audioType == 1));
+        formData.append("startTimeSeconds", String(isTimeFrame ? startTime : 0));
+        formData.append("endTimeSeconds", String(isTimeFrame ? endTime : 0));
 
         this.fileItemService.update(formData).subscribe(
             () => {
@@ -102,11 +132,62 @@ export class EditFileComponent implements OnInit {
                 if (err.errorCode === ErrorCode.EC203)
                     error = "Audio type is not supported";
 
+                if (err.errorCode === ErrorCode.EC204)
+                    error = "Start time must be less than end time";
+
+                if (err.errorCode === ErrorCode.EC205)
+                    error = "End time must be less than total time of the recording";
+
                 if (err.errorCode === ErrorCode.EC500)
                     error = "System is under maintenance. Please try again later.";
 
                 this.alertService.error(error);
                 this.loading = false;
             });
+    }
+
+    public onTimeChange() {
+        this.validateTimes();
+    }
+
+    private validateTimes(): void {
+        if (!this.controls.startTime.value) {
+            this.controls.startTime.setValue(this.createEmpty());
+        }
+
+        if (!this.controls.endTime.value) {
+            this.controls.endTime.setValue(this.createEmpty());
+        }
+
+        var startTimeSeconds = this.convertToSeconds(this.controls.startTime.value);
+        var endTimeSeconds = this.convertToSeconds(this.controls.endTime.value);
+
+        if (startTimeSeconds > endTimeSeconds) {
+            if (endTimeSeconds > 0) {
+                this.controls.startTime.setValue(this.convertToModel(endTimeSeconds - 1));
+            } else {
+                this.controls.startTime.setValue({ ...this.controls.endTime.value });
+            }
+        }
+    }
+
+    private convertToSeconds(timeStruct: NgbTimeStruct): number {
+        return (timeStruct.hour * 3600) + (timeStruct.minute * 60) + timeStruct.second;
+    }
+
+    private convertToModel(seconds: number): NgbTimeStruct {
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor((seconds - (hours * 3600)) / 60);
+        let second = seconds - (hours * 3600) - (minutes * 60);
+
+        return {
+            hour: hours,
+            minute: minutes,
+            second: second
+        }
+    }
+
+    private createEmpty(): NgbTimeStruct {
+        return { hour: 0, minute: 0, second: 0 };
     }
 }

@@ -53,7 +53,7 @@
 
             <h4 *ngIf="isModelSupported">Audio type</h4>
 
-            <div *ngIf="isModelSupported" class="check-container mb-5">
+            <div *ngIf="isModelSupported" class="check-container mb-3">
                 <div class="form-check">
                     <input type="radio" id="isBasicRecording" formControlName="audioType" class="form-check-input"
                         value="0" />
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div class="btn-group btn-group-toggle mb-3" ngbRadioGroup name="radioBasic" formControlName="isTimeFrame">
+            <div class="btn-group btn-group-toggle mb-5" ngbRadioGroup name="radioBasic" formControlName="isTimeFrame">
                 <label ngbButtonLabel [ngClass]="{ 'btn-light': isTimeFrame == 1, 'btn-primary': isTimeFrame == 0 }">
                     <input ngbButton type="radio" [value]="0"> Transcribe full audio
                 </label>

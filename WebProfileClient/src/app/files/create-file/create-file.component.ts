@@ -49,7 +49,7 @@ export class CreateFileComponent implements OnInit, OnDestroy {
 
         this.createFileForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(changes => {
             this.isTimeFrame = changes.isTimeFrame;
-        })
+        });
     }
 
     ngOnDestroy(): void {
@@ -90,6 +90,15 @@ export class CreateFileComponent implements OnInit, OnDestroy {
             return;
         }
 
+        this.submitted = true;
+        if (this.createFileForm.invalid)
+            return;
+
+        this.loading = true;
+
+        let language = this.controls.language.value;
+        let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
+
         const isTimeFrame = this.controls.isTimeFrame.value;
         const startTime = this.convertToSeconds(this.controls.startTime.value);
         const endTime = this.convertToSeconds(this.controls.endTime.value);
@@ -99,15 +108,6 @@ export class CreateFileComponent implements OnInit, OnDestroy {
                 return;
             }
         }
-
-        this.submitted = true;
-        if (this.createFileForm.invalid)
-            return;
-
-        this.loading = true;
-
-        let language = this.controls.language.value;
-        let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
 
         let file = files[0];
         let params = new HttpParams();
