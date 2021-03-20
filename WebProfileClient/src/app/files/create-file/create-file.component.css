@@ -2,3 +2,16 @@
     display: inline-block;
     margin-right: 10px;
 }
+
+.timer {
+    display: flex;
+    justify-content: center;
+}
+
+.timer p {
+    text-align: center;
+}
+
+.btn-group-toggle {
+    width: 100%;
+}

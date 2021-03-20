@@ -39,9 +39,19 @@
                 </select>
             </div>
 
+            <h4>Audio upload</h4>
+
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input #fileInput type="file" id="inputGroupFile" class="custom-file-input"
+                        aria-describedby="inputGroupFileAddon" (change)="onChange(fileInput.files)" />
+                    <label class="custom-file-label" for="inputGroupFile">{{selectedFileName}}</label>
+                </div>
+            </div>
+
             <h4 *ngIf="isModelSupported">Audio type</h4>
 
-            <div *ngIf="isModelSupported" class="check-container mb-5">
+            <div *ngIf="isModelSupported" class="check-container mb-3">
                 <div class="form-check">
                     <input type="radio" id="isBasicRecording" formControlName="audioType" class="form-check-input"
                         value="0" />
@@ -55,10 +65,37 @@
                 </div>
             </div>
 
+            <div class="btn-group btn-group-toggle mb-5" ngbRadioGroup name="radioBasic" formControlName="isTimeFrame">
+                <label ngbButtonLabel [ngClass]="{ 'btn-light': isTimeFrame, 'btn-primary': !isTimeFrame }">
+                    <input ngbButton type="radio" [value]="0"> Transcribe full audio
+                </label>
+                <label ngbButtonLabel [ngClass]="{ 'btn-primary': isTimeFrame, 'btn-light': !isTimeFrame }">
+                    <input ngbButton type="radio" [value]="1"> Transcribe a part of the audio
+                </label>
+            </div>
+
+            <div *ngIf="isTimeFrame" class="timer">
+                <div class="mr-5">
+                    <p>Time start</p>
+                    <ngb-timepicker formControlName="startTime" seconds="true" (ngModelChange)="onTimeChange()">
+                    </ngb-timepicker>
+                </div>
+
+                <div>
+                    <p>Time end</p>
+                    <ngb-timepicker formControlName="endTime" seconds="true" (ngModelChange)="onTimeChange()">
+                    </ngb-timepicker>
+                </div>
+            </div>
+
             <div class="form-group">
-                <button [disabled]="loading" (click)="onSubmit()" class="btn btn-primary mr-2">Edit</button>
+                <button [disabled]="loading" (click)="onSubmit(fileInput.files)" class="btn btn-primary mr-2">Edit</button>
                 <img *ngIf="loading"
                     src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            </div>
+
+            <div *ngIf="progress > 0 && progress < 100">
+                <app-progress-bar value="{{progress}}"></app-progress-bar>
             </div>
         </form>
     </div>

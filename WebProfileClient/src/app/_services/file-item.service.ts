@@ -39,8 +39,11 @@ export class FileItemService {
 
     update(formData: FormData) {
         formData.append("applicationId", CommonVariables.ApplicationId);
+        let uploadRequest = new HttpRequest("PUT", this.routingService.getUpdateFileItemUri(), formData, {
+            reportProgress: true
+        });
 
-        return this.http.put(this.routingService.getUpdateFileItemUri(), formData);
+        return this.http.request(uploadRequest);
     }
 
     delete(fileItemId: string) {
