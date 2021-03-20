@@ -10,6 +10,7 @@ import { LanguageHelper } from 'src/app/_helpers/language-helper';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-edit-file',
@@ -19,9 +20,11 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 export class EditFileComponent implements OnInit, OnDestroy {
     private destroy$: Subject<void> = new Subject<void>();
 
-    selectedLanguage: string = '';
     fileItem: FileItem;
     editFileForm: FormGroup;
+    progress: number;
+    selectedFileName: string = 'Choose file';
+    selectedLanguage: string = '';
     submitted: boolean;
     loading: boolean;
     isModelSupported: boolean = false;
@@ -88,7 +91,15 @@ export class EditFileComponent implements OnInit, OnDestroy {
         return this.editFileForm.controls;
     }
 
-    onSubmit() {
+    onChange(files) {
+        if (files.length === 0)
+            return;
+
+        this.selectedFileName = "";
+        this.selectedFileName = files[0].name;
+    }
+
+    onSubmit(files) {
         this.alertService.clear();
         if (this.controls.language.value === "") {
             this.alertService.error("Language is required");
@@ -127,10 +138,24 @@ export class EditFileComponent implements OnInit, OnDestroy {
         formData.append("startTimeSeconds", String(isTimeFrame ? startTime : 0));
         formData.append("endTimeSeconds", String(isTimeFrame ? endTime : 0));
 
+        if (files.length > 0) {
+            let file = files[0];
+            formData.append("file", file);
+            formData.append("fileName", file.name);
+        }
+
         this.fileItemService.update(formData).subscribe(
-            () => {
-                this.alertService.success("File was successfully created", true);
-                this.router.navigate(["/files"]);
+            (event) => {
+                if (event.type == HttpEventType.UploadProgress) {
+                    this.progress = Math.round(100 * event.loaded / event.total);
+                } else if (event instanceof HttpResponse) {
+                    this.alertService.success("File was successfully updated", true);
+
+                    this.submitted = false;
+                    this.loading = false;
+
+                    this.router.navigate(["/files"]);
+                }
             },
             (err: ErrorResponse) => {
                 let error = err.message;

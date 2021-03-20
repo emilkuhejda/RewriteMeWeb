@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileItemService } from 'src/app/_services/file-item.service';
@@ -18,8 +18,6 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./create-file.component.css']
 })
 export class CreateFileComponent implements OnInit, OnDestroy {
-    @ViewChild("fileInput") fileInputElement: ElementRef;
-
     private destroy$: Subject<void> = new Subject<void>();
 
     createFileForm: FormGroup;
