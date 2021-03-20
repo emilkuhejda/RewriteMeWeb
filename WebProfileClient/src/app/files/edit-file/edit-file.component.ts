@@ -52,11 +52,22 @@ export class EditFileComponent implements OnInit, OnDestroy {
             let fileId = paramMap.get("fileId");
             this.fileItemService.get(fileId).subscribe(
                 (fileItem: FileItem) => {
+                    const isTimeFrame = fileItem.transcriptionStartTime.ticks > 0 || fileItem.transcriptionEndTime.ticks > 0;
+
                     this.fileItem = fileItem;
                     this.editFileForm.controls.name.setValue(fileItem.name);
                     this.editFileForm.controls.language.setValue(fileItem.language);
                     this.editFileForm.controls.audioType.setValue(fileItem.isPhoneCall ? '1' : '0');
                     this.isModelSupported = LanguageHelper.isPhoneCallModelSupported(this.controls.language.value);
+
+                    this.editFileForm.controls.isTimeFrame.setValue(isTimeFrame);
+                    if (isTimeFrame) {
+                        this.editFileForm.controls.startTime.setValue(this.parseTime(fileItem.transcriptionStartTime.getTime()));
+                    }
+
+                    if (isTimeFrame) {
+                        this.editFileForm.controls.endTime.setValue(this.parseTime(fileItem.transcriptionEndTime.getTime()));
+                    }
                 },
                 (err: ErrorResponse) => {
                     this.alertService.error(err.message);
@@ -189,5 +200,17 @@ export class EditFileComponent implements OnInit, OnDestroy {
 
     private createEmpty(): NgbTimeStruct {
         return { hour: 0, minute: 0, second: 0 };
+    }
+
+    private parseTime(time: string): NgbTimeStruct {
+        var timeArr = time.split(':');
+        if (timeArr.length < 2)
+            return this.createEmpty();
+
+        return {
+            hour: Number(timeArr[0]),
+            minute: Number(timeArr[1]),
+            second: Number(timeArr[2])
+        }
     }
 }

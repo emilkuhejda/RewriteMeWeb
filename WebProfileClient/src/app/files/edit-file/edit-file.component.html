@@ -64,7 +64,7 @@
                 </label>
             </div>
 
-            <div *ngIf="isTimeFrame == 1" class="timer">
+            <div *ngIf="isTimeFrame" class="timer">
                 <div class="mr-5">
                     <p>Time start</p>
                     <ngb-timepicker formControlName="startTime" seconds="true" (ngModelChange)="onTimeChange()">
