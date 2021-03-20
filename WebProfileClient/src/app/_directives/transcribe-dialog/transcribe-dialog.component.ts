@@ -28,8 +28,9 @@ export class TranscribeDialogComponent implements OnInit {
 
         let endTime = this.parseTime(data.totalTime);
 
-        this.startTime = this.createEmpty();
-        this.endTime = endTime;
+        this.isTimeFrame = data.transcriptionStartTime.ticks > 0 || data.transcriptionEndTime.ticks > 0 ? 1 : 0;
+        this.startTime = this.isTimeFrame ? this.parseTime(data.transcriptionStartTime.getTime()) : this.createEmpty();
+        this.endTime = this.isTimeFrame ? this.parseTime(data.transcriptionEndTime.getTime()) : endTime;
         this.totalTime = endTime;
         this.totalTimeSeconds = this.convertToSeconds(this.totalTime);
     }

@@ -1,5 +1,6 @@
 import { RecognitionState } from '../_enums/recognition-state';
 import { UploadStatus } from '../_enums/upload-status';
+import { TimeSpanWrapper } from './time-span-wrapper';
 
 export class FileItem {
     public id: string;
@@ -10,6 +11,9 @@ export class FileItem {
     public recognitionState: RecognitionState;
     public uploadStatus: UploadStatus;
     public totalTime: string;
+    public isTimeFrame: boolean;
+    public transcriptionStartTime: TimeSpanWrapper;
+    public transcriptionEndTime: TimeSpanWrapper;
     public transcribedTime: string;
     public dateCreated: Date;
     public dateProcessed: Date;
