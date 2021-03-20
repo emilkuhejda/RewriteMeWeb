@@ -56,10 +56,10 @@
             </div>
 
             <div class="btn-group btn-group-toggle mb-5" ngbRadioGroup name="radioBasic" formControlName="isTimeFrame">
-                <label ngbButtonLabel [ngClass]="{ 'btn-light': isTimeFrame == 1, 'btn-primary': isTimeFrame == 0 }">
+                <label ngbButtonLabel [ngClass]="{ 'btn-light': isTimeFrame, 'btn-primary': !isTimeFrame }">
                     <input ngbButton type="radio" [value]="0"> Transcribe full audio
                 </label>
-                <label ngbButtonLabel [ngClass]="{ 'btn-primary': isTimeFrame == 1, 'btn-light': isTimeFrame == 0 }">
+                <label ngbButtonLabel [ngClass]="{ 'btn-primary': isTimeFrame, 'btn-light': !isTimeFrame }">
                     <input ngbButton type="radio" [value]="1"> Transcribe a part of the audio
                 </label>
             </div>
