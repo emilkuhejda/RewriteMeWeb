@@ -72,6 +72,7 @@ export class FileItemService {
         let params = new HttpParams();
         params = params.append('fileItemId', transcribeModel.fileItemId);
         params = params.append('language', transcribeModel.language);
+        params = params.append('isPhoneCall', transcribeModel.isPhoneCall ? 'true' : 'false');
         params = params.append('applicationId', CommonVariables.ApplicationId);
         if (transcribeModel.isTimeFrame) {
             params = params.append('startTimeSeconds', transcribeModel.startTime.toString());

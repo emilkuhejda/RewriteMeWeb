@@ -127,6 +127,8 @@ export class EditFileComponent implements OnInit, OnDestroy {
         if (isTimeFrame) {
             if (startTime >= endTime) {
                 this.alertService.error('Start time must be less than end time');
+                this.submitted = false;
+                this.loading = false;
                 return;
             }
         }

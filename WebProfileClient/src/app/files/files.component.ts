@@ -158,6 +158,7 @@ export class FilesComponent implements OnInit, OnDestroy {
             let transcribeModel: TranscribeModel = {
                 fileItemId: fileItem.id,
                 language: fileItem.language,
+                isPhoneCall: fileItem.isPhoneCall,
                 isTimeFrame: dialogComponent.isTimeFrame === 1,
                 startTime: dialogComponent.getStartTimeSeconds(),
                 endTime: dialogComponent.getEndTimeSeconds()
