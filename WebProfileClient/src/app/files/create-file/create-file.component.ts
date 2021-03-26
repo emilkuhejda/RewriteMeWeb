@@ -8,18 +8,14 @@ import { ErrorResponse } from 'src/app/_models/error-response';
 import { CommonVariables } from 'src/app/_config/common-variables';
 import { ErrorCode } from 'src/app/_enums/error-code';
 import { LanguageHelper } from 'src/app/_helpers/language-helper';
-import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-file',
     templateUrl: './create-file.component.html',
     styleUrls: ['./create-file.component.css']
 })
-export class CreateFileComponent implements OnInit, OnDestroy {
-    private destroy$: Subject<void> = new Subject<void>();
-
+export class CreateFileComponent implements OnInit {
     createFileForm: FormGroup;
     progress: number;
     selectedFileName: string = 'Choose file';
@@ -27,7 +23,6 @@ export class CreateFileComponent implements OnInit, OnDestroy {
     submitted: boolean;
     loading: boolean;
     isModelSupported: boolean = false;
-    isTimeFrame: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -39,20 +34,8 @@ export class CreateFileComponent implements OnInit, OnDestroy {
         this.createFileForm = this.formBuilder.group({
             name: ['', Validators.required],
             language: ['', Validators.required],
-            audioType: ['0', Validators.required],
-            isTimeFrame: [0],
-            startTime: [{ hour: 0, minute: 0, second: 0 }],
-            endTime: [{ hour: 0, minute: 0, second: 0 }]
+            audioType: ['0', Validators.required]
         });
-
-        this.createFileForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(changes => {
-            this.isTimeFrame = changes.isTimeFrame;
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.unsubscribe();
     }
 
     get controls() {
@@ -97,26 +80,14 @@ export class CreateFileComponent implements OnInit, OnDestroy {
         let language = this.controls.language.value;
         let audioType = LanguageHelper.isPhoneCallModelSupported(language) ? this.controls.audioType.value : 0;
 
-        const isTimeFrame = this.controls.isTimeFrame.value;
-        const startTime = this.convertToSeconds(this.controls.startTime.value);
-        const endTime = this.convertToSeconds(this.controls.endTime.value);
-        if (isTimeFrame) {
-            if (startTime >= endTime) {
-                this.alertService.error('Start time must be less than end time');
-                this.submitted = false;
-                this.loading = false;
-                return;
-            }
-        }
-
         let file = files[0];
         let params = new HttpParams();
         params = params.append("name", this.controls.name.value);
         params = params.append("language", language);
         params = params.append("fileName", file.name);
         params = params.append("isPhoneCall", String(audioType == 1));
-        params = params.append("startTimeSeconds", String(isTimeFrame ? startTime : 0));
-        params = params.append("endTimeSeconds", String(isTimeFrame ? endTime : 0));
+        params = params.append("startTimeSeconds", '0');
+        params = params.append("endTimeSeconds", '0');
         params = params.append("dateCreated", new Date().toISOString());
         params = params.append("applicationId", CommonVariables.ApplicationId);
 
@@ -164,50 +135,5 @@ export class CreateFileComponent implements OnInit, OnDestroy {
                     this.loading = false;
                 }
             );
-    }
-
-    public onTimeChange() {
-        this.validateTimes();
-    }
-
-    private validateTimes(): void {
-        if (!this.controls.startTime.value) {
-            this.controls.startTime.setValue(this.createEmpty());
-        }
-
-        if (!this.controls.endTime.value) {
-            this.controls.endTime.setValue(this.createEmpty());
-        }
-
-        var startTimeSeconds = this.convertToSeconds(this.controls.startTime.value);
-        var endTimeSeconds = this.convertToSeconds(this.controls.endTime.value);
-
-        if (startTimeSeconds > endTimeSeconds) {
-            if (endTimeSeconds > 0) {
-                this.controls.startTime.setValue(this.convertToModel(endTimeSeconds - 1));
-            } else {
-                this.controls.startTime.setValue({ ...this.controls.endTime.value });
-            }
-        }
-    }
-
-    private convertToSeconds(timeStruct: NgbTimeStruct): number {
-        return (timeStruct.hour * 3600) + (timeStruct.minute * 60) + timeStruct.second;
-    }
-
-    private convertToModel(seconds: number): NgbTimeStruct {
-        let hours = Math.floor(seconds / 3600);
-        let minutes = Math.floor((seconds - (hours * 3600)) / 60);
-        let second = seconds - (hours * 3600) - (minutes * 60);
-
-        return {
-            hour: hours,
-            minute: minutes,
-            second: second
-        }
-    }
-
-    private createEmpty(): NgbTimeStruct {
-        return { hour: 0, minute: 0, second: 0 };
     }
 }
